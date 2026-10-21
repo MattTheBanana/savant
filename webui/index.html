@@ -628,12 +628,15 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     let delta=(d.lastClientX-d.startX)/Math.max(1,d.pps)+(d.autoDelta||0);
     if(d.mode==='move'&&d.snapToPlayhead&&d.items.length){
       const playhead=Number(player.currentTime)||0;
-      const minStart=Math.min(...d.items.map(item=>item.start))+delta,maxEnd=Math.max(...d.items.map(item=>item.end))+delta;
-      const center=(minStart+maxEnd)/2;
-      if(!d.snapSide)d.snapSide=center<=playhead?'end':'start';
-      else if(d.snapSide==='end'&&center>playhead+.001)d.snapSide='start';
-      else if(d.snapSide==='start'&&center<playhead-.001)d.snapSide='end';
-      const edge=d.snapSide==='end'?maxEnd:minStart,threshold=Math.max(.025,Math.min(.12,8/Math.max(1,d.pps)));
+      const rawMinStart=Math.min(...d.items.map(item=>item.start))+delta;
+      const rawMaxEnd=Math.max(...d.items.map(item=>item.end))+delta;
+      // Keep the same edge latched while the selected piece straddles the
+      // playhead; switch edges only after the whole selection crosses it.
+      if(!d.snapSide)d.snapSide=d.initialSnapSide||(rawMinStart<=playhead?'end':'start');
+      if(d.snapSide==='end'&&rawMinStart>=playhead)d.snapSide='start';
+      else if(d.snapSide==='start'&&rawMaxEnd<=playhead)d.snapSide='end';
+      const edge=d.snapSide==='end'?rawMaxEnd:rawMinStart;
+      const threshold=Math.max(.025,Math.min(.12,8/Math.max(1,d.pps)));
       if(Math.abs(playhead-edge)<=threshold){delta+=playhead-edge;d.snapUsed=true;}
     }else if(!d.snapToPlayhead)d.snapSide=null;
     if(d.mode==='start')cue.start=Math.max(0,Math.min(d.origEnd-.01,d.origStart+delta));
@@ -680,7 +683,9 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       const groupKeys=shiftDrag?[...selectedWordKeys]:(!ctrlDrag&&selectedWordKeys.has(key)&&selectedWordKeys.size>1&&edge===''?[...selectedWordKeys]:[key]);
       const items=groupKeys.map(k=>{const ref=parseWordKey(k),c=rows[ref.lineIndex]?.wordCues?.[ref.cueIndex];return c?{...ref,start:c.start,end:c.end}:null;}).filter(Boolean);
       const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`);
-      wordDragState={pointerId:e.pointerId,lineIndex,cueIndex,mode:shiftDrag?'pending':edge==='start'?'start':edge==='end'?'end':'move',startX:e.clientX,lastClientX:e.clientX,downX:e.clientX,downY:e.clientY,origStart:cue.start,origEnd:cue.end,pps:Number(lane?.dataset.pps)||timelinePps,items,groupMove:items.length>1,changed:false,autoDelta:0,lastAutoTime:performance.now(),snapToPlayhead:shiftDrag,snapSide:null,snapUsed:false};
+      const playheadTime=Number(player.currentTime)||0,itemMin=Math.min(...items.map(item=>item.start)),itemMax=Math.max(...items.map(item=>item.end));
+      const initialSnapSide=itemMax<=playheadTime?'end':itemMin>=playheadTime?'start':Math.abs(playheadTime-itemMax)<=Math.abs(itemMin-playheadTime)?'end':'start';
+      wordDragState={pointerId:e.pointerId,lineIndex,cueIndex,mode:shiftDrag?'pending':edge==='start'?'start':edge==='end'?'end':'move',startX:e.clientX,lastClientX:e.clientX,downX:e.clientX,downY:e.clientY,origStart:cue.start,origEnd:cue.end,pps:Number(lane?.dataset.pps)||timelinePps,items,groupMove:items.length>1,changed:false,autoDelta:0,lastAutoTime:performance.now(),snapToPlayhead:shiftDrag,snapSide:shiftDrag?initialSnapSide:null,initialSnapSide,snapUsed:false};
       clip.setPointerCapture?.(e.pointerId);if(!shiftDrag&&!autoScrollFrame)autoScrollFrame=requestAnimationFrame(runDragAutoScroll);e.preventDefault();
     });
     clip.addEventListener('pointermove',e=>{

@@ -1,6 +1,6 @@
-# Savant (Windows CLI)
+# Savant — local lyric alignment and editing
 
-A separate CLI program that takes an audio file and a supplied lyrics text file, uses a **local forced-alignment model**, and writes a standard line-timed `.lrc` file. It does not use LRCLIB, Lidarr, an online inference API, or the `synclyr2metadata` program.
+Savant includes a command-line aligner that uses a **local forced-alignment model** to time supplied lyrics, plus a local browser editor for reviewing and refining LRC and TTML timing. It does not use LRCLIB, Lidarr, an online inference API, or the `synclyr2metadata` program. It does not use LRCLIB, Lidarr, an online inference API, or the `synclyr2metadata` program.
 
 ## How it works
 

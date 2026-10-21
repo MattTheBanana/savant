@@ -1,4 +1,4 @@
-# Lyrics Audio Aligner (Windows CLI)
+# Savant (Windows CLI)
 
 A separate CLI program that takes an audio file and a supplied lyrics text file, uses a **local forced-alignment model**, and writes a standard line-timed `.lrc` file. It does not use LRCLIB, Lidarr, an online inference API, or the `synclyr2metadata` program.
 

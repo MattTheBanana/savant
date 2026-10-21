@@ -121,7 +121,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       <div class="setting"><label for="language">TTML language</label><input id="language" type="text" value="en" maxlength="20"><p>BCP-47 language code used in exported TTML.</p></div>
       <div class="setting"><label for="defaultTab">Default preview</label><select id="defaultTab"><option value="lrc">LRC</option><option value="ttml">TTML</option></select><p>Which export preview to show when the editor opens.</p></div>
       <div class="setting"><label for="autoFollow">Grid follow behavior</label><select id="autoFollow"><option value="true">Keep selected / playing line visible</option><option value="false">Do not auto-scroll</option></select><p>Follows keyboard selection and the active lyric during playback, unless you are typing.</p></div>
-      <div class="setting"><label for="timelineOverlap">Waveform edge context (seconds per side)</label><input id="timelineOverlap" type="number" min="0" max="5" step="0.05" value="0.45"><p>Show this much preceding/following waveform around each lyric line. Ctrl + scroll changes how much context is visible while keeping each line on one screen.</p></div>
+      <div class="setting"><label for="timelineOverlap">Waveform edge context (seconds per side)</label><input id="timelineOverlap" type="number" min="0" max="5" step="0.05" value="0.45"><p>Limit each lane to its lyric line plus this much preceding/following audio. Middle-drag can pan within these edges; Ctrl + scroll changes detail without exposing the full song in every lane.</p></div>
       <div class="setting"><label for="playheadLabelSize">Playhead time label size (px)</label><input id="playheadLabelSize" type="number" min="7" max="16" step="1" value="9"><p>Size of the timestamp shown beneath the red playhead marker.</p></div>
       <div class="setting"><label for="dragAutoScrollSpeed">Word-drag edge scroll speed (px/sec)</label><input id="dragAutoScrollSpeed" type="number" min="40" max="1600" step="20" value="320"><p>How quickly the waveform view advances when dragging a word near or beyond a lane edge.</p></div>
       <div class="setting"><label for="downloadBase">Export filename suffix</label><select id="downloadBase"><option value="same">Use imported lyrics base name</option><option value="audio">Use audio base name</option></select><p>Controls the default downloaded filename.</p></div>
@@ -514,10 +514,17 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     rows.forEach((_,i)=>{const p=phraseExtent(i);longest=Math.max(longest,p.span+2*context);});
     return Math.max(2,timelineTrackWidth/longest);
   }
+  function laneVisibleSpan(lineIndex,requestedSpan) {
+    const duration=timelineDuration(),phrase=phraseExtent(lineIndex),context=Math.max(0,Number(settings.timelineOverlap)||0);
+    // A lane represents one lyric line plus configured edge context, never the
+    // whole recording just because the user zoomed far out.
+    const lineSpan=Math.max(.08,phrase.span+2*context);
+    return Math.max(.08,Math.min(duration,requestedSpan,lineSpan));
+  }
   function getLineWindow(lineIndex,focusTime=null,focusRatio=.5) {
-    const phrase=phraseExtent(lineIndex),duration=timelineDuration();
+    const phrase=phraseExtent(lineIndex);
     const fullSpan=Math.max(.08,Number(timelineZoom)||computeFitZoom());
-    const visibleSpan=Math.min(duration,timelineTrackWidth/fullSpan);
+    const visibleSpan=laneVisibleSpan(lineIndex,timelineTrackWidth/fullSpan);
     let center=(phrase.start+phrase.end)/2;
     if(Number.isFinite(focusTime))center=focusTime;
     else if(phrase.span>visibleSpan){
@@ -539,20 +546,15 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   }
   function clampLaneWindowStart(lineIndex,start,span) {
     const duration=timelineDuration(),phrase=phraseExtent(lineIndex),context=Math.max(0,Number(settings.timelineOverlap)||0);
-    const safeSpan=Math.max(.08,Math.min(duration,span));
-    const minStart=Math.max(0,phrase.start-context);
-    const maxStart=Math.min(Math.max(0,duration-safeSpan),phrase.end+context-safeSpan);
-    if(maxStart<minStart){
-      // If the viewport is wider than this line plus its edge context, pin it
-      // around the phrase instead of allowing a pan into unrelated audio.
-      const center=(phrase.start+phrase.end)/2;
-      return Math.max(0,Math.min(Math.max(0,duration-safeSpan),center-safeSpan/2));
-    }
+    const safeSpan=laneVisibleSpan(lineIndex,span),durationMax=Math.max(0,duration-safeSpan);
+    // Intersect the line's context limits with the song's valid time range.
+    const minStart=Math.min(durationMax,Math.max(0,phrase.start-context));
+    const maxStart=Math.max(minStart,Math.min(durationMax,phrase.end+context-safeSpan));
     return Math.max(minStart,Math.min(maxStart,start));
   }
   function setLaneWindowRange(lineIndex,start,span) {
     const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`);if(!lane)return;
-    const duration=timelineDuration();span=Math.max(.08,Math.min(duration,span));start=clampLaneWindowStart(lineIndex,start,span);
+    span=laneVisibleSpan(lineIndex,span);start=clampLaneWindowStart(lineIndex,start,span);
     const end=start+span,pps=timelineTrackWidth/span;
     lane.dataset.windowStart=String(start);lane.dataset.windowEnd=String(end);lane.dataset.pps=String(pps);
     drawLaneWaveform(lane.querySelector('.lane-waveform-canvas'),start,end);
@@ -569,8 +571,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const win=getLineWindow(lineIndex,centerTime,focusRatio);setLaneWindowStart(lineIndex,win.start);
   }
   function setLaneWindowAtAnchor(lineIndex,anchorTime,ratio) {
-    const duration=timelineDuration(),visibleSpan=Math.min(duration,timelineTrackWidth/Math.max(.08,timelineZoom));
-    setLaneWindowStart(lineIndex,anchorTime-Math.max(0,Math.min(1,ratio))*visibleSpan);
+    const visibleSpan=laneVisibleSpan(lineIndex,timelineTrackWidth/Math.max(.08,timelineZoom));
+    setLaneWindowRange(lineIndex,anchorTime-Math.max(0,Math.min(1,ratio))*visibleSpan,visibleSpan);
   }
   function drawLaneWaveform(canvas,windowStart,windowEnd) {
     if(!canvas)return;
@@ -1052,9 +1054,9 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     timelineZoom=Math.max(minimumTimelineZoom(),Math.min(2000,next));
     if(gridMode!=='words')return;
     timelinePps=timelineZoom;
-    const duration=timelineDuration(),visibleSpan=Math.min(duration,timelineTrackWidth/Math.max(.08,timelineZoom));
+    const requestedSpan=Math.min(timelineDuration(),timelineTrackWidth/Math.max(.08,timelineZoom));
     for(const lane of $('timelineLanes').querySelectorAll('.timeline-lane-row')){
-      const lineIndex=Number(lane.dataset.lineIndex),win=getLineWindow(lineIndex);
+      const lineIndex=Number(lane.dataset.lineIndex),win=getLineWindow(lineIndex),visibleSpan=laneVisibleSpan(lineIndex,requestedSpan);
       const start=anchor&&anchor.lineIndex===lineIndex?anchor.time-anchor.ratio*visibleSpan:win.start;
       setLaneWindowRange(lineIndex,start,visibleSpan);
     }
@@ -1093,7 +1095,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   $('timelineLanes').addEventListener('pointermove',e=>{
     updateMarquee(e);
     if(waveScrubState&&waveScrubState.pointerId===e.pointerId)seekFromWavePointer(e,waveScrubState);
-    if(wavePanState&&wavePanState.pointerId===e.pointerId){const state=wavePanState,lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${state.lineIndex}"] .timeline-lane-content`);if(lane)setLaneWindowStart(state.lineIndex,state.windowStart-(e.clientX-state.startX)/Math.max(1,state.pps));}
+    if(wavePanState&&wavePanState.pointerId===e.pointerId){const state=wavePanState,lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${state.lineIndex}"] .timeline-lane-content`);if(lane){setLaneWindowStart(state.lineIndex,state.windowStart-(e.clientX-state.startX)/Math.max(1,state.pps));e.preventDefault();}}
   });
   function endWaveInteraction(e){if(waveScrubState&&waveScrubState.pointerId===e.pointerId)waveScrubState=null;if(wavePanState&&wavePanState.pointerId===e.pointerId){$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${wavePanState.lineIndex}"] .timeline-lane-content`)?.classList.remove('pan-active');wavePanState=null;updateLiveHighlight(true);}}
   $('timelineLanes').addEventListener('pointerup',e=>{finishMarquee(e);endWaveInteraction(e);});

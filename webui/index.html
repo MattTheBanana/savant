@@ -42,11 +42,11 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .word-clip.singer-italic{font-style:italic}.word-clip.singer-bold{font-weight:800}.word-clip .word-label{overflow:hidden;text-overflow:ellipsis;min-width:0;padding:0 2px;pointer-events:none}
 .word-clip .word-edge{position:absolute;top:0;bottom:0;width:6px;cursor:ew-resize;background:#a7d6e555;z-index:2}.word-clip .word-edge.left{left:0}.word-clip .word-edge.right{right:0}
 .word-clip.no-cue{background:#252e3d;border-style:dashed;border-color:#4d5d70;color:#9aabc0;cursor:default}
-.lane-playhead{position:absolute;top:0;bottom:0;width:2px;background:#ff646e;z-index:7;pointer-events:none;box-shadow:0 0 0 1px #ff646e28;display:none}.lane-playhead.visible{display:block}.lane-playhead.ghost{opacity:.34;z-index:6}.lane-playhead.ghost .lane-playhead-time{display:none}.lane-playhead:before{content:'';position:absolute;left:-5px;top:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #ff646e}.lane-playhead-time{position:absolute;left:50%;top:10px;transform:translateX(-50%);font-family:var(--mono);font-size:var(--playhead-label-size,9px);line-height:1;color:#ffc2c6;background:#101721dd;border:1px solid #773f48;border-radius:3px;padding:2px 3px;white-space:nowrap;font-weight:500;letter-spacing:0;box-shadow:0 1px 3px #0005}.lane-playhead.offscreen-left:before{left:-5px;border-top-color:transparent;border-left:0;border-right:7px solid #ff646e;border-top:5px solid transparent;border-bottom:5px solid transparent;top:1px}.lane-playhead.offscreen-right:before{left:-5px;border-top-color:transparent;border-right:0;border-left:7px solid #ff646e;border-top:5px solid transparent;border-bottom:5px solid transparent;top:1px}.lane-waveform-canvas{touch-action:pan-y;user-select:none}.timeline-lane-content.pan-active,.lane-waveform-wrapper.pan-active{cursor:grabbing!important}
+.lane-playhead{position:absolute;top:0;bottom:0;width:2px;background:#ff646e;z-index:7;pointer-events:none;cursor:ew-resize;box-shadow:0 0 0 1px #ff646e28;display:none}.lane-playhead-handle{position:absolute;left:-7px;top:0;width:16px;height:66px;background:transparent;pointer-events:auto;cursor:ew-resize;touch-action:none}.lane-playhead.visible{display:block}.lane-playhead.ghost{opacity:.34;z-index:6}.lane-playhead.ghost .lane-playhead-handle,.lane-playhead.ghost .lane-playhead-time{display:none}.lane-playhead-handle:focus-visible{outline:2px solid var(--accent);outline-offset:1px}.lane-playhead:before{content:'';position:absolute;left:-5px;top:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #ff646e}.lane-playhead-time{position:absolute;left:50%;top:10px;transform:translateX(-50%);font-family:var(--mono);font-size:var(--playhead-label-size,9px);line-height:1;color:#ffc2c6;background:#101721dd;border:1px solid #773f48;border-radius:3px;padding:2px 3px;white-space:nowrap;font-weight:500;letter-spacing:0;box-shadow:0 1px 3px #0005}.lane-playhead.offscreen-left:before{left:-5px;border-top-color:transparent;border-left:0;border-right:7px solid #ff646e;border-top:5px solid transparent;border-bottom:5px solid transparent;top:1px}.lane-playhead.offscreen-right:before{left:-5px;border-top-color:transparent;border-right:0;border-left:7px solid #ff646e;border-top:5px solid transparent;border-bottom:5px solid transparent;top:1px}.lane-waveform-canvas{touch-action:pan-y;user-select:none}.timeline-lane-content.pan-active,.lane-waveform-wrapper.pan-active{cursor:grabbing!important}
 .timeline-selection-box{position:absolute;z-index:20;border:1px solid #76e4c1;background:#76e4c126;box-shadow:0 0 0 1px #76e4c12b;pointer-events:none;display:none}.timeline-selection-box.visible{display:block}
 .word-inspector{margin-top:11px;border:1px solid var(--border);background:#121b29;border-radius:9px;padding:10px 11px}.word-inspector-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}.word-inspector-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:9px;align-items:end}.word-inspector-text{grid-column:span 2}.word-inspector-field{display:flex;flex-direction:column;gap:4px;min-width:0}.word-inspector-field label{font-size:10px;color:#a6b6c9;text-transform:uppercase;letter-spacing:.06em}.word-inspector-field input,.word-inspector-field select{width:100%;min-width:0;background:#09111b;border:1px solid #34455a;border-radius:6px;color:var(--text);padding:8px 9px;font-size:12px}.word-inspector-field input:focus,.word-inspector-field select:focus{outline:2px solid var(--accent2);outline-offset:1px}.timeline-empty{padding:26px;text-align:center;color:#91a1b5;min-width:0}.timeline-empty strong{display:block;color:#d9e6f5;margin-bottom:5px}
 @media(max-width:950px){.timeline-viewport{max-height:65vh}.word-inspector-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.word-inspector-text{grid-column:1/-1}.timeline-inner{--label-width:118px}}
-@media(max-width:540px){.timeline-toolbar{align-items:flex-start}.timeline-help{max-width:100%}.word-inspector-fields{grid-template-columns:1fr 1fr}.timeline-inner{--label-width:94px}.timeline-lane-row{min-height:116px}.timeline-lane-content{grid-template-rows:62px 48px}.lane-waveform-wrapper,.lane-waveform-canvas{height:62px}}
+@media(max-width:540px){.timeline-toolbar{align-items:flex-start}.timeline-help{max-width:100%}.word-inspector-fields{grid-template-columns:1fr 1fr}.timeline-inner{--label-width:94px}.timeline-lane-row{min-height:116px}.timeline-lane-content{grid-template-rows:62px 48px}.lane-waveform-wrapper,.lane-waveform-canvas{height:62px}.lane-playhead-handle{height:62px}}
 @media(max-width:1000px){.editor-layout{grid-template-columns:1fr}.table-wrap,.preview{max-height:none}.audio-panel{grid-template-columns:1fr}.status{margin-left:0}}@media(max-width:620px){.app-header{padding:12px}.shell{padding:12px}.brand p{display:none}.file-name{max-width:180px}.settings-grid{grid-template-columns:1fr}.toolbar{align-items:flex-start}.toolbar>*{max-width:100%}th.time,td.time{width:128px}th.num,td.num{width:42px}.panel-actions{margin-left:auto}}
 </style>
 </head>
@@ -78,7 +78,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         <div id="wordTimelineEditor" class="word-timeline-editor hidden">
           <div class="timeline-toolbar">
             <div class="timeline-toolbar-group"><button id="zoomOut" class="small" aria-label="Zoom out line detail">−</button><button id="zoomIn" class="small" aria-label="Zoom in line detail">+</button><button id="zoomFit" class="small" title="Fit the longest lyric line across the lane with configured edge context">Fit lines</button><span id="timelineZoomLabel" class="timeline-zoom-label">Fit longest line</span></div>
-            <div class="timeline-toolbar-group"><span class="timeline-help">Each row wraps its waveform above its words. Ctrl + wheel zooms around the cursor; left-drag waveform to seek; middle-drag pans within line edges; drag the empty word track to box-select that line, or Shift + drag across lanes to box-select. Drag a selected group to move it; Shift + click-drag snaps it to the playhead.</span></div>
+            <div class="timeline-toolbar-group"><span class="timeline-help">Each row wraps its waveform above its words. Ctrl + wheel zooms around the cursor; drag the red playhead or left-drag the waveform to seek; middle-drag pans within this line's edge context. Drag the empty word track to box-select this line, or Shift-drag an empty lane/waveform to select across lines. Drag a selected word to move the group; Shift-drag a word to snap the selection to the playhead.</span></div>
             <span id="waveformStatus" class="timeline-zoom-label">Waveform waits for audio</span>
           </div>
           <div id="timelineViewport" class="timeline-viewport" aria-label="Wrapped word timing timeline">
@@ -126,7 +126,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       <div class="setting"><label for="dragAutoScrollSpeed">Word-drag edge scroll speed (px/sec)</label><input id="dragAutoScrollSpeed" type="number" min="40" max="1600" step="20" value="320"><p>How quickly the waveform view advances when dragging a word near or beyond a lane edge.</p></div>
       <div class="setting"><label for="downloadBase">Export filename suffix</label><select id="downloadBase"><option value="same">Use imported lyrics base name</option><option value="audio">Use audio base name</option></select><p>Controls the default downloaded filename.</p></div>
     </div>
-    <p class="settings-note">Keyboard behavior: Space starts/pauses playback when focus is outside an editable text cell. When a lyric text field is focused, Space and all arrow keys remain normal text-editing keys. In TTML mode, Shift + left-drag over a waveform or lyric lane box-selects words. Drag any selected word to shift the group; Ctrl + drag one selected word moves only that word. Ctrl + mouse wheel zooms around the cursor; middle-drag pans; left-drag the waveform to seek. While dragging a word near a lane edge, the view auto-scrolls at the configured speed. Without a selected word, ←/→ seek by the fine nudge step; Shift+←/→ jump to word boundaries. In line text, Ctrl+A selects the whole line.</p>
+    <p class="settings-note">Keyboard behavior: Space starts/pauses playback when focus is outside an editable text cell. When a lyric text field is focused, Space and all arrow keys remain normal text-editing keys. In TTML mode, drag the empty word track to box-select within the current line; Shift-drag empty lane/waveform space to box-select across lines. Drag any selected word to move the whole selection; Ctrl-drag a selected word moves only that word. Shift-drag a word or selection to snap its near edge to the red playhead, switching edges after the selection crosses it. Drag the red playhead or left-drag the waveform to seek; the translucent markers show where the playhead time falls in overlapping line windows. Middle-drag pans only within each line's configured edge context. Ctrl+mouse wheel zooms at the cursor and redraws at most once per animation frame. While dragging a word near a lane edge, the view auto-scrolls at the configured speed. In TTML mode, Shift+←/→ moves the playhead to the nearest word boundary; plain ←/→ nudges a selected word or seeks in small increments if no word is selected. In line text, Ctrl+A selects only that line.</p>
   </section>
   <p class="footer-note">Audio and lyric files are opened locally by your browser. This app does not upload them. Press <span class="shortcut">Esc</span> to leave a lyric text field and return to keyboard navigation.</p>
 </main>
@@ -170,6 +170,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   let waveScrubState = null;
   let wavePanState = null;
   let autoScrollFrame = null;
+  let zoomRenderFrame = null;
+  let pendingZoomRender = null;
   let settings = {
     nudgeStep: 0.02, shiftMultiplier: 5, replayLead: 2.0, txtSpacing: 3.0,
     language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320
@@ -514,10 +516,19 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     rows.forEach((_,i)=>{const p=phraseExtent(i);longest=Math.max(longest,p.span+2*context);});
     return Math.max(2,timelineTrackWidth/longest);
   }
+  function laneContextBounds(lineIndex) {
+    const duration=timelineDuration(),phrase=phraseExtent(lineIndex),context=Math.max(0,Number(settings.timelineOverlap)||0);
+    const start=Math.min(duration,Math.max(0,phrase.start-context));
+    const end=Math.max(start,Math.min(duration,phrase.end+context));
+    return {start,end,span:Math.max(.08,end-start)};
+  }
+  function laneVisibleSpan(lineIndex,requestedSpan) {
+    const bounds=laneContextBounds(lineIndex);
+    return Math.max(.08,Math.min(timelineDuration(),requestedSpan,bounds.span));
+  }
   function getLineWindow(lineIndex,focusTime=null,focusRatio=.5) {
-    const phrase=phraseExtent(lineIndex),duration=timelineDuration();
-    const fullSpan=Math.max(.08,Number(timelineZoom)||computeFitZoom());
-    const visibleSpan=Math.min(duration,timelineTrackWidth/fullSpan);
+    const phrase=phraseExtent(lineIndex),fullSpan=Math.max(.08,Number(timelineZoom)||computeFitZoom());
+    const visibleSpan=laneVisibleSpan(lineIndex,timelineTrackWidth/fullSpan);
     let center=(phrase.start+phrase.end)/2;
     if(Number.isFinite(focusTime))center=focusTime;
     else if(phrase.span>visibleSpan){
@@ -530,29 +541,20 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       }
     }
     const ratio=Number.isFinite(focusRatio)?Math.max(0,Math.min(1,focusRatio)):.5;
-    let start=Number.isFinite(focusTime)?focusTime-visibleSpan*ratio:center-visibleSpan/2;
-    start=clampLaneWindowStart(lineIndex,start,visibleSpan);
+    const start=clampLaneWindowStart(lineIndex,Number.isFinite(focusTime)?focusTime-visibleSpan*ratio:center-visibleSpan/2,visibleSpan);
     return {start,end:start+visibleSpan,phraseStart:phrase.start,phraseEnd:phrase.end,phraseSpan:phrase.span,context:Math.max(0,(visibleSpan-phrase.span)/2),pps:timelineTrackWidth/visibleSpan};
   }
   function lanePixelsPerSecond(lineIndex) {
     const win=getLineWindow(lineIndex);return timelineTrackWidth/Math.max(.08,win.end-win.start);
   }
   function clampLaneWindowStart(lineIndex,start,span) {
-    const duration=timelineDuration(),phrase=phraseExtent(lineIndex),context=Math.max(0,Number(settings.timelineOverlap)||0);
-    const safeSpan=Math.max(.08,Math.min(duration,span));
-    const minStart=Math.max(0,phrase.start-context);
-    const maxStart=Math.min(Math.max(0,duration-safeSpan),phrase.end+context-safeSpan);
-    if(maxStart<minStart){
-      // If the viewport is wider than this line plus its edge context, pin it
-      // around the phrase instead of allowing a pan into unrelated audio.
-      const center=(phrase.start+phrase.end)/2;
-      return Math.max(0,Math.min(Math.max(0,duration-safeSpan),center-safeSpan/2));
-    }
+    const bounds=laneContextBounds(lineIndex),safeSpan=laneVisibleSpan(lineIndex,span);
+    const minStart=bounds.start,maxStart=Math.max(minStart,bounds.end-safeSpan);
     return Math.max(minStart,Math.min(maxStart,start));
   }
   function setLaneWindowRange(lineIndex,start,span) {
     const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`);if(!lane)return;
-    const duration=timelineDuration();span=Math.max(.08,Math.min(duration,span));start=clampLaneWindowStart(lineIndex,start,span);
+    span=laneVisibleSpan(lineIndex,span);start=clampLaneWindowStart(lineIndex,start,span);
     const end=start+span,pps=timelineTrackWidth/span;
     lane.dataset.windowStart=String(start);lane.dataset.windowEnd=String(end);lane.dataset.pps=String(pps);
     drawLaneWaveform(lane.querySelector('.lane-waveform-canvas'),start,end);
@@ -564,13 +566,13 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const oldStart=Number(lane.dataset.windowStart)||0,oldEnd=Number(lane.dataset.windowEnd)||0,span=Math.max(.08,oldEnd-oldStart);
     setLaneWindowRange(lineIndex,start,span);
   }
-
-    function repositionLaneWindow(lineIndex,centerTime,focusRatio=.5) {
-    const win=getLineWindow(lineIndex,centerTime,focusRatio);setLaneWindowStart(lineIndex,win.start);
+  function repositionLaneWindow(lineIndex,centerTime,focusRatio=.5) {
+    const win=getLineWindow(lineIndex,centerTime,focusRatio);setLaneWindowRange(lineIndex,win.start,win.end-win.start);
   }
-  function setLaneWindowAtAnchor(lineIndex,anchorTime,ratio) {
-    const duration=timelineDuration(),visibleSpan=Math.min(duration,timelineTrackWidth/Math.max(.08,timelineZoom));
-    setLaneWindowStart(lineIndex,anchorTime-Math.max(0,Math.min(1,ratio))*visibleSpan);
+
+    function setLaneWindowAtAnchor(lineIndex,anchorTime,ratio) {
+    const visibleSpan=laneVisibleSpan(lineIndex,timelineTrackWidth/Math.max(.08,timelineZoom));
+    setLaneWindowRange(lineIndex,anchorTime-Math.max(0,Math.min(1,ratio))*visibleSpan,visibleSpan);
   }
   function drawLaneWaveform(canvas,windowStart,windowEnd) {
     if(!canvas)return;
@@ -626,12 +628,15 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     let delta=(d.lastClientX-d.startX)/Math.max(1,d.pps)+(d.autoDelta||0);
     if(d.mode==='move'&&d.snapToPlayhead&&d.items.length){
       const playhead=Number(player.currentTime)||0;
-      const minStart=Math.min(...d.items.map(item=>item.start))+delta,maxEnd=Math.max(...d.items.map(item=>item.end))+delta;
-      const center=(minStart+maxEnd)/2;
-      if(!d.snapSide)d.snapSide=center<=playhead?'end':'start';
-      else if(d.snapSide==='end'&&center>playhead+.001)d.snapSide='start';
-      else if(d.snapSide==='start'&&center<playhead-.001)d.snapSide='end';
-      const edge=d.snapSide==='end'?maxEnd:minStart,threshold=Math.max(.025,Math.min(.12,8/Math.max(1,d.pps)));
+      const rawMinStart=Math.min(...d.items.map(item=>item.start))+delta;
+      const rawMaxEnd=Math.max(...d.items.map(item=>item.end))+delta;
+      // Keep the same edge latched while the selected piece straddles the
+      // playhead; switch edges only after the whole selection crosses it.
+      if(!d.snapSide)d.snapSide=d.initialSnapSide||(rawMinStart<=playhead?'end':'start');
+      if(d.snapSide==='end'&&rawMinStart>=playhead)d.snapSide='start';
+      else if(d.snapSide==='start'&&rawMaxEnd<=playhead)d.snapSide='end';
+      const edge=d.snapSide==='end'?rawMaxEnd:rawMinStart;
+      const threshold=Math.max(.025,Math.min(.12,8/Math.max(1,d.pps)));
       if(Math.abs(playhead-edge)<=threshold){delta+=playhead-edge;d.snapUsed=true;}
     }else if(!d.snapToPlayhead)d.snapSide=null;
     if(d.mode==='start')cue.start=Math.max(0,Math.min(d.origEnd-.01,d.origStart+delta));
@@ -678,7 +683,9 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       const groupKeys=shiftDrag?[...selectedWordKeys]:(!ctrlDrag&&selectedWordKeys.has(key)&&selectedWordKeys.size>1&&edge===''?[...selectedWordKeys]:[key]);
       const items=groupKeys.map(k=>{const ref=parseWordKey(k),c=rows[ref.lineIndex]?.wordCues?.[ref.cueIndex];return c?{...ref,start:c.start,end:c.end}:null;}).filter(Boolean);
       const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`);
-      wordDragState={pointerId:e.pointerId,lineIndex,cueIndex,mode:shiftDrag?'pending':edge==='start'?'start':edge==='end'?'end':'move',startX:e.clientX,lastClientX:e.clientX,downX:e.clientX,downY:e.clientY,origStart:cue.start,origEnd:cue.end,pps:Number(lane?.dataset.pps)||timelinePps,items,groupMove:items.length>1,changed:false,autoDelta:0,lastAutoTime:performance.now(),snapToPlayhead:shiftDrag,snapSide:null,snapUsed:false};
+      const playheadTime=Number(player.currentTime)||0,itemMin=Math.min(...items.map(item=>item.start)),itemMax=Math.max(...items.map(item=>item.end));
+      const initialSnapSide=itemMax<=playheadTime?'end':itemMin>=playheadTime?'start':Math.abs(playheadTime-itemMax)<=Math.abs(itemMin-playheadTime)?'end':'start';
+      wordDragState={pointerId:e.pointerId,lineIndex,cueIndex,mode:shiftDrag?'pending':edge==='start'?'start':edge==='end'?'end':'move',startX:e.clientX,lastClientX:e.clientX,downX:e.clientX,downY:e.clientY,origStart:cue.start,origEnd:cue.end,pps:Number(lane?.dataset.pps)||timelinePps,items,groupMove:items.length>1,changed:false,autoDelta:0,lastAutoTime:performance.now(),snapToPlayhead:shiftDrag,snapSide:shiftDrag?initialSnapSide:null,initialSnapSide,snapUsed:false};
       clip.setPointerCapture?.(e.pointerId);if(!shiftDrag&&!autoScrollFrame)autoScrollFrame=requestAnimationFrame(runDragAutoScroll);e.preventDefault();
     });
     clip.addEventListener('pointermove',e=>{
@@ -728,7 +735,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         clip.append(leftHandle,labelText,rightHandle);if(selectedWordKeys.has(wordKey(lineIndex,cueIndex)))clip.classList.add('selected');
         attachClipInteractions(clip,lineIndex,cueIndex);track.append(clip);
       });
-      const playhead=document.createElement('div');playhead.className='lane-playhead visible';playhead.dataset.lineIndex=String(lineIndex);playhead.setAttribute('aria-hidden','true');const playheadLabel=document.createElement('span');playheadLabel.className='lane-playhead-time';playhead.append(playheadLabel);
+      const playhead=document.createElement('div');playhead.className='lane-playhead visible';playhead.dataset.lineIndex=String(lineIndex);playhead.setAttribute('aria-hidden','true');const playheadHandle=document.createElement('span');playheadHandle.className='lane-playhead-handle';playheadHandle.setAttribute('aria-hidden','true');const playheadLabel=document.createElement('span');playheadLabel.className='lane-playhead-time';playhead.append(playheadHandle,playheadLabel);
       content.append(waveWrap,track,playhead);lane.append(label,content);frag.append(lane);
     }
     tbody.append(frag);$('gridStatus').textContent=`${rows.length} lyric lane(s) · ${cueCount} timed word(s) · box-select to shift multiple words`;
@@ -816,8 +823,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`);if(!lane)return;
     const playhead=lane.querySelector('.lane-playhead');if(!playhead)return;
     const time=Number(player.currentTime)||0,ws=Number(lane.dataset.windowStart)||0,we=Number(lane.dataset.windowEnd)||0,pps=Number(lane.dataset.pps)||1;
-    const outsideLeft=time<ws,outsideRight=time>we,offscreen=outsideLeft||outsideRight;
-    const x=Math.max(0,Math.min(timelineTrackWidth,(time-ws)*pps));
+    const outsideLeft=time<ws-.0001,outsideRight=time>we+.0001;
+    const x=Math.max(0,Math.min(lane.clientWidth||timelineTrackWidth,(time-ws)*pps));
     playhead.classList.toggle('offscreen-left',outsideLeft);playhead.classList.toggle('offscreen-right',outsideRight);playhead.style.left=`${x}px`;
     const label=playhead.querySelector('.lane-playhead-time');if(label){label.textContent=fmtTime(time,2);label.style.fontSize=`${settings.playheadLabelSize}px`;}
   }
@@ -841,17 +848,18 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       }
     }
     if(gridMode==='words'){
-      const playheadIndex=getPlayheadLineIndex(time,nextIndex),edgeContext=Math.max(0,Number(settings.timelineOverlap)||0);
+      const playheadIndex=waveScrubState?waveScrubState.lineIndex:getPlayheadLineIndex(time,nextIndex);
       for(const lane of $('timelineLanes').querySelectorAll('.timeline-lane-row')){
-        const lineIndex=Number(lane.dataset.lineIndex),isActive=lineIndex===nextIndex,isPlayhead=lineIndex===playheadIndex,extent=phraseExtent(lineIndex),ghostCandidate=time>=extent.start-edgeContext&&time<=extent.end+edgeContext;lane.classList.toggle('playing-lane',isActive);
+        const lineIndex=Number(lane.dataset.lineIndex),isActive=lineIndex===nextIndex,isPlayhead=lineIndex===playheadIndex;lane.classList.toggle('playing-lane',isActive);
         let content=lane.querySelector('.timeline-lane-content');
-        if(isPlayhead&&content&&!suppressAutoPan&&!(wavePanState&&wavePanState.lineIndex===lineIndex)){
+        if(isPlayhead&&content&&!suppressAutoPan&&!(wavePanState&&wavePanState.lineIndex===lineIndex)&&!(waveScrubState&&waveScrubState.lineIndex===lineIndex)){
           const ws=Number(content.dataset.windowStart)||0,we=Number(content.dataset.windowEnd)||0,span=we-ws;
           const needsReveal=time<ws||time>we;
           const nearingEdge=span>0&&phraseExtent(lineIndex).span>span&&!player.paused&&(time<ws+span*.18||time>we-span*.18);
           if(needsReveal||nearingEdge){repositionLaneWindow(lineIndex,time,.5);content=lane.querySelector('.timeline-lane-content');}
         }
-        const marker=lane.querySelector('.lane-playhead');
+        const marker=lane.querySelector('.lane-playhead'),ws=Number(content?.dataset.windowStart)||0,we=Number(content?.dataset.windowEnd)||0;
+        const ghostCandidate=lineIndex!==playheadIndex&&time>=ws-.0001&&time<=we+.0001;
         if(marker&&(isPlayhead||ghostCandidate)){marker.classList.add('visible');marker.classList.toggle('ghost',!isPlayhead);updatePlayheadOnLane(lineIndex);}
         else marker?.classList.remove('visible');
       }
@@ -880,9 +888,10 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const refs=allWordRefs().filter(r=>Number.isFinite(r.cue.start)&&Number.isFinite(r.cue.end)).sort((a,b)=>a.cue.start-b.cue.start);
     if(!refs.length){seekPlayhead(direction*settings.nudgeStep);return;}
     const time=Number(player.currentTime)||0,tolerance=.005;
-    const boundaries=[];
-    for(const ref of refs){boundaries.push(ref.cue.start,ref.cue.end);}
-    boundaries.sort((a,b)=>a-b);
+    const allEdges=[];
+    for(const ref of refs){allEdges.push(ref.cue.start,ref.cue.end);}
+    allEdges.sort((a,b)=>a-b);
+    const boundaries=[];for(const edge of allEdges){if(!boundaries.length||edge-boundaries[boundaries.length-1]>.005)boundaries.push(edge);}
     // Navigate actual word edges, not just word starts. Left at the beginning
     // of a word lands on the previous word's end, even across a gap.
     let target=null;
@@ -1049,18 +1058,28 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   $('viewLines').addEventListener('click',()=>setGridMode('lines'));$('viewWords').addEventListener('click',()=>setGridMode('words'));
   function minimumTimelineZoom(){return Math.max(2,computeFitZoom()/4);}
   function applyTimelineZoom(next,fit=false,anchor=null){
+    if(zoomRenderFrame!==null){cancelAnimationFrame(zoomRenderFrame);zoomRenderFrame=null;pendingZoomRender=null;}
     timelineZoom=Math.max(minimumTimelineZoom(),Math.min(2000,next));
     if(gridMode!=='words')return;
     timelinePps=timelineZoom;
-    const duration=timelineDuration(),visibleSpan=Math.min(duration,timelineTrackWidth/Math.max(.08,timelineZoom));
+    const requestedSpan=Math.min(timelineDuration(),timelineTrackWidth/Math.max(.08,timelineZoom));
     for(const lane of $('timelineLanes').querySelectorAll('.timeline-lane-row')){
-      const lineIndex=Number(lane.dataset.lineIndex),win=getLineWindow(lineIndex);
+      const lineIndex=Number(lane.dataset.lineIndex),win=getLineWindow(lineIndex),visibleSpan=laneVisibleSpan(lineIndex,requestedSpan);
       const start=anchor&&anchor.lineIndex===lineIndex?anchor.time-anchor.ratio*visibleSpan:win.start;
       setLaneWindowRange(lineIndex,start,visibleSpan);
     }
     $('timelineZoomLabel').textContent=`${timelineZoom.toFixed(0)} px/sec · ${(timelineTrackWidth/Math.max(1,timelineZoom)).toFixed(2)}s view`;
     if(fit)$('timelineViewport').scrollTop=0;
     updateLiveHighlight(true);
+  }
+  function scheduleTimelineZoom(next,anchor,scrollTop){
+    pendingZoomRender={next,anchor,scrollTop};
+    if(zoomRenderFrame!==null)return;
+    zoomRenderFrame=requestAnimationFrame(()=>{
+      zoomRenderFrame=null;const request=pendingZoomRender;pendingZoomRender=null;if(!request)return;
+      applyTimelineZoom(request.next,false,request.anchor);
+      $('timelineViewport').scrollTop=request.scrollTop;
+    });
   }
 
     $('zoomIn').addEventListener('click',()=>applyTimelineZoom(timelineZoom*1.25));
@@ -1072,10 +1091,16 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const oldTop=$('timelineViewport').scrollTop;
     let anchor=null;
     if(content){const rect=content.getBoundingClientRect(),ratio=Math.max(0,Math.min(1,(e.clientX-rect.left)/Math.max(1,rect.width))),ws=Number(content.dataset.windowStart)||0,pps=Number(content.dataset.pps)||timelinePps;anchor={lineIndex:Number(laneRow.dataset.lineIndex),time:ws+(e.clientX-rect.left)/Math.max(1,pps),ratio};}
-    applyTimelineZoom(timelineZoom*Math.exp(-e.deltaY*.002),false,anchor);$('timelineViewport').scrollTop=oldTop;
-    if(anchor)updateLiveHighlight(true);
+    const baseZoom=pendingZoomRender?.next??timelineZoom;
+    scheduleTimelineZoom(baseZoom*Math.exp(-e.deltaY*.002),anchor,oldTop);
   },{passive:false});
   function seekFromWavePointer(e,state){const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${state.lineIndex}"] .timeline-lane-content`);if(!lane)return;const rect=state.canvas.getBoundingClientRect(),ratio=Math.max(0,Math.min(1,(e.clientX-rect.left)/Math.max(1,rect.width))),ws=Number(lane.dataset.windowStart)||0,we=Number(lane.dataset.windowEnd)||0;player.currentTime=Math.max(0,Math.min(timelineDuration(),ws+ratio*(we-ws)));replayFromAnchor=false;updateTimeReadout();updateLiveHighlight();}
+  function startPlayheadDrag(e,marker){
+    if(e.button!==0||gridMode!=='words'||!marker)return;
+    const laneRow=marker.closest('.timeline-lane-row'),canvas=laneRow?.querySelector('.lane-waveform-canvas');if(!laneRow||!canvas)return;
+    waveScrubState={pointerId:e.pointerId,lineIndex:Number(laneRow.dataset.lineIndex),canvas,viaPlayhead:true};
+    marker.setPointerCapture?.(e.pointerId);seekFromWavePointer(e,waveScrubState);e.preventDefault();e.stopPropagation();
+  }
   function startWaveInteraction(e){
     if(gridMode!=='words'||e.defaultPrevented)return;const canvas=e.target.closest?.('.lane-waveform-canvas');if(!canvas)return;
     const laneRow=canvas.closest('.timeline-lane-row'),content=laneRow?.querySelector('.timeline-lane-content');if(!content)return;
@@ -1084,6 +1109,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     else if(e.button===1){wavePanState={pointerId:e.pointerId,lineIndex:Number(laneRow.dataset.lineIndex),canvas,startX:e.clientX,windowStart:Number(content.dataset.windowStart)||0,pps:Number(content.dataset.pps)||timelinePps};canvas.setPointerCapture?.(e.pointerId);content.classList.add('pan-active');e.preventDefault();}
   }
   $('timelineLanes').addEventListener('pointerdown',e=>{
+    const marker=e.target.closest?.('.lane-playhead:not(.ghost)');
+    if(e.button===0&&marker){startPlayheadDrag(e,marker);return;}
     if(e.target.closest?.('.word-clip'))return;
     const track=e.target.closest?.('.lane-word-track');
     if(e.button===0&&track&&!e.shiftKey){startMarquee(e,Number(track.dataset.lineIndex));return;}
@@ -1093,9 +1120,14 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   $('timelineLanes').addEventListener('pointermove',e=>{
     updateMarquee(e);
     if(waveScrubState&&waveScrubState.pointerId===e.pointerId)seekFromWavePointer(e,waveScrubState);
-    if(wavePanState&&wavePanState.pointerId===e.pointerId){const state=wavePanState,lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${state.lineIndex}"] .timeline-lane-content`);if(lane)setLaneWindowStart(state.lineIndex,state.windowStart-(e.clientX-state.startX)/Math.max(1,state.pps));}
+    if(wavePanState&&wavePanState.pointerId===e.pointerId){const state=wavePanState,lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${state.lineIndex}"] .timeline-lane-content`);if(lane){setLaneWindowStart(state.lineIndex,state.windowStart-(e.clientX-state.startX)/Math.max(1,state.pps));e.preventDefault();}}
   });
-  function endWaveInteraction(e){if(waveScrubState&&waveScrubState.pointerId===e.pointerId)waveScrubState=null;if(wavePanState&&wavePanState.pointerId===e.pointerId){$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${wavePanState.lineIndex}"] .timeline-lane-content`)?.classList.remove('pan-active');wavePanState=null;updateLiveHighlight(true);}}
+  function endWaveInteraction(e){
+    let changed=false;
+    if(waveScrubState&&waveScrubState.pointerId===e.pointerId){waveScrubState=null;changed=true;}
+    if(wavePanState&&wavePanState.pointerId===e.pointerId){$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${wavePanState.lineIndex}"] .timeline-lane-content`)?.classList.remove('pan-active');wavePanState=null;changed=true;}
+    if(changed)updateLiveHighlight(true);
+  }
   $('timelineLanes').addEventListener('pointerup',e=>{finishMarquee(e);endWaveInteraction(e);});
   $('timelineLanes').addEventListener('pointercancel',e=>{finishMarquee(e);endWaveInteraction(e);});
   $('timelineLanes').addEventListener('click',e=>{
@@ -1133,7 +1165,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     else if(e.key==='ArrowDown'){e.preventDefault();if(gridMode==='words')moveSelectedWord(1);else setSelected(Math.min(rows.length-1,selectedIndex+1),true);}
     else if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
       e.preventDefault();const direction=e.key==='ArrowLeft'?-1:1;
-      if(gridMode==='words'&&!selectedWordRef){if(e.shiftKey)seekWordBoundary(direction);else seekPlayhead(direction*settings.nudgeStep);}
+      if(gridMode==='words'&&e.shiftKey)seekWordBoundary(direction);
+      else if(gridMode==='words'&&!selectedWordRef)seekPlayhead(direction*settings.nudgeStep);
       else if(selectedIndex>=0){const mult=e.shiftKey?settings.shiftMultiplier:1;const amount=settings.nudgeStep*mult*direction;if(gridMode==='words')nudgeSelectedWord(amount);else nudgeSelected(amount);}
     }else if(e.key==='Enter'&&selectedIndex>=0){e.preventDefault();if(gridMode==='words'&&selectedWordRef){$('wordText').focus();}else{const input=$('gridBody').querySelector(`tr[data-index="${selectedIndex}"] .lyric-editor`);input?.focus();}}
     else if(e.key==='Home'&&rows.length){e.preventDefault();setSelected(0,true);}

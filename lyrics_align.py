@@ -1181,7 +1181,7 @@ def select_device(requested: str, torch_module: Any) -> str:
 
 
 def run_doctor() -> int:
-    print("Lyrics Audio Aligner diagnostics")
+    print("Savant diagnostics")
     print(f"Python: {sys.version.split()[0]} ({sys.executable})")
     ffmpeg = shutil.which("ffmpeg")
     print(f"FFmpeg: {ffmpeg or 'NOT FOUND (required on PATH)'}")
@@ -2009,7 +2009,7 @@ def line_review_report(
     refined_changes: list[str],
 ) -> str:
     report = [
-        "Lyrics Audio Aligner - alignment review",
+        "Savant - alignment review",
         "Review hints are heuristic; singing can make short or overlapping word spans legitimate.",
         "",
     ]

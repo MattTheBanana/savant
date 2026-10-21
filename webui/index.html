@@ -1,0 +1,1077 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lyrics Audio Aligner — Editor</title>
+<style>
+:root{color-scheme:dark;--bg:#0c111b;--panel:#151c29;--panel2:#1b2534;--border:#2d3a4d;--text:#edf3fb;--muted:#9aa9be;--accent:#76e4c1;--accent2:#8bb8ff;--warn:#f5ce81;--danger:#ff9696;--radius:13px;--mono:ui-monospace,SFMono-Regular,Consolas,monospace;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(1100px 500px at 15% -10%,#1b3045 0,transparent 68%),var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;color:var(--text);background:#233146;border:1px solid #394b62;border-radius:9px;padding:8px 12px}button:hover{border-color:var(--accent2);background:#2a3a51}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}button.primary{background:#246451;border-color:#328b70}button.primary:hover{background:#2c7b63}button.danger{background:#512b35;border-color:#793f4c}button.small{padding:5px 9px;font-size:12px}.app-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-bottom:1px solid #263244;background:#0f1622d9;position:sticky;top:0;z-index:5;backdrop-filter:blur(14px)}.brand{display:flex;align-items:center;gap:12px}.brand-mark{height:38px;width:38px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(135deg,#2e9578,#5b8ed2);color:#fff;font-size:21px;font-weight:800}.brand h1{font-size:17px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.header-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.shell{max-width:1500px;margin:0 auto;padding:20px 22px 36px}.nav{display:flex;gap:8px;margin-bottom:16px}.nav button{background:transparent;color:var(--muted);border-color:transparent}.nav button.active{color:var(--text);background:var(--panel2);border-color:var(--border)}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);padding:12px;border-radius:var(--radius);margin-bottom:14px}.file-label{display:inline-flex;gap:8px;align-items:center;background:#223147;border:1px solid #394b62;border-radius:9px;padding:8px 12px;cursor:pointer}.file-label:hover{border-color:var(--accent2)}input[type=file]{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.file-name{color:var(--muted);font-size:12px;max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.status{margin-left:auto;color:var(--muted);font-size:12px}.status strong{color:var(--accent);font-weight:600}.audio-panel{display:grid;grid-template-columns:minmax(220px,1fr) minmax(280px,2fr) auto;gap:16px;align-items:center;background:var(--panel);border:1px solid var(--border);padding:12px 15px;border-radius:var(--radius);margin-bottom:14px}.audio-title{font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.audio-sub{font-size:12px;color:var(--muted);margin-top:2px}.audio-panel audio{width:100%;height:36px}.audio-time{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}.editor-layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(320px,.7fr);gap:14px;align-items:start}.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;min-width:0}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 15px;border-bottom:1px solid var(--border)}.panel-head h2{font-size:14px;margin:0}.panel-head p{font-size:12px;color:var(--muted);margin:3px 0 0}.panel-actions{display:flex;gap:7px;flex-wrap:wrap}.table-wrap{overflow:auto;max-height:calc(100vh - 360px);min-height:300px}table{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed}thead th{position:sticky;top:0;background:#1a2433;color:#afbed1;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.07em;padding:10px 12px;border-bottom:1px solid var(--border);z-index:1}th.num,td.num{width:54px;text-align:right}th.time,td.time{width:142px}tbody tr{background:transparent}tbody tr:hover{background:#1a2636}tbody tr.selected{background:#1b3440;box-shadow:inset 3px 0 var(--accent)}td{padding:5px 8px;border-bottom:1px solid #263142;vertical-align:middle}td.num{padding-right:12px;color:#75879f;font-family:var(--mono);font-size:12px}td.time input,td.lyric input{width:100%;background:transparent;border:1px solid transparent;border-radius:6px;color:var(--text);padding:8px 7px;outline:none}td.time input{font-family:var(--mono);font-size:12px;color:#a9d8cf}td.lyric input{font-size:13px}td.time input:focus,td.lyric input:focus{background:#0e1622;border-color:#527d83;outline:none}td.lyric input{min-width:120px}tbody tr.flagged td.num::after{content:' !';color:var(--warn);font-weight:bold}.grid-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;color:var(--muted);font-size:12px}.shortcut{font-family:var(--mono);background:#0b111a;border:1px solid #37465b;padding:2px 5px;border-radius:5px;color:#c8d4e3}.preview-tabs{display:flex;gap:7px}.preview-tabs button{font-size:12px;padding:5px 9px}.preview-tabs button.active{background:#245346;border-color:#367b66}.preview{white-space:pre;overflow:auto;max-height:calc(100vh - 385px);min-height:300px;margin:0;padding:14px;background:#0b1019;color:#c8d7e8;font:12px/1.65 var(--mono);tab-size:2}.preview-info{padding:10px 14px;border-top:1px solid var(--border);color:var(--muted);font-size:12px}.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:17px}.setting{display:flex;flex-direction:column;gap:6px}.setting label{font-weight:600}.setting p{margin:0;color:var(--muted);font-size:12px}.setting input,.setting select{width:100%;background:#0e1622;border:1px solid var(--border);border-radius:8px;padding:9px 10px;color:var(--text)}.settings-note{margin:0 17px 17px;padding:12px;border:1px solid #345349;background:#142a27;border-radius:10px;color:#c7e9df;font-size:12px}.hidden{display:none!important}.footer-note{margin-top:14px;color:var(--muted);font-size:12px;text-align:center}.toast{position:fixed;right:20px;bottom:20px;background:#173b32;border:1px solid #377761;color:#e2fff4;padding:11px 15px;border-radius:10px;box-shadow:0 10px 30px #0005;z-index:20;max-width:min(500px,calc(100vw - 40px))}.toast.error{background:#48242d;border-color:#874756;color:#ffe6e6}.badge{font-size:11px;border:1px solid #3c4b62;border-radius:20px;padding:3px 8px;color:var(--muted)}.badge.good{border-color:#367b66;color:var(--accent)}
+
+/* Live playback preview and drag/drop affordance. */
+tbody tr.playing{background:#25394d;box-shadow:inset 4px 0 var(--accent2)}
+tbody tr.selected.playing{background:#24434d;box-shadow:inset 4px 0 var(--accent),inset 0 0 0 1px #47776e}
+td.lyric .lyric-editor{display:block;width:100%;min-width:120px;min-height:34px;padding:8px 7px;border:1px solid transparent;border-radius:6px;color:var(--text);font-size:13px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;outline:none;cursor:text}
+td.lyric .lyric-editor:focus{background:#0e1622;border-color:#527d83}
+td.lyric .lyric-editor:empty::before{content:'Enter lyric…';color:#61738a}
+td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(--accent);border-radius:4px;box-shadow:0 0 0 2px #76e4c155;padding:1px 0}
+.drop-overlay{position:fixed;inset:12px;z-index:50;display:grid;place-items:center;border:3px dashed var(--accent);border-radius:20px;background:#0b1422ed;box-shadow:0 0 0 9999px #02060bb0;pointer-events:none;text-align:center;padding:24px}
+.drop-overlay.hidden{display:none!important}.drop-card{max-width:560px;padding:28px;border-radius:18px;border:1px solid #476d70;background:#172838;box-shadow:0 18px 60px #0008}.drop-icon{font-size:42px;color:var(--accent);margin-bottom:8px}.drop-card h2{font-size:22px;margin:0 0 8px}.drop-card p{color:#c2d0e0;margin:0;line-height:1.6}.drop-card .drop-types{font-family:var(--mono);font-size:12px;margin-top:14px;color:#a9d8cf}
+.drag-drop-note{color:var(--muted);font-size:12px;padding:0 3px}
+
+/* TTML word-level editor: each lyric line gets its own wrapped waveform lane; no song-wide horizontal scrolling. */
+.word-timeline-editor{padding:10px 12px 13px;min-width:0}
+.timeline-toolbar{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px;color:var(--muted)}
+.timeline-toolbar-group{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.timeline-zoom-label{font-family:var(--mono);font-size:11px;color:#a8b8cc}.timeline-help{color:var(--muted);font-size:11px}
+.timeline-viewport{position:relative;overflow-x:hidden;overflow-y:auto;max-height:calc(100vh - 390px);min-height:330px;border:1px solid #2c394d;border-radius:9px;background:#0b111a;overscroll-behavior:contain}
+.timeline-inner{position:relative;width:100%;min-width:0;--label-width:150px;}
+#timelineLanes{position:relative;width:100%;min-width:0}
+.timeline-lane-row{display:grid;grid-template-columns:var(--label-width) minmax(0,1fr);width:100%;min-width:0;position:relative;min-height:122px}
+.timeline-lane-row:nth-child(even){background:#0f1722}.timeline-lane-row:nth-child(odd){background:#111b28}.timeline-lane-row.playing-lane{background:#172a3a}
+.timeline-label{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:7px 9px;background:#172231;border-right:1px solid #334256;border-bottom:1px solid #2a3748;color:#dce6f4;font-size:11px;overflow:hidden;min-width:0}
+.timeline-lane-row:nth-child(even) .timeline-label{background:#1a2636}
+.timeline-label strong{font-size:11px;color:#dce6f4}.timeline-label span{font-family:var(--mono);font-size:10px;color:#90a1b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.timeline-lane-content{position:relative;display:grid;grid-template-rows:66px 50px;min-width:0;width:100%;overflow:hidden;border-bottom:1px solid #2a3748}
+.lane-waveform-wrapper{height:66px;position:relative;overflow:hidden;background:linear-gradient(180deg,#101b28,#0c1520);border-bottom:1px solid #354359}
+.lane-waveform-canvas{display:block;width:100%;height:66px;pointer-events:auto;cursor:crosshair}
+.lane-word-track{position:relative;min-width:0;width:100%;height:50px;overflow:hidden;background-image:linear-gradient(90deg,#27334488 1px,transparent 1px);background-size:var(--grid-step,35px) 100%;cursor:crosshair}
+.lane-word-track:before{content:'';position:absolute;left:0;right:0;top:24px;border-top:1px solid #243347;pointer-events:none}
+.word-clip{position:absolute;top:7px;height:35px;min-width:12px;border:1px solid #4c7891;border-radius:6px;background:linear-gradient(180deg,#2a5265,#1b384b);color:#edf7ff;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden;padding:0 5px;font-size:12px;line-height:1.2;cursor:grab;user-select:none;touch-action:none;box-shadow:0 2px 4px #0003}
+.word-clip:hover{border-color:#89c8e4;background:linear-gradient(180deg,#32647a,#214457);z-index:3}.word-clip:focus-visible{outline:2px solid var(--accent);outline-offset:1px;z-index:4}.word-clip.selected{border:2px solid var(--accent);background:linear-gradient(180deg,#256d63,#1b4e4a);z-index:4;box-shadow:0 0 0 2px #76e4c122}
+.word-clip.playing-word-row{border-color:#e8d28c;background:linear-gradient(180deg,#9b7a2c,#765a20);color:#fff7dd;box-shadow:0 0 0 2px #f1cc6130;z-index:5;font-weight:850}.word-clip.playing-word-row.selected{border-color:#fff0b8;box-shadow:0 0 0 2px #f1cc6155}
+.word-clip.singer-italic{font-style:italic}.word-clip.singer-bold{font-weight:800}.word-clip .word-label{overflow:hidden;text-overflow:ellipsis;min-width:0;padding:0 2px;pointer-events:none}
+.word-clip .word-edge{position:absolute;top:0;bottom:0;width:6px;cursor:ew-resize;background:#a7d6e555;z-index:2}.word-clip .word-edge.left{left:0}.word-clip .word-edge.right{right:0}
+.word-clip.no-cue{background:#252e3d;border-style:dashed;border-color:#4d5d70;color:#9aabc0;cursor:default}
+.lane-playhead{position:absolute;top:0;bottom:0;width:2px;background:#ff646e;z-index:7;pointer-events:none;box-shadow:0 0 0 1px #ff646e28;display:none}.lane-playhead.visible{display:block}.lane-playhead:before{content:'';position:absolute;left:-5px;top:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #ff646e}.lane-playhead-time{position:absolute;left:50%;top:10px;transform:translateX(-50%);font-family:var(--mono);font-size:var(--playhead-label-size,9px);line-height:1;color:#ffc2c6;background:#101721dd;border:1px solid #773f48;border-radius:3px;padding:2px 3px;white-space:nowrap;font-weight:500;letter-spacing:0;box-shadow:0 1px 3px #0005}.lane-playhead.offscreen-left:before{left:-5px;border-top-color:transparent;border-left:0;border-right:7px solid #ff646e;border-top:5px solid transparent;border-bottom:5px solid transparent;top:1px}.lane-playhead.offscreen-right:before{left:-5px;border-top-color:transparent;border-right:0;border-left:7px solid #ff646e;border-top:5px solid transparent;border-bottom:5px solid transparent;top:1px}.lane-waveform-canvas{touch-action:pan-y;user-select:none}.timeline-lane-content.pan-active,.lane-waveform-wrapper.pan-active{cursor:grabbing!important}
+.timeline-selection-box{position:absolute;z-index:20;border:1px solid #76e4c1;background:#76e4c126;box-shadow:0 0 0 1px #76e4c12b;pointer-events:none;display:none}.timeline-selection-box.visible{display:block}
+.word-inspector{margin-top:11px;border:1px solid var(--border);background:#121b29;border-radius:9px;padding:10px 11px}.word-inspector-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}.word-inspector-fields{display:grid;grid-template-columns:140px 140px minmax(140px,2fr) minmax(120px,1fr) minmax(90px,1fr) 105px 105px minmax(110px,1fr);gap:9px}.word-inspector-field{display:flex;flex-direction:column;gap:4px;min-width:0}.word-inspector-field label{font-size:10px;color:#a6b6c9;text-transform:uppercase;letter-spacing:.06em}.word-inspector-field input,.word-inspector-field select{width:100%;min-width:0;background:#09111b;border:1px solid #34455a;border-radius:6px;color:var(--text);padding:8px 9px;font-size:12px}.word-inspector-field input:focus,.word-inspector-field select:focus{outline:2px solid var(--accent2);outline-offset:1px}.timeline-empty{padding:26px;text-align:center;color:#91a1b5;min-width:0}.timeline-empty strong{display:block;color:#d9e6f5;margin-bottom:5px}
+@media(max-width:950px){.timeline-viewport{max-height:65vh}.word-inspector-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.word-inspector-text{grid-column:1/-1}.timeline-inner{--label-width:118px}}
+@media(max-width:540px){.timeline-toolbar{align-items:flex-start}.timeline-help{max-width:100%}.word-inspector-fields{grid-template-columns:1fr 1fr}.timeline-inner{--label-width:94px}.timeline-lane-row{min-height:116px}.timeline-lane-content{grid-template-rows:62px 48px}.lane-waveform-wrapper,.lane-waveform-canvas{height:62px}}
+@media(max-width:1000px){.editor-layout{grid-template-columns:1fr}.table-wrap,.preview{max-height:none}.audio-panel{grid-template-columns:1fr}.status{margin-left:0}}@media(max-width:620px){.app-header{padding:12px}.shell{padding:12px}.brand p{display:none}.file-name{max-width:180px}.settings-grid{grid-template-columns:1fr}.toolbar{align-items:flex-start}.toolbar>*{max-width:100%}th.time,td.time{width:128px}th.num,td.num{width:42px}.panel-actions{margin-left:auto}}
+</style>
+</head>
+<body>
+<header class="app-header">
+  <div class="brand"><div class="brand-mark">♫</div><div><h1>Lyrics Audio Aligner</h1><p>Local lyric timing editor</p></div></div>
+  <div class="header-right"><span class="badge">LOCAL ONLY</span><button id="saveLrcTop" class="small">Export LRC</button><button id="saveTtmlTop" class="small primary">Export TTML</button></div>
+</header>
+<main class="shell">
+  <nav class="nav" aria-label="Application screens"><button id="navEdit" class="active" aria-current="page">01 · Edit lyrics</button><button id="navSettings">02 · Settings</button></nav>
+  <section id="editScreen">
+    <div class="toolbar">
+      <label class="file-label" for="audioFile">♫ Import audio</label><input id="audioFile" type="file" accept="audio/*">
+      <span id="audioFileName" class="file-name">No audio selected</span>
+      <label class="file-label" for="lyricsFile">↥ Import LRC / TTML / TXT</label><input id="lyricsFile" type="file" accept=".lrc,.ttml,.xml,.txt,text/plain,application/xml">
+      <span id="lyricsFileName" class="file-name">No lyrics loaded</span>
+      <span class="drag-drop-note">Tip: drop audio + LRC / TTML / TXT files anywhere</span>
+      <span id="status" class="status"><strong>Ready</strong> · import files to begin</span>
+    </div>
+    <div class="audio-panel">
+      <div><div id="audioTitle" class="audio-title">No audio loaded</div><div id="audioSub" class="audio-sub">Choose a local audio file to play and review timings.</div></div>
+      <audio id="player" controls preload="metadata"></audio>
+      <div id="timeReadout" class="audio-time">00:00.000 / 00:00.000</div>
+    </div>
+    <div class="editor-layout">
+      <section class="panel" aria-label="Lyrics editing grid">
+        <div class="panel-head"><div><h2>Lyric timing grid</h2><p id="gridDescription">Edit line timestamps here; switch to TTML words for per-word timing and speaker edits.</p></div><div class="panel-actions"><button id="viewLines" class="small active">Lines / LRC</button><button id="viewWords" class="small" disabled>TTML words</button><button id="addLine" class="small">+ Line</button><button id="deleteLine" class="small danger">Delete</button></div></div>
+        <div id="lineTableWrap" class="table-wrap"><table><thead id="gridHead"><tr><th class="num">#</th><th class="time">Time</th><th>Lyric</th></tr></thead><tbody id="gridBody"><tr><td colspan="3" style="padding:30px;text-align:center;color:#91a1b5">Import an LRC, TTML, or TXT lyrics file.</td></tr></tbody></table></div>
+        <div id="wordTimelineEditor" class="word-timeline-editor hidden">
+          <div class="timeline-toolbar">
+            <div class="timeline-toolbar-group"><button id="zoomOut" class="small" aria-label="Zoom out line detail">−</button><button id="zoomIn" class="small" aria-label="Zoom in line detail">+</button><button id="zoomFit" class="small" title="Fit the longest lyric line across the lane with configured edge context">Fit lines</button><span id="timelineZoomLabel" class="timeline-zoom-label">Fit longest line</span></div>
+            <div class="timeline-toolbar-group"><span class="timeline-help">Each row wraps its waveform above its words. Ctrl + wheel zooms around the cursor; left-drag waveform to seek; middle-drag to pan; Shift + drag to box-select. Normal drag shifts the selection; Ctrl + drag one selected word moves only that word.</span></div>
+            <span id="waveformStatus" class="timeline-zoom-label">Waveform waits for audio</span>
+          </div>
+          <div id="timelineViewport" class="timeline-viewport" aria-label="Wrapped word timing timeline">
+            <div id="timelineInner" class="timeline-inner">
+              <div id="timelineLanes"></div>
+              <div id="timelineSelectionBox" class="timeline-selection-box" aria-hidden="true"></div>
+            </div>
+          </div>
+          <div id="wordInspector" class="word-inspector hidden">
+            <div class="word-inspector-title"><strong id="wordInspectorHeading">Selected word</strong><span id="wordInspectorMeta" class="timeline-zoom-label">Choose a word block above</span></div>
+            <div class="word-inspector-fields">
+              <div class="word-inspector-field"><label for="wordStart">Start</label><input id="wordStart" type="text" inputmode="decimal" aria-label="Selected word start timestamp"></div>
+              <div class="word-inspector-field"><label for="wordEnd">End</label><input id="wordEnd" type="text" inputmode="decimal" aria-label="Selected word end timestamp"></div>
+              <div class="word-inspector-field word-inspector-text"><label for="wordText">Word / text</label><input id="wordText" type="text" aria-label="Selected word text"></div>
+              <div class="word-inspector-field"><label for="wordAgent">Singer / agent</label><input id="wordAgent" type="text" aria-label="Selected word singer agent"></div>
+              <div class="word-inspector-field"><label for="wordStyle">Style ref</label><input id="wordStyle" type="text" aria-label="Selected word style reference"></div>
+              <div class="word-inspector-field"><label for="wordFontStyle">Font style</label><select id="wordFontStyle"><option value="">Default</option><option value="normal">Normal</option><option value="italic">Italic</option><option value="oblique">Oblique</option></select></div>
+              <div class="word-inspector-field"><label for="wordFontWeight">Font weight</label><select id="wordFontWeight"><option value="">Default</option><option value="normal">Normal</option><option value="bold">Bold</option><option value="700">700</option><option value="800">800</option></select></div>
+              <div class="word-inspector-field"><label for="wordColor">Text color</label><input id="wordColor" type="text" placeholder="#ffffff" aria-label="Selected word text color"></div>
+            </div>
+          </div>
+        </div>
+        <div class="grid-footer"><span id="gridStatus">0 lines</span><span><span class="shortcut">↑</span>/<span class="shortcut">↓</span> select · <span class="shortcut">←</span>/<span class="shortcut">→</span> nudge or seek · <span class="shortcut">Shift+←/→</span> word edges · <span class="shortcut">Space</span> play/pause</span></div>
+      </section>
+      <section class="panel" aria-label="Lyrics output preview">
+        <div class="panel-head"><div><h2 id="previewTitle">Output preview · LRC</h2><p id="previewSub">Standard line-timed lyrics</p></div><div class="preview-tabs"><button id="tabLrc" class="active">LRC</button><button id="tabTtml">TTML</button></div></div>
+        <pre id="preview" class="preview" tabindex="0">; Import lyrics to preview exported text.</pre>
+        <div id="previewInfo" class="preview-info">LRC is compatible with common players. TTML can preserve word cues when imported from an existing word-timed TTML.</div>
+        <div class="grid-footer"><button id="copyPreview" class="small">Copy preview</button><div class="panel-actions"><button id="saveLrc" class="small">Download LRC</button><button id="saveTtml" class="small primary">Download TTML</button></div></div>
+      </section>
+    </div>
+  </section>
+  <section id="settingsScreen" class="panel hidden">
+    <div class="panel-head"><div><h2>Editor settings</h2><p>Adjust timing behavior and playback. Settings are saved in this browser on this computer.</p></div><button id="resetSettings" class="small">Reset defaults</button></div>
+    <div class="settings-grid">
+      <div class="setting"><label for="nudgeStep">Fine nudge step (seconds)</label><input id="nudgeStep" type="number" min="0.001" max="1" step="0.001" value="0.020"><p>Left/right arrow nudges the selected line. Default: 20 ms.</p></div>
+      <div class="setting"><label for="shiftMultiplier">Shift + arrow multiplier</label><input id="shiftMultiplier" type="number" min="2" max="50" step="1" value="5"><p>Shift + left/right makes a larger correction.</p></div>
+      <div class="setting"><label for="replayLead">Replay lead-in (seconds)</label><input id="replayLead" type="number" min="0" max="15" step="0.1" value="2.0"><p>When starting playback after an edit, begin this long before the edited line.</p></div>
+      <div class="setting"><label for="txtSpacing">Initial spacing for plain TXT (seconds)</label><input id="txtSpacing" type="number" min="0.2" max="30" step="0.1" value="3.0"><p>TXT has no timestamps, so this is only an initial placeholder layout.</p></div>
+      <div class="setting"><label for="language">TTML language</label><input id="language" type="text" value="en" maxlength="20"><p>BCP-47 language code used in exported TTML.</p></div>
+      <div class="setting"><label for="defaultTab">Default preview</label><select id="defaultTab"><option value="lrc">LRC</option><option value="ttml">TTML</option></select><p>Which export preview to show when the editor opens.</p></div>
+      <div class="setting"><label for="autoFollow">Grid follow behavior</label><select id="autoFollow"><option value="true">Keep selected / playing line visible</option><option value="false">Do not auto-scroll</option></select><p>Follows keyboard selection and the active lyric during playback, unless you are typing.</p></div>
+      <div class="setting"><label for="timelineOverlap">Waveform edge context (seconds per side)</label><input id="timelineOverlap" type="number" min="0" max="5" step="0.05" value="0.45"><p>Show this much preceding/following waveform around each lyric line. Ctrl + scroll changes how much context is visible while keeping each line on one screen.</p></div>
+      <div class="setting"><label for="playheadLabelSize">Playhead time label size (px)</label><input id="playheadLabelSize" type="number" min="7" max="16" step="1" value="9"><p>Size of the timestamp shown beneath the red playhead marker.</p></div>
+      <div class="setting"><label for="dragAutoScrollSpeed">Word-drag edge scroll speed (px/sec)</label><input id="dragAutoScrollSpeed" type="number" min="40" max="1600" step="20" value="320"><p>How quickly the waveform view advances when dragging a word near or beyond a lane edge.</p></div>
+      <div class="setting"><label for="downloadBase">Export filename suffix</label><select id="downloadBase"><option value="same">Use imported lyrics base name</option><option value="audio">Use audio base name</option></select><p>Controls the default downloaded filename.</p></div>
+    </div>
+    <p class="settings-note">Keyboard behavior: Space starts/pauses playback when focus is outside an editable text cell. When a lyric text field is focused, Space and all arrow keys remain normal text-editing keys. In TTML mode, Shift + left-drag over a waveform or lyric lane box-selects words. Drag any selected word to shift the group; Ctrl + drag one selected word moves only that word. Ctrl + mouse wheel zooms around the cursor; middle-drag pans; left-drag the waveform to seek. While dragging a word near a lane edge, the view auto-scrolls at the configured speed. Without a selected word, ←/→ seek by the fine nudge step; Shift+←/→ jump to word boundaries. In line text, Ctrl+A selects the whole line.</p>
+  </section>
+  <p class="footer-note">Audio and lyric files are opened locally by your browser. This app does not upload them. Press <span class="shortcut">Esc</span> to leave a lyric text field and return to keyboard navigation.</p>
+</main>
+<div id="dropOverlay" class="drop-overlay hidden" aria-hidden="true">
+  <div class="drop-card"><div class="drop-icon">↧</div><h2>Drop files to load them</h2><p>Drop an audio file and a lyric file together, or drop either one independently. Audio and lyrics stay on this computer.</p><p class="drop-types">Audio: FLAC · MP3 · WAV · M4A · OGG · OPUS<br>Lyrics: LRC · TTML · XML · TXT</p></div>
+</div>
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const player = $('player');
+  let rows = [];
+  let selectedIndex = -1;
+  let lastEditedIndex = -1;
+  let replayFromAnchor = true;
+  let importedLyricsName = 'lyrics';
+  let audioName = '';
+  let audioUrl = null;
+  let metadata = [];
+  let ttmlHeadInner = '';
+  let outputMode = 'lrc';
+  let hasWordTiming = false;
+  let sourceFormat = '';
+  let gridMode = 'lines';
+  let selectedWordRef = null;
+  let activePlaybackIndex = -1;
+  let activeWordIndex = -1;
+  let livePlaybackFrame = null;
+  let dragDepth = 0;
+  let waveformPeaks = null;
+  let timelineZoom = 0; // Absolute pixels per second; initialized to fit the longest lyric line.
+  let timelinePps = 60; // Per-lane pixels/second fallback.
+  let timelineTrackWidth = 600;
+  let timelineGeometryReady = false;
+  let selectedWordKeys = new Set();
+  let marqueeState = null;
+  let suppressTimelineClick = false;
+  let waveformBuildToken = 0;
+  let wordDragState = null;
+  let waveScrubState = null;
+  let wavePanState = null;
+  let autoScrollFrame = null;
+  let settings = {
+    nudgeStep: 0.02, shiftMultiplier: 5, replayLead: 2.0, txtSpacing: 3.0,
+    language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320
+  };
+  try { settings = {...settings, ...JSON.parse(localStorage.getItem('lyrics-aligner-ui-settings') || '{}')}; } catch (_) {}
+  let toastTimer = null;
+
+  function toast(message, error=false) {
+    const el=$('toast'); el.textContent=message; el.classList.remove('hidden','error'); if(error) el.classList.add('error');
+    clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.add('hidden'),4200);
+  }
+  function saveSettings() {
+    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed']) {
+      const el=$(key); if (!el) continue;
+      settings[key] = ['language','defaultTab','downloadBase'].includes(key) ? el.value :
+        key==='autoFollow' ? el.value==='true' : Number(el.value);
+    }
+    settings.nudgeStep=Math.min(1,Math.max(.001,Number(settings.nudgeStep)||.02));
+    settings.shiftMultiplier=Math.min(50,Math.max(2,Math.round(Number(settings.shiftMultiplier)||5)));
+    settings.replayLead=Math.min(15,Math.max(0,Number(settings.replayLead)||0));
+    settings.txtSpacing=Math.min(30,Math.max(.2,Number(settings.txtSpacing)||3));
+    settings.timelineOverlap=Math.min(5,Math.max(0,Number(settings.timelineOverlap)||0));
+    settings.playheadLabelSize=Math.min(16,Math.max(7,Number(settings.playheadLabelSize)||9));
+    settings.dragAutoScrollSpeed=Math.min(1600,Math.max(40,Number(settings.dragAutoScrollSpeed)||320));
+    document.documentElement.style.setProperty('--playhead-label-size',`${settings.playheadLabelSize}px`);
+    localStorage.setItem('lyrics-aligner-ui-settings', JSON.stringify(settings));
+  }
+  function syncSettingsForm() {
+    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed']) $(key).value=settings[key];
+    document.documentElement.style.setProperty('--playhead-label-size',`${settings.playheadLabelSize}px`);
+    $('autoFollow').value=String(settings.autoFollow);
+  }
+  function fmtTime(sec, places=3) {
+    sec=Math.max(0,Number(sec)||0); const mins=Math.floor(sec/60), secs=sec-mins*60;
+    return String(mins).padStart(2,'0')+':'+secs.toFixed(places).padStart(places===3?6:places===2?5:4,'0');
+  }
+  function parseTime(value) {
+    const s=String(value||'').trim(); if (!s) return null;
+    if (/^\d+(?:\.\d+)?s$/i.test(s)) return Number(s.slice(0,-1));
+    const parts=s.split(':');
+    if (parts.length===2 && /^\d+$/.test(parts[0]) && /^\d+(?:\.\d+)?$/.test(parts[1])) return Number(parts[0])*60+Number(parts[1]);
+    if (parts.length===3 && /^\d+$/.test(parts[0]) && /^\d+$/.test(parts[1]) && /^\d+(?:\.\d+)?$/.test(parts[2])) return Number(parts[0])*3600+Number(parts[1])*60+Number(parts[2]);
+    if (/^\d+(?:\.\d+)?$/.test(s)) return Number(s);
+    return null;
+  }
+  function escapeXml(text) { return String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;'); }
+  function lrcTimestamp(sec) { sec=Math.max(0,Number(sec)||0); const cs=Math.floor(sec*100+1e-7); return '['+String(Math.floor(cs/6000)).padStart(2,'0')+':'+String(Math.floor(cs/100)%60).padStart(2,'0')+'.'+String(cs%100).padStart(2,'0')+']'; }
+  function ttmlTime(sec) { sec=Math.max(0,Number(sec)||0); const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60; return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+s.toFixed(3).padStart(6,'0'); }
+  function getLineEnd(index) {
+    const row=rows[index]; if (!row) return 0;
+    const next=rows.slice(index+1).find(r=>r.start>row.start+.005);
+    const duration=Number.isFinite(player.duration)?player.duration:0;
+    let end=(row.rawEnd!==null && row.rawEnd>row.start)?row.rawEnd:(next?next.start:(duration>row.start?duration:row.start+3.0));
+    if (row.wordCues && row.wordCues.length) end=Math.max(end,...row.wordCues.map(c=>c.end||0));
+    return Math.max(row.start+.05,end);
+  }
+  function activeScreen() { return !$('settingsScreen').classList.contains('hidden') ? 'settings' : 'edit'; }
+  function setScreen(screen) {
+    $('editScreen').classList.toggle('hidden',screen!=='edit'); $('settingsScreen').classList.toggle('hidden',screen!=='settings');
+    $('navEdit').classList.toggle('active',screen==='edit'); $('navSettings').classList.toggle('active',screen==='settings');
+    $('navEdit').setAttribute('aria-current',screen==='edit'?'page':'false'); $('navSettings').setAttribute('aria-current',screen==='settings'?'page':'false');
+  }
+  function cleanPlainLine(line) {
+    let s=line.trim(); if (!s) return '';
+    if (/^\[(?:ar|al|ti|au|by|re|ve|length|offset|la|id):.*\]$/i.test(s)) return '';
+    if (/^\[[^\]]*,.*\]$/.test(s) && !/\d{1,2}:\d{2}/.test(s)) return '';
+    s=s.replace(/\\\*/g,'\u0000'); s=s.replace(/\*\*(.*?)\*\*/gs,'$1').replace(/\*(.*?)\*/gs,'$1').replace(/\u0000/g,'*');
+    return s.trim();
+  }
+  function parseLrc(text) {
+    const out=[]; const meta=[];
+    for (const rawLine of text.replace(/^\uFEFF/,'').split(/\r?\n/)) {
+      const line=rawLine.trim(); if (!line) continue;
+      const tags=[...line.matchAll(/\[(\d{1,3}):(\d{2})(?:[.:](\d{1,3}))?\]/g)];
+      if (!tags.length) { if (/^\[[a-z]+:/i.test(line)) meta.push(line); continue; }
+      const lyric=line.replace(/^(?:\[\d{1,3}:\d{2}(?:[.:]\d{1,3})?\])+/, '').trim();
+      for (const tag of tags) {
+        const fraction=tag[3]||'0'; const frac=Number('0.'+fraction.padEnd(2,'0').slice(0,3));
+        out.push(makeRow(Number(tag[1])*60+Number(tag[2])+frac, lyric));
+      }
+    }
+    return {rows:out,metadata:meta,head:'',format:'lrc',wordTiming:false};
+  }
+  function makeRow(start,text,extra={}) { return {start:Math.max(0,Number(start)||0),text:String(text??''),originalText:String(text??''),wordCues:extra.wordCues||null,rawEnd:extra.rawEnd??null,lineAgent:extra.lineAgent||'',lineStyle:extra.lineStyle||'',lineFontStyle:extra.lineFontStyle||'',lineFontWeight:extra.lineFontWeight||'',lineColor:extra.lineColor||'',flagged:false}; }
+  function parseTtml(text) {
+    const doc=new DOMParser().parseFromString(text,'application/xml');
+    if (doc.querySelector('parsererror')) throw new Error('This TTML/XML file could not be parsed.');
+    const byLocal=(node,name)=>[...node.getElementsByTagNameNS('*',name)];
+    const pNodes=byLocal(doc,'p');
+    const head=byLocal(doc,'head')[0];
+    const headInner=head?[...head.childNodes].map(n=>new XMLSerializer().serializeToString(n)).join(''):'';
+    const out=[];
+    for(const p of pNodes){
+      const begin=p.getAttribute('begin')||p.getAttribute('start'); const start=parseTime(begin);
+      if(start===null) continue;
+      const rawText=(p.textContent||'').replace(/\s+/g,' ').trim(); if(!rawText) continue;
+      const children=[...p.children].filter(n=>n.localName.toLowerCase()==='span');
+      let cues=children.map(span=>{
+        const txt=(span.textContent||''); if(!txt) return null;
+        let a=parseTime(span.getAttribute('begin')), b=parseTime(span.getAttribute('end'));
+        // Child cue times in this tool's TTML exports are expressed on the global timeline.
+        if(a!==null && b!==null && b>a) return {text:txt,start:a,end:b,agent:span.getAttribute('ttm:agent')||span.getAttributeNS('http://www.w3.org/ns/ttml#metadata','agent')||'',style:span.getAttribute('style')||'',ttsStyle:span.getAttribute('tts:fontStyle')||'',ttsWeight:span.getAttribute('tts:fontWeight')||'',color:span.getAttribute('tts:color')||''};
+        return null;
+      }).filter(Boolean);
+      const end=parseTime(p.getAttribute('end'));
+      const lineAgent=p.getAttribute('ttm:agent')||p.getAttributeNS('http://www.w3.org/ns/ttml#metadata','agent')||'';
+      const lineStyle=p.getAttribute('style')||'';
+      const lineFontStyle=p.getAttribute('tts:fontStyle')||'';
+      const lineFontWeight=p.getAttribute('tts:fontWeight')||'';
+      const lineColor=p.getAttribute('tts:color')||'';
+      out.push(makeRow(start,rawText,{wordCues:cues.length?cues:null,rawEnd:end,lineAgent,lineStyle,lineFontStyle,lineFontWeight,lineColor}));
+    }
+    out.sort((a,b)=>a.start-b.start);
+    return {rows:out,metadata:[],head:headInner,format:'ttml',wordTiming:out.some(r=>r.wordCues&&r.wordCues.length)};
+  }
+  function parseTxt(text) {
+    const lines=text.replace(/^\uFEFF/,'').split(/\r?\n/).map(cleanPlainLine).filter(Boolean);
+    return {rows:lines.map((line,i)=>makeRow(i*settings.txtSpacing,line)),metadata:[],head:'',format:'txt',wordTiming:false};
+  }
+  function importParsed(parsed,name) {
+    rows=parsed.rows; metadata=parsed.metadata||[]; ttmlHeadInner=parsed.head||''; sourceFormat=parsed.format; hasWordTiming=Boolean(parsed.wordTiming); gridMode='lines'; selectedWordRef=null; selectedWordKeys.clear();
+    importedLyricsName=(name||'lyrics').replace(/\.(lrc|ttml|xml|txt)$/i,'')||'lyrics';
+    selectedIndex=rows.length?0:-1; lastEditedIndex=-1; replayFromAnchor=true;
+    if(rows.length) { renderGrid(); setSelected(0,true); }
+    else renderGrid();
+    updatePreview(); updateStatus();
+    $('lyricsFileName').textContent=name||'Lyrics imported';
+    toast(`Loaded ${rows.length} lyric line(s) from ${name}.`);
+  }
+  async function loadLyrics(file) {
+    if(!file) return;
+    try {
+      const text=await file.text(); const ext=file.name.toLowerCase().split('.').pop();
+      let parsed;
+      if(ext==='lrc') parsed=parseLrc(text);
+      else if(ext==='ttml'||ext==='xml'||text.trimStart().startsWith('<?xml')||/<tt[\s>]/i.test(text)) parsed=parseTtml(text);
+      else parsed=parseTxt(text);
+      importParsed(parsed,file.name);
+    } catch(err) { toast(`Could not load lyrics: ${err.message||err}`,true); }
+  }
+  function renderWordAwareEditor(editor,row) {
+    editor.replaceChildren();
+    const tokens=[...String(row.text??'').matchAll(/\S+|\s+/g)];
+    const textTokens=tokens.filter(m=>/^\S+$/.test(m[0]));
+    const canHighlightWords=Boolean(row.wordCues&&row.wordCues.length&&row.text===row.originalText&&textTokens.length===row.wordCues.length);
+    if(!canHighlightWords){editor.textContent=row.text;return;}
+    let wordIndex=0;
+    for(const token of tokens){
+      if(/^\s+$/.test(token[0])) editor.append(document.createTextNode(token[0]));
+      else {
+        const span=document.createElement('span'); span.className='word-token'; span.dataset.wordIndex=String(wordIndex++); span.textContent=token[0]; editor.append(span);
+      }
+    }
+  }
+  function renderLineGrid() {
+    const tbody=$('gridBody'); tbody.textContent=''; activePlaybackIndex=-1; activeWordIndex=-1;
+    if(!rows.length){tbody.innerHTML='<tr><td colspan="3" style="padding:30px;text-align:center;color:#91a1b5">Import an LRC, TTML, or TXT lyrics file.</td></tr>'; $('gridStatus').textContent='0 lines'; return;}
+    const frag=document.createDocumentFragment();
+    rows.forEach((row,i)=>{
+      const tr=document.createElement('tr'); tr.dataset.index=String(i); tr.tabIndex=0; if(i===selectedIndex) tr.classList.add('selected'); if(row.flagged) tr.classList.add('flagged');
+      const num=document.createElement('td'); num.className='num'; num.textContent=String(i+1); num.setAttribute('aria-label',`Line ${i+1}`);
+      const time=document.createElement('td'); time.className='time'; const timeInput=document.createElement('input'); timeInput.type='text'; timeInput.value=fmtTime(row.start); timeInput.className='time-input'; timeInput.setAttribute('aria-label',`Line ${i+1} timestamp`); timeInput.spellcheck=false; timeInput.autocomplete='off';
+      time.append(timeInput);
+      const lyric=document.createElement('td'); lyric.className='lyric'; const textEditor=document.createElement('div'); textEditor.contentEditable='true'; textEditor.setAttribute('role','textbox'); textEditor.setAttribute('aria-multiline','false'); textEditor.setAttribute('aria-label',`Line ${i+1} lyrics`); textEditor.className='lyric-editor'; textEditor.spellcheck=false; textEditor.autocapitalize='off';
+      renderWordAwareEditor(textEditor,row);
+      lyric.append(textEditor); tr.append(num,time,lyric); frag.append(tr);
+      tr.addEventListener('click',()=>setSelected(i,false));
+      tr.addEventListener('focusin',()=>setSelected(i,false));
+      timeInput.addEventListener('focus',()=>setSelected(i,false));
+      timeInput.addEventListener('change',()=>{
+        const parsed=parseTime(timeInput.value);
+        if(parsed===null||!Number.isFinite(parsed)||parsed<0){timeInput.value=fmtTime(row.start);toast('Timestamp must be MM:SS.mmm, HH:MM:SS.mmm, or seconds.',true);return;}
+        shiftRowTime(i,parsed,true); timeInput.value=fmtTime(row.start); replayFromAnchor=true; renderPreviewOnly(); updateStatus(); updateLiveHighlight();
+      });
+      timeInput.addEventListener('keydown',e=>{ if(e.key==='Enter'){timeInput.blur();} if(e.key==='Escape'){timeInput.value=fmtTime(row.start);timeInput.blur();} });
+      textEditor.addEventListener('focus',()=>setSelected(i,false));
+      textEditor.addEventListener('input',()=>{
+        const newText=textEditor.textContent.replace(/\u00a0/g,' ');
+        if(newText!==row.text && row.wordCues && row.wordCues.length){
+          const pieces=[...newText.matchAll(/\S+\s*/g)].map(m=>m[0]);
+          if(pieces.length===row.wordCues.length){
+            row.wordCues.forEach((cue,k)=>{cue.text=pieces[k];});
+            row.text=newText; row.originalText=newText;
+          } else {
+            row.text=newText; row.wordCues=null;
+            toast('Word count changed; stale word timings were cleared for this line.',true);
+          }
+        } else { row.text=newText; }
+        row.originalText=row.text;
+        hasWordTiming=rows.some(r=>r.wordCues&&r.wordCues.length);
+        $('viewWords').disabled=!hasWordTiming;
+        if(gridMode==='words'&&!hasWordTiming)gridMode='lines';
+        lastEditedIndex=i; replayFromAnchor=true; updatePreview(); updateStatus(); updateLiveHighlight();
+      });
+      textEditor.addEventListener('paste',e=>{
+        e.preventDefault();
+        const plain=(e.clipboardData||window.clipboardData).getData('text').replace(/[\r\n]+/g,' ');
+        const selection=window.getSelection();
+        if(!selection||!selection.rangeCount){document.execCommand('insertText',false,plain);return;}
+        const range=selection.getRangeAt(0); range.deleteContents(); const node=document.createTextNode(plain); range.insertNode(node); range.setStartAfter(node); range.collapse(true); selection.removeAllRanges(); selection.addRange(range);
+        textEditor.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertFromPaste',data:plain}));
+      });
+      textEditor.addEventListener('keydown',e=>{
+        if(e.key==='Escape'){textEditor.blur();setSelected(i,true);e.preventDefault();}
+        else if(e.key==='Enter'){e.preventDefault();textEditor.blur();if(i+1<rows.length){setSelected(i+1,true);const next=tbody.querySelector(`tr[data-index="${i+1}"] .lyric-editor`);next?.focus();}}
+      });
+    });
+    tbody.append(frag); $('gridStatus').textContent=`${rows.length} line(s) · ${hasWordTiming?'word timings imported':'line-level source timing'} · live preview follows playback`;
+    updateLiveHighlight();
+  }
+  function setGridMode(mode) {
+    if(mode==='words'&&!hasWordTiming){toast('Import a word-timed TTML file first to edit individual TTML cues.',true);return;}
+    gridMode=mode==='words'?'words':'lines';
+    $('viewLines').classList.toggle('primary',gridMode==='lines');
+    $('viewWords').classList.toggle('primary',gridMode==='words');
+    $('viewWords').disabled=!hasWordTiming;
+    $('addLine').disabled=gridMode==='words';
+    $('deleteLine').disabled=gridMode==='words';
+    renderGrid();
+    if(gridMode==='words'){
+      const refs=allWordRefs();
+      if(refs.length){
+        const existing=refs.find(r=>r.lineIndex===selectedWordRef?.lineIndex&&r.cueIndex===selectedWordRef?.cueIndex);
+        const chosen=existing||refs.find(r=>r.lineIndex===Math.max(0,selectedIndex))||refs[0];
+        selectWord(chosen.lineIndex,chosen.cueIndex,false);
+      }
+    }
+  }
+  function allWordRefs() {
+    const refs=[];
+    rows.forEach((row,lineIndex)=>(row.wordCues||[]).forEach((cue,cueIndex)=>refs.push({lineIndex,cueIndex,cue})));
+    return refs;
+  }
+  const TIMELINE_LABEL_WIDTH = 150;
+
+  function timelineDuration() {
+    const mediaDuration=Number.isFinite(player.duration)?player.duration:0;
+    let latest=mediaDuration;
+    for(const row of rows){latest=Math.max(latest,row.rawEnd||0,row.start+0.5);for(const cue of row.wordCues||[])latest=Math.max(latest,cue.end||0);}
+    return Math.max(1,latest);
+  }
+  function cueForRef(ref=selectedWordRef) {
+    if(!ref)return null;
+    const row=rows[ref.lineIndex];const cue=row?.wordCues?.[ref.cueIndex];
+    return cue?{row,cue,lineIndex:ref.lineIndex,cueIndex:ref.cueIndex}:null;
+  }
+  function updateWordInspector() {
+    const record=cueForRef();
+    if(!record){$('wordInspector').classList.add('hidden');$('wordInspectorHeading').textContent='Selected word';$('wordInspectorMeta').textContent='Choose a word block above';return;}
+    const {row,cue,lineIndex,cueIndex}=record;
+    $('wordInspector').classList.remove('hidden');
+    $('wordInspectorHeading').textContent=`${selectedWordKeys.size>1?`${selectedWordKeys.size} words selected · `:''}Line ${lineIndex+1} · Word ${cueIndex+1}: ${String(cue.text||'').trim()||'(empty)'}`;
+    $('wordInspectorMeta').textContent=`${fmtTime(cue.start)} – ${fmtTime(cue.end)} · line starts ${fmtTime(row.start)}`;
+    const values={wordStart:fmtTime(cue.start),wordEnd:fmtTime(cue.end),wordText:String(cue.text||'').trim(),wordAgent:cue.agent||'',wordStyle:cue.style||'',wordFontStyle:cue.ttsStyle||'',wordFontWeight:cue.ttsWeight||'',wordColor:cue.color||''};
+    for(const [id,value] of Object.entries(values)){const el=$(id);if(el&&document.activeElement!==el)el.value=value;}
+  }
+  function wordKey(lineIndex,cueIndex){return `${lineIndex}:${cueIndex}`;}
+  function parseWordKey(key){const [lineIndex,cueIndex]=String(key).split(':').map(Number);return {lineIndex,cueIndex};}
+  function refreshWordSelection(){
+    for(const clip of $('timelineLanes').querySelectorAll('.word-clip[data-line-index]'))clip.classList.toggle('selected',selectedWordKeys.has(wordKey(Number(clip.dataset.lineIndex),Number(clip.dataset.cueIndex))));
+    $('gridStatus').textContent=`${rows.length} lyric lane(s) · ${allWordRefs().length} timed word(s) · ${selectedWordKeys.size>1?`${selectedWordKeys.size} words selected · `:''}drag or box-select to refine TTML`;
+  }
+  function selectWord(lineIndex,cueIndex,focus=false,extend=false,toggle=false) {
+    const key=wordKey(lineIndex,cueIndex);
+    if(toggle){if(selectedWordKeys.has(key))selectedWordKeys.delete(key);else selectedWordKeys.add(key);if(!selectedWordKeys.size)selectedWordKeys.add(key);}
+    else if(extend)selectedWordKeys.add(key);
+    else {selectedWordKeys.clear();selectedWordKeys.add(key);}
+    selectedIndex=lineIndex; selectedWordRef={lineIndex,cueIndex}; lastEditedIndex=lineIndex; replayFromAnchor=true;
+    refreshWordSelection();
+    let ref=$('timelineLanes').querySelector(`.word-clip[data-line-index="${lineIndex}"][data-cue-index="${cueIndex}"]`);
+    const content=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`),cue=rows[lineIndex]?.wordCues?.[cueIndex];
+    if(content&&cue&&(cue.start<Number(content.dataset.windowStart)-.01||cue.end>Number(content.dataset.windowEnd)+.01)){rerenderWordTimelinePreservingView();ref=$('timelineLanes').querySelector(`.word-clip[data-line-index="${lineIndex}"][data-cue-index="${cueIndex}"]`);}
+    if(settings.autoFollow&&ref)ref.scrollIntoView({block:'nearest'});
+    if(focus)ref?.focus();
+    updateWordInspector();updateStatus();
+  }
+  function refreshGridPreservingTimeline() {
+    const vp=$('timelineViewport'),left=vp?.scrollLeft||0,top=vp?.scrollTop||0;
+    renderGrid();
+    if(vp){vp.scrollLeft=left;vp.scrollTop=top;}
+  }
+  function syncWordClip(lineIndex,cueIndex) {
+    const row=rows[lineIndex],cue=row?.wordCues?.[cueIndex];
+    const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${lineIndex}"][data-cue-index="${cueIndex}"]`);
+    const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`);
+    const windowStart=Number(lane?.dataset.windowStart)||0,pps=Number(lane?.dataset.pps)||timelinePps;
+    if(clip&&cue){clip.style.left=`${(cue.start-windowStart)*pps}px`;clip.style.width=`${Math.max(12,(cue.end-cue.start)*pps)}px`;clip.title=`${String(cue.text||'').trim()} · ${fmtTime(cue.start)}–${fmtTime(cue.end)}${cue.agent?' · '+cue.agent:''}`;}
+    const label=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-label`);
+    if(label&&row){const timeSpan=label.querySelector('.lane-start');if(timeSpan)timeSpan.textContent=fmtTime(row.start,2);}
+  }
+  function applyWordTime(lineIndex,cueIndex,field,parsed) {
+    const row=rows[lineIndex],cue=row?.wordCues?.[cueIndex];if(!cue)return;
+    if(field==='start'&&parsed>=cue.end){toast('A word start must be earlier than its end.',true);updateWordInspector();return;}
+    if(field==='end'&&parsed<=cue.start){toast('A word end must be later than its start.',true);updateWordInspector();return;}
+    cue[field]=parsed;
+    if(cueIndex===0&&field==='start')row.start=parsed; // LRC line timestamp follows first word start.
+    if(row.rawEnd===null||row.rawEnd<cue.end)row.rawEnd=cue.end;
+    lastEditedIndex=lineIndex;selectedIndex=lineIndex;selectedWordRef={lineIndex,cueIndex};replayFromAnchor=true;
+    rerenderWordTimelinePreservingView();updateWordInspector();updatePreview();updateStatus();updateLiveHighlight();
+  }
+  function setWordTime(lineIndex,cueIndex,field,value) {
+    const parsed=parseTime(value);
+    if(parsed===null||!Number.isFinite(parsed)||parsed<0){toast('Timestamp must be MM:SS.mmm, HH:MM:SS.mmm, or seconds.',true);updateWordInspector();return;}
+    applyWordTime(lineIndex,cueIndex,field,parsed);
+  }
+  function editSelectedWordText(value) {
+    const record=cueForRef();if(!record)return;
+    const {row,cue,lineIndex,cueIndex}=record;
+    const old=String(cue.text||'');const leading=(old.match(/^\s*/)||[''])[0],trailing=(old.match(/\s*$/)||[''])[0];
+    cue.text=leading+String(value).trim()+trailing;
+    row.text=row.wordCues.map(c=>c.text).join('');row.originalText=row.text;
+    const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${lineIndex}"][data-cue-index="${cueIndex}"] .word-label`);
+    if(clip)clip.textContent=String(cue.text||'').trim()||'(empty)';
+    const laneLabel=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-label span:last-child`);
+    if(laneLabel){laneLabel.textContent=row.text;laneLabel.title=row.text;}
+    updateWordInspector();updatePreview();updateStatus();updateLiveHighlight();
+  }
+  function nudgeSelectedWord(delta) {
+    const record=cueForRef();if(!record)return;
+    const refs=[...selectedWordKeys].map(parseWordKey).map(ref=>({...ref,cue:rows[ref.lineIndex]?.wordCues?.[ref.cueIndex]})).filter(ref=>ref.cue);
+    if(!refs.length)refs.push({lineIndex:record.lineIndex,cueIndex:record.cueIndex,cue:record.cue});
+    const minStart=Math.min(...refs.map(ref=>ref.cue.start));const shift=Math.max(-minStart,delta);
+    for(const ref of refs){const {lineIndex,cueIndex,cue}=ref;const row=rows[lineIndex];cue.start=Math.max(0,cue.start+shift);cue.end=Math.max(cue.start+.01,cue.end+shift);if(cueIndex===0)row.start=cue.start;if(row.rawEnd===null||row.rawEnd<cue.end)row.rawEnd=cue.end;}
+    lastEditedIndex=record.lineIndex;selectedIndex=record.lineIndex;replayFromAnchor=true;
+    rerenderWordTimelinePreservingView();updateWordInspector();updatePreview();updateStatus();updateLiveHighlight();
+  }
+  function moveSelectedWord(direction) {
+    const refs=allWordRefs();if(!refs.length)return;
+    let index=refs.findIndex(r=>r.lineIndex===selectedWordRef?.lineIndex&&r.cueIndex===selectedWordRef?.cueIndex);
+    if(index<0)index=0;else index=Math.max(0,Math.min(refs.length-1,index+direction));
+    selectWord(refs[index].lineIndex,refs[index].cueIndex,true);
+  }
+  function phraseExtent(lineIndex) {
+    const row=rows[lineIndex];const cues=row?.wordCues||[];let start=Number(row?.start)||0,end=getLineEnd(lineIndex);
+    if(cues.length){start=Math.min(...cues.map(c=>Number(c.start)||0));end=Math.max(...cues.map(c=>Number(c.end)||0));}
+    if(!(end>start))end=start+Math.max(.25,String(row?.text||'').length*.045);
+    return {start,end,span:end-start};
+  }
+  function computeFitZoom() {
+    const context=Math.max(0,Number(settings.timelineOverlap)||0);let longest=.5;
+    rows.forEach((_,i)=>{const p=phraseExtent(i);longest=Math.max(longest,p.span+2*context);});
+    return Math.max(2,timelineTrackWidth/longest);
+  }
+  function getLineWindow(lineIndex,focusTime=null,focusRatio=.5) {
+    const phrase=phraseExtent(lineIndex),duration=timelineDuration();
+    const fullSpan=Math.max(.08,Number(timelineZoom)||computeFitZoom());
+    const visibleSpan=Math.min(duration,timelineTrackWidth/fullSpan);
+    let center=(phrase.start+phrase.end)/2;
+    if(Number.isFinite(focusTime))center=focusTime;
+    else if(phrase.span>visibleSpan){
+      const selectedCue=selectedWordRef?.lineIndex===lineIndex?rows[lineIndex]?.wordCues?.[selectedWordRef.cueIndex]:null;
+      if(selectedCue)center=(selectedCue.start+selectedCue.end)/2;
+      else {
+        const selectedKey=[...selectedWordKeys].map(parseWordKey).find(ref=>ref.lineIndex===lineIndex),selected=selectedKey?rows[lineIndex]?.wordCues?.[selectedKey.cueIndex]:null;
+        if(selected)center=(selected.start+selected.end)/2;
+        else if(activePlaybackIndex===lineIndex&&activeWordIndex>=0&&rows[lineIndex]?.wordCues?.[activeWordIndex]){const c=rows[lineIndex].wordCues[activeWordIndex];center=(c.start+c.end)/2;}
+      }
+    }
+    const ratio=Number.isFinite(focusRatio)?Math.max(0,Math.min(1,focusRatio)):.5;
+    let start=Number.isFinite(focusTime)?focusTime-visibleSpan*ratio:center-visibleSpan/2;
+    start=Math.max(0,Math.min(Math.max(0,duration-visibleSpan),start));
+    return {start,end:start+visibleSpan,phraseStart:phrase.start,phraseEnd:phrase.end,phraseSpan:phrase.span,context:Math.max(0,(visibleSpan-phrase.span)/2),pps:timelineTrackWidth/visibleSpan};
+  }
+  function lanePixelsPerSecond(lineIndex) {
+    const win=getLineWindow(lineIndex);return timelineTrackWidth/Math.max(.08,win.end-win.start);
+  }
+  function setLaneWindowStart(lineIndex,start) {
+    const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`);if(!lane)return;
+    const oldStart=Number(lane.dataset.windowStart)||0,oldEnd=Number(lane.dataset.windowEnd)||0,span=Math.max(.08,oldEnd-oldStart),duration=timelineDuration();
+    start=Math.max(0,Math.min(Math.max(0,duration-span),start));const end=start+span,pps=timelineTrackWidth/span;
+    lane.dataset.windowStart=String(start);lane.dataset.windowEnd=String(end);lane.dataset.pps=String(pps);
+    drawLaneWaveform(lane.querySelector('.lane-waveform-canvas'),start,end);
+    for(const clip of lane.querySelectorAll('.word-clip[data-line-index]'))syncWordClip(lineIndex,Number(clip.dataset.cueIndex));
+    updatePlayheadOnLane(lineIndex);
+  }
+  function repositionLaneWindow(lineIndex,centerTime,focusRatio=.5) {
+    const win=getLineWindow(lineIndex,centerTime,focusRatio);setLaneWindowStart(lineIndex,win.start);
+  }
+  function setLaneWindowAtAnchor(lineIndex,anchorTime,ratio) {
+    const duration=timelineDuration(),visibleSpan=Math.min(duration,timelineTrackWidth/Math.max(.08,timelineZoom));
+    setLaneWindowStart(lineIndex,anchorTime-Math.max(0,Math.min(1,ratio))*visibleSpan);
+  }
+  function drawLaneWaveform(canvas,windowStart,windowEnd) {
+    if(!canvas)return;
+    const height=66,width=Math.max(120,timelineTrackWidth),dpr=Math.min(2,window.devicePixelRatio||1);
+    canvas.width=Math.max(1,Math.ceil(width*dpr));canvas.height=Math.ceil(height*dpr);canvas.style.width='100%';canvas.style.height=`${height}px`;
+    const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,width,height);ctx.fillStyle='#0d1723';ctx.fillRect(0,0,width,height);
+    ctx.strokeStyle='#2c4055';ctx.beginPath();ctx.moveTo(0,height/2+.5);ctx.lineTo(width,height/2+.5);ctx.stroke();
+    const span=Math.max(.08,windowEnd-windowStart);let tick=1;if(span>8)tick=2;if(span>18)tick=5;if(span>45)tick=10;
+    ctx.font='9px ui-monospace,Consolas,monospace';ctx.textBaseline='top';
+    for(let sec=Math.ceil(windowStart/tick)*tick;sec<windowEnd;sec+=tick){const x=(sec-windowStart)/span*width;ctx.strokeStyle='#33445a';ctx.beginPath();ctx.moveTo(x+.5,0);ctx.lineTo(x+.5,height);ctx.stroke();if(x>28&&x<width-28){ctx.fillStyle='#91a4ba';ctx.fillText(fmtTime(sec,1),x+3,2);}}
+    if(!waveformPeaks){ctx.fillStyle='#8294aa';ctx.font='11px system-ui,sans-serif';ctx.fillText(player.src?'Waveform unavailable — timing lanes remain editable':'Import audio to draw waveforms',9,22);return;}
+    const {min,max,rate,duration}=waveformPeaks;ctx.strokeStyle='#63bba8';ctx.lineWidth=1;ctx.beginPath();
+    for(let x=0;x<width;x++){
+      const t0=windowStart+(x/width)*span,t1=Math.min(duration,windowStart+((x+1)/width)*span);if(t0>duration)break;
+      const b0=Math.min(min.length-1,Math.max(0,Math.floor(t0*rate))),b1=Math.min(min.length-1,Math.max(b0+1,Math.ceil(t1*rate)-1));
+      let low=0,high=0;for(let b=b0;b<=b1;b++){if(min[b]<low)low=min[b];if(max[b]>high)high=max[b];}
+      const top=height/2-Math.max(0,Math.min(1,high))*(height*.40),bottom=height/2+Math.max(0,Math.min(1,-low))*(height*.40);
+      ctx.moveTo(x+.5,top);ctx.lineTo(x+.5,bottom);
+    }
+    ctx.stroke();
+    ctx.fillStyle='#96a9bc';ctx.font='9px ui-monospace,Consolas,monospace';ctx.textBaseline='bottom';ctx.fillText(fmtTime(windowStart,2),4,height-2);ctx.fillText(fmtTime(windowEnd,2),Math.max(4,width-58),height-2);
+  }
+  function rerenderWordTimelinePreservingView(fit=false) {
+    const vp=$('timelineViewport'),top=vp?.scrollTop||0;
+    renderWordGrid();
+    if(vp)vp.scrollTop=fit?0:Math.min(top,Math.max(0,vp.scrollHeight-vp.clientHeight));
+  }
+  function setTimelineGeometry() {
+    const vp=$('timelineViewport');
+    const oldWidth=timelineTrackWidth;const outerWidth=Math.max(220,(vp?.clientWidth||900)-2);
+    const labelWidth=Math.min(TIMELINE_LABEL_WIDTH,Math.max(94,outerWidth*.23));
+    timelineTrackWidth=Math.max(120,outerWidth-labelWidth);
+    $('timelineInner').style.width=`${outerWidth}px`;
+    $('timelineInner').style.setProperty('--label-width',`${labelWidth}px`);
+    if(!timelineGeometryReady||!(timelineZoom>0))timelineZoom=computeFitZoom();
+    else if(Math.abs(timelineTrackWidth-oldWidth)>2)timelineZoom*=timelineTrackWidth/Math.max(1,oldWidth);
+    timelineGeometryReady=true;timelinePps=timelineZoom;
+    const minimum=Math.max(2,computeFitZoom()/4);timelineZoom=Math.max(minimum,Math.min(2000,timelineZoom));timelinePps=timelineZoom;
+    $('timelineZoomLabel').textContent=`${timelineZoom.toFixed(0)} px/sec · ${(timelineTrackWidth/Math.max(1,timelineZoom)).toFixed(2)}s view`;
+  }
+  function safeCssColor(value) {
+    const s=String(value||'').trim();
+    return /^(#[0-9a-f]{3,8}|rgba?\([\d\s.,%+-]+\)|hsla?\([\d\s.,%+-]+\)|[a-z]{3,20})$/i.test(s)?s:'';
+  }
+  function applyWordDragState(d) {
+    const row=rows[d.lineIndex],cue=row?.wordCues?.[d.cueIndex];if(!cue)return;
+    const delta=(d.lastClientX-d.startX)/Math.max(1,d.pps)+(d.autoDelta||0);
+    if(d.mode==='start')cue.start=Math.max(0,Math.min(d.origEnd-.01,d.origStart+delta));
+    else if(d.mode==='end')cue.end=Math.max(d.origStart+.01,d.origEnd+delta);
+    else {
+      const minStart=Math.min(...d.items.map(item=>item.start));const shift=Math.max(-minStart,delta);
+      for(const item of d.items){const c=rows[item.lineIndex]?.wordCues?.[item.cueIndex];if(!c)continue;c.start=Math.max(0,item.start+shift);c.end=Math.max(c.start+.01,item.end+shift);if(item.cueIndex===0)rows[item.lineIndex].start=c.start;if(rows[item.lineIndex].rawEnd===null||rows[item.lineIndex].rawEnd<c.end)rows[item.lineIndex].rawEnd=c.end;syncWordClip(item.lineIndex,item.cueIndex);}
+    }
+    if(d.mode!=='move'){if(d.cueIndex===0)row.start=cue.start;if(row.rawEnd===null||row.rawEnd<cue.end)row.rawEnd=cue.end;syncWordClip(d.lineIndex,d.cueIndex);}
+    d.changed=Math.abs(delta)>.002;
+    const inspectorStart=$('wordStart'),inspectorEnd=$('wordEnd');if(document.activeElement!==inspectorStart)inspectorStart.value=fmtTime(cue.start);if(document.activeElement!==inspectorEnd)inspectorEnd.value=fmtTime(cue.end);
+    updateWordInspector();updatePreview();updateStatus();updateLiveHighlight(true);
+  }
+  function runDragAutoScroll(now) {
+    autoScrollFrame=null;const d=wordDragState;if(!d)return;
+    const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${d.lineIndex}"] .timeline-lane-content`);if(!lane)return;
+    const rect=lane.getBoundingClientRect(),x=d.lastClientX,edge=36;let strength=0;
+    if(x<rect.left+edge)strength=-Math.min(1,(rect.left+edge-x)/edge);
+    else if(x>rect.right-edge)strength=Math.min(1,(x-(rect.right-edge))/edge);
+    const elapsed=Math.min(.05,Math.max(0,(now-(d.lastAutoTime||now))/1000));d.lastAutoTime=now;
+    if(strength&&elapsed>0){
+      const seconds=strength*settings.dragAutoScrollSpeed*elapsed/Math.max(1,d.pps);d.autoDelta=(d.autoDelta||0)+seconds;
+      const ws=Number(lane.dataset.windowStart)||0;setLaneWindowStart(d.lineIndex,ws+seconds);
+      applyWordDragState(d);
+    }
+    if(wordDragState)autoScrollFrame=requestAnimationFrame(runDragAutoScroll);
+  }
+  function attachClipInteractions(clip,lineIndex,cueIndex) {
+    clip.addEventListener('click',e=>{e.stopPropagation();if(e.detail>0)return;selectWord(lineIndex,cueIndex,false);});
+    clip.addEventListener('focus',()=>{if(!selectedWordKeys.has(wordKey(lineIndex,cueIndex)))selectWord(lineIndex,cueIndex,false);});
+    clip.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();selectWord(lineIndex,cueIndex,false);$('wordText').focus();}});
+    clip.addEventListener('pointerdown',e=>{
+      if(e.button!==0)return;
+      const key=wordKey(lineIndex,cueIndex),ctrlDrag=(e.ctrlKey||e.metaKey)&&selectedWordKeys.has(key)&&selectedWordKeys.size>1;
+      if(e.shiftKey){selectWord(lineIndex,cueIndex,false,true,true);e.preventDefault();return;}
+      if(!selectedWordKeys.has(key))selectWord(lineIndex,cueIndex,false);
+      else {selectedIndex=lineIndex;selectedWordRef={lineIndex,cueIndex};lastEditedIndex=lineIndex;updateWordInspector();}
+      const row=rows[lineIndex],cue=row?.wordCues?.[cueIndex];if(!cue)return;
+      const edge=e.target instanceof HTMLElement?e.target.dataset.resize:'';
+      const groupKeys=!ctrlDrag&&selectedWordKeys.has(key)&&selectedWordKeys.size>1&&edge===''?[...selectedWordKeys]:[key];
+      const items=groupKeys.map(k=>{const ref=parseWordKey(k),c=rows[ref.lineIndex]?.wordCues?.[ref.cueIndex];return c?{...ref,start:c.start,end:c.end}:null;}).filter(Boolean);
+      const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`);
+      wordDragState={pointerId:e.pointerId,lineIndex,cueIndex,mode:edge==='start'?'start':edge==='end'?'end':'move',startX:e.clientX,lastClientX:e.clientX,origStart:cue.start,origEnd:cue.end,pps:Number(lane?.dataset.pps)||timelinePps,items,groupMove:items.length>1,changed:false,autoDelta:0,lastAutoTime:performance.now()};
+      clip.setPointerCapture?.(e.pointerId);if(!autoScrollFrame)autoScrollFrame=requestAnimationFrame(runDragAutoScroll);e.preventDefault();
+    });
+    clip.addEventListener('pointermove',e=>{
+      const d=wordDragState;if(!d||d.pointerId!==e.pointerId||d.lineIndex!==lineIndex||d.cueIndex!==cueIndex)return;
+      d.lastClientX=e.clientX;applyWordDragState(d);
+    });
+    const endDrag=e=>{
+      if(!wordDragState||wordDragState.pointerId!==e.pointerId||wordDragState.lineIndex!==lineIndex||wordDragState.cueIndex!==cueIndex)return;
+      const changed=wordDragState.changed,wasGroupMove=wordDragState.groupMove;wordDragState=null;if(autoScrollFrame){cancelAnimationFrame(autoScrollFrame);autoScrollFrame=null;}
+      if(changed){lastEditedIndex=lineIndex;selectedIndex=lineIndex;replayFromAnchor=true;rerenderWordTimelinePreservingView();refreshWordSelection();updatePreview();updateStatus();updateLiveHighlight();updateWordInspector();toast(wasGroupMove?'Selected words shifted together.':'Word timing updated.');}
+    };
+    clip.addEventListener('pointerup',endDrag);clip.addEventListener('pointercancel',endDrag);
+  }
+  function renderWordGrid() {
+    const tbody=$('timelineLanes');tbody.textContent='';activePlaybackIndex=-1;activeWordIndex=-1;
+    $('lineTableWrap').classList.add('hidden');$('wordTimelineEditor').classList.remove('hidden');
+    setTimelineGeometry();
+    if(!hasWordTiming){tbody.innerHTML='<div class="timeline-empty"><strong>No word-level TTML cues</strong>Import a word-timed TTML file to see each lyric line above its own waveform segment. The line/LRC view remains available for simpler timing edits.</div>';$('wordInspector').classList.add('hidden');return;}
+    const frag=document.createDocumentFragment();let cueCount=0;
+    for(let lineIndex=0;lineIndex<rows.length;lineIndex++){
+      const row=rows[lineIndex],win=getLineWindow(lineIndex),pps=timelineTrackWidth/Math.max(.08,win.end-win.start);
+      const lane=document.createElement('div');lane.className='timeline-lane-row';lane.dataset.lineIndex=String(lineIndex);lane.style.setProperty('--lane-height','122px');
+      const label=document.createElement('div');label.className='timeline-label';
+      const number=document.createElement('strong');number.textContent=`Line ${lineIndex+1}`;
+      const start=document.createElement('span');start.className='lane-start';start.textContent=fmtTime(row.start,2);
+      const summary=document.createElement('span');summary.textContent=row.text;summary.title=row.text;
+      label.append(number,start,summary);
+      const content=document.createElement('div');content.className='timeline-lane-content';content.style.width=`${timelineTrackWidth}px`;content.dataset.windowStart=String(win.start);content.dataset.windowEnd=String(win.end);content.dataset.pps=String(pps);
+      const waveWrap=document.createElement('div');waveWrap.className='lane-waveform-wrapper';
+      const canvas=document.createElement('canvas');canvas.className='lane-waveform-canvas';canvas.setAttribute('aria-label',`Waveform for line ${lineIndex+1}: ${row.text}`);canvas.dataset.lineIndex=String(lineIndex);waveWrap.append(canvas);drawLaneWaveform(canvas,win.start,win.end);
+      const track=document.createElement('div');track.className='lane-word-track';track.dataset.lineIndex=String(lineIndex);track.style.setProperty('--grid-step',`${Math.max(20,Math.min(100,Math.round(timelineTrackWidth/12)))}px`);
+      if(!row.wordCues||!row.wordCues.length){const note=document.createElement('div');note.className='word-clip no-cue';note.style.left=`${Math.max(0,(row.start-win.start)*pps)}px`;note.style.width=`${Math.min(timelineTrackWidth,Math.max(80,Math.min(400,row.text.length*7+30)))}px`;note.textContent=row.text||'(no timed words)';note.title='This line has no word-level timing cues';track.append(note);}
+      else row.wordCues.forEach((cue,cueIndex)=>{
+        cueCount++;const clip=document.createElement('div');clip.className='word-clip';clip.dataset.lineIndex=String(lineIndex);clip.dataset.cueIndex=String(cueIndex);clip.tabIndex=0;clip.setAttribute('role','button');clip.setAttribute('aria-label',`Line ${lineIndex+1}, word ${cueIndex+1}, ${String(cue.text||'').trim()}, ${fmtTime(cue.start)} to ${fmtTime(cue.end)}`);
+        clip.style.left=`${(cue.start-win.start)*pps}px`;clip.style.width=`${Math.max(12,(cue.end-cue.start)*pps)}px`;clip.title=`${String(cue.text||'').trim()} · ${fmtTime(cue.start)}–${fmtTime(cue.end)}${cue.agent?' · '+cue.agent:''}`;
+        const color=safeCssColor(cue.color);if(color)clip.style.color=color;
+        if(String(cue.ttsStyle||'').toLowerCase()==='italic')clip.classList.add('singer-italic');
+        if(['bold','bolder','700','800','900'].includes(String(cue.ttsWeight||'').toLowerCase()))clip.classList.add('singer-bold');
+        const leftHandle=document.createElement('span');leftHandle.className='word-edge left';leftHandle.dataset.resize='start';leftHandle.setAttribute('aria-hidden','true');
+        const labelText=document.createElement('span');labelText.className='word-label';labelText.textContent=String(cue.text||'').trim()||'(empty)';
+        const rightHandle=document.createElement('span');rightHandle.className='word-edge right';rightHandle.dataset.resize='end';rightHandle.setAttribute('aria-hidden','true');
+        clip.append(leftHandle,labelText,rightHandle);if(selectedWordKeys.has(wordKey(lineIndex,cueIndex)))clip.classList.add('selected');
+        attachClipInteractions(clip,lineIndex,cueIndex);track.append(clip);
+      });
+      const playhead=document.createElement('div');playhead.className='lane-playhead visible';playhead.dataset.lineIndex=String(lineIndex);playhead.setAttribute('aria-hidden','true');const playheadLabel=document.createElement('span');playheadLabel.className='lane-playhead-time';playhead.append(playheadLabel);
+      content.append(waveWrap,track,playhead);lane.append(label,content);frag.append(lane);
+    }
+    tbody.append(frag);$('gridStatus').textContent=`${rows.length} lyric lane(s) · ${cueCount} timed word(s) · box-select to shift multiple words`;
+    $('wordInspector').classList.toggle('hidden',!cueForRef());updateWordInspector();refreshWordSelection();updateLiveHighlight();
+  }
+  function startMarquee(e) {
+    if(e.button!==0||!e.shiftKey||e.target.closest('.word-clip'))return;
+    const content=e.target.closest('.timeline-lane-content');if(!content)return;
+    marqueeState={pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,x:e.clientX,y:e.clientY,moved:false};
+    $('timelineLanes').setPointerCapture?.(e.pointerId);e.preventDefault();
+  }
+  function updateMarquee(e) {
+    const m=marqueeState;if(!m||m.pointerId!==e.pointerId)return;
+    m.x=e.clientX;m.y=e.clientY;
+    if(Math.hypot(m.x-m.startX,m.y-m.startY)<4)return;
+    m.moved=true;const innerRect=$('timelineInner').getBoundingClientRect();const box=$('timelineSelectionBox');
+    const left=Math.min(m.startX,m.x)-innerRect.left,top=Math.min(m.startY,m.y)-innerRect.top,w=Math.abs(m.x-m.startX),h=Math.abs(m.y-m.startY);
+    Object.assign(box.style,{left:`${left}px`,top:`${top}px`,width:`${w}px`,height:`${h}px`});box.classList.add('visible');
+    const rect={left:Math.min(m.startX,m.x),top:Math.min(m.startY,m.y),right:Math.max(m.startX,m.x),bottom:Math.max(m.startY,m.y)};
+    const selected=new Set();
+    for(const clip of $('timelineLanes').querySelectorAll('.word-clip[data-line-index]')){const r=clip.getBoundingClientRect();if(r.right>=rect.left&&r.left<=rect.right&&r.bottom>=rect.top&&r.top<=rect.bottom)selected.add(wordKey(Number(clip.dataset.lineIndex),Number(clip.dataset.cueIndex)));}
+    selectedWordKeys=selected;refreshWordSelection();
+  }
+  function finishMarquee(e) {
+    const m=marqueeState;if(!m||m.pointerId!==e.pointerId)return;marqueeState=null;$('timelineSelectionBox').classList.remove('visible');
+    if(m.moved){suppressTimelineClick=true;setTimeout(()=>{suppressTimelineClick=false;},0);const first=[...selectedWordKeys][0];if(first){selectedWordRef=parseWordKey(first);selectedIndex=selectedWordRef.lineIndex;lastEditedIndex=selectedIndex;}else selectedWordRef=null;updateWordInspector();updateStatus();toast(`${selectedWordKeys.size} word(s) selected. Drag a selected clip or use arrow keys to shift the group.`);}
+  }
+  function renderGrid() {
+    $('viewWords').disabled=!hasWordTiming;
+    $('viewLines').classList.toggle('primary',gridMode==='lines');$('viewWords').classList.toggle('primary',gridMode==='words');
+    $('gridDescription').textContent=gridMode==='words'?'TTML timeline: every lyric row has its own waveform strip and word clips, with no song-wide horizontal scrolling. Box-select and shift multiple words.':'Edit line starts and lyrics. Changing a line start moves its TTML word cues by the same amount.';
+    if(gridMode==='words')renderWordGrid();else {
+      $('wordTimelineEditor').classList.add('hidden');$('lineTableWrap').classList.remove('hidden');
+      $('gridHead').innerHTML='<tr><th class="num">#</th><th class="time">Time</th><th>Lyric</th></tr>';
+      $('addLine').disabled=false;$('deleteLine').disabled=false;renderLineGrid();
+    }
+    if(gridMode==='words'){$('addLine').disabled=true;$('deleteLine').disabled=true;}
+    updateLiveHighlight();
+  }
+
+  function shiftRowTime(index,newTime,fromDirect=false) {
+    const row=rows[index]; if(!row)return; const delta=newTime-row.start; row.start=Math.max(0,newTime);
+    if(Math.abs(delta)>1e-9&&row.rawEnd!==null) row.rawEnd=Math.max(row.start+.05,row.rawEnd+delta);
+    if(Math.abs(delta)>1e-9&&row.wordCues) row.wordCues=row.wordCues.map(c=>({...c,start:Math.max(0,c.start+delta),end:Math.max(0.01,c.end+delta)}));
+    if(fromDirect||Math.abs(delta)>0) lastEditedIndex=index;
+    if(Math.abs(delta)>0) replayFromAnchor=true;
+    const tr=$('gridBody').querySelector(`tr[data-index="${index}"]`); if(tr){const input=tr.querySelector('.time-input');if(input&&document.activeElement!==input)input.value=fmtTime(row.start);}
+    updatePreview();
+  }
+  function setSelected(index,focusRow=false) {
+    if(index<0||index>=rows.length)return;
+    if(gridMode==='words'){
+      const first=(rows[index].wordCues||[]).length?0:-1;
+      if(first>=0){selectWord(index,first,focusRow);return;}
+      toast(`Line ${index+1} has no word-level TTML cues.`,true);return;
+    }
+    selectedIndex=index;
+    for(const tr of $('gridBody').querySelectorAll('tr[data-index]'))tr.classList.toggle('selected',Number(tr.dataset.index)===index);
+    if(settings.autoFollow){const tr=$('gridBody').querySelector(`tr[data-index="${index}"]`);tr?.scrollIntoView({block:'nearest'});}
+    if(focusRow){const row=$('gridBody').querySelector(`tr[data-index="${index}"]`);row?.focus();}
+    updateStatus();
+  }
+  function nudgeSelected(delta) {
+    if(selectedIndex<0||selectedIndex>=rows.length)return;
+    shiftRowTime(selectedIndex,Math.max(0,rows[selectedIndex].start+delta));
+    const input=$('gridBody').querySelector(`tr[data-index="${selectedIndex}"] .time-input`); if(input) input.value=fmtTime(rows[selectedIndex].start);
+    renderPreviewOnly(); updateStatus(); updateLiveHighlight();
+  }
+  function getPlayheadLineIndex(time=Number(player.currentTime)||0,activeIndex=-1) {
+    if(activeIndex>=0)return activeIndex;
+    if(!rows.length)return -1;
+    let best=0,bestDistance=Infinity;
+    for(let i=0;i<rows.length;i++){
+      const p=phraseExtent(i);let distance=0;
+      if(time<p.start)distance=p.start-time;else if(time>p.end)distance=time-p.end;
+      if(distance<bestDistance){bestDistance=distance;best=i;}
+    }
+    return best;
+  }
+  function updatePlayheadOnLane(lineIndex) {
+    const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`);if(!lane)return;
+    const playhead=lane.querySelector('.lane-playhead');if(!playhead)return;
+    const time=Number(player.currentTime)||0,ws=Number(lane.dataset.windowStart)||0,we=Number(lane.dataset.windowEnd)||0,pps=Number(lane.dataset.pps)||1;
+    const outsideLeft=time<ws,outsideRight=time>we,offscreen=outsideLeft||outsideRight;
+    const x=Math.max(0,Math.min(timelineTrackWidth,(time-ws)*pps));
+    playhead.classList.toggle('offscreen-left',outsideLeft);playhead.classList.toggle('offscreen-right',outsideRight);playhead.style.left=`${x}px`;
+    const label=playhead.querySelector('.lane-playhead-time');if(label){label.textContent=fmtTime(time,2);label.style.fontSize=`${settings.playheadLabelSize}px`;}
+  }
+  function updateLiveHighlight(suppressAutoPan=false) {
+    const time=Number(player.currentTime)||0;
+    let candidate=-1;
+    for(let i=0;i<rows.length;i++){if(rows[i].start<=time+1e-7)candidate=i;else break;}
+    let nextIndex=-1;
+    for(let i=candidate;i>=0;i--){if(time>=rows[i].start && time<getLineEnd(i)){nextIndex=i;break;}}
+    let nextWord=-1;
+    if(nextIndex>=0){
+      const row=rows[nextIndex];
+      if(row.wordCues&&row.text===row.originalText){
+        nextWord=row.wordCues.findIndex(c=>time>=c.start && time<c.end);
+        if(nextWord>=0){
+          const wordExists=gridMode==='words'
+            ? $('timelineLanes').querySelector(`.word-clip[data-line-index="${nextIndex}"][data-cue-index="${nextWord}"]`)
+            : $('gridBody').querySelector(`tr[data-index="${nextIndex}"] .word-token[data-word-index="${nextWord}"]`);
+          if(!wordExists)nextWord=-1;
+        }
+      }
+    }
+    if(gridMode==='words'){
+      const playheadIndex=getPlayheadLineIndex(time,nextIndex);
+      for(const lane of $('timelineLanes').querySelectorAll('.timeline-lane-row')){
+        const lineIndex=Number(lane.dataset.lineIndex),isActive=lineIndex===nextIndex,isPlayhead=lineIndex===playheadIndex;lane.classList.toggle('playing-lane',isActive);
+        let content=lane.querySelector('.timeline-lane-content');
+        if(isPlayhead&&content&&!suppressAutoPan&&!(wavePanState&&wavePanState.lineIndex===lineIndex)){
+          const ws=Number(content.dataset.windowStart)||0,we=Number(content.dataset.windowEnd)||0,span=we-ws;
+          const needsReveal=time<ws||time>we;
+          const nearingEdge=span>0&&phraseExtent(lineIndex).span>span&&!player.paused&&(time<ws+span*.18||time>we-span*.18);
+          if(needsReveal||nearingEdge){repositionLaneWindow(lineIndex,time,.5);content=lane.querySelector('.timeline-lane-content');}
+        }
+        if(isPlayhead&&content){const marker=lane.querySelector('.lane-playhead');marker?.classList.add('visible');updatePlayheadOnLane(lineIndex);}else{const marker=lane.querySelector('.lane-playhead');marker?.classList.remove('visible');}
+      }
+      for(const clip of $('timelineLanes').querySelectorAll('.word-clip[data-line-index]'))clip.classList.toggle('playing-word-row',Number(clip.dataset.lineIndex)===nextIndex&&Number(clip.dataset.cueIndex)===nextWord);
+      if(nextIndex!==activePlaybackIndex&&!player.paused&&settings.autoFollow&&activeScreen()==='edit'&&nextIndex>=0){const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${nextIndex}"]`);lane?.scrollIntoView({block:'nearest'});}
+      activePlaybackIndex=nextIndex;activeWordIndex=nextWord;return;
+    }
+    if(activePlaybackIndex!==nextIndex){
+      if(activePlaybackIndex>=0){const old=$('gridBody').querySelector(`tr[data-index="${activePlaybackIndex}"]`);old?.classList.remove('playing');old?.querySelector('.playing-word')?.classList.remove('playing-word');}
+      activePlaybackIndex=nextIndex;activeWordIndex=-1;
+      if(activePlaybackIndex>=0){const current=$('gridBody').querySelector(`tr[data-index="${activePlaybackIndex}"]`);current?.classList.add('playing');
+        const typing=document.activeElement instanceof HTMLElement&&document.activeElement.matches('.lyric-editor,.time-input');
+        if(!typing&&settings.autoFollow&&!player.paused&&activeScreen()==='edit')current?.scrollIntoView({block:'nearest'});
+      }
+    }
+    if(activeWordIndex!==nextWord){
+      if(activePlaybackIndex>=0){const tr=$('gridBody').querySelector(`tr[data-index="${activePlaybackIndex}"]`);tr?.querySelector('.playing-word')?.classList.remove('playing-word');if(nextWord>=0)tr?.querySelector(`.word-token[data-word-index="${nextWord}"]`)?.classList.add('playing-word');}
+      activeWordIndex=nextWord;
+    }
+  }
+  function seekPlayhead(delta) {
+    if(!rows.length&&!player.src)return;
+    const duration=timelineDuration();player.currentTime=Math.max(0,Math.min(duration,(Number(player.currentTime)||0)+delta));replayFromAnchor=false;updateTimeReadout();updateLiveHighlight();
+  }
+  function seekWordBoundary(direction) {
+    const refs=allWordRefs().filter(r=>Number.isFinite(r.cue.start)&&Number.isFinite(r.cue.end)).sort((a,b)=>a.cue.start-b.cue.start);
+    if(!refs.length){seekPlayhead(direction*settings.nudgeStep);return;}
+    const time=Number(player.currentTime)||0;let target=null;
+    if(direction<0){
+      const containing=refs.find(r=>time>=r.cue.start&&time<=r.cue.end);
+      if(containing&&time>containing.cue.start+.005)target=containing.cue.start;
+      else {for(const r of refs){if(r.cue.start<time-.005)target=r.cue.start;else break;}}
+      if(target===null)target=refs[0].cue.start;
+    }else{
+      const containing=refs.find(r=>time>=r.cue.start&&time<r.cue.end);
+      if(containing)target=containing.cue.end;
+      else {const next=refs.find(r=>r.cue.start>time+.005);target=next?next.cue.end:refs[refs.length-1].cue.end;}
+    }
+    player.currentTime=Math.max(0,Math.min(timelineDuration(),target));replayFromAnchor=false;updateTimeReadout();updateLiveHighlight();
+  }
+  function playPause() {
+    if(!player.src){toast('Import an audio file first.',true);return;}
+    if(!player.paused){player.pause();return;}
+    if(replayFromAnchor){const idx=lastEditedIndex>=0?lastEditedIndex:selectedIndex;if(idx>=0&&rows[idx])player.currentTime=Math.max(0,rows[idx].start-settings.replayLead);replayFromAnchor=false;}
+    player.play().catch(err=>toast(`Playback could not start: ${err.message||err}`,true));
+  }
+  function lrcOutput() {
+    const lines=[...metadata];
+    rows.forEach(row=>lines.push(lrcTimestamp(row.start)+row.text));
+    return lines.join('\n')+'\n';
+  }
+  function ttmlOutput() {
+    const lang=String(settings.language||'en').replace(/[^A-Za-z0-9-]/g,'')||'en';
+    let head=ttmlHeadInner.trim();
+    if(!head) head='<styling/><metadata/>';
+    const parts=['<?xml version="1.0" encoding="UTF-8"?>',`<tt xmlns="http://www.w3.org/ns/ttml" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns:tts="http://www.w3.org/ns/ttml#styling" xml:lang="${escapeXml(lang)}">`,`  <head>${head}</head>`,'  <body>','    <div>'];
+    rows.forEach((row,i)=>{
+      const start=Math.max(0,row.start),end=getLineEnd(i);
+      const hasValidCues=row.wordCues&&row.wordCues.length&&row.text===row.originalText;
+      const pAttrs=[`begin="${ttmlTime(start)}"`,`end="${ttmlTime(end)}"`];
+      if(row.lineAgent)pAttrs.push(`ttm:agent="${escapeXml(row.lineAgent)}"`);
+      if(row.lineStyle)pAttrs.push(`style="${escapeXml(row.lineStyle)}"`);
+      if(row.lineFontStyle)pAttrs.push(`tts:fontStyle="${escapeXml(row.lineFontStyle)}"`);
+      if(row.lineFontWeight)pAttrs.push(`tts:fontWeight="${escapeXml(row.lineFontWeight)}"`);
+      if(row.lineColor)pAttrs.push(`tts:color="${escapeXml(row.lineColor)}"`);
+      let content='';
+      if(hasValidCues){
+        content=row.wordCues.map(c=>{
+          const attrs=[];
+          if(c.agent)attrs.push(`ttm:agent="${escapeXml(c.agent)}"`);
+          if(c.style)attrs.push(`style="${escapeXml(c.style)}"`);
+          if(c.ttsStyle)attrs.push(`tts:fontStyle="${escapeXml(c.ttsStyle)}"`);
+          if(c.ttsWeight)attrs.push(`tts:fontWeight="${escapeXml(c.ttsWeight)}"`);
+          if(c.color)attrs.push(`tts:color="${escapeXml(c.color)}"`);
+          attrs.push(`begin="${ttmlTime(c.start)}"`,`end="${ttmlTime(c.end)}"`);
+          return `<span ${attrs.join(' ')}>${escapeXml(c.text)}</span>`;
+        }).join('');
+      } else {
+        content=`<span begin="${ttmlTime(start)}" end="${ttmlTime(end)}">${escapeXml(row.text)}</span>`;
+      }
+      parts.push(`      <p ${pAttrs.join(' ')}>${content}</p>`);
+    });
+    parts.push('    </div>','  </body>','</tt>');
+    return parts.join('\n')+'\n';
+  }
+  function renderPreviewOnly(){ updatePreview(); }
+  function updatePreview() {
+    const preview=$('preview');
+    preview.textContent=outputMode==='lrc'?lrcOutput():ttmlOutput();
+    $('tabLrc').classList.toggle('active',outputMode==='lrc'); $('tabTtml').classList.toggle('active',outputMode==='ttml');
+    $('previewTitle').textContent=outputMode==='lrc'?'Output preview · LRC':'Output preview · TTML';
+    $('previewSub').textContent=outputMode==='lrc'?'Standard line-timed lyrics':'TTML export for Navidrome / compatible clients';
+    $('previewInfo').textContent=outputMode==='lrc'?'LRC carries one timestamp per line. Imported TTML word-level data remains available in the TTML export.':
+      (hasWordTiming?'Both views edit the same timing data. Line timestamp nudges shift all TTML word cues on that line; TTML words mode edits individual cue times, text, singer/agent, and style. Editing the first word start also updates the LRC line time.':'This source has only line-level timings. TTML can be exported, but word-by-word editing requires a word-timed TTML source or running the aligner.');
+  }
+  function updateStatus() {
+    const problems=[]; for(let i=1;i<rows.length;i++)if(rows[i].start<rows[i-1].start)problems.push(i+1);
+    $('status').innerHTML=`<strong>${rows.length} line(s)</strong> · ${problems.length?`<span style="color:var(--warn)">${problems.length} out-of-order time(s)</span>`:`${hasWordTiming?'word timing preserved':'line timing'}`}`;
+  }
+  function download(name,text,type) {
+    const blob=new Blob([text],{type}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000); toast(`Downloaded ${name}.`);
+  }
+  function baseName() { const chosen=settings.downloadBase==='audio'&&audioName?audioName:importedLyricsName; return (chosen||'lyrics').replace(/\.(lrc|ttml|xml|txt)$/i,''); }
+  function exportLrc(){ if(!rows.length){toast('Load lyrics before exporting.',true);return;}download(baseName()+'.lrc',lrcOutput(),'text/plain;charset=utf-8'); }
+  function exportTtml(){ if(!rows.length){toast('Load lyrics before exporting.',true);return;}download(baseName()+'.ttml',ttmlOutput(),'application/ttml+xml;charset=utf-8'); }
+  function addLine() {
+    if(gridMode==='words')setGridMode('lines');
+    const start=selectedIndex>=0&&rows[selectedIndex]?rows[selectedIndex].start+settings.txtSpacing:(rows.length?rows[rows.length-1].start+settings.txtSpacing:0);
+    const index=selectedIndex>=0?selectedIndex+1:rows.length; rows.splice(index,0,makeRow(start,'')); selectedIndex=index;lastEditedIndex=index;replayFromAnchor=true;renderGrid();setSelected(index,true);const input=$('gridBody').querySelector(`tr[data-index="${index}"] .lyric-editor`);input?.focus();updatePreview();updateStatus();
+  }
+  function deleteLine(){if(gridMode==='words')setGridMode('lines');if(selectedIndex<0||selectedIndex>=rows.length)return;rows.splice(selectedIndex,1);selectedIndex=Math.min(selectedIndex,rows.length-1);lastEditedIndex=selectedIndex;replayFromAnchor=true;hasWordTiming=rows.some(r=>r.wordCues&&r.wordCues.length);renderGrid();if(selectedIndex>=0)setSelected(selectedIndex,true);updatePreview();updateStatus();}
+
+  function drawWaveform(){$('waveformStatus').textContent=waveformPeaks?'Waveform ready · shown per lyric line':(player.src?'Waveform loading / unavailable':'Waveform waits for audio');}
+  async function buildWaveform(file) {
+    const token=++waveformBuildToken;waveformPeaks=null;$('waveformStatus').textContent='Decoding audio for waveform…';drawWaveform();
+    if(file.size>350*1024*1024){$('waveformStatus').textContent='Waveform skipped for very large file';drawWaveform();return;}
+    const AudioCtx=window.AudioContext||window.webkitAudioContext;
+    if(!AudioCtx){$('waveformStatus').textContent='Web Audio unavailable';drawWaveform();return;}
+    let context=null;
+    try{
+      context=new AudioCtx();
+      const arrayBuffer=await file.arrayBuffer();
+      const decoded=await context.decodeAudioData(arrayBuffer);
+      if(token!==waveformBuildToken)return;
+      const rate=1000,count=Math.max(1,Math.ceil(decoded.duration*rate));
+      const min=new Float32Array(count),max=new Float32Array(count);
+      const channels=Array.from({length:decoded.numberOfChannels},(_,i)=>decoded.getChannelData(i));
+      for(let bucket=0;bucket<count;bucket++){
+        const a=Math.floor(bucket/rate*decoded.sampleRate),b=Math.min(decoded.length,Math.max(a+1,Math.floor((bucket+1)/rate*decoded.sampleRate)));
+        let low=0,high=0;
+        for(const data of channels){for(let k=a;k<b;k++){const v=data[k];if(v<low)low=v;if(v>high)high=v;}}
+        min[bucket]=low;max[bucket]=high;
+      }
+      waveformPeaks={min,max,rate,duration:decoded.duration};$('waveformStatus').textContent=`High-detail waveform ready · ${rate} samples/sec · ${decoded.numberOfChannels} channel(s)`;
+    }catch(err){if(token===waveformBuildToken){waveformPeaks=null;$('waveformStatus').textContent='Waveform unavailable in this browser codec';}}
+    finally{if(context){try{await context.close();}catch(_){}}}
+    if(token===waveformBuildToken){if(gridMode==='words')rerenderWordTimelinePreservingView();else drawWaveform();updateLiveHighlight();}
+  }
+  function loadAudio(file) {
+    if(!file)return;
+    if(audioUrl)URL.revokeObjectURL(audioUrl);
+    audioUrl=URL.createObjectURL(file);audioName=file.name.replace(/\.[^.]+$/,'');player.src=audioUrl;player.load();
+    $('audioTitle').textContent=file.name;$('audioSub').textContent=`${(file.size/1048576).toFixed(1)} MB · local browser playback`;$('audioFileName').textContent=file.name;
+    if(gridMode==='words')renderWordGrid();
+    buildWaveform(file);
+    updateLiveHighlight();toast(`Loaded audio ${file.name}.`);
+  }
+  $('audioFile').addEventListener('change',e=>{loadAudio(e.target.files?.[0]);e.target.value='';});
+  $('lyricsFile').addEventListener('change',e=>{loadLyrics(e.target.files?.[0]);e.target.value='';});
+  function updateTimeReadout() {$('timeReadout').textContent=`${fmtTime(player.currentTime)} / ${fmtTime(Number.isFinite(player.duration)?player.duration:0)}`;}
+  function animateLivePlayback() {
+    livePlaybackFrame=null; updateTimeReadout(); updateLiveHighlight();
+    if(!player.paused&&!player.ended)livePlaybackFrame=requestAnimationFrame(animateLivePlayback);
+  }
+  function startLivePlayback() { updateLiveHighlight(); if(livePlaybackFrame===null&&!player.paused&&!player.ended)livePlaybackFrame=requestAnimationFrame(animateLivePlayback); }
+  function stopLivePlayback() { if(livePlaybackFrame!==null)cancelAnimationFrame(livePlaybackFrame);livePlaybackFrame=null;updateTimeReadout();updateLiveHighlight(); }
+  player.addEventListener('timeupdate',()=>{updateTimeReadout();updateLiveHighlight();});
+  player.addEventListener('seeking',updateLiveHighlight); player.addEventListener('seeked',updateLiveHighlight);
+  player.addEventListener('play',startLivePlayback); player.addEventListener('pause',stopLivePlayback); player.addEventListener('ended',stopLivePlayback);
+  player.addEventListener('loadedmetadata',()=>{updateTimeReadout();updatePreview();if(gridMode==='words')renderWordGrid();updateLiveHighlight();});
+
+  function isAudioFile(file) {
+    const ext=file.name.toLowerCase().split('.').pop();
+    return (file.type||'').startsWith('audio/') || ['flac','mp3','wav','wave','m4a','mp4','aac','ogg','oga','opus','wma','aiff','aif','alac'].includes(ext);
+  }
+  function isLyricsFile(file) { return /\.(lrc|ttml|xml|txt)$/i.test(file.name); }
+  async function handleDroppedFiles(files) {
+    const audioFiles=files.filter(isAudioFile); const lyricFiles=files.filter(isLyricsFile);
+    if(!audioFiles.length&&!lyricFiles.length){toast('No supported audio or lyric files found in that drop.',true);return;}
+    if(audioFiles.length>1||lyricFiles.length>1)toast(`Using the first audio and first lyric file from ${files.length} dropped file(s).`);
+    if(audioFiles.length)loadAudio(audioFiles[0]);
+    if(lyricFiles.length)await loadLyrics(lyricFiles[0]);
+    const ignored=files.length-audioFiles.length-lyricFiles.length;
+    if(ignored>0)toast(`Loaded supported files; ignored ${ignored} unsupported file(s).`);
+  }
+  function isFileDrag(e){return Boolean(e.dataTransfer&&Array.from(e.dataTransfer.types||[]).includes('Files'));}
+  document.addEventListener('dragenter',e=>{
+    if(!isFileDrag(e))return;e.preventDefault();dragDepth++;$('dropOverlay').classList.remove('hidden');$('dropOverlay').setAttribute('aria-hidden','false');
+  });
+  document.addEventListener('dragover',e=>{if(!isFileDrag(e))return;e.preventDefault();if(e.dataTransfer)e.dataTransfer.dropEffect='copy';});
+  document.addEventListener('dragleave',e=>{
+    if(!isFileDrag(e))return;e.preventDefault();dragDepth=Math.max(0,dragDepth-1);
+    if(dragDepth===0){$('dropOverlay').classList.add('hidden');$('dropOverlay').setAttribute('aria-hidden','true');}
+  });
+  document.addEventListener('drop',e=>{
+    if(!e.dataTransfer||!e.dataTransfer.files?.length)return;e.preventDefault();dragDepth=0;$('dropOverlay').classList.add('hidden');$('dropOverlay').setAttribute('aria-hidden','true');
+    handleDroppedFiles(Array.from(e.dataTransfer.files));
+  });
+  $('navEdit').addEventListener('click',()=>setScreen('edit'));$('navSettings').addEventListener('click',()=>setScreen('settings'));
+  $('viewLines').addEventListener('click',()=>setGridMode('lines'));$('viewWords').addEventListener('click',()=>setGridMode('words'));
+  function minimumTimelineZoom(){return Math.max(2,computeFitZoom()/4);}
+  function applyTimelineZoom(next,fit=false){timelineZoom=Math.max(minimumTimelineZoom(),Math.min(2000,next));if(gridMode==='words')rerenderWordTimelinePreservingView(fit);}
+  $('zoomIn').addEventListener('click',()=>applyTimelineZoom(timelineZoom*1.25));
+  $('zoomOut').addEventListener('click',()=>applyTimelineZoom(timelineZoom/1.25));
+  $('zoomFit').addEventListener('click',()=>applyTimelineZoom(computeFitZoom(),true));
+  $('timelineViewport').addEventListener('wheel',e=>{
+    if(!e.ctrlKey||gridMode!=='words')return;e.preventDefault();
+    const laneRow=e.target.closest?.('.timeline-lane-row'),content=laneRow?.querySelector('.timeline-lane-content');
+    const oldTop=$('timelineViewport').scrollTop;
+    let anchor=null;
+    if(content){const rect=content.getBoundingClientRect(),ratio=Math.max(0,Math.min(1,(e.clientX-rect.left)/Math.max(1,rect.width))),ws=Number(content.dataset.windowStart)||0,pps=Number(content.dataset.pps)||timelinePps;anchor={lineIndex:Number(laneRow.dataset.lineIndex),time:ws+(e.clientX-rect.left)/Math.max(1,pps),ratio};}
+    applyTimelineZoom(timelineZoom*Math.exp(-e.deltaY*.002));$('timelineViewport').scrollTop=oldTop;
+    if(anchor){setLaneWindowAtAnchor(anchor.lineIndex,anchor.time,anchor.ratio);updateLiveHighlight(true);}
+  },{passive:false});
+  function seekFromWavePointer(e,state){const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${state.lineIndex}"] .timeline-lane-content`);if(!lane)return;const rect=state.canvas.getBoundingClientRect(),ratio=Math.max(0,Math.min(1,(e.clientX-rect.left)/Math.max(1,rect.width))),ws=Number(lane.dataset.windowStart)||0,we=Number(lane.dataset.windowEnd)||0;player.currentTime=Math.max(0,Math.min(timelineDuration(),ws+ratio*(we-ws)));replayFromAnchor=false;updateTimeReadout();updateLiveHighlight();}
+  function startWaveInteraction(e){
+    if(gridMode!=='words'||e.defaultPrevented)return;const canvas=e.target.closest?.('.lane-waveform-canvas');if(!canvas)return;
+    const laneRow=canvas.closest('.timeline-lane-row'),content=laneRow?.querySelector('.timeline-lane-content');if(!content)return;
+    if(e.button===0&&e.shiftKey){startMarquee(e);return;}
+    if(e.button===0){waveScrubState={pointerId:e.pointerId,lineIndex:Number(laneRow.dataset.lineIndex),canvas};canvas.setPointerCapture?.(e.pointerId);seekFromWavePointer(e,waveScrubState);e.preventDefault();}
+    else if(e.button===1){wavePanState={pointerId:e.pointerId,lineIndex:Number(laneRow.dataset.lineIndex),canvas,startX:e.clientX,windowStart:Number(content.dataset.windowStart)||0,pps:Number(content.dataset.pps)||timelinePps};canvas.setPointerCapture?.(e.pointerId);content.classList.add('pan-active');e.preventDefault();}
+  }
+  $('timelineLanes').addEventListener('pointerdown',e=>{
+    if(e.target.closest?.('.word-clip'))return;
+    if(e.button===0&&e.shiftKey){startMarquee(e);return;}
+    startWaveInteraction(e);
+  });
+  $('timelineLanes').addEventListener('pointermove',e=>{
+    updateMarquee(e);
+    if(waveScrubState&&waveScrubState.pointerId===e.pointerId)seekFromWavePointer(e,waveScrubState);
+    if(wavePanState&&wavePanState.pointerId===e.pointerId){const state=wavePanState,lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${state.lineIndex}"] .timeline-lane-content`);if(lane)setLaneWindowStart(state.lineIndex,state.windowStart-(e.clientX-state.startX)/Math.max(1,state.pps));}
+  });
+  function endWaveInteraction(e){if(waveScrubState&&waveScrubState.pointerId===e.pointerId)waveScrubState=null;if(wavePanState&&wavePanState.pointerId===e.pointerId){$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${wavePanState.lineIndex}"] .timeline-lane-content`)?.classList.remove('pan-active');wavePanState=null;updateLiveHighlight(true);}}
+  $('timelineLanes').addEventListener('pointerup',e=>{finishMarquee(e);endWaveInteraction(e);});
+  $('timelineLanes').addEventListener('pointercancel',e=>{finishMarquee(e);endWaveInteraction(e);});
+  $('timelineLanes').addEventListener('click',e=>{
+    if(suppressTimelineClick){suppressTimelineClick=false;return;}if(e.target.closest('.word-clip')||e.target.closest('.lane-waveform-canvas'))return;
+    const track=e.target.closest('.lane-word-track');if(track){selectedWordKeys.clear();selectedWordRef=null;selectedIndex=Number(track.dataset.lineIndex);lastEditedIndex=selectedIndex;refreshWordSelection();updateWordInspector();updateStatus();return;}
+    if(e.target.closest('.timeline-lane-content')){selectedWordKeys.clear();selectedWordRef=null;refreshWordSelection();updateWordInspector();updateStatus();}
+  });
+  $('timelineLanes').addEventListener('auxclick',e=>{if(e.button===1)e.preventDefault();});
+  $('timelineLanes').addEventListener('contextmenu',e=>{if(e.target.closest('.lane-waveform-canvas'))e.preventDefault();});
+  window.addEventListener('resize',()=>{if(gridMode==='words')rerenderWordTimelinePreservingView();});
+  $('tabLrc').addEventListener('click',()=>{outputMode='lrc';updatePreview();});$('tabTtml').addEventListener('click',()=>{outputMode='ttml';updatePreview();});
+  $('saveLrc').addEventListener('click',exportLrc);$('saveLrcTop').addEventListener('click',exportLrc);$('saveTtml').addEventListener('click',exportTtml);$('saveTtmlTop').addEventListener('click',exportTtml);
+  $('copyPreview').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(outputMode==='lrc'?lrcOutput():ttmlOutput());toast('Preview copied to clipboard.');}catch(_){toast('Clipboard access was blocked by the browser. Select the preview and copy manually.',true);}});
+  $('addLine').addEventListener('click',addLine);$('deleteLine').addEventListener('click',deleteLine);
+  $('wordStart').addEventListener('change',()=>{if(selectedWordRef)setWordTime(selectedWordRef.lineIndex,selectedWordRef.cueIndex,'start',$('wordStart').value);});
+  $('wordEnd').addEventListener('change',()=>{if(selectedWordRef)setWordTime(selectedWordRef.lineIndex,selectedWordRef.cueIndex,'end',$('wordEnd').value);});
+  $('wordText').addEventListener('change',()=>editSelectedWordText($('wordText').value));
+  $('wordAgent').addEventListener('change',()=>{const rec=cueForRef();if(rec){rec.cue.agent=$('wordAgent').value.trim();updatePreview();updateStatus();const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);if(clip)clip.title=`${String(rec.cue.text||'').trim()} · ${fmtTime(rec.cue.start)}–${fmtTime(rec.cue.end)}${rec.cue.agent?' · '+rec.cue.agent:''}`;toast('TTML singer/agent updated.');}});
+  $('wordStyle').addEventListener('change',()=>{const rec=cueForRef();if(rec){rec.cue.style=$('wordStyle').value.trim();updatePreview();toast('TTML style reference updated.');}});
+  $('wordFontStyle').addEventListener('change',()=>{const rec=cueForRef();if(rec){rec.cue.ttsStyle=$('wordFontStyle').value;const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);clip?.classList.toggle('singer-italic',rec.cue.ttsStyle==='italic');updatePreview();}});
+  $('wordFontWeight').addEventListener('change',()=>{const rec=cueForRef();if(rec){rec.cue.ttsWeight=$('wordFontWeight').value;const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);clip?.classList.toggle('singer-bold',['bold','bolder','700','800','900'].includes(String(rec.cue.ttsWeight).toLowerCase()));updatePreview();}});
+  $('wordColor').addEventListener('change',()=>{const rec=cueForRef();if(rec){const val=$('wordColor').value.trim();if(val&&!safeCssColor(val)){toast('Use a CSS color such as #ffffff, rgb(255,255,255), or white.',true);$('wordColor').value=rec.cue.color||'';return;}rec.cue.color=val;const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);if(clip)clip.style.color=val;updatePreview();}});
+  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);toast('Settings saved.');});
+  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320};syncSettingsForm();saveSettings();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
+  document.addEventListener('keydown',e=>{
+    if(e.ctrlKey&&e.key.toLowerCase()==='s'){e.preventDefault();if(gridMode==='words')exportTtml();else exportLrc();return;}
+    const target=e.target; const lyricEditing=target instanceof HTMLElement&&Boolean(target.closest('.lyric-editor,#wordText'));
+    const formFocus=target instanceof HTMLElement&&Boolean(target.closest('input,textarea,select,[contenteditable="true"]'));
+    if(e.code==='Space'&&!lyricEditing){e.preventDefault();playPause();return;}
+    const editableLine=target instanceof HTMLElement?target.closest('.lyric-editor'):null;
+    if(e.ctrlKey&&e.key.toLowerCase()==='a'&&editableLine){e.preventDefault();const range=document.createRange();range.selectNodeContents(editableLine);const sel=window.getSelection();sel?.removeAllRanges();sel?.addRange(range);return;}
+    if(formFocus)return;
+    if(activeScreen()!=='edit')return;
+    if(e.key==='ArrowUp'){e.preventDefault();if(gridMode==='words')moveSelectedWord(-1);else setSelected(Math.max(0,selectedIndex-1),true);}
+    else if(e.key==='ArrowDown'){e.preventDefault();if(gridMode==='words')moveSelectedWord(1);else setSelected(Math.min(rows.length-1,selectedIndex+1),true);}
+    else if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
+      e.preventDefault();const direction=e.key==='ArrowLeft'?-1:1;
+      if(gridMode==='words'&&!selectedWordRef){if(e.shiftKey)seekWordBoundary(direction);else seekPlayhead(direction*settings.nudgeStep);}
+      else if(selectedIndex>=0){const mult=e.shiftKey?settings.shiftMultiplier:1;const amount=settings.nudgeStep*mult*direction;if(gridMode==='words')nudgeSelectedWord(amount);else nudgeSelected(amount);}
+    }else if(e.key==='Enter'&&selectedIndex>=0){e.preventDefault();if(gridMode==='words'&&selectedWordRef){$('wordText').focus();}else{const input=$('gridBody').querySelector(`tr[data-index="${selectedIndex}"] .lyric-editor`);input?.focus();}}
+    else if(e.key==='Home'&&rows.length){e.preventDefault();setSelected(0,true);}
+    else if(e.key==='End'&&rows.length){e.preventDefault();setSelected(rows.length-1,true);}
+    else if(e.key==='Delete'&&selectedIndex>=0){e.preventDefault();deleteLine();}
+  });
+  document.addEventListener('click',e=>{const target=e.target;if(target instanceof HTMLElement&&!target.closest('.toast'))$('toast').classList.add('hidden');});
+  window.addEventListener('beforeunload',()=>{if(audioUrl)URL.revokeObjectURL(audioUrl);});
+  syncSettingsForm();outputMode=settings.defaultTab;updatePreview();renderGrid();updateStatus();
+})();
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Local-only browser editor for LRC/TTML lyrics. Standard-library HTTP server."""
+"""Savant local browser editor for LRC/TTML lyrics. Standard-library HTTP server."""
 from __future__ import annotations
 import argparse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -47,7 +47,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Open the local Lyrics Audio Aligner editor in your browser.")
+    parser = argparse.ArgumentParser(description="Open the local Savant editor in your browser.")
     parser.add_argument("--port", type=int, default=8765, help="Local port to use (default: 8765).")
     parser.add_argument("--no-browser", action="store_true", help="Print the URL without opening a browser.")
     args = parser.parse_args()
@@ -58,7 +58,7 @@ def main() -> int:
     except OSError as exc:
         parser.error(f"Could not listen on 127.0.0.1:{args.port}: {exc}. Try --port 8766.")
     url = f"http://127.0.0.1:{args.port}/"
-    print("Lyrics Audio Aligner Editor")
+    print("Savant Editor")
     print(f"Open: {url}")
     print("Local-only: audio and lyric files stay in your browser. Use Ctrl+C to stop the editor.")
     if not args.no_browser:

@@ -42,7 +42,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .word-clip.singer-italic{font-style:italic}.word-clip.singer-bold{font-weight:800}.word-clip .word-label{overflow:hidden;text-overflow:ellipsis;min-width:0;padding:0 2px;pointer-events:none}
 .word-clip .word-edge{position:absolute;top:0;bottom:0;width:6px;cursor:ew-resize;background:#a7d6e555;z-index:2}.word-clip .word-edge.left{left:0}.word-clip .word-edge.right{right:0}
 .word-clip.no-cue{background:#252e3d;border-style:dashed;border-color:#4d5d70;color:#9aabc0;cursor:default}
-.lane-playhead{position:absolute;top:0;bottom:0;width:2px;background:#ff646e;z-index:7;pointer-events:none;box-shadow:0 0 0 1px #ff646e28;display:none}.lane-playhead.visible{display:block}.lane-playhead.ghost{opacity:.34;z-index:6}.lane-playhead.ghost .lane-playhead-time{display:none}.lane-playhead:before{content:'';position:absolute;left:-5px;top:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #ff646e}.lane-playhead-time{position:absolute;left:50%;top:10px;transform:translateX(-50%);font-family:var(--mono);font-size:var(--playhead-label-size,9px);line-height:1;color:#ffc2c6;background:#101721dd;border:1px solid #773f48;border-radius:3px;padding:2px 3px;white-space:nowrap;font-weight:500;letter-spacing:0;box-shadow:0 1px 3px #0005}.lane-playhead.offscreen-left:before{left:-5px;border-top-color:transparent;border-left:0;border-right:7px solid #ff646e;border-top:5px solid transparent;border-bottom:5px solid transparent;top:1px}.lane-playhead.offscreen-right:before{left:-5px;border-top-color:transparent;border-right:0;border-left:7px solid #ff646e;border-top:5px solid transparent;border-bottom:5px solid transparent;top:1px}.lane-waveform-canvas{touch-action:pan-y;user-select:none}.timeline-lane-content.pan-active,.lane-waveform-wrapper.pan-active{cursor:grabbing!important}
+.lane-playhead{position:absolute;top:0;bottom:0;width:2px;background:#ff646e;z-index:7;pointer-events:auto;cursor:ew-resize;box-shadow:0 0 0 1px #ff646e28;display:none;touch-action:none}.lane-playhead:after{content:'';position:absolute;left:-7px;top:0;bottom:0;width:16px;background:transparent}.lane-playhead.visible{display:block}.lane-playhead.ghost{opacity:.34;z-index:6;pointer-events:none}.lane-playhead.ghost .lane-playhead-time{display:none}.lane-playhead:before{content:'';position:absolute;left:-5px;top:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #ff646e}.lane-playhead-time{position:absolute;left:50%;top:10px;transform:translateX(-50%);font-family:var(--mono);font-size:var(--playhead-label-size,9px);line-height:1;color:#ffc2c6;background:#101721dd;border:1px solid #773f48;border-radius:3px;padding:2px 3px;white-space:nowrap;font-weight:500;letter-spacing:0;box-shadow:0 1px 3px #0005}.lane-playhead.offscreen-left:before{left:-5px;border-top-color:transparent;border-left:0;border-right:7px solid #ff646e;border-top:5px solid transparent;border-bottom:5px solid transparent;top:1px}.lane-playhead.offscreen-right:before{left:-5px;border-top-color:transparent;border-right:0;border-left:7px solid #ff646e;border-top:5px solid transparent;border-bottom:5px solid transparent;top:1px}.lane-waveform-canvas{touch-action:pan-y;user-select:none}.timeline-lane-content.pan-active,.lane-waveform-wrapper.pan-active{cursor:grabbing!important}
 .timeline-selection-box{position:absolute;z-index:20;border:1px solid #76e4c1;background:#76e4c126;box-shadow:0 0 0 1px #76e4c12b;pointer-events:none;display:none}.timeline-selection-box.visible{display:block}
 .word-inspector{margin-top:11px;border:1px solid var(--border);background:#121b29;border-radius:9px;padding:10px 11px}.word-inspector-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}.word-inspector-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:9px;align-items:end}.word-inspector-text{grid-column:span 2}.word-inspector-field{display:flex;flex-direction:column;gap:4px;min-width:0}.word-inspector-field label{font-size:10px;color:#a6b6c9;text-transform:uppercase;letter-spacing:.06em}.word-inspector-field input,.word-inspector-field select{width:100%;min-width:0;background:#09111b;border:1px solid #34455a;border-radius:6px;color:var(--text);padding:8px 9px;font-size:12px}.word-inspector-field input:focus,.word-inspector-field select:focus{outline:2px solid var(--accent2);outline-offset:1px}.timeline-empty{padding:26px;text-align:center;color:#91a1b5;min-width:0}.timeline-empty strong{display:block;color:#d9e6f5;margin-bottom:5px}
 @media(max-width:950px){.timeline-viewport{max-height:65vh}.word-inspector-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.word-inspector-text{grid-column:1/-1}.timeline-inner{--label-width:118px}}
@@ -514,10 +514,19 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     rows.forEach((_,i)=>{const p=phraseExtent(i);longest=Math.max(longest,p.span+2*context);});
     return Math.max(2,timelineTrackWidth/longest);
   }
+  function laneContextBounds(lineIndex) {
+    const duration=timelineDuration(),phrase=phraseExtent(lineIndex),context=Math.max(0,Number(settings.timelineOverlap)||0);
+    const start=Math.min(duration,Math.max(0,phrase.start-context));
+    const end=Math.max(start,Math.min(duration,phrase.end+context));
+    return {start,end,span:Math.max(.08,end-start)};
+  }
+  function laneVisibleSpan(lineIndex,requestedSpan) {
+    const bounds=laneContextBounds(lineIndex);
+    return Math.max(.08,Math.min(timelineDuration(),requestedSpan,bounds.span));
+  }
   function getLineWindow(lineIndex,focusTime=null,focusRatio=.5) {
-    const phrase=phraseExtent(lineIndex),duration=timelineDuration();
-    const fullSpan=Math.max(.08,Number(timelineZoom)||computeFitZoom());
-    const visibleSpan=Math.min(duration,timelineTrackWidth/fullSpan);
+    const phrase=phraseExtent(lineIndex),fullSpan=Math.max(.08,Number(timelineZoom)||computeFitZoom());
+    const visibleSpan=laneVisibleSpan(lineIndex,timelineTrackWidth/fullSpan);
     let center=(phrase.start+phrase.end)/2;
     if(Number.isFinite(focusTime))center=focusTime;
     else if(phrase.span>visibleSpan){
@@ -530,29 +539,20 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       }
     }
     const ratio=Number.isFinite(focusRatio)?Math.max(0,Math.min(1,focusRatio)):.5;
-    let start=Number.isFinite(focusTime)?focusTime-visibleSpan*ratio:center-visibleSpan/2;
-    start=clampLaneWindowStart(lineIndex,start,visibleSpan);
+    const start=clampLaneWindowStart(lineIndex,Number.isFinite(focusTime)?focusTime-visibleSpan*ratio:center-visibleSpan/2,visibleSpan);
     return {start,end:start+visibleSpan,phraseStart:phrase.start,phraseEnd:phrase.end,phraseSpan:phrase.span,context:Math.max(0,(visibleSpan-phrase.span)/2),pps:timelineTrackWidth/visibleSpan};
   }
   function lanePixelsPerSecond(lineIndex) {
     const win=getLineWindow(lineIndex);return timelineTrackWidth/Math.max(.08,win.end-win.start);
   }
   function clampLaneWindowStart(lineIndex,start,span) {
-    const duration=timelineDuration(),phrase=phraseExtent(lineIndex),context=Math.max(0,Number(settings.timelineOverlap)||0);
-    const safeSpan=Math.max(.08,Math.min(duration,span));
-    const minStart=Math.max(0,phrase.start-context);
-    const maxStart=Math.min(Math.max(0,duration-safeSpan),phrase.end+context-safeSpan);
-    if(maxStart<minStart){
-      // If the viewport is wider than this line plus its edge context, pin it
-      // around the phrase instead of allowing a pan into unrelated audio.
-      const center=(phrase.start+phrase.end)/2;
-      return Math.max(0,Math.min(Math.max(0,duration-safeSpan),center-safeSpan/2));
-    }
+    const bounds=laneContextBounds(lineIndex),safeSpan=laneVisibleSpan(lineIndex,span);
+    const minStart=bounds.start,maxStart=Math.max(minStart,bounds.end-safeSpan);
     return Math.max(minStart,Math.min(maxStart,start));
   }
   function setLaneWindowRange(lineIndex,start,span) {
     const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`);if(!lane)return;
-    const duration=timelineDuration();span=Math.max(.08,Math.min(duration,span));start=clampLaneWindowStart(lineIndex,start,span);
+    span=laneVisibleSpan(lineIndex,span);start=clampLaneWindowStart(lineIndex,start,span);
     const end=start+span,pps=timelineTrackWidth/span;
     lane.dataset.windowStart=String(start);lane.dataset.windowEnd=String(end);lane.dataset.pps=String(pps);
     drawLaneWaveform(lane.querySelector('.lane-waveform-canvas'),start,end);
@@ -564,13 +564,13 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const oldStart=Number(lane.dataset.windowStart)||0,oldEnd=Number(lane.dataset.windowEnd)||0,span=Math.max(.08,oldEnd-oldStart);
     setLaneWindowRange(lineIndex,start,span);
   }
-
-    function repositionLaneWindow(lineIndex,centerTime,focusRatio=.5) {
-    const win=getLineWindow(lineIndex,centerTime,focusRatio);setLaneWindowStart(lineIndex,win.start);
+  function repositionLaneWindow(lineIndex,centerTime,focusRatio=.5) {
+    const win=getLineWindow(lineIndex,centerTime,focusRatio);setLaneWindowRange(lineIndex,win.start,win.end-win.start);
   }
-  function setLaneWindowAtAnchor(lineIndex,anchorTime,ratio) {
-    const duration=timelineDuration(),visibleSpan=Math.min(duration,timelineTrackWidth/Math.max(.08,timelineZoom));
-    setLaneWindowStart(lineIndex,anchorTime-Math.max(0,Math.min(1,ratio))*visibleSpan);
+
+    function setLaneWindowAtAnchor(lineIndex,anchorTime,ratio) {
+    const visibleSpan=laneVisibleSpan(lineIndex,timelineTrackWidth/Math.max(.08,timelineZoom));
+    setLaneWindowRange(lineIndex,anchorTime-Math.max(0,Math.min(1,ratio))*visibleSpan,visibleSpan);
   }
   function drawLaneWaveform(canvas,windowStart,windowEnd) {
     if(!canvas)return;
@@ -816,8 +816,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`);if(!lane)return;
     const playhead=lane.querySelector('.lane-playhead');if(!playhead)return;
     const time=Number(player.currentTime)||0,ws=Number(lane.dataset.windowStart)||0,we=Number(lane.dataset.windowEnd)||0,pps=Number(lane.dataset.pps)||1;
-    const outsideLeft=time<ws,outsideRight=time>we,offscreen=outsideLeft||outsideRight;
-    const x=Math.max(0,Math.min(timelineTrackWidth,(time-ws)*pps));
+    const outsideLeft=time<ws-.0001,outsideRight=time>we+.0001;
+    const x=Math.max(0,Math.min(lane.clientWidth||timelineTrackWidth,(time-ws)*pps));
     playhead.classList.toggle('offscreen-left',outsideLeft);playhead.classList.toggle('offscreen-right',outsideRight);playhead.style.left=`${x}px`;
     const label=playhead.querySelector('.lane-playhead-time');if(label){label.textContent=fmtTime(time,2);label.style.fontSize=`${settings.playheadLabelSize}px`;}
   }
@@ -841,17 +841,18 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       }
     }
     if(gridMode==='words'){
-      const playheadIndex=getPlayheadLineIndex(time,nextIndex),edgeContext=Math.max(0,Number(settings.timelineOverlap)||0);
+      const playheadIndex=waveScrubState?waveScrubState.lineIndex:getPlayheadLineIndex(time,nextIndex);
       for(const lane of $('timelineLanes').querySelectorAll('.timeline-lane-row')){
-        const lineIndex=Number(lane.dataset.lineIndex),isActive=lineIndex===nextIndex,isPlayhead=lineIndex===playheadIndex,extent=phraseExtent(lineIndex),ghostCandidate=time>=extent.start-edgeContext&&time<=extent.end+edgeContext;lane.classList.toggle('playing-lane',isActive);
+        const lineIndex=Number(lane.dataset.lineIndex),isActive=lineIndex===nextIndex,isPlayhead=lineIndex===playheadIndex;lane.classList.toggle('playing-lane',isActive);
         let content=lane.querySelector('.timeline-lane-content');
-        if(isPlayhead&&content&&!suppressAutoPan&&!(wavePanState&&wavePanState.lineIndex===lineIndex)){
+        if(isPlayhead&&content&&!suppressAutoPan&&!(wavePanState&&wavePanState.lineIndex===lineIndex)&&!(waveScrubState&&waveScrubState.lineIndex===lineIndex)){
           const ws=Number(content.dataset.windowStart)||0,we=Number(content.dataset.windowEnd)||0,span=we-ws;
           const needsReveal=time<ws||time>we;
           const nearingEdge=span>0&&phraseExtent(lineIndex).span>span&&!player.paused&&(time<ws+span*.18||time>we-span*.18);
           if(needsReveal||nearingEdge){repositionLaneWindow(lineIndex,time,.5);content=lane.querySelector('.timeline-lane-content');}
         }
-        const marker=lane.querySelector('.lane-playhead');
+        const marker=lane.querySelector('.lane-playhead'),ws=Number(content?.dataset.windowStart)||0,we=Number(content?.dataset.windowEnd)||0;
+        const ghostCandidate=lineIndex!==playheadIndex&&time>=ws-.0001&&time<=we+.0001;
         if(marker&&(isPlayhead||ghostCandidate)){marker.classList.add('visible');marker.classList.toggle('ghost',!isPlayhead);updatePlayheadOnLane(lineIndex);}
         else marker?.classList.remove('visible');
       }

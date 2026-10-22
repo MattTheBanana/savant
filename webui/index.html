@@ -1388,6 +1388,180 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const token=$('gridBody').querySelector(`tr[data-index="${lineIndex}"] .lyric-editor .word-token[data-word-index="${cueIndex}"]`);
     token?.classList.toggle('singer-italic',italic);token?.classList.toggle('singer-bold',bold);
   }
+  const PRESET_COLORS=['#ffffff','#d9e2f2','#a6b8d4','#64748b','#000000','#ef4444','#f97316','#f59e0b','#eab308','#84cc16','#22c55e','#10b981','#14b8a6','#06b6d4','#0ea5e9','#3b82f6','#6366f1','#8b5cf6','#a855f7','#d946ef','#ec4899','#f43f5e','#7f1d1d','#78350f','#713f12','#365314','#14532d','#134e4a','#164e63','#1e3a8a','#312e81','#581c87'];
+  function rgbToHex({r,g,b}){return '#'+[r,g,b].map(v=>Math.round(v).toString(16).padStart(2,'0')).join('');}
+  function hexToRgb(value){
+    let s=String(value||'').trim();if(/^#[0-9a-f]{3}$/i.test(s))s='#'+s.slice(1).split('').map(c=>c+c).join('');
+    if(/^#[0-9a-f]{6}$/i.test(s))return {r:parseInt(s.slice(1,3),16),g:parseInt(s.slice(3,5),16),b:parseInt(s.slice(5,7),16)};
+    const ctx=document.createElement('canvas').getContext('2d');
+    if(ctx){ctx.fillStyle='#ffffff';ctx.fillStyle=safeCssColor(s)||'#ffffff';const norm=ctx.fillStyle;if(/^#[0-9a-f]{6}$/i.test(norm))return hexToRgb(norm);const m=norm.match(/^rgba?\((\d+)[, ]+\s*(\d+)[, ]+\s*(\d+)/i);if(m)return {r:+m[1],g:+m[2],b:+m[3]};}
+    return {r:255,g:255,b:255};
+  }
+  function rgbToHsv({r,g,b}){r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;let h=0;if(d){if(max===r)h=60*(((g-b)/d)%6);else if(max===g)h=60*((b-r)/d+2);else h=60*((r-g)/d+4);}if(h<0)h+=360;return {h,s:max===0?0:d/max,v:max};}
+  function hsvToRgb({h,s,v}){const c=v*s,x=c*(1-Math.abs((h/60)%2-1)),m=v-c;let r=0,g=0,b=0;if(h<60){r=c;g=x;}else if(h<120){r=x;g=c;}else if(h<180){g=c;b=x;}else if(h<240){g=x;b=c;}else if(h<300){r=x;b=c;}else{r=c;b=x;}return {r:(r+m)*255,g:(g+m)*255,b:(b+m)*255};}
+  function normalizedHex(value){return rgbToHex(hexToRgb(value));}
+  function syncFormatToggleUI(cue=cueForRef()?.cue){
+    const italic=Boolean(cue&&['italic','oblique'].includes(String(cue.ttsStyle||'').toLowerCase())),bold=Boolean(cue&&['bold','bolder','700','800','900'].includes(String(cue.ttsWeight||'').toLowerCase()));
+    for(const [id,on] of [['wordItalicToggle',italic],['wordBoldToggle',bold]]){const el=$(id);if(el){el.setAttribute('aria-pressed',String(on));el.classList.toggle('active',on);}}
+  }
+  function selectedCueRecords(){
+    const refs=gridMode==='words'&&selectedWordKeys.size?[...selectedWordKeys].map(parseWordKey):selectedWordRef?[selectedWordRef]:[];
+    return refs.map(ref=>{const cue=rows[ref.lineIndex]?.wordCues?.[ref.cueIndex];return cue?{...ref,cue}:null;}).filter(Boolean);
+  }
+  function toggleWordEmphasis(kind){
+    const records=selectedCueRecords();if(!records.length)return;const historyBefore=captureHistoryState(),field=kind==='italic'?'ttsStyle':'ttsWeight';
+    const on=kind==='italic'?['italic','oblique'].includes(String(records[0].cue[field]||'').toLowerCase()):['bold','bolder','700','800','900'].includes(String(records[0].cue[field]||'').toLowerCase()),value=on?'':kind==='italic'?'italic':'bold';
+    for(const rec of records){rec.cue[field]=value;syncWordCueEmphasis(rec);}
+    $('wordFontStyle').value=cueForRef()?.cue.ttsStyle||'';$('wordFontWeight').value=cueForRef()?.cue.ttsWeight||'';syncFormatToggleUI(cueForRef()?.cue);updatePreview();updateStatus();commitHistoryChange(historyBefore);
+  }
+  function refreshAgentPresetSelect(){
+    const select=$('agentPresetSelect');if(!select)return;const chosen=select.value;select.textContent='';const blank=document.createElement('option');blank.value='';blank.textContent='Apply saved preset…';select.append(blank);
+    agentPresets.forEach(p=>{const option=document.createElement('option');option.value=String(p.id);option.textContent=p.name;select.append(option);});select.value=agentPresets.some(p=>String(p.id)===chosen)?chosen:'';
+  }
+  function persistAgentPresets(){try{localStorage.setItem('savant-agent-presets',JSON.stringify(agentPresets));}catch(_){toast('Could not save agent presets in this browser.',true);}}
+  function saveAgentPreset(){
+    const rec=cueForRef();if(!rec){toast('Select a word before saving an agent preset.',true);return;}
+    const name=prompt('Name this agent preset:',rec.cue.agent||'New agent preset');if(name===null)return;const clean=name.trim();if(!clean){toast('Preset name cannot be empty.',true);return;}
+    agentPresets=agentPresets.filter(p=>p.name.toLowerCase()!==clean.toLowerCase());
+    agentPresets.push({id:Date.now(),name:clean,agent:rec.cue.agent||'',style:rec.cue.style||'',ttsStyle:rec.cue.ttsStyle||'',ttsWeight:rec.cue.ttsWeight||'',color:rec.cue.color||''});
+    persistAgentPresets();refreshAgentPresetSelect();$('agentPresetSelect').value=String(agentPresets[agentPresets.length-1].id);toast(`Saved agent preset “${clean}”.`);
+  }
+  function applyAgentPreset(presetId){
+    const preset=agentPresets.find(p=>String(p.id)===String(presetId));if(!preset)return;const records=selectedCueRecords();if(!records.length){toast('Select a word to apply an agent preset.',true);return;}
+    const historyBefore=captureHistoryState();
+    for(const rec of records){rec.cue.agent=preset.agent||'';rec.cue.style=preset.style||'';rec.cue.ttsStyle=preset.ttsStyle||'';rec.cue.ttsWeight=preset.ttsWeight||'';rec.cue.color=preset.color||'';syncWordCueEmphasis(rec);const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);if(clip)clip.style.color=safeCssColor(rec.cue.color)||'';}
+    updateWordInspector();updatePreview();updateStatus();commitHistoryChange(historyBefore);toast(`Applied agent preset “${preset.name}”.`);
+  }
+  function beginColorPickerHistory(){if(!colorPickerHistoryBefore)colorPickerHistoryBefore=captureHistoryState();}
+  function finishColorPickerHistory(){if(colorPickerHistoryBefore){commitHistoryChange(colorPickerHistoryBefore);colorPickerHistoryBefore=null;}}
+  function applyPickerColor(hex){
+    hex=normalizedHex(hex);const input=$('wordColor');input.value=hex;input.style.color=hex;$('colorPreviewSwatch').style.background=hex;$('colorPreviewHex').textContent=hex;
+    const rec=cueForRef();if(rec){beginColorPickerHistory();rec.cue.color=hex;const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);if(clip)clip.style.color=hex;updatePreview();}
+  }
+  function pickerHSVFromInput(){return rgbToHsv(hexToRgb($('wordColor').value||cueForRef()?.cue.color||'#ffffff'));}
+  function updatePickerPreview(){
+    const hex=normalizedHex($('wordColor').value||'#ffffff');$('colorPreviewSwatch').style.background=hex;$('colorPreviewHex').textContent=hex;
+    const pad=$('colorPickerContent').querySelector('.sv-pad');if(pad){const hsv=pickerHSVFromInput();pad.style.backgroundImage=`linear-gradient(to top,#000,transparent),linear-gradient(to right,#fff,transparent),linear-gradient(0deg,hsl(${hsv.h} 100% 50%),hsl(${hsv.h} 100% 50%))`;}
+  }
+  function pickerRange(label,min,max,value,format,onInput){
+    const wrap=document.createElement('label');wrap.className='color-range';const name=document.createElement('span');name.textContent=label;const input=document.createElement('input');input.type='range';input.min=String(min);input.max=String(max);input.step='1';input.value=String(Math.round(value));const output=document.createElement('output');output.textContent=format(Number(input.value));
+    input.addEventListener('pointerdown',beginColorPickerHistory);input.addEventListener('input',()=>{output.textContent=format(Number(input.value));onInput(Number(input.value));});input.addEventListener('change',finishColorPickerHistory);wrap.append(name,input,output);return wrap;
+  }
+  function renderColorPickerContent(){
+    const host=$('colorPickerContent');host.textContent='';const hex=normalizedHex($('wordColor').value||cueForRef()?.cue.color||'#ffffff'),hsv=rgbToHsv(hexToRgb(hex)),rgb=hexToRgb(hex);
+    if(colorPickerTab==='palette'){
+      const pad=document.createElement('div');pad.className='sv-pad';pad.setAttribute('aria-label','Drag to choose saturation and brightness');pad.style.backgroundImage=`linear-gradient(to top,#000,transparent),linear-gradient(to right,#fff,transparent),linear-gradient(0deg,hsl(${hsv.h} 100% 50%),hsl(${hsv.h} 100% 50%))`;
+      const sample=e=>{const rect=pad.getBoundingClientRect(),s=Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width)),v=1-Math.max(0,Math.min(1,(e.clientY-rect.top)/rect.height));applyPickerColor(rgbToHex(hsvToRgb({...pickerHSVFromInput(),s,v})));};
+      pad.addEventListener('pointerdown',e=>{beginColorPickerHistory();pad.setPointerCapture?.(e.pointerId);sample(e);e.preventDefault();});pad.addEventListener('pointermove',e=>{if(e.buttons&1)sample(e);});pad.addEventListener('pointerup',finishColorPickerHistory);pad.addEventListener('pointercancel',finishColorPickerHistory);host.append(pad);
+      host.append(pickerRange('Hue',0,360,hsv.h,v=>`${v}°`,v=>{beginColorPickerHistory();applyPickerColor(rgbToHex(hsvToRgb({...pickerHSVFromInput(),h:v})));updatePickerPreview();}));
+    }else if(colorPickerTab==='hsv'){
+      host.append(pickerRange('Hue',0,360,hsv.h,v=>`${v}°`,v=>{beginColorPickerHistory();applyPickerColor(rgbToHex(hsvToRgb({...pickerHSVFromInput(),h:v})));}));
+      host.append(pickerRange('Saturation',0,100,hsv.s*100,v=>`${v}%`,v=>{beginColorPickerHistory();applyPickerColor(rgbToHex(hsvToRgb({...pickerHSVFromInput(),s:v/100})));}));
+      host.append(pickerRange('Value',0,100,hsv.v*100,v=>`${v}%`,v=>{beginColorPickerHistory();applyPickerColor(rgbToHex(hsvToRgb({...pickerHSVFromInput(),v:v/100})));}));
+    }else{
+      host.append(pickerRange('Red',0,255,rgb.r,v=>String(v),v=>{beginColorPickerHistory();const q=hexToRgb($('wordColor').value);q.r=v;applyPickerColor(rgbToHex(q));}));
+      host.append(pickerRange('Green',0,255,rgb.g,v=>String(v),v=>{beginColorPickerHistory();const q=hexToRgb($('wordColor').value);q.g=v;applyPickerColor(rgbToHex(q));}));
+      host.append(pickerRange('Blue',0,255,rgb.b,v=>String(v),v=>{beginColorPickerHistory();const q=hexToRgb($('wordColor').value);q.b=v;applyPickerColor(rgbToHex(q));}));
+    }
+    updatePickerPreview();
+  }
+  function renderColorSwatches(){
+    const host=$('colorSwatches');host.textContent='';const current=normalizedHex($('wordColor').value||'#ffffff');
+    PRESET_COLORS.forEach(hex=>{const button=document.createElement('button');button.type='button';button.className='color-swatch';button.style.background=hex;button.setAttribute('aria-label',hex);button.title=hex;button.setAttribute('aria-pressed',String(current===hex));button.addEventListener('click',()=>{beginColorPickerHistory();applyPickerColor(hex);renderColorSwatches();updatePickerPreview();finishColorPickerHistory();});host.append(button);});
+  }
+  function renderColorPicker(){$('colorPickerPopover').querySelectorAll('[data-color-tab]').forEach(button=>{const active=button.dataset.colorTab===colorPickerTab;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));});renderColorSwatches();renderColorPickerContent();}
+  function openColorPicker(){
+    const input=$('wordColor'),pop=$('colorPickerPopover');if(!cueForRef())return;const rect=input.getBoundingClientRect();
+    pop.style.left=`${Math.max(10,Math.min(window.innerWidth-330,rect.left))}px`;pop.style.top=`${Math.max(10,Math.min(window.innerHeight-355,rect.bottom+6))}px`;pop.classList.remove('hidden');colorPickerHistoryBefore=null;colorPickerTab='palette';renderColorPicker();
+  }
+  function closeColorPicker(){if($('colorPickerPopover').classList.contains('hidden'))return;$('colorPickerPopover').classList.add('hidden');finishColorPickerHistory();}
+  function addMenuSeparator(menu){const el=document.createElement('div');el.className='context-menu-separator';menu.append(el);}
+  function addMenuHeading(menu,text){const el=document.createElement('div');el.className='context-menu-heading';el.textContent=text;menu.append(el);}
+  function addContextAction(menu,label,action,{disabled=false,footer=false}={}){
+    const button=document.createElement('button');button.type='button';button.textContent=label;button.disabled=disabled;button.setAttribute('role','menuitem');if(footer)button.classList.add('context-menu-footer');
+    button.addEventListener('click',()=>{const previous=contextMenuTarget;hideEditorContextMenu();contextMenuTarget=previous;try{if(!disabled)action();}finally{contextMenuTarget=null;}});menu.append(button);return button;
+  }
+  function hideEditorContextMenu(){$('editorContextMenu').classList.add('hidden');contextMenuTarget=null;}
+  function showEditorContextMenu(event,target){
+    const menu=$('editorContextMenu');contextMenuTarget=target;menu.textContent='';
+    addContextAction(menu,'Copy',copyContextTarget,{disabled:!target});addContextAction(menu,'Cut',cutContextTarget,{disabled:!target});addContextAction(menu,'Paste',pasteContextTarget,{disabled:!editorClipboard});
+    addMenuSeparator(menu);addContextAction(menu,'Undo',undoEditorChange,{disabled:!undoHistory.length});addContextAction(menu,'Redo',redoEditorChange,{disabled:!redoHistory.length});
+    if(gridMode==='words'){addMenuSeparator(menu);addContextAction(menu,'Make new word  ·  F',addWordCue,{disabled:!hasWordTiming});}
+    if(target?.lineIndex!==undefined){addMenuSeparator(menu);addContextAction(menu,'Insert line above this line',()=>insertLineAt(target.lineIndex));addContextAction(menu,'Insert line below this line',()=>insertLineAt(target.lineIndex+1));}
+    if(gridMode==='words'){addMenuSeparator(menu);addMenuHeading(menu,'Apply agent preset');if(agentPresets.length)agentPresets.forEach(p=>addContextAction(menu,p.name,()=>applyAgentPreset(p.id)));else{const empty=document.createElement('button');empty.type='button';empty.textContent='No saved presets yet';empty.disabled=true;menu.append(empty);}addContextAction(menu,'+ Save new agent preset…',saveAgentPreset,{footer:true,disabled:!cueForRef()});}
+    menu.classList.remove('hidden');const x=Math.max(6,Math.min(event.clientX,innerWidth-menu.offsetWidth-6)),y=Math.max(6,Math.min(event.clientY,innerHeight-menu.offsetHeight-6));menu.style.left=`${x}px`;menu.style.top=`${y}px`;
+  }
+  function copyContextTarget(){
+    const target=contextMenuTarget;if(!target)return;
+    if(target.type==='word'&&gridMode==='words'){
+      const refs=selectedWordKeys.has(wordKey(target.lineIndex,target.cueIndex))?[...selectedWordKeys].map(parseWordKey):[{lineIndex:target.lineIndex,cueIndex:target.cueIndex}];
+      const cues=refs.map(ref=>{const cue=rows[ref.lineIndex]?.wordCues?.[ref.cueIndex];return cue?{...JSON.parse(JSON.stringify(cue)),sourceLineIndex:ref.lineIndex}:null;}).filter(Boolean).sort((a,b)=>a.start-b.start);
+      if(cues.length)editorClipboard={kind:'words',cues};else toast('No word cues to copy.',true);
+    }else{const row=rows[target.lineIndex];if(row)editorClipboard={kind:'lines',rows:[JSON.parse(JSON.stringify(row))]};}
+    if(editorClipboard)toast('Copied to Savant clipboard.');
+  }
+  function cutContextTarget(){
+    const target=contextMenuTarget;if(!target)return;copyContextTarget();if(!editorClipboard)return;
+    if(editorClipboard.kind==='words'){const refs=selectedWordKeys.has(wordKey(target.lineIndex,target.cueIndex))?[...selectedWordKeys].map(parseWordKey):[{lineIndex:target.lineIndex,cueIndex:target.cueIndex}];deleteWordCues(refs);}else removeLineAt(target.lineIndex);
+  }
+  function pasteContextTarget(){
+    if(!editorClipboard)return;
+    if(editorClipboard.kind==='words'){
+      if(gridMode!=='words'){if(!hasWordTiming){toast('Word paste requires TTML word timing.',true);return;}setGridMode('words');}
+      const index=Number.isInteger(contextMenuTarget?.lineIndex)?contextMenuTarget.lineIndex:selectedWordRef?.lineIndex??Math.max(0,selectedIndex),row=rows[index];if(!row){toast('Select a lyric line for the pasted words.',true);return;}
+      if(!row.wordCues)row.wordCues=[];const refs=editorClipboard.cues,first=Math.min(...refs.map(c=>c.start)),anchor=selectedWordRef?.lineIndex===index&&row.wordCues[selectedWordRef.cueIndex]?row.wordCues[selectedWordRef.cueIndex].end:row.wordCues.length?Math.max(...row.wordCues.map(c=>c.end)):Math.max(row.start,Number(player.currentTime)||0);
+      const newCues=refs.map(c=>{const {sourceLineIndex,...cue}=JSON.parse(JSON.stringify(c));const duration=Math.max(.02,cue.end-cue.start);cue.start=Math.max(0,anchor+(c.start-first));cue.end=cue.start+duration;return cue;});
+      const historyBefore=captureHistoryState();row.wordCues.push(...newCues);row.wordCues.sort((a,b)=>a.start-b.start);row.text=row.wordCues.map(c=>c.text).join('');row.originalText=row.text;hasWordTiming=true;selectedIndex=index;lastEditedIndex=index;
+      const firstCue=row.wordCues.indexOf(newCues[0]);selectedWordRef={lineIndex:index,cueIndex:firstCue};selectedWordKeys=new Set(newCues.map(c=>wordKey(index,row.wordCues.indexOf(c))));
+      rerenderWordTimelinePreservingView();updateWordInspector();updatePreview();updateStatus();commitHistoryChange(historyBefore);toast(`Pasted ${newCues.length} word cue(s).`);
+    }else{
+      const target=contextMenuTarget,at=target?.lineIndex??selectedIndex,index=Math.max(0,Math.min(rows.length,at<0?rows.length:at+1)),historyBefore=captureHistoryState(),clones=JSON.parse(JSON.stringify(editorClipboard.rows));
+      if(gridMode==='words')setGridMode('lines');const base=rows[Math.max(0,index-1)],baseStart=base?base.start:0,first=clones[0]?.start||0,offset=base?Math.max(0,baseStart+settings.txtSpacing-first):0;
+      clones.forEach(row=>{row.start+=offset;row.wordCues?.forEach(c=>{c.start+=offset;c.end+=offset;});});
+      rows.splice(index,0,...clones);selectedIndex=index;lastEditedIndex=index;hasWordTiming=rows.some(r=>r.wordCues?.length);renderGrid();setSelected(index,true);updatePreview();updateStatus();commitHistoryChange(historyBefore);toast(`Pasted ${clones.length} lyric line(s).`);
+    }
+  }
+  function deleteWordCues(refs){
+    if(!refs.length)return;const historyBefore=captureHistoryState(),grouped=new Map();refs.forEach(ref=>{if(!grouped.has(ref.lineIndex))grouped.set(ref.lineIndex,new Set());grouped.get(ref.lineIndex).add(ref.cueIndex);});
+    for(const [lineIndex,indices] of grouped){const row=rows[lineIndex];if(!row?.wordCues)continue;row.wordCues=row.wordCues.filter((_,i)=>!indices.has(i));row.text=row.wordCues.map(c=>c.text).join('');row.originalText=row.text;if(!row.wordCues.length)row.wordCues=null;}
+    selectedWordKeys.clear();const next=allWordRefs()[0];selectedWordRef=next?{lineIndex:next.lineIndex,cueIndex:next.cueIndex}:null;selectedIndex=selectedWordRef?.lineIndex??Math.max(0,selectedIndex);hasWordTiming=rows.some(r=>r.wordCues?.length);
+    rerenderWordTimelinePreservingView();updateWordInspector();updatePreview();updateStatus();commitHistoryChange(historyBefore);toast('Word cue(s) cut.');
+  }
+  function removeLineAt(index){if(index<0||index>=rows.length)return;const historyBefore=captureHistoryState();if(gridMode==='words')setGridMode('lines');rows.splice(index,1);selectedIndex=Math.min(index,rows.length-1);lastEditedIndex=selectedIndex;replayFromAnchor=true;hasWordTiming=rows.some(r=>r.wordCues?.length);selectedWordRef=null;selectedWordKeys.clear();renderGrid();if(selectedIndex>=0)setSelected(selectedIndex,true);updatePreview();updateStatus();commitHistoryChange(historyBefore);}
+  function insertLineAt(index){
+    const historyBefore=captureHistoryState();if(gridMode==='words')setGridMode('lines');index=Math.max(0,Math.min(rows.length,index));let start=0;
+    if(rows.length){if(index===0)start=Math.max(0,rows[0].start-settings.txtSpacing);else start=rows[index-1].start+settings.txtSpacing;if(index>0&&index<rows.length){const left=rows[index-1].start,right=rows[index].start;if(right>left)start=Math.min(start,left+(right-left)/2);}}
+    rows.splice(index,0,makeRow(start,''));selectedIndex=index;lastEditedIndex=index;replayFromAnchor=true;renderGrid();setSelected(index,true);$('gridBody').querySelector(`tr[data-index="${index}"] .lyric-editor`)?.focus();updatePreview();updateStatus();commitHistoryChange(historyBefore);
+  }
+  function ensureWordCues(row,lineIndex){
+    if(row.wordCues?.length)return;const tokens=[...String(row.text||'').matchAll(/\S+\s*/g)].map(m=>m[0]);if(!tokens.length){row.wordCues=[];return;}
+    const start=row.start,end=Math.max(start+.3,getLineEnd(lineIndex)),step=(end-start)/tokens.length;
+    row.wordCues=tokens.map((text,i)=>({text,start:start+i*step,end:start+(i+1)*step,agent:row.lineAgent||'',style:row.lineStyle||'',ttsStyle:row.lineFontStyle||'',ttsWeight:row.lineFontWeight||'',color:row.lineColor||''}));row.text=row.wordCues.map(c=>c.text).join('');row.originalText=row.text;
+  }
+  function addWordCue(){
+    if(gridMode!=='words'||!hasWordTiming){toast('Switch to TTML words mode to add a word cue.',true);return;}
+    const historyBefore=captureHistoryState(),index=(contextMenuTarget?.lineIndex??selectedWordRef?.lineIndex??(selectedIndex>=0?selectedIndex:0)),row=rows[index];if(!row){toast('Select a lyric line first.',true);return;}ensureWordCues(row,index);
+    const baseIndex=selectedWordRef?.lineIndex===index?selectedWordRef.cueIndex:-1,base=row.wordCues[baseIndex]||null;let start=base?base.end:Math.max(row.start,Number(player.currentTime)||row.start),insertAt=base?baseIndex+1:row.wordCues.findIndex(c=>c.start>=start);if(insertAt<0)insertAt=row.wordCues.length;
+    const next=row.wordCues[insertAt],available=next?next.start-start:Infinity,duration=available>=.08?Math.min(.3,available*.8):.25;
+    if(next&&available<duration)for(let i=insertAt;i<row.wordCues.length;i++)if(row.wordCues[i].start>=start-1e-7){row.wordCues[i].start+=duration;row.wordCues[i].end+=duration;}
+    const cue={text:'',start:Math.max(0,start),end:Math.max(0,start)+duration,agent:base?.agent||row.lineAgent||'',style:base?.style||row.lineStyle||'',ttsStyle:base?.ttsStyle||row.lineFontStyle||'',ttsWeight:base?.ttsWeight||row.lineFontWeight||'',color:base?.color||row.lineColor||''};
+    row.wordCues.splice(insertAt,0,cue);row.text=row.wordCues.map(c=>c.text).join('');row.originalText=row.text;row.rawEnd=Math.max(row.rawEnd||0,cue.end);hasWordTiming=true;selectedIndex=index;lastEditedIndex=index;selectedWordRef={lineIndex:index,cueIndex:insertAt};selectedWordKeys=new Set([wordKey(index,insertAt)]);replayFromAnchor=true;
+    rerenderWordTimelinePreservingView();selectWord(index,insertAt,true);$('wordText').value='';$('wordText').focus();updatePreview();updateStatus();commitHistoryChange(historyBefore);toast('New word cue added. Type its text in the inspector.');
+  }
+  document.addEventListener('contextmenu',e=>{
+    if(activeScreen()!=='edit'||!$('editScreen').contains(e.target))return;
+    const clip=e.target instanceof Element?e.target.closest('.word-clip[data-line-index][data-cue-index]'):null,lane=e.target instanceof Element?e.target.closest('.timeline-lane-row[data-line-index]'):null,tr=e.target instanceof Element?e.target.closest('tr[data-index]'):null;
+    if(!clip&&!lane&&!tr)return;e.preventDefault();closeColorPicker();
+    if(clip){const lineIndex=Number(clip.dataset.lineIndex),cueIndex=Number(clip.dataset.cueIndex),key=wordKey(lineIndex,cueIndex);if(!selectedWordKeys.has(key))selectWord(lineIndex,cueIndex,false);else{selectedWordRef={lineIndex,cueIndex};selectedIndex=lineIndex;lastEditedIndex=lineIndex;updateWordInspector();}showEditorContextMenu(e,{type:'word',lineIndex,cueIndex});}
+    else{const lineIndex=Number(lane?.dataset.lineIndex??tr?.dataset.index);if(!Number.isFinite(lineIndex))return;if(tr)setSelected(lineIndex,false);else{selectedIndex=lineIndex;lastEditedIndex=lineIndex;}showEditorContextMenu(e,{type:'line',lineIndex});}
+  });
+  document.addEventListener('pointerdown',e=>{const pop=$('colorPickerPopover');if(!pop.classList.contains('hidden')&&!pop.contains(e.target)&&e.target!==$('wordColor'))closeColorPicker();const menu=$('editorContextMenu');if(!menu.classList.contains('hidden')&&!menu.contains(e.target))hideEditorContextMenu();},true);
+  $('colorPickerPopover').addEventListener('click',e=>{const tab=e.target.closest?.('[data-color-tab]');if(tab){colorPickerTab=tab.dataset.colorTab;renderColorPicker();}});
+  $('wordColor').addEventListener('click',openColorPicker);
+  $('wordColor').addEventListener('input',()=>{const value=$('wordColor').value.trim();$('wordColor').style.color=safeCssColor(value)||'var(--text)';if(/^#[0-9a-f]{3,8}$/i.test(value)){$('colorPreviewSwatch').style.background=value;$('colorPreviewHex').textContent=value;}});
+  $('wordItalicToggle').addEventListener('click',()=>toggleWordEmphasis('italic'));$('wordBoldToggle').addEventListener('click',()=>toggleWordEmphasis('bold'));
+  $('addWord').addEventListener('click',addWordCue);$('saveAgentPreset').addEventListener('click',saveAgentPreset);
+  $('agentPresetSelect').addEventListener('change',e=>{if(e.target.value)applyAgentPreset(e.target.value);e.target.value='';});
   const wordInspectorFieldIds=['wordStart','wordEnd','wordText','wordAgent','wordStyle','wordFontStyle','wordFontWeight','wordColor'];
   function wordInspectorFieldNeedsCommit(id,record=cueForRef()){
     if(!record)return false;
@@ -1421,6 +1595,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if(e.ctrlKey&&e.key.toLowerCase()==='s'){e.preventDefault();if(gridMode==='words')exportTtml();else exportLrc();return;}
     const target=e.target; const lyricEditing=target instanceof HTMLElement&&Boolean(target.closest('.lyric-editor,#wordText'));
     const formFocus=target instanceof HTMLElement&&Boolean(target.closest('input,textarea,select,[contenteditable="true"]'));
+    if(e.key==='Escape'&&!$('editorContextMenu').classList.contains('hidden')){hideEditorContextMenu();e.preventDefault();return;}
+    if(e.key==='Escape'&&!$('colorPickerPopover').classList.contains('hidden')){closeColorPicker();e.preventDefault();return;}
     if(e.code==='Space'&&e.ctrlKey&&!lyricEditing){e.preventDefault();blockPause();return;}
     if(e.code==='Space'&&!lyricEditing){e.preventDefault();playPause();return;}
     const editableLine=target instanceof HTMLElement?target.closest('.lyric-editor'):null;
@@ -1435,6 +1611,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     }
     if(formFocus)return;
     if(activeScreen()!=='edit')return;
+    if(gridMode==='words'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&e.key.toLowerCase()==='f'){e.preventDefault();addWordCue();return;}
     if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='a'&&gridMode==='words'){
       e.preventDefault();e.stopPropagation();
       const fallbackLine=selectedIndex>=0&&selectedIndex<rows.length?selectedIndex:lastEditedIndex>=0&&lastEditedIndex<rows.length?lastEditedIndex:0;
@@ -1457,6 +1634,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     else if(e.key==='End'&&rows.length){e.preventDefault();setSelected(rows.length-1,true);}
     else if(e.key==='Delete'&&selectedIndex>=0){e.preventDefault();deleteLine();}
   });
+  refreshAgentPresetSelect();
   document.addEventListener('click',e=>{const target=e.target;if(target instanceof HTMLElement&&!target.closest('.toast'))$('toast').classList.add('hidden');});
   window.addEventListener('beforeunload',()=>{if(audioUrl)URL.revokeObjectURL(audioUrl);});
   syncSettingsForm();outputMode=settings.defaultTab;updatePreview();renderGrid();updateStatus();

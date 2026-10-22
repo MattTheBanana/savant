@@ -1531,30 +1531,31 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if(editorClipboard.kind==='words'){const refs=selectedWordKeys.has(wordKey(target.lineIndex,target.cueIndex))?[...selectedWordKeys].map(parseWordKey):[{lineIndex:target.lineIndex,cueIndex:target.cueIndex}];deleteWordCues(refs);}else removeLineAt(target.lineIndex);
   }
   async function pasteContextTarget(){
+    const requestedTarget=contextMenuTarget;
     if(!editorClipboard){
       try{const text=await navigator.clipboard.readText();if(!text){toast('The system clipboard is empty.',true);return;}
-        if(contextMenuTarget?.type==='word'&&gridMode==='words'){editSelectedWordText(text);toast('Pasted text into the selected word.');return;}
+        if(requestedTarget?.type==='word'&&gridMode==='words'){editSelectedWordText(text);toast('Pasted text into the selected word.');return;}
         if(gridMode==='words'){toast('Right-click a word to paste text into it.',true);return;}editorClipboard={kind:'text',text,sourceLineIndex:null};
       }catch(_){toast('Browser clipboard access is unavailable. Copy something in the editor first.',true);return;}
     }
     if(editorClipboard.kind==='text'){
-      if(contextMenuTarget?.type==='word'&&gridMode==='words'){editSelectedWordText(editorClipboard.text);toast('Pasted text into the selected word.');return;}
-      const lineIndex=Number.isInteger(contextMenuTarget?.lineIndex)?contextMenuTarget.lineIndex:selectedIndex,editor=$('gridBody').querySelector(`tr[data-index="${lineIndex}"] .lyric-editor`);
+      if(requestedTarget?.type==='word'&&gridMode==='words'){editSelectedWordText(editorClipboard.text);toast('Pasted text into the selected word.');return;}
+      const lineIndex=Number.isInteger(requestedTarget?.lineIndex)?requestedTarget.lineIndex:selectedIndex,editor=$('gridBody').querySelector(`tr[data-index="${lineIndex}"] .lyric-editor`);
       if(!editor){toast('Select a lyric line to paste text into.',true);return;}
-      const isTextTarget=contextMenuTarget?.type==='text',a=isTextTarget?contextMenuTarget.selectionStart:editor.textContent.length,b=isTextTarget?contextMenuTarget.selectionEnd:a;
+      const isTextTarget=requestedTarget?.type==='text',a=isTextTarget?requestedTarget.selectionStart:editor.textContent.length,b=isTextTarget?requestedTarget.selectionEnd:a;
       replaceEditorTextRange(lineIndex,a,b,editorClipboard.text);toast('Pasted lyric text.');return;
     }
     if(editorClipboard.kind==='words'){
       const historyBefore=captureHistoryState();
       if(gridMode!=='words'){if(!hasWordTiming){toast('Word paste requires TTML word timing.',true);return;}setGridMode('words');}
-      const index=Number.isInteger(contextMenuTarget?.lineIndex)?contextMenuTarget.lineIndex:selectedWordRef?.lineIndex??Math.max(0,selectedIndex),row=rows[index];if(!row){toast('Select a lyric line for the pasted words.',true);return;}
+      const index=Number.isInteger(requestedTarget?.lineIndex)?requestedTarget.lineIndex:selectedWordRef?.lineIndex??Math.max(0,selectedIndex),row=rows[index];if(!row){toast('Select a lyric line for the pasted words.',true);return;}
       if(!row.wordCues)ensureWordCues(row,index);const refs=editorClipboard.cues,first=Math.min(...refs.map(c=>c.start)),anchor=selectedWordRef?.lineIndex===index&&row.wordCues[selectedWordRef.cueIndex]?row.wordCues[selectedWordRef.cueIndex].end:row.wordCues.length?Math.max(...row.wordCues.map(c=>c.end)):Math.max(row.start,Number(player.currentTime)||0);
       const newCues=refs.map(c=>{const {sourceLineIndex,...cue}=JSON.parse(JSON.stringify(c));const duration=Math.max(.02,cue.end-cue.start);cue.start=Math.max(0,anchor+(c.start-first));cue.end=cue.start+duration;return cue;});
       row.wordCues.push(...newCues);row.wordCues.sort((a,b)=>a.start-b.start);row.text=row.wordCues.map(c=>c.text).join('');row.originalText=row.text;hasWordTiming=true;selectedIndex=index;lastEditedIndex=index;
       const firstCue=row.wordCues.indexOf(newCues[0]);selectedWordRef={lineIndex:index,cueIndex:firstCue};selectedWordKeys=new Set(newCues.map(c=>wordKey(index,row.wordCues.indexOf(c))));
       rerenderWordTimelinePreservingView();updateWordInspector();updatePreview();updateStatus();commitHistoryChange(historyBefore);toast(`Pasted ${newCues.length} word cue(s).`);
     }else{
-      const target=contextMenuTarget,at=target?.lineIndex??selectedIndex,index=Math.max(0,Math.min(rows.length,at<0?rows.length:at+1)),historyBefore=captureHistoryState(),clones=JSON.parse(JSON.stringify(editorClipboard.rows));
+      const target=requestedTarget,at=target?.lineIndex??selectedIndex,index=Math.max(0,Math.min(rows.length,at<0?rows.length:at+1)),historyBefore=captureHistoryState(),clones=JSON.parse(JSON.stringify(editorClipboard.rows));
       if(gridMode==='words')setGridMode('lines');const base=rows[Math.max(0,index-1)],baseStart=base?base.start:0,first=clones[0]?.start||0,offset=base?Math.max(0,baseStart+settings.txtSpacing-first):0;
       clones.forEach(row=>{row.start+=offset;row.wordCues?.forEach(c=>{c.start+=offset;c.end+=offset;});});
       rows.splice(index,0,...clones);selectedIndex=index;lastEditedIndex=index;hasWordTiming=rows.some(r=>r.wordCues?.length);renderGrid();setSelected(index,true);updatePreview();updateStatus();commitHistoryChange(historyBefore);toast(`Pasted ${clones.length} lyric line(s).`);

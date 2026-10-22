@@ -577,14 +577,15 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     }
     viewport.scrollTop=Math.max(0,Math.min(targetTop,Math.max(0,viewport.scrollHeight-viewport.clientHeight)));
   }
-  function scrollTimelineElementIntoView(element){
-    const viewport=$('timelineViewport');if(!viewport||!element)return;
+  function scrollElementToCenter(viewport,element){
+    if(!viewport||!element||viewport.clientHeight<=0)return;
     const rect=viewport.getBoundingClientRect(),item=element.getBoundingClientRect();
-    const visibleTop=rect.top+viewport.clientTop,visibleBottom=rect.bottom-viewport.clientTop;
-    const itemCenter=item.top+item.height/2,visibleCenter=(visibleTop+visibleBottom)/2;
+    const visibleCenter=rect.top+viewport.clientTop+viewport.clientHeight/2;
+    const itemCenter=item.top+item.height/2;
     viewport.scrollTop+=itemCenter-visibleCenter;
     viewport.scrollTop=Math.max(0,Math.min(viewport.scrollTop,viewport.scrollHeight-viewport.clientHeight));
   }
+  function scrollTimelineElementIntoView(element){scrollElementToCenter($('timelineViewport'),element);}
   function captureHistoryState() {
     const active=document.activeElement;
     let focus=null;
@@ -1742,7 +1743,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     }
     selectedIndex=index;
     for(const tr of $('gridBody').querySelectorAll('tr[data-index]'))tr.classList.toggle('selected',Number(tr.dataset.index)===index);
-    if(settings.autoFollow){const tr=$('gridBody').querySelector(`tr[data-index="${index}"]`);tr?.scrollIntoView({block:'nearest'});}
+    if(settings.autoFollow){const tr=$('gridBody').querySelector(`tr[data-index="${index}"]`);if(tr)scrollElementToCenter($('lineTableWrap'),tr);}
     if(focusRow){const row=$('gridBody').querySelector(`tr[data-index="${index}"]`);row?.focus();}
     syncEditorActionBar();updateStatus();
   }
@@ -1816,7 +1817,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       activePlaybackIndex=nextIndex;activeWordIndex=-1;
       if(activePlaybackIndex>=0){const current=$('gridBody').querySelector(`tr[data-index="${activePlaybackIndex}"]`);current?.classList.add('playing');
         const typing=document.activeElement instanceof HTMLElement&&document.activeElement.matches('.lyric-editor,.time-input');
-        if(!typing&&settings.autoFollow&&!player.paused&&activeScreen()==='edit')current?.scrollIntoView({block:'center',inline:'nearest'});
+        if(!typing&&settings.autoFollow&&!player.paused&&activeScreen()==='edit'&&current)scrollElementToCenter($('lineTableWrap'),current);
       }
     }
     if(activeWordIndex!==nextWord){

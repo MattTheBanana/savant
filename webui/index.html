@@ -657,10 +657,10 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function renderGenerateInstallPrompts(){
     const panel=$('genInstallPrompt');if(!panel)return;const issues=[],mode=$('genMode').value,adjust=mode==='adjust',doctor=mode==='doctor';
     if(!genCapabilities){panel.classList.remove('hidden');panel.textContent='Setup checks require the local Python server. Launch Savant with lyrics_editor.py, then reload this page.';return;}
-    if(!adjust&&!doctor&&!genCapabilities.ffmpeg)issues.push({kind:'ffmpeg',title:'FFmpeg is missing',detail:'The CLI requires FFmpeg on PATH.'});
-    if(!adjust&&!doctor&&(!genCapabilities.whisperx||!genCapabilities.torch))issues.push({kind:'base',title:'Base dependencies may be missing',detail:'WhisperX and PyTorch are required.'});
-    if(!adjust&&!doctor&&$('genAligner').value==='tifa'&&!genCapabilities.tifa)issues.push({kind:'tifa',title:'TIFA is not fully installed',detail:'TIFA needs source, a separate environment, and model weights.'});
-    if(!adjust&&!doctor&&$('genSeparateVocals').checked&&!genCapabilities.vocalSeparation)issues.push({kind:'vocal',title:'Vocal separation is not installed',detail:'Install demucs-infer to use optional vocal isolation.'});
+    if(!adjust&&!genCapabilities.ffmpeg)issues.push({kind:'ffmpeg',title:'FFmpeg is missing',detail:'The CLI requires FFmpeg on PATH.'});
+    if(!adjust&&(!genCapabilities.whisperx||!genCapabilities.torch))issues.push({kind:'base',title:'Base dependencies may be missing',detail:'WhisperX and PyTorch are required.'});
+    if(!adjust&&$('genAligner').value==='tifa'&&!genCapabilities.tifa)issues.push({kind:'tifa',title:'TIFA is not fully installed',detail:'TIFA needs source, a separate environment, and model weights.'});
+    if(!adjust&&$('genSeparateVocals').checked&&!genCapabilities.vocalSeparation)issues.push({kind:'vocal',title:'Vocal separation is not installed',detail:'Install demucs-infer to use optional vocal isolation.'});
     if(doctor&&genLastSnapshot?.logs){
       const logs=genLastSnapshot.logs;
       if(/FFmpeg:\s*NOT FOUND|FFmpeg was not found/i.test(logs)&&!issues.some(i=>i.kind==='ffmpeg'))issues.push({kind:'ffmpeg',title:'FFmpeg is missing',detail:'Diagnostics could not find ffmpeg on PATH.'});

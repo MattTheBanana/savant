@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import argparse
 import email.policy
+import importlib.util
+import shutil
 import json
 import mimetypes
 import os
@@ -203,8 +205,9 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
         if ttml_path_text:
             ttml_path = Path(ttml_path_text).expanduser()
             _add_flag(command, "--ttml-output", ttml_path)
-        elif bool(config.get("wordLevel")):
+        elif bool(config.get("wordLevel")) or "singerConfig" in saved:
             ttml_path = output_path.with_suffix(".ttml")
+            _add_flag(command, "--ttml-output", ttml_path)
         else:
             ttml_path = None
         if ttml_path is not None:
@@ -238,6 +241,64 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
     _add_switch(command, "--overwrite", config, "overwrite")
     _add_switch(command, "--dry-run", config, "dryRun")
     return command
+
+
+def _capability_snapshot() -> dict:
+    """Describe runtime dependencies and safe, allowlisted installer actions."""
+    windows = os.name == "nt"
+    tifa_root = ROOT / "vendor" / "TIFA"
+    tifa_python = ROOT / ".tifa-venv" / "Scripts" / "python.exe"
+    tifa_model = ROOT / "models" / "TIFA-1.0-ST"
+    tifa_ready = (tifa_root / "infer.py").is_file() and tifa_python.is_file() and tifa_model.is_dir()
+    installers = {
+        "base": {"label": "Install base dependencies", "available": (ROOT / "install.bat").is_file() if windows else True,
+                 "method": "script" if (ROOT / "install.bat").is_file() else "pip",
+                 "description": "Install WhisperX in this editor's Python environment."},
+        "vocal": {"label": "Install vocal separation", "available": (ROOT / "install-vocal-separation.bat").is_file() if windows else True,
+                  "method": "script" if (ROOT / "install-vocal-separation.bat").is_file() else "pip",
+                  "description": "Install demucs-infer for optional local vocal isolation."},
+        "tifa": {"label": "Install TIFA", "available": (ROOT / "install-tifa.bat").is_file() if windows else False,
+                 "method": "script" if (ROOT / "install-tifa.bat").is_file() else "manual",
+                 "description": "TIFA needs a separate source checkout, isolated environment, and model checkpoint."},
+        "ffmpeg": {"label": "Install FFmpeg", "available": windows and shutil.which("winget") is not None,
+                   "method": "winget" if windows and shutil.which("winget") is not None else "manual",
+                   "description": "FFmpeg must be installed system-wide and available on PATH."},
+    }
+    return {
+        "platform": platform.system(), "python": sys.executable, "ffmpeg": shutil.which("ffmpeg"),
+        "whisperx": importlib.util.find_spec("whisperx") is not None,
+        "torch": importlib.util.find_spec("torch") is not None,
+        "vocalSeparation": importlib.util.find_spec("demucs_infer") is not None,
+        "tifa": tifa_ready, "installers": installers, "projectRoot": str(ROOT),
+    }
+
+
+def _installation_command(kind: str) -> tuple[list[str], str]:
+    options = _capability_snapshot()["installers"]
+    if kind not in options:
+        raise ValueError("Unknown installation option.")
+    option = options[kind]
+    if kind == "ffmpeg":
+        if option["method"] == "winget":
+            return (["winget", "install", "--id", "Gyan.FFmpeg.Shared", "--exact",
+                     "--accept-source-agreements", "--accept-package-agreements"], "Install FFmpeg")
+        raise RuntimeError("FFmpeg cannot be installed automatically here. Follow the FFmpeg instructions in README.md, then restart Savant.")
+    if kind == "tifa":
+        script = ROOT / "install-tifa.bat"
+        if option["method"] == "script" and script.is_file() and os.name == "nt":
+            return ([os.environ.get("COMSPEC", "cmd.exe"), "/d", "/c", str(script)], "Install TIFA")
+        raise RuntimeError("install-tifa.bat is not present in this project folder. TIFA requires a separate source checkout, environment, and model checkpoint; follow its setup instructions in README.md or add the project's installer script.")
+    if kind == "base":
+        script = ROOT / "install.bat"
+        if script.is_file() and os.name == "nt":
+            return ([os.environ.get("COMSPEC", "cmd.exe"), "/d", "/c", str(script)], "Install base dependencies")
+        return ([sys.executable, "-m", "pip", "install", "whisperx"], "Install WhisperX")
+    if kind == "vocal":
+        script = ROOT / "install-vocal-separation.bat"
+        if script.is_file() and os.name == "nt":
+            return ([os.environ.get("COMSPEC", "cmd.exe"), "/d", "/c", str(script)], "Install vocal separation")
+        return ([sys.executable, "-m", "pip", "install", "demucs-infer"], "Install vocal separation")
+    raise ValueError("Unknown installation option.")
 
 
 def _open_path(path: Path, mode: str) -> None:
@@ -352,10 +413,12 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_error(500, f"Cannot read editor UI: {exc}")
                 return
             self._send_bytes(payload, "text/html; charset=utf-8")
-            self.send_header
             return
         if route.path == "/api/health":
             self._send_json({"ok": True, "localOnly": True})
+            return
+        if route.path == "/api/capabilities":
+            self._send_json(_capability_snapshot())
             return
         match = re.fullmatch(r"/api/runs/([A-Za-z0-9_-]+)", route.path)
         if match:
@@ -460,6 +523,39 @@ class Handler(BaseHTTPRequestHandler):
                 thread.start()
                 self._send_json({"runId": run_id})
             except (ValueError, OSError, json.JSONDecodeError) as exc:
+                self._send_json({"error": str(exc)}, 400)
+            return
+        if route.path == "/api/install":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if length > 100_000:
+                    raise ValueError("Invalid request size.")
+                payload = json.loads(self.rfile.read(length).decode("utf-8"))
+                kind = str(payload.get("kind", ""))
+                command, label = _installation_command(kind)
+                RUNS_ROOT.mkdir(parents=True, exist_ok=True)
+                run_id = uuid.uuid4().hex[:16]
+                run_dir = RUNS_ROOT / run_id
+                (run_dir / "inputs").mkdir(parents=True, exist_ok=False)
+                run = {
+                    "id": run_id, "status": "queued", "operation": "install-" + kind,
+                    "created": time.time(), "started": None, "finished": None,
+                    "return_code": None, "step": label, "overall_progress": 0,
+                    "step_progress": 0, "logs": "", "directory": run_dir,
+                    "log_path": run_dir / "savant-install.log",
+                    "artifacts": {"log": {"label": label + " log", "path": str(run_dir / "savant-install.log"), "kind": "log"}},
+                }
+                run["log_path"].write_text("", encoding="utf-8")
+                with RUNS_LOCK:
+                    RUNS[run_id] = run
+                _set_progress(run, 1, label)
+                env = os.environ.copy()
+                env["PYTHONUNBUFFERED"] = "1"
+                env["SAVANT_GUI_PROGRESS"] = "1"
+                thread = threading.Thread(target=_run_worker, args=(run_id, command, env), daemon=True)
+                thread.start()
+                self._send_json({"runId": run_id, "label": label})
+            except (ValueError, OSError, json.JSONDecodeError, RuntimeError) as exc:
                 self._send_json({"error": str(exc)}, 400)
             return
         if route.path == "/api/open-artifact":

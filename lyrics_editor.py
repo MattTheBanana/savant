@@ -202,7 +202,7 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
 
         ttml_path_text = str(config.get("ttmlOutputPath", "")).strip()
         if ttml_path_text:
-            ttml_path = Path(ttml_path_text).expanduser()
+            ttml_path = Path(ttml_path_text).expanduser().resolve()
             _add_flag(command, "--ttml-output", ttml_path)
         elif bool(config.get("wordLevel")) or "singerConfig" in saved:
             ttml_path = output_path.with_suffix(".ttml")
@@ -217,20 +217,22 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
         if "vocalOutput" in config and str(config.get("vocalOutput", "")).strip():
             if not bool(config.get("separateVocals")):
                 raise ValueError("Enable vocal separation before choosing a retained vocal stem path.")
-            _add_flag(command, "--vocal-output", config["vocalOutput"])
-            run["artifacts"]["vocal-output"] = {"label": "Separated vocal stem", "path": str(config["vocalOutput"]), "kind": "output"}
+            vocal_output_path = Path(str(config["vocalOutput"])).expanduser().resolve()
+            _add_flag(command, "--vocal-output", vocal_output_path)
+            run["artifacts"]["vocal-output"] = {"label": "Separated vocal stem", "path": str(vocal_output_path), "kind": "output"}
 
         tifa_diagnostics = str(config.get("tifaDiagnosticsPath", "")).strip()
         if tifa_diagnostics:
-            _add_flag(command, "--tifa-diagnostics", Path(tifa_diagnostics).expanduser())
-            run["artifacts"]["tifa-diagnosis"] = {"label": "TIFA diagnosis (raw JSON)", "path": str(Path(tifa_diagnostics).expanduser()), "kind": "diagnosis"}
+            diagnosis_path = Path(tifa_diagnostics).expanduser().resolve()
+            _add_flag(command, "--tifa-diagnostics", diagnosis_path)
+            run["artifacts"]["tifa-diagnosis"] = {"label": "TIFA diagnosis (raw JSON)", "path": str(diagnosis_path), "kind": "diagnosis"}
         elif str(config.get("aligner", "whisperx")) == "tifa":
             default_diagnosis = saved["audio"].with_suffix(".tifa-diagnosis.json")
             run["artifacts"]["tifa-diagnosis"] = {"label": "TIFA diagnosis (raw JSON)", "path": str(default_diagnosis), "kind": "diagnosis"}
 
         if bool(config.get("reviewReport")) or str(config.get("reviewReportPath", "")).strip():
             report_text = str(config.get("reviewReportPath", "")).strip()
-            report = Path(report_text).expanduser() if report_text else directory / "alignment-review.txt"
+            report = Path(report_text).expanduser().resolve() if report_text else directory / "alignment-review.txt"
             _add_flag(command, "--review-report", report)
             run["artifacts"]["review-report"] = {"label": "Alignment review report", "path": str(report), "kind": "report"}
         for field_name, arg_name in (("lineOffsets", "--line-offsets"), ("phraseOffsets", "--phrase-offsets")):
@@ -389,17 +391,19 @@ def _run_worker(run_id: str, command: list[str], env: dict[str, str]) -> None:
 
 
 class Handler(BaseHTTPRequestHandler):
-    def _send_bytes(self, payload: bytes, content_type: str, status: int = 200, filename: str | None = None) -> None:
+    def _send_bytes(self, payload: bytes, content_type: str, status: int = 200, filename: str | None = None, send_body: bool = True) -> None:
         self.send_response(status)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(payload)))
         self.send_header("Cache-Control", "no-store")
         self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Content-Security-Policy", "default-src 'self' 'unsafe-inline' blob: data:; media-src blob: data:; connect-src 'self'; img-src 'self' data: blob:")
         if filename:
             safe = re.sub(r'[^A-Za-z0-9._ -]', "_", filename)
             self.send_header("Content-Disposition", f'attachment; filename="{safe}"')
         self.end_headers()
-        self.wfile.write(payload)
+        if send_body:
+            self.wfile.write(payload)
 
     def _send_json(self, value: dict, status: int = 200) -> None:
         self._send_bytes(json.dumps(value, ensure_ascii=False).encode("utf-8"),
@@ -481,7 +485,7 @@ class Handler(BaseHTTPRequestHandler):
         except OSError as exc:
             self.send_error(500, f"Cannot read editor UI: {exc}")
             return
-        self._send_bytes(payload, "text/html; charset=utf-8")
+        self._send_bytes(payload, "text/html; charset=utf-8", send_body=False)
 
     def do_POST(self) -> None:  # noqa: N802
         route = urlparse(self.path)

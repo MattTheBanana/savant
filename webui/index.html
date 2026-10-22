@@ -187,27 +187,38 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 </header>
 <main class="shell">
   <section id="editScreen">
-    <div class="toolbar">
-      <div class="import-group"><label class="file-label" for="audioFile">♫ Import audio</label><input id="audioFile" type="file" accept="audio/*"><span id="audioFileName" class="file-name">No audio selected</span></div>
-      <div class="import-group"><label class="file-label" for="lyricsFile">↥ Import lyrics</label><input id="lyricsFile" type="file" accept=".lrc,.ttml,.xml,.txt,text/plain,application/xml"><span id="lyricsFileName" class="file-name">No lyrics loaded</span></div>
-      <span id="status" class="status"><strong>Ready</strong> · import files to begin</span>
-    </div>
-    <div class="editor-layout">    <div class="editor-layout">
+    <div class="editor-layout">
       <section class="panel" aria-label="Lyrics editing grid">
-        <div class="panel-head"><div><h2>Lyric timing grid</h2><p id="gridDescription">Edit line timing in LRC view or fine-tune individual word cues in TTML view.</p></div><div class="panel-actions"><button id="viewLines" class="small active" title="Sync line by line" aria-label="LRC — Sync line by line">LRC</button><button id="viewWords" class="small" disabled title="Sync word by word" aria-label="TTML — Sync word by word">TTML</button></div></div>
-        <div class="editor-action-bar" aria-label="Editing actions">
-          <span id="editorActionsLabel" class="editor-actions-label">LRC line actions</span>
-          <button id="addLine" class="small">+ Add line</button>
-          <button id="addWord" class="small" title="Add a timed word cue (F)">+ Add word</button>
-          <button id="deleteTtmlLine" class="small danger hidden" type="button">Delete line</button>
-          <button id="deleteLine" class="small danger">Delete line</button>
+        <div class="editor-action-bar" id="editorActionBar" data-actions-align="left" aria-label="Editor actions">
+          <div class="editor-bar-group" id="editorModeSwitch">
+            <button id="viewLines" class="small primary" type="button" title="Sync line by line" aria-label="LRC — Sync line by line">LRC</button>
+            <button id="viewWords" class="small" type="button" disabled title="Sync word by word" aria-label="TTML — Sync word by word">TTML</button>
+          </div>
+          <span class="editor-bar-separator" id="editorSep1" aria-hidden="true"></span>
+          <div class="editor-bar-group" id="editorImportGroup">
+            <div class="import-group action-import-group"><label class="file-label action-import-button" for="audioFile" title="Choose local audio">Import Audio</label><input id="audioFile" type="file" accept="audio/*"><span id="audioFileName" class="file-name action-file-name" title="No audio selected">No audio</span></div>
+            <div class="import-group action-import-group"><label class="file-label action-import-button" for="lyricsFile" title="Choose local lyrics">Import Lyrics</label><input id="lyricsFile" type="file" accept=".lrc,.ttml,.xml,.txt,text/plain,application/xml"><span id="lyricsFileName" class="file-name action-file-name" title="No lyrics loaded">No lyrics</span></div>
+          </div>
+          <span class="editor-bar-separator" id="editorSep2" aria-hidden="true"></span>
+          <div class="editor-bar-group" id="editorZoomControls" aria-label="TTML timeline zoom">
+            <button id="zoomOut" class="small" type="button" aria-label="Zoom out line detail" title="Zoom out">−</button>
+            <button id="zoomIn" class="small" type="button" aria-label="Zoom in line detail" title="Zoom in">+</button>
+            <button id="zoomFit" class="small" type="button" title="Fit the longest lyric line across the lane with configured edge context">Fit Lines</button>
+            <span id="timelineZoomLabel" class="timeline-zoom-label">Fit longest line</span>
+          </div>
+          <span class="editor-bar-separator" id="editorSep3" aria-hidden="true"></span>
+          <div class="editor-bar-group editor-bar-actions" id="editorActionButtons">
+            <button id="addLine" class="small" type="button">+ Add Line</button>
+            <button id="addWord" class="small" type="button" title="Add a timed word cue (F)">+ Add Word</button>
+            <button id="deleteTtmlLine" class="small danger hidden" type="button">Delete Line</button>
+            <button id="deleteLine" class="small danger" type="button">Delete Line</button>
+          </div>
+          <button id="timelineControlsTrigger" class="small editor-controls-trigger" type="button" aria-haspopup="dialog" aria-expanded="false">Controls ▾</button>
+          <span id="waveformStatus" class="hidden" aria-hidden="true"></span>
         </div>
         <div id="lineTableWrap" class="table-wrap"><table><thead id="gridHead"><tr><th class="num">#</th><th class="time">Time</th><th>Lyric</th></tr></thead><tbody id="gridBody"><tr><td colspan="3" style="padding:30px;text-align:center;color:#91a1b5">Import an LRC, TTML, or TXT lyrics file.</td></tr></tbody></table></div>
         <div id="wordTimelineEditor" class="word-timeline-editor hidden">
-          <div class="timeline-toolbar">
-            <div class="timeline-toolbar-group"><button id="zoomOut" class="small" aria-label="Zoom out line detail">−</button><button id="zoomIn" class="small" aria-label="Zoom in line detail">+</button><button id="zoomFit" class="small" title="Fit the longest lyric line across the lane with configured edge context">Fit lines</button><span id="timelineZoomLabel" class="timeline-zoom-label">Fit longest line</span></div>
-            <div class="timeline-toolbar-group"><span id="waveformStatus" class="timeline-zoom-label">Waveform waits for audio</span><button id="timelineControlsTrigger" class="small" type="button" aria-haspopup="dialog" aria-expanded="false">Controls ▾</button></div>
-          </div>
+          <div class="ttml-editor-layout" id="ttmlEditorLayout">
           <div id="timelineViewport" class="timeline-viewport" aria-label="Wrapped word timing timeline">
             <div id="timelineInner" class="timeline-inner">
               <div id="timelineLanes"></div>
@@ -227,8 +238,9 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
               <div class="agent-preset-row"><label for="agentPresetTrigger">Agent preset</label><div class="agent-preset-picker"><button type="button" id="agentPresetTrigger" class="small" aria-haspopup="menu" aria-expanded="false">Agent presets ▾</button></div><button type="button" id="saveAgentPreset" class="small">+ New preset</button></div>
             </div>
           </div>
+          </div>
         </div>
-        <div class="grid-footer"><span id="gridStatus">0 lines</span><span><span class="shortcut">↑</span>/<span class="shortcut">↓</span> select · <span class="shortcut">←</span>/<span class="shortcut">→</span> nudge or seek · <span class="shortcut">Shift+←/→</span> word edges · <span class="shortcut">Ctrl+Z</span> undo · <span class="shortcut">Ctrl+Y</span> redo · <span class="shortcut">Space</span> play/pause · <span class="shortcut">Ctrl+Space</span> block pause · <span class="shortcut">F</span> add word (TTML)</span></div>
+        <div class="grid-footer"><span id="gridStatus">0 lines</span><span id="status" class="status"><strong>Ready</strong> · import files to begin</span><span><span class="shortcut">↑</span>/<span class="shortcut">↓</span> select · <span class="shortcut">←</span>/<span class="shortcut">→</span> nudge or seek · <span class="shortcut">Shift+←/→</span> word edges · <span class="shortcut">Ctrl+Z</span> undo · <span class="shortcut">Ctrl+Y</span> redo · <span class="shortcut">Space</span> play/pause · <span class="shortcut">Ctrl+Space</span> block pause · <span class="shortcut">F</span> add word (TTML)</span></div>
       </section>
     </div>
   </section>
@@ -353,6 +365,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       <div class="setting"><label for="downloadBase">Export filename suffix</label><select id="downloadBase"><option value="same">Use imported lyrics base name</option><option value="audio">Use audio base name</option></select><p>Controls the default downloaded filename.</p></div>
       <div class="setting"><label for="returnToEditAfterGenerate">After generation finishes</label><select id="returnToEditAfterGenerate"><option value="false">Stay on Generate and review results</option><option value="true">Open Edit automatically</option></select><p>Choose whether a completed CLI run takes you straight to the editor.</p></div>
       <div class="setting"><label for="autoImportGeneratedOutput">Automatically import generated files</label><select id="autoImportGeneratedOutput"><option value="false">Off — use Import Output to Edit</option><option value="true">On — load audio and lyrics into Edit</option></select><p>When enabled, load the generated TTML (or LRC if TTML was not requested) and source audio in Edit after a successful run.</p></div>
+      <div class="setting"><label for="editorActionAlignment">Editor action alignment</label><select id="editorActionAlignment"><option value="left">Left</option><option value="center">Center</option><option value="right">Right</option></select><p>Choose whether the Add / Delete buttons sit left, center, or right on the editor action bar.</p></div>
+      <div class="setting"><label for="wordInspectorLayout">TTML word editor placement</label><select id="wordInspectorLayout"><option value="right">Right side</option><option value="bottom">Below timeline</option></select><p>Place the selected-word fields beside the timeline or stack them underneath it.</p></div>
     </div>
   </section>
   <p class="footer-note">Audio and lyric files are opened locally by your browser. This app does not upload them. Press <span class="shortcut">Esc</span> to leave a lyric text field and return to keyboard navigation.</p>
@@ -365,8 +379,13 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   <div id="previewInfo" class="preview-info">LRC is compatible with common players. TTML can preserve word cues when imported from an existing word-timed TTML.</div>
   <div class="grid-footer"><button id="copyPreview" class="small">Copy preview</button><div class="panel-actions"><button id="saveLrc" class="small">Download LRC</button><button id="saveTtml" class="small primary">Download TTML</button></div></div>
 </section>
-<div id="timelineControlsMenu" class="timeline-controls-menu hidden" role="dialog" aria-label="TTML timeline controls">
-  <div class="floating-menu-title">TTML timeline controls</div>
+<div id="timelineControlsMenu" class="timeline-controls-menu hidden" role="dialog" aria-label="Editor controls">
+  <div class="floating-menu-title">Editor controls</div>
+  <div class="floating-menu-row"><span class="shortcut">↑ / ↓</span><span>Select the previous or next lyric line in the LRC grid.</span></div>
+  <div class="floating-menu-row"><span class="shortcut">← / →</span><span>Nudge the selected line or seek during playback. Shift + arrows applies the configured multiplier or adjusts word edges.</span></div>
+  <div class="floating-menu-row"><span class="shortcut">Ctrl+Z / Ctrl+Y</span><span>Undo / redo the last edit.</span></div>
+  <div class="floating-menu-row"><span class="shortcut">Space</span><span>Play or pause. Ctrl + Space performs a block pause.</span></div>
+  <div class="floating-menu-title">TTML word editing</div>
   <div class="floating-menu-row"><span class="shortcut">Drag playhead</span><span>Seek the audio to a precise time.</span></div>
   <div class="floating-menu-row"><span class="shortcut">Left-drag waveform</span><span>Seek by dragging the waveform.</span></div>
   <div class="floating-menu-row"><span class="shortcut">Middle-drag</span><span>Pan within the line’s edge context.</span></div>
@@ -376,7 +395,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   <div class="floating-menu-row"><span class="shortcut">Ctrl+A</span><span>Select words on this line; Ctrl+Shift+A selects all word cues.</span></div>
   <div class="floating-menu-row"><span class="shortcut">Shift+← / →</span><span>Seek to the nearest word boundary. Plain arrows nudge the selected word or seek.</span></div>
   <div class="floating-menu-row"><span class="shortcut">F</span><span>Add a timed word cue.</span></div>
-  <div class="floating-menu-foot">Ctrl+wheel zooms around the cursor. Fit lines resets the timeline scale.</div>
+  <div class="floating-menu-foot">Ctrl + wheel zooms around the cursor. Fit Lines resets the timeline scale. Word dragging, box selection, and playhead controls are available in TTML mode.</div>
 </div>
 <div id="agentPresetMenu" class="agent-preset-menu hidden" role="menu" aria-label="Saved agent presets"></div>
 <div id="playerDock" class="audio-panel player-dock">
@@ -1257,7 +1276,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     row.text=row.wordCues.map(c=>c.text).join('');row.originalText=row.text;
     const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${lineIndex}"][data-cue-index="${cueIndex}"] .word-label`);
     if(clip)clip.textContent=String(cue.text||'').trim()||'(empty)';
-    const laneLabel=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-label span:last-child`);
+    const laneLabel=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-label .lane-summary`);
     if(laneLabel){laneLabel.textContent=row.text;laneLabel.title=row.text;}
     updateWordInspector();updatePreview();updateStatus();updateLiveHighlight();
     commitHistoryChange(historyBefore);
@@ -1544,7 +1563,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       const label=document.createElement('div');label.className='timeline-label';
       const number=document.createElement('strong');number.textContent=`Line ${lineIndex+1}`;
       const start=document.createElement('span');start.className='lane-start';start.textContent=fmtTime(row.start,2);
-      const summary=document.createElement('span');summary.textContent=row.text;summary.title=row.text;
+      const summary=document.createElement('span');summary.className='lane-summary';summary.textContent=row.text;summary.title=row.text;
       label.append(number,start,summary);
       const content=document.createElement('div');content.className='timeline-lane-content';content.style.width=`${timelineTrackWidth}px`;content.dataset.windowStart=String(win.start);content.dataset.windowEnd=String(win.end);content.dataset.pps=String(pps);
       const waveWrap=document.createElement('div');waveWrap.className='lane-waveform-wrapper';

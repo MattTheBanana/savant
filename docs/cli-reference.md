@@ -49,7 +49,7 @@ python lyrics_align.py --adjust-lrc "D:/Music/Song.lrc" --offset -0.15
 | `--language CODE` | Alignment language code (default: `en`). Model support varies by backend. |
 | `--aligner whisperx` or `--aligner tifa` | Select the backend. WhisperX is the default; TIFA is the optional singing-aware backend and currently supports English in this integration. |
 | `--align-model NAME` | Optional custom Hugging Face / wav2vec2 alignment model for WhisperX. |
-| `--device auto|cpu|cuda` | Inference device (default: `auto`). |
+| `--device auto`, `--device cpu`, or `--device cuda` | Inference device (default: `auto`). |
 | `--offset SECONDS` | Apply a global timing correction. Negative values move timings earlier; positive values move them later. |
 | `--line-offsets PATH` | JSON object mapping 1-based lyric line numbers to timing corrections in seconds. Blank lines and standard LRC metadata are removed before counting. |
 | `--phrase-offsets PATH` | JSON object mapping exact cleaned lyric-line text to extra timing corrections. Repeated matching lines all receive the correction. |

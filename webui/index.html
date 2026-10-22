@@ -464,7 +464,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   let pendingZoomRender = null;
   let settings = {
     nudgeStep: 0.02, shiftMultiplier: 5, replayLead: 2.0, txtSpacing: 3.0,
-    language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, returnToEditAfterGenerate: false, autoImportGeneratedOutput: false
+    language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, returnToEditAfterGenerate: false, autoImportGeneratedOutput: false, editorActionAlignment: 'left', wordInspectorLayout: 'right'
   };
   try { settings = {...settings, ...JSON.parse(localStorage.getItem('lyrics-aligner-ui-settings') || '{}')}; } catch (_) {}
   let toastTimer = null;
@@ -472,6 +472,11 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function toast(message, error=false) {
     const el=$('toast'); el.textContent=message; el.classList.remove('hidden','error'); if(error) el.classList.add('error');
     clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.add('hidden'),4200);
+  }
+  function applyEditorPreferences(){
+    const alignment=['left','center','right'].includes(settings.editorActionAlignment)?settings.editorActionAlignment:'left';
+    $('editorActionBar').dataset.actionsAlign=alignment;
+    $('ttmlEditorLayout').classList.toggle('bottom',settings.wordInspectorLayout==='bottom');
   }
   function positionFloatingMenu(trigger,menu){
     menu.classList.remove('hidden');
@@ -518,9 +523,10 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function scrollTimelineElementIntoView(element){
     const viewport=$('timelineViewport');if(!viewport||!element)return;
     const rect=viewport.getBoundingClientRect(),item=element.getBoundingClientRect();
-    const top=rect.top+viewport.clientTop,bottom=rect.bottom-viewport.clientTop;
-    if(item.top<top)viewport.scrollTop-=top-item.top;
-    else if(item.bottom>bottom)viewport.scrollTop+=item.bottom-bottom;
+    const visibleTop=rect.top+viewport.clientTop,visibleBottom=rect.bottom-viewport.clientTop;
+    const itemCenter=item.top+item.height/2,visibleCenter=(visibleTop+visibleBottom)/2;
+    viewport.scrollTop+=itemCenter-visibleCenter;
+    viewport.scrollTop=Math.max(0,Math.min(viewport.scrollTop,viewport.scrollHeight-viewport.clientHeight));
   }
   function captureHistoryState() {
     const active=document.activeElement;
@@ -583,9 +589,9 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     restoreHistoryState(next);toast('Redo.');
   }
   function saveSettings() {
-    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput']) {
+    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','editorActionAlignment','wordInspectorLayout']) {
       const el=$(key); if (!el) continue;
-      settings[key] = ['language','defaultTab','downloadBase'].includes(key) ? el.value :
+      settings[key] = ['language','defaultTab','downloadBase','editorActionAlignment','wordInspectorLayout'].includes(key) ? el.value :
         (key==='autoFollow'||key==='returnToEditAfterGenerate'||key==='autoImportGeneratedOutput') ? el.value==='true' : Number(el.value);
     }
     settings.nudgeStep=Math.min(1,Math.max(.001,Number(settings.nudgeStep)||.02));
@@ -602,7 +608,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed']) $(key).value=settings[key];
     document.documentElement.style.setProperty('--playhead-label-size',`${settings.playheadLabelSize}px`);
     $('autoFollow').value=String(settings.autoFollow);
-    $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));$('autoImportGeneratedOutput').value=String(Boolean(settings.autoImportGeneratedOutput));
+    $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));$('autoImportGeneratedOutput').value=String(Boolean(settings.autoImportGeneratedOutput));$('editorActionAlignment').value=settings.editorActionAlignment||'left';$('wordInspectorLayout').value=settings.wordInspectorLayout||'right';applyEditorPreferences();
   }
   function fmtTime(sec, places=3) {
     sec=Math.max(0,Number(sec)||0); const mins=Math.floor(sec/60), secs=sec-mins*60;
@@ -907,7 +913,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function wireGeneratePanel(){
     genWireFileInputs();$('generateConfigTab').addEventListener('click',()=>setGeneratePane('configuration'));$('generateAdvancedTab').addEventListener('click',()=>setGeneratePane('advanced'));
     $('genMode').addEventListener('change',updateGenerateConfigVisibility);$('genAligner').addEventListener('change',updateGenerateConfigVisibility);$('genSeparateVocals').addEventListener('change',renderGenerateInstallPrompts);
-    $('genOutputName').addEventListener('input',()=>{genOutputNameCustom=Boolean($('genOutputName').value.trim())&&$('genOutputName').value.trim()!==genDefaultOutputName;});
+    $('genOutputName').addEventListener('input',()=>{genOutputNameCustom=Boolean($('genOutputName').value.trim())&&$('genOutputName').value.trim()!==genDefaultOutputName;genMarkConfigChanged();});
     $('genChooseLyricsDirectory').addEventListener('click',()=>genChooseOutputDirectory('lyrics'));$('genChooseAudioDirectory').addEventListener('click',()=>genChooseOutputDirectory('audio'));
     $('genUseDefaultDirectory').addEventListener('click',()=>{$('genOutputDirectory').value='';genMarkConfigChanged();});
     $('genOutputDirectory').addEventListener('input',genMarkConfigChanged);
@@ -1153,7 +1159,6 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   }
   function syncEditorActionBar(){
     const wordMode=gridMode==='words';
-    $('editorActionsLabel').textContent=wordMode?'TTML word actions':'LRC line actions';
     $('addLine').classList.toggle('hidden',wordMode);
     $('addWord').classList.toggle('hidden',!wordMode);
     $('addLine').disabled=wordMode;
@@ -1554,6 +1559,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     function renderWordGrid() {
     const tbody=$('timelineLanes');tbody.textContent='';activePlaybackIndex=-1;activeWordIndex=-1;
     $('lineTableWrap').classList.add('hidden');$('wordTimelineEditor').classList.remove('hidden');
+    $('ttmlEditorLayout').classList.toggle('empty',!hasWordTiming);
     setTimelineGeometry();
     if(!hasWordTiming){tbody.innerHTML='<div class="timeline-empty"><strong>No word-level TTML cues</strong>Import a word-timed TTML file to see each lyric line above its own waveform segment. The line/LRC view remains available for simpler timing edits.</div>';$('wordInspector').classList.add('hidden');return;}
     const frag=document.createDocumentFragment();let cueCount=0;
@@ -1628,7 +1634,6 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function renderGrid() {
     $('viewWords').disabled=!rows.some(row=>String(row.text||'').trim());
     $('viewLines').classList.toggle('primary',gridMode==='lines');$('viewWords').classList.toggle('primary',gridMode==='words');
-    $('gridDescription').textContent=gridMode==='words'?'Adjust each word cue against its line waveform; select or box-select words to edit them.':'Edit line starts and lyrics. When word timing exists, changes to a line’s word count create starter cues for further editing.';
     if(gridMode==='words')renderWordGrid();else {
       $('wordTimelineEditor').classList.add('hidden');$('lineTableWrap').classList.remove('hidden');
       $('gridHead').innerHTML='<tr><th class="num">#</th><th class="time">Time</th><th>Lyric</th></tr>';
@@ -1732,7 +1737,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       activePlaybackIndex=nextIndex;activeWordIndex=-1;
       if(activePlaybackIndex>=0){const current=$('gridBody').querySelector(`tr[data-index="${activePlaybackIndex}"]`);current?.classList.add('playing');
         const typing=document.activeElement instanceof HTMLElement&&document.activeElement.matches('.lyric-editor,.time-input');
-        if(!typing&&settings.autoFollow&&!player.paused&&activeScreen()==='edit')current?.scrollIntoView({block:'nearest'});
+        if(!typing&&settings.autoFollow&&!player.paused&&activeScreen()==='edit')current?.scrollIntoView({block:'center',inline:'nearest'});
       }
     }
     if(activeWordIndex!==nextWord){
@@ -1858,7 +1863,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     deleteLine();
   }
 
-  function drawWaveform(){$('waveformStatus').textContent=waveformPeaks?'Waveform ready · shown per lyric line':(player.src?'Waveform loading / unavailable':'Waveform waits for audio');}
+  function drawWaveform(){const status=$('waveformStatus');if(status)status.textContent='';}
   async function buildWaveform(file) {
     const token=++waveformBuildToken;waveformPeaks=null;$('waveformStatus').textContent='Decoding audio for waveform…';drawWaveform();
     if(file.size>350*1024*1024){$('waveformStatus').textContent='Waveform skipped for very large file';drawWaveform();return;}
@@ -2394,8 +2399,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       flushActiveWordInspectorField();
     }
   },true);
-  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);toast('Settings saved.');});
-  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false};syncSettingsForm();saveSettings();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
+  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','editorActionAlignment','wordInspectorLayout'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);if(id==='wordInspectorLayout'&&gridMode==='words')rerenderWordTimelinePreservingView();toast('Settings saved.');});
+  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false,editorActionAlignment:'left',wordInspectorLayout:'right'};syncSettingsForm();saveSettings();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
   document.addEventListener('keydown',e=>{
     if(e.ctrlKey&&e.key.toLowerCase()==='s'){e.preventDefault();if(gridMode==='words')exportTtml();else exportLrc();return;}
     const target=e.target; const lyricEditing=target instanceof HTMLElement&&Boolean(target.closest('.lyric-editor,#wordText'));

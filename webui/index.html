@@ -662,8 +662,9 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if(doctor&&genLastSnapshot?.logs){
       const logs=genLastSnapshot.logs;
       if(/FFmpeg:\s*NOT FOUND|FFmpeg was not found/i.test(logs)&&!issues.some(i=>i.kind==='ffmpeg'))issues.push({kind:'ffmpeg',title:'FFmpeg is missing',detail:'Diagnostics could not find ffmpeg on PATH.'});
-      if(/WhisperX:\s*ERROR|alignment dependencies are missing/i.test(logs)&&!issues.some(i=>i.kind==='base'))issues.push({kind:'base',title:'Base dependencies may be missing',detail:'Diagnostics report missing packages.'});
+      if(/PyTorch:\s*ERROR|WhisperX:\s*ERROR|alignment dependencies are missing/i.test(logs)&&!issues.some(i=>i.kind==='base'))issues.push({kind:'base',title:'Base dependencies may be missing',detail:'Diagnostics report missing Python packages.'});
       if(/Vocal separation: not installed/i.test(logs)&&$('genSeparateVocals').checked&&!issues.some(i=>i.kind==='vocal'))issues.push({kind:'vocal',title:'Vocal separation is not installed',detail:'This is optional unless enabled.'});
+      if(/TIFA:\s*not installed|TIFA pretrained model:\s*NOT FOUND|TIFA Python:\s*ERROR/i.test(logs)&&$('genAligner').value==='tifa'&&!issues.some(i=>i.kind==='tifa'))issues.push({kind:'tifa',title:'TIFA setup is incomplete',detail:'Diagnostics could not find its source, environment, or checkpoint.'});
     }
     if(!issues.length){panel.classList.add('hidden');panel.textContent='';return;}
     panel.classList.remove('hidden');panel.textContent='';const heading=document.createElement('strong');heading.textContent='Setup help';panel.append(heading);
@@ -692,7 +693,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     $('generateRunStatus').classList.remove('hidden');$('genCurrentStep').textContent=snapshot.step||'Working…';
     const overall=Math.max(0,Math.min(100,Number(snapshot.overallProgress)||0)),step=Math.max(0,Math.min(100,Number(snapshot.stepProgress)||0));
     $('genOverallText').textContent=overall+'% overall';$('genOverallBar').style.width=overall+'%';$('genOverallBar').parentElement.setAttribute('aria-valuenow',String(overall));
-    $('genStepText').textContent=step+'%';$('genStepBar').style.width=step+'%';$('genStepBar').parentElement.setAttribute('aria-valuenow',String(step));$('genStepBar').classList.toggle('indeterminate',snapshot.status==='running'&&step===0);
+    $('genStepText').textContent=step===0&&snapshot.status==='running'?'Working…':step+'%';$('genStepBar').style.width=step+'%';$('genStepBar').parentElement.setAttribute('aria-valuenow',String(step));$('genStepBar').classList.toggle('indeterminate',snapshot.status==='running'&&step===0);
     $('genRunStatusBadge').textContent=({queued:'Queued',running:'Running',success:'Completed',warning:'Completed with warnings',failed:'Failed'})[snapshot.status]||snapshot.status;
     $('genFooterStatus').textContent=snapshot.error||((snapshot.status==='success'||snapshot.status==='warning')?'Finished. Review outputs and logs.':snapshot.status==='failed'?'Task failed. Open Logs for details.':'Working locally…');
   }
@@ -776,7 +777,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function wireGeneratePanel(){
     genWireFileInputs();$('generateConfigTab').addEventListener('click',()=>setGeneratePane('configuration'));$('generateAdvancedTab').addEventListener('click',()=>setGeneratePane('advanced'));
     $('genMode').addEventListener('change',updateGenerateConfigVisibility);$('genAligner').addEventListener('change',renderGenerateInstallPrompts);$('genSeparateVocals').addEventListener('change',renderGenerateInstallPrompts);
-    $('genRunButton').addEventListener('click',()=>startGenerator());$('genDoctorButton').addEventListener('click',()=>startGenerator('doctor'));
+    $('genRunButton').addEventListener('click',()=>startGenerator());$('genDoctorButton').addEventListener('click',()=>{$('genMode').value='doctor';updateGenerateConfigVisibility();startGenerator('doctor');});
     for(const button of document.querySelectorAll('[data-gen-result]'))button.addEventListener('click',()=>selectGenerateResult(button.dataset.genResult));updateGenerateConfigVisibility();
   }
   function cleanPlainLine(line) {

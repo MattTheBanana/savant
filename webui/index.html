@@ -6,7 +6,7 @@
 <title>Savant — Editor</title>
 <style>
 :root{color-scheme:dark;--bg:#0c111b;--panel:#151c29;--panel2:#1b2534;--border:#2d3a4d;--text:#edf3fb;--muted:#9aa9be;--accent:#76e4c1;--accent2:#8bb8ff;--warn:#f5ce81;--danger:#ff9696;--radius:13px;--mono:ui-monospace,SFMono-Regular,Consolas,monospace;font-synthesis:none}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(1100px 500px at 15% -10%,#1b3045 0,transparent 68%),var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;color:var(--text);background:#233146;border:1px solid #394b62;border-radius:9px;padding:8px 12px}button:hover{border-color:var(--accent2);background:#2a3a51}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}button.primary{background:#246451;border-color:#328b70}button.primary:hover{background:#2c7b63}button.danger{background:#512b35;border-color:#793f4c}button.small{padding:5px 9px;font-size:12px}.app-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-bottom:1px solid #263244;background:#0f1622d9;position:sticky;top:0;z-index:5;backdrop-filter:blur(14px)}.brand{display:flex;align-items:center;gap:12px}.brand-mark{height:38px;width:38px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(135deg,#2e9578,#5b8ed2);color:#fff;font-size:21px;font-weight:800}.brand h1{font-size:17px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.header-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.shell{max-width:1500px;margin:0 auto;padding:20px 22px 36px}.nav{display:flex;gap:8px;margin-bottom:16px}.nav button{background:transparent;color:var(--muted);border-color:transparent}.nav button.active{color:var(--text);background:var(--panel2);border-color:var(--border)}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);padding:12px;border-radius:var(--radius);margin-bottom:14px}.file-label{display:inline-flex;gap:8px;align-items:center;background:#223147;border:1px solid #394b62;border-radius:9px;padding:8px 12px;cursor:pointer}.file-label:hover{border-color:var(--accent2)}input[type=file]{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.file-name{color:var(--muted);font-size:12px;max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.status{margin-left:auto;color:var(--muted);font-size:12px}.status strong{color:var(--accent);font-weight:600}.audio-panel{display:grid;grid-template-columns:minmax(220px,1fr) minmax(280px,2fr) auto;gap:16px;align-items:center;background:var(--panel);border:1px solid var(--border);padding:12px 15px;border-radius:var(--radius);margin-bottom:14px}.audio-title{font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.audio-sub{font-size:12px;color:var(--muted);margin-top:2px}.audio-panel audio{width:100%;height:36px}.audio-time{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}.editor-layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(320px,.7fr);gap:14px;align-items:start}.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;min-width:0}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 15px;border-bottom:1px solid var(--border)}.panel-head h2{font-size:14px;margin:0}.panel-head p{font-size:12px;color:var(--muted);margin:3px 0 0}.panel-actions{display:flex;gap:7px;flex-wrap:wrap}.table-wrap{overflow:auto;max-height:calc(100vh - 360px);min-height:300px}table{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed}thead th{position:sticky;top:0;background:#1a2433;color:#afbed1;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.07em;padding:10px 12px;border-bottom:1px solid var(--border);z-index:1}th.num,td.num{width:54px;text-align:right}th.time,td.time{width:142px}tbody tr{background:transparent}tbody tr:hover{background:#1a2636}tbody tr.selected{background:#1b3440;box-shadow:inset 3px 0 var(--accent)}td{padding:5px 8px;border-bottom:1px solid #263142;vertical-align:middle}td.num{padding-right:12px;color:#75879f;font-family:var(--mono);font-size:12px}td.time input,td.lyric input{width:100%;background:transparent;border:1px solid transparent;border-radius:6px;color:var(--text);padding:8px 7px;outline:none}td.time input{font-family:var(--mono);font-size:12px;color:#a9d8cf}td.lyric input{font-size:13px}td.time input:focus,td.lyric input:focus{background:#0e1622;border-color:#527d83;outline:none}td.lyric input{min-width:120px}tbody tr.flagged td.num::after{content:' !';color:var(--warn);font-weight:bold}.grid-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;color:var(--muted);font-size:12px}.shortcut{font-family:var(--mono);background:#0b111a;border:1px solid #37465b;padding:2px 5px;border-radius:5px;color:#c8d4e3}.preview-tabs{display:flex;gap:7px}.preview-tabs button{font-size:12px;padding:5px 9px}.preview-tabs button.active{background:#245346;border-color:#367b66}.preview{white-space:pre;overflow:auto;max-height:calc(100vh - 385px);min-height:300px;margin:0;padding:14px;background:#0b1019;color:#c8d7e8;font:12px/1.65 var(--mono);tab-size:2}.preview-info{padding:10px 14px;border-top:1px solid var(--border);color:var(--muted);font-size:12px}.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:17px}.setting{display:flex;flex-direction:column;gap:6px}.setting label{font-weight:600}.setting p{margin:0;color:var(--muted);font-size:12px}.setting input,.setting select{width:100%;background:#0e1622;border:1px solid var(--border);border-radius:8px;padding:9px 10px;color:var(--text)}.settings-note{margin:0 17px 17px;padding:12px;border:1px solid #345349;background:#142a27;border-radius:10px;color:#c7e9df;font-size:12px}.hidden{display:none!important}.footer-note{margin-top:14px;color:var(--muted);font-size:12px;text-align:center}.toast{position:fixed;right:20px;bottom:20px;background:#173b32;border:1px solid #377761;color:#e2fff4;padding:11px 15px;border-radius:10px;box-shadow:0 10px 30px #0005;z-index:20;max-width:min(500px,calc(100vw - 40px))}.toast.error{background:#48242d;border-color:#874756;color:#ffe6e6}.badge{font-size:11px;border:1px solid #3c4b62;border-radius:20px;padding:3px 8px;color:var(--muted)}.badge.good{border-color:#367b66;color:var(--accent)}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(1100px 500px at 15% -10%,#1b3045 0,transparent 68%),var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;color:var(--text);background:#233146;border:1px solid #394b62;border-radius:9px;padding:8px 12px}button:hover{border-color:var(--accent2);background:#2a3a51}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}button.primary{background:#246451;border-color:#328b70}button.primary:hover{background:#2c7b63}button.danger{background:#512b35;border-color:#793f4c}button.small{padding:5px 9px;font-size:12px}.app-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-bottom:1px solid #263244;background:#0f1622d9;position:sticky;top:0;z-index:5;backdrop-filter:blur(14px)}.brand{display:flex;align-items:center;gap:12px}.brand-mark{height:38px;width:38px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(135deg,#2e9578,#5b8ed2);color:#fff;font-size:21px;font-weight:800}.brand h1{font-size:17px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.header-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.shell{max-width:1500px;margin:0 auto;padding:20px 22px 36px}.nav{display:flex;gap:8px;margin-bottom:16px}.nav button{background:transparent;color:var(--muted);border-color:transparent}.nav button.active{color:var(--text);background:var(--panel2);border-color:var(--border)}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);padding:12px;border-radius:var(--radius);margin-bottom:14px}.file-label{display:inline-flex;gap:8px;align-items:center;background:#223147;border:1px solid #394b62;border-radius:9px;padding:8px 12px;cursor:pointer}.file-label:hover{border-color:var(--accent2)}input[type=file]{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.file-name{color:var(--muted);font-size:12px;max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.status{margin-left:auto;color:var(--muted);font-size:12px}.status strong{color:var(--accent);font-weight:600}.audio-panel{display:grid;grid-template-columns:minmax(220px,1fr) minmax(280px,2fr) auto;gap:16px;align-items:center;background:var(--panel);border:1px solid var(--border);padding:12px 15px;border-radius:var(--radius);margin-bottom:14px}.audio-title{font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.audio-sub{font-size:12px;color:var(--muted);margin-top:2px}.audio-panel audio{width:100%;height:36px}.audio-time{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}.editor-layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(320px,.7fr);gap:14px;align-items:start}.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;min-width:0}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 15px;border-bottom:1px solid var(--border)}.panel-head h2{font-size:14px;margin:0}.panel-head p{font-size:12px;color:var(--muted);margin:3px 0 0}.panel-actions{display:flex;gap:7px;flex-wrap:wrap}.editor-action-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 15px;border-bottom:1px solid var(--border);background:#111a27}.editor-actions-label{margin-right:auto;color:var(--muted);font-size:11px;font-weight:650;text-transform:uppercase;letter-spacing:.06em}@media(max-width:540px){.editor-action-bar{padding:9px 10px}.editor-actions-label{width:100%;margin:0}}.table-wrap{overflow:auto;max-height:calc(100vh - 360px);min-height:300px}table{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed}thead th{position:sticky;top:0;background:#1a2433;color:#afbed1;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.07em;padding:10px 12px;border-bottom:1px solid var(--border);z-index:1}th.num,td.num{width:54px;text-align:right}th.time,td.time{width:142px}tbody tr{background:transparent}tbody tr:hover{background:#1a2636}tbody tr.selected{background:#1b3440;box-shadow:inset 3px 0 var(--accent)}td{padding:5px 8px;border-bottom:1px solid #263142;vertical-align:middle}td.num{padding-right:12px;color:#75879f;font-family:var(--mono);font-size:12px}td.time input,td.lyric input{width:100%;background:transparent;border:1px solid transparent;border-radius:6px;color:var(--text);padding:8px 7px;outline:none}td.time input{font-family:var(--mono);font-size:12px;color:#a9d8cf}td.lyric input{font-size:13px}td.time input:focus,td.lyric input:focus{background:#0e1622;border-color:#527d83;outline:none}td.lyric input{min-width:120px}tbody tr.flagged td.num::after{content:' !';color:var(--warn);font-weight:bold}.grid-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;color:var(--muted);font-size:12px}.shortcut{font-family:var(--mono);background:#0b111a;border:1px solid #37465b;padding:2px 5px;border-radius:5px;color:#c8d4e3}.preview-tabs{display:flex;gap:7px}.preview-tabs button{font-size:12px;padding:5px 9px}.preview-tabs button.active{background:#245346;border-color:#367b66}.preview{white-space:pre;overflow:auto;max-height:calc(100vh - 385px);min-height:300px;margin:0;padding:14px;background:#0b1019;color:#c8d7e8;font:12px/1.65 var(--mono);tab-size:2}.preview-info{padding:10px 14px;border-top:1px solid var(--border);color:var(--muted);font-size:12px}.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:17px}.setting{display:flex;flex-direction:column;gap:6px}.setting label{font-weight:600}.setting p{margin:0;color:var(--muted);font-size:12px}.setting input,.setting select{width:100%;background:#0e1622;border:1px solid var(--border);border-radius:8px;padding:9px 10px;color:var(--text)}.hidden{display:none!important}.footer-note{margin-top:14px;color:var(--muted);font-size:12px;text-align:center}.toast{position:fixed;right:20px;bottom:20px;background:#173b32;border:1px solid #377761;color:#e2fff4;padding:11px 15px;border-radius:10px;box-shadow:0 10px 30px #0005;z-index:20;max-width:min(500px,calc(100vw - 40px))}.toast.error{background:#48242d;border-color:#874756;color:#ffe6e6}.badge{font-size:11px;border:1px solid #3c4b62;border-radius:20px;padding:3px 8px;color:var(--muted)}.badge.good{border-color:#367b66;color:var(--accent)}
 
 /* Live playback preview and drag/drop affordance. */
 tbody tr.playing{background:#25394d;box-shadow:inset 4px 0 var(--accent2)}
@@ -58,7 +58,6 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .header-left{display:flex;align-items:center;gap:18px;min-width:0}
 .header-nav{padding:7px 11px;background:transparent;border-color:transparent;color:var(--muted);font-size:13px}
 .header-nav.active{background:var(--panel2);border-color:var(--border);color:var(--text)}
-.header-settings{width:36px;height:36px;padding:0;display:grid;place-items:center;font-size:21px;line-height:1}
 .header-right{gap:7px}
 .shell{padding-bottom:calc(var(--player-dock-height) + 24px)}
 .editor-layout{grid-template-columns:minmax(0,1fr)}
@@ -113,7 +112,6 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   .header-nav{padding:6px 8px}
   .header-right{gap:4px}
   .header-right button{font-size:10px;padding:5px 6px}
-  .header-settings{width:31px;height:32px;font-size:19px}
   .shell{padding:10px 10px calc(var(--player-dock-height) + 18px)}
   .toolbar{gap:6px;padding:4px 0 8px}
   .import-group{gap:5px;flex:1 1 auto}
@@ -139,6 +137,38 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .editor-context-menu .context-menu-label{min-width:0;text-align:left}
 .editor-context-menu .context-menu-shortcut{flex:0 0 auto;margin-left:auto;color:#75869b;font-size:10px;font-weight:500;white-space:nowrap}
 .editor-context-menu button.danger .context-menu-label{color:#ffb5b5}
+
+/* Local CLI generator */
+.generate-heading .badge{white-space:nowrap}
+.generate-subnav{display:flex;gap:7px;padding:11px 16px;border-bottom:1px solid var(--border);background:#111a27}
+.generate-subnav button,.generate-result-tabs button{padding:7px 12px;color:var(--muted);background:transparent;border-color:transparent}
+.generate-subnav button.active,.generate-result-tabs button.active{color:var(--text);background:var(--panel2);border-color:#3a4b61}
+.generate-pane{padding:16px}.generate-drop-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.generate-drop-zone{position:relative;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:16px;border:1px dashed #50657e;border-radius:12px;background:#101927;transition:border-color .15s,background .15s}
+.generate-drop-zone.dragover,.generate-mini-drop.dragover{border-color:var(--accent);background:#15322f}
+.generate-drop-icon{font-size:26px;color:var(--accent)}.generate-drop-zone strong{font-size:14px}.generate-file-name{display:block;max-width:100%;overflow-wrap:anywhere;color:#cfdbeb;font-size:12px}.generate-file-name.empty,.generate-muted,.generate-drop-help,.generate-card-note{color:var(--muted);font-size:12px}
+.generate-drop-help{line-height:1.5}.generate-file-input{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.generate-basic-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;padding:17px 0}
+.generate-basic-grid .setting,.generate-advanced-card .setting{min-width:0}.generate-check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.generate-check{display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid var(--border);border-radius:9px;background:#111a27;cursor:pointer;min-width:0}
+.generate-check input{margin-top:3px;accent-color:var(--accent);flex:0 0 auto}.generate-check span{display:grid;gap:3px;min-width:0}.generate-check strong{font-size:12px}.generate-check small{font-size:11px;line-height:1.45;color:var(--muted)}
+.generate-check.compact{background:transparent;padding:8px 0;border:0}.generate-note{font-size:12px;line-height:1.55;color:var(--muted);margin:13px 0 0;padding:12px;border-left:3px solid #476a78;background:#101927}
+.generate-advanced-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.generate-advanced-card{display:flex;flex-direction:column;gap:12px;min-width:0;padding:14px;border:1px solid var(--border);border-radius:11px;background:#111a27}
+.generate-advanced-card h3,.generate-tools-row h3,.generate-results h3{font-size:13px;margin:0}.generate-card-note{margin:0}.generate-fields-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.generate-json-uploads{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.generate-mini-drop{display:flex;flex-direction:column;gap:7px;align-items:flex-start;min-width:0;padding:10px;border:1px dashed #45576b;border-radius:8px;background:#0e1724}.generate-mini-drop strong{font-size:11px}.generate-mini-drop span{font-size:10px;color:var(--muted);overflow-wrap:anywhere}
+.generate-tools-row{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:13px 16px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:#111a27}.generate-tools-row p,.generate-results-head p{margin:4px 0 0;font-size:11px;color:var(--muted)}
+.generate-install-prompt{display:grid;gap:8px;margin:13px 0;padding:13px;border:1px solid #755f3d;border-radius:10px;background:#292316}.generate-install-prompt.hidden{display:none!important}.generate-install-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #594a2f}.generate-install-item:last-child{border-bottom:0}.generate-install-item div{display:grid;gap:3px;min-width:0}.generate-install-item strong{font-size:12px}.generate-install-item span{font-size:11px;color:#c6bba5}.generate-install-item button{flex:0 0 auto}.generate-results{margin:14px 16px 16px;border:1px solid var(--border);border-radius:11px;overflow:hidden}
+.generate-results-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:#111a27}.generate-result-tabs{display:flex;gap:3px;flex-wrap:wrap;padding:7px 9px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:#0f1723}
+.generate-result-pane{padding:11px;min-width:0}.generate-result-pane.hidden{display:none!important}.generate-log-view{margin:0;max-height:340px;min-height:180px;overflow:auto;padding:12px;border:1px solid #27364a;border-radius:8px;background:#090f18;color:#c8d7e8;font:11px/1.55 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere}
+.generate-clean-diagnosis{display:grid;gap:10px}.generate-diagnosis-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.generate-diagnosis-stat{padding:10px;border:1px solid var(--border);border-radius:8px;background:#111a27}.generate-diagnosis-stat span{font-size:10px;color:var(--muted)}.generate-diagnosis-stat strong{display:block;font-size:17px;margin-top:4px;overflow-wrap:anywhere}
+.generate-diagnosis-chunks{width:100%;border-collapse:collapse;font-size:11px}.generate-diagnosis-chunks th,.generate-diagnosis-chunks td{padding:7px 8px;border:1px solid var(--border);text-align:left}.generate-diagnosis-chunks th{position:static;background:#172232}.generate-diagnosis-notes{margin:0;padding-left:19px;font-size:11px;color:#c9d5e3}.generate-artifacts{display:grid;gap:8px}.generate-artifact-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:#111a27}.generate-artifact-info{min-width:0;display:grid;gap:3px}.generate-artifact-info strong{font-size:12px}.generate-artifact-info span{color:var(--muted);font-size:10px;overflow-wrap:anywhere}.generate-artifact-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.generate-run-status{padding:13px 16px 0}.generate-run-status.hidden{display:none!important}.generate-progress-heading{display:flex;justify-content:space-between;gap:12px;font-size:11px;color:var(--muted);margin:0 0 6px}.generate-progress-heading strong{font-size:12px;color:var(--text);font-weight:650}.generate-progress-track{height:8px;border-radius:99px;overflow:hidden;background:#070c13;border:1px solid #27364a;margin-bottom:12px}.generate-progress-fill{height:100%;width:0;background:linear-gradient(90deg,#328b70,#76e4c1);transition:width .25s}.generate-progress-fill.indeterminate{background:linear-gradient(90deg,transparent,#76e4c1,#89baff,transparent);background-size:200% 100%;animation:genProgressShimmer 1.4s linear infinite}
+@keyframes genProgressShimmer{from{background-position:100% 0}to{background-position:-100% 0}}
+.generate-run-footer{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:14px 16px;border-top:1px solid var(--border);background:#111a27}.generate-run-button{min-width:170px;font-weight:700}.generate-run-button:disabled{opacity:.55;cursor:wait}
+@media(max-width:950px){.generate-basic-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.generate-advanced-grid{grid-template-columns:1fr}.generate-diagnosis-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.generate-pane{padding:10px}.generate-drop-grid,.generate-basic-grid,.generate-check-grid{grid-template-columns:1fr}.generate-json-uploads{grid-template-columns:1fr}.generate-tools-row,.generate-run-footer{align-items:stretch;flex-direction:column}.generate-run-button{width:100%}.generate-install-item,.generate-artifact-row{align-items:flex-start;flex-direction:column}.generate-artifact-actions{justify-content:flex-start}.generate-results{margin:10px}.generate-subnav{padding:9px}.generate-subnav button{flex:1;padding:8px 5px;font-size:12px}}
 </style>
 </head>
 <body>
@@ -146,12 +176,13 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   <div class="header-left">
     <div class="brand"><div class="brand-mark">♫</div><div><h1>Savant</h1><p>Local lyric timing editor</p></div></div>
     <button id="navEdit" class="header-nav active" aria-current="page">Edit</button>
+    <button id="navGenerate" class="header-nav" aria-label="Generate" title="Generate lyric timings">Generate</button>
+    <button id="navSettings" class="header-nav" aria-label="Preferences" title="Preferences">Preferences</button>
   </div>
   <div class="header-right">
     <span class="badge">LOCAL ONLY</span>
     <button id="saveLrcTop" class="small" title="Export line-timed lyrics">Export LRC</button>
     <button id="saveTtmlTop" class="small primary" title="Export word-timed lyrics">Export TTML</button>
-    <button id="navSettings" class="header-settings" aria-label="Settings" title="Settings"><span aria-hidden="true">⚙</span></button>
   </div>
 </header>
 <main class="shell">
@@ -163,11 +194,17 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     </div>
     <div class="editor-layout">    <div class="editor-layout">
       <section class="panel" aria-label="Lyrics editing grid">
-        <div class="panel-head"><div><h2>Lyric timing grid</h2><p id="gridDescription">Edit line timestamps here; switch to TTML words for per-word timing and speaker edits.</p></div><div class="panel-actions"><button id="viewLines" class="small active" title="Sync line by line" aria-label="LRC — Sync line by line">LRC</button><button id="viewWords" class="small" disabled title="Sync word by word" aria-label="TTML — Sync word by word">TTML</button><button id="addLine" class="small">+ Line</button><button id="deleteLine" class="small danger">Delete</button></div></div>
+        <div class="panel-head"><div><h2>Lyric timing grid</h2><p id="gridDescription">Edit line timing in LRC view or fine-tune individual word cues in TTML view.</p></div><div class="panel-actions"><button id="viewLines" class="small active" title="Sync line by line" aria-label="LRC — Sync line by line">LRC</button><button id="viewWords" class="small" disabled title="Sync word by word" aria-label="TTML — Sync word by word">TTML</button></div></div>
+        <div class="editor-action-bar" aria-label="Editing actions">
+          <span id="editorActionsLabel" class="editor-actions-label">LRC line actions</span>
+          <button id="addLine" class="small">+ Add line</button>
+          <button id="addWord" class="small" title="Add a timed word cue (F)">+ Add word</button>
+          <button id="deleteLine" class="small danger">Delete line</button>
+        </div>
         <div id="lineTableWrap" class="table-wrap"><table><thead id="gridHead"><tr><th class="num">#</th><th class="time">Time</th><th>Lyric</th></tr></thead><tbody id="gridBody"><tr><td colspan="3" style="padding:30px;text-align:center;color:#91a1b5">Import an LRC, TTML, or TXT lyrics file.</td></tr></tbody></table></div>
         <div id="wordTimelineEditor" class="word-timeline-editor hidden">
           <div class="timeline-toolbar">
-            <div class="timeline-toolbar-group"><button id="zoomOut" class="small" aria-label="Zoom out line detail">−</button><button id="zoomIn" class="small" aria-label="Zoom in line detail">+</button><button id="zoomFit" class="small" title="Fit the longest lyric line across the lane with configured edge context">Fit lines</button><button id="addWord" class="small" title="Add a timed word cue (F)">+ Word</button><span id="timelineZoomLabel" class="timeline-zoom-label">Fit longest line</span></div>
+            <div class="timeline-toolbar-group"><button id="zoomOut" class="small" aria-label="Zoom out line detail">−</button><button id="zoomIn" class="small" aria-label="Zoom in line detail">+</button><button id="zoomFit" class="small" title="Fit the longest lyric line across the lane with configured edge context">Fit lines</button><span id="timelineZoomLabel" class="timeline-zoom-label">Fit longest line</span></div>
             <div class="timeline-toolbar-group"><span id="waveformStatus" class="timeline-zoom-label">Waveform waits for audio</span><button id="timelineControlsTrigger" class="small" type="button" aria-haspopup="dialog" aria-expanded="false">Controls ▾</button></div>
           </div>
           <div id="timelineViewport" class="timeline-viewport" aria-label="Wrapped word timing timeline">
@@ -194,6 +231,101 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       </section>
     </div>
   </section>
+  <section id="generateScreen" class="panel hidden" aria-label="CLI generation">
+    <div class="panel-head generate-heading"><div><h2>Generate lyric timings</h2><p>Run the local command-line aligner here, then review its logs and output files.</p></div><span class="badge">LOCAL CLI</span></div>
+    <div class="generate-subnav" role="tablist" aria-label="Generator configuration">
+      <button id="generateConfigTab" class="active" role="tab" aria-selected="true" aria-controls="generateConfigurationPane">Configuration</button>
+      <button id="generateAdvancedTab" role="tab" aria-selected="false" aria-controls="generateAdvancedPane">Advanced options</button>
+    </div>
+    <div id="genInstallPrompt" class="generate-install-prompt hidden" aria-live="polite"></div>
+    <section id="generateConfigurationPane" class="generate-pane" role="tabpanel" aria-labelledby="generateConfigTab">
+      <div class="generate-drop-grid">
+        <div id="genAudioDrop" class="generate-drop-zone" tabindex="0" role="button" aria-label="Choose or drop an audio file">
+          <div class="generate-drop-icon">♫</div><strong>Audio file</strong><span id="genAudioName" class="generate-file-name">Drop audio here or choose a file</span>
+          <label class="small file-label" for="genAudioFile">Choose audio</label><input id="genAudioFile" class="generate-file-input" type="file" accept="audio/*">
+          <span class="generate-drop-help">FLAC, WAV, MP3, M4A, OGG and other FFmpeg formats</span>
+        </div>
+        <div id="genLyricsDrop" class="generate-drop-zone" tabindex="0" role="button" aria-label="Choose or drop lyrics">
+          <div class="generate-drop-icon">≡</div><strong id="genLyricsTitle">Lyrics / transcript</strong><span id="genLyricsName" class="generate-file-name">Drop text, LRC, or TTML here</span>
+          <label class="small file-label" for="genLyricsFile">Choose lyrics</label><input id="genLyricsFile" class="generate-file-input" type="file" accept=".txt,.lrc,.ttml,.xml,text/plain,application/xml">
+          <span id="genLyricsHelp" class="generate-drop-help">Plain text or LRC for alignment; choose an LRC for timestamp adjustment.</span>
+        </div>
+      </div>
+      <div class="generate-basic-grid">
+        <div class="setting"><label for="genMode">Task</label><select id="genMode"><option value="align">Align audio to lyrics</option><option value="adjust">Adjust an existing LRC</option><option value="doctor">Run system diagnostics only</option></select><p>Choose the CLI operation.</p></div>
+        <div id="genAlignOptions" class="setting"><label for="genAligner">Alignment backend</label><select id="genAligner"><option value="whisperx">WhisperX · general alignment</option><option value="tifa">TIFA · singing-trained alignment (English)</option></select><p>TIFA requires its separate optional install and model.</p></div>
+        <div id="genLanguageWrap" class="setting"><label for="genLanguage">Language code</label><input id="genLanguage" value="en" maxlength="20" spellcheck="false"><p>Language used in the recording.</p></div>
+        <div id="genDeviceWrap" class="setting"><label for="genDevice">Compute device</label><select id="genDevice"><option value="auto">Auto detect</option><option value="cuda">CUDA GPU</option><option value="cpu">CPU</option></select><p>Auto is recommended for most systems.</p></div>
+        <div id="genOffsetWrap" class="setting"><label for="genOffset">Global timing offset (seconds)</label><input id="genOffset" type="number" min="-30" max="30" step="0.01" value="0"><p>Negative values move timings earlier.</p></div>
+      </div>
+      <div id="genQuickToggles" class="generate-check-grid">
+        <label class="generate-check"><input id="genWordLevel" type="checkbox"><span><strong>Generate word-timed TTML</strong><small>Write an LRC plus a Navidrome TTML sidecar.</small></span></label>
+        <label class="generate-check"><input id="genSeparateVocals" type="checkbox"><span><strong>Separate vocals first</strong><small>Uses optional local Demucs vocal isolation.</small></span></label>
+        <label class="generate-check"><input id="genRefine" type="checkbox"><span><strong>Refine line timings</strong><small>WhisperX second pass; ignored by TIFA.</small></span></label>
+        <label class="generate-check"><input id="genInstrumentalCues" type="checkbox"><span><strong>Add instrumental cues</strong><small>Add ♪ markers for long gaps and intros/outros.</small></span></label>
+      </div>
+      <p class="generate-note">The first run can download model weights and take a while. Choose Dry run under Advanced options to validate inputs and output paths without loading a model.</p>
+    </section>
+    <section id="generateAdvancedPane" class="generate-pane hidden" role="tabpanel" aria-labelledby="generateAdvancedTab">
+      <div class="generate-advanced-grid">
+        <div class="generate-advanced-card"><h3>Output files</h3>
+          <div class="setting"><label for="genOutputPath">LRC output path</label><input id="genOutputPath" type="text" placeholder="Automatic: under your home folder, in a Savant run folder"><p>Optional full local path. Leaving this blank keeps output inside the run folder.</p></div>
+          <div class="setting"><label for="genTtmlOutputPath">TTML output path</label><input id="genTtmlOutputPath" type="text" placeholder="Automatic when word timing is enabled"></div>
+          <div class="setting"><label for="genReviewReportPath">Review report path</label><input id="genReviewReportPath" type="text" placeholder="Automatic: alignment-review.txt"></div>
+          <label class="generate-check compact"><input id="genReviewReport" type="checkbox"><span><strong>Write alignment review report</strong><small>Timing warnings and model-disagreement notes.</small></span></label>
+          <label class="generate-check compact"><input id="genOverwrite" type="checkbox"><span><strong>Overwrite existing outputs</strong><small>Allow the CLI to replace files at the specified paths.</small></span></label>
+          <label class="generate-check compact"><input id="genDryRun" type="checkbox"><span><strong>Dry run only</strong><small>Validate inputs and planned outputs without loading a model.</small></span></label>
+        </div>
+        <div class="generate-advanced-card"><h3>Model and TIFA</h3>
+          <div class="setting"><label for="genAlignModel">Custom WhisperX alignment model</label><input id="genAlignModel" type="text" placeholder="Optional model name"></div>
+          <div class="setting"><label for="genTifaRoot">TIFA source directory</label><input id="genTifaRoot" type="text" placeholder="Use project default"></div>
+          <div class="setting"><label for="genTifaPython">TIFA Python executable</label><input id="genTifaPython" type="text" placeholder="Use project default"></div>
+          <div class="setting"><label for="genTifaModel">TIFA model checkpoint / folder</label><input id="genTifaModel" type="text" placeholder="Use project default"></div>
+          <div class="generate-fields-two">
+            <div class="setting"><label for="genTifaChunkSeconds">TIFA chunk seconds</label><input id="genTifaChunkSeconds" type="number" min="20" max="55" step="1" value="42"></div>
+            <div class="setting"><label for="genTifaContext">TIFA context seconds</label><input id="genTifaContext" type="number" min="0.5" max="5" step="0.1" value="1.8"></div>
+          </div>
+          <div class="setting"><label for="genTifaDiagnosticsPath">TIFA diagnosis JSON path</label><input id="genTifaDiagnosticsPath" type="text" placeholder="Automatic for TIFA runs"></div>
+          <label class="generate-check compact"><input id="genContextRepair" type="checkbox" checked><span><strong>Repair short function-word timings</strong><small>TIFA only; use neighboring words to conservatively recover weak cues.</small></span></label>
+        </div>
+        <div class="generate-advanced-card"><h3>Timing and audio extras</h3>
+          <div class="generate-fields-two">
+            <div class="setting"><label for="genRefineWindow">Refine window (seconds)</label><input id="genRefineWindow" type="number" min="0.1" max="5" step="0.05" value="0.8"></div>
+            <div class="setting"><label for="genInstrumentalThreshold">Instrumental gap (seconds)</label><input id="genInstrumentalThreshold" type="number" min="0.1" max="120" step="0.5" value="6"></div>
+            <div class="setting"><label for="genDemucsModel">Demucs model</label><input id="genDemucsModel" value="htdemucs"></div>
+            <div class="setting"><label for="genDemucsSegment">Demucs segment (seconds)</label><input id="genDemucsSegment" type="number" min="2" max="7" step="1" value="6"></div>
+          </div>
+          <div class="setting"><label for="genVocalOutput">Keep isolated vocal stem (.wav path)</label><input id="genVocalOutput" type="text" placeholder="Optional; enable vocal separation first"></div>
+        </div>
+        <div class="generate-advanced-card"><h3>Optional JSON inputs</h3>
+          <p class="generate-card-note">Singer styling and per-line / phrase timing corrections.</p>
+          <div class="generate-json-uploads">
+            <div id="genSingerDrop" class="generate-mini-drop" tabindex="0" role="button"><strong>Singer config</strong><span id="genSingerName">No file selected</span><label class="small file-label" for="genSingerFile">Choose JSON</label><input id="genSingerFile" class="generate-file-input" type="file" accept=".json,application/json"></div>
+            <div id="genLineOffsetsDrop" class="generate-mini-drop" tabindex="0" role="button"><strong>Line offsets</strong><span id="genLineOffsetsName">No file selected</span><label class="small file-label" for="genLineOffsetsFile">Choose JSON</label><input id="genLineOffsetsFile" class="generate-file-input" type="file" accept=".json,application/json"></div>
+            <div id="genPhraseOffsetsDrop" class="generate-mini-drop" tabindex="0" role="button"><strong>Phrase offsets</strong><span id="genPhraseOffsetsName">No file selected</span><label class="small file-label" for="genPhraseOffsetsFile">Choose JSON</label><input id="genPhraseOffsetsFile" class="generate-file-input" type="file" accept=".json,application/json"></div>
+          </div>
+        </div>
+      </div>
+      <div class="generate-tools-row"><div><h3>Run diagnostics</h3><p>Check Python, FFmpeg, WhisperX, PyTorch, CUDA, and optional installs.</p></div><button id="genDoctorButton" class="small">Run system diagnostics</button></div>
+      <section class="generate-results">
+        <div class="generate-results-head"><div><h3>Run activity and diagnostics</h3><p>Inspect logs, clean TIFA summaries, raw JSON, and generated files.</p></div><span id="genRunStatusBadge" class="badge">No run yet</span></div>
+        <div class="generate-result-tabs" role="tablist" aria-label="Run results">
+          <button data-gen-result="logs" class="active" role="tab" aria-selected="true">Logs</button><button data-gen-result="clean" role="tab" aria-selected="false">Clean diagnosis</button><button data-gen-result="raw" role="tab" aria-selected="false">Raw JSON</button><button data-gen-result="files" role="tab" aria-selected="false">Output files</button>
+        </div>
+        <div id="genResultLogs" class="generate-result-pane"><pre id="genLogs" class="generate-log-view" tabindex="0">Run the generator or system diagnostics to see live output here.</pre></div>
+        <div id="genResultClean" class="generate-result-pane hidden"><div id="genCleanDiagnosis" class="generate-clean-diagnosis"><p class="generate-muted">A TIFA diagnosis summary will appear here when available.</p></div></div>
+        <div id="genResultRaw" class="generate-result-pane hidden"><pre id="genRawDiagnosis" class="generate-log-view">The raw TIFA JSON will appear here when available.</pre></div>
+        <div id="genResultFiles" class="generate-result-pane hidden"><div id="genArtifacts" class="generate-artifacts"><p class="generate-muted">Generated files will be listed here.</p></div></div>
+      </section>
+    </section>
+    <section id="generateRunStatus" class="generate-run-status hidden" aria-live="polite">
+      <div class="generate-progress-heading"><strong id="genCurrentStep">Preparing generator…</strong><span id="genOverallText">0% overall</span></div>
+      <div class="generate-progress-track" role="progressbar" aria-label="Total progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="genOverallBar" class="generate-progress-fill" style="width:0%"></div></div>
+      <div class="generate-progress-heading"><span>Current step progress</span><span id="genStepText">Starting…</span></div>
+      <div class="generate-progress-track" role="progressbar" aria-label="Current step progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="genStepBar" class="generate-progress-fill indeterminate" style="width:35%"></div></div>
+    </section>
+    <div class="generate-run-footer"><span id="genFooterStatus" class="generate-muted">Choose an audio file and lyrics to begin.</span><button id="genRunButton" class="primary generate-run-button"><span aria-hidden="true">▶</span> Run generator</button></div>
+  </section>
   <section id="settingsScreen" class="panel hidden">
     <div class="panel-head"><div><h2>Editor settings</h2><p>Adjust timing behavior and playback. Settings are saved in this browser on this computer.</p></div><button id="resetSettings" class="small">Reset defaults</button></div>
     <div class="settings-grid">
@@ -208,8 +340,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       <div class="setting"><label for="playheadLabelSize">Playhead time label size (px)</label><input id="playheadLabelSize" type="number" min="7" max="16" step="1" value="9"><p>Size of the timestamp shown beneath the red playhead marker.</p></div>
       <div class="setting"><label for="dragAutoScrollSpeed">Word-drag edge scroll speed (px/sec)</label><input id="dragAutoScrollSpeed" type="number" min="40" max="1600" step="20" value="320"><p>How quickly the waveform view advances when dragging a word near or beyond a lane edge.</p></div>
       <div class="setting"><label for="downloadBase">Export filename suffix</label><select id="downloadBase"><option value="same">Use imported lyrics base name</option><option value="audio">Use audio base name</option></select><p>Controls the default downloaded filename.</p></div>
+      <div class="setting"><label for="returnToEditAfterGenerate">After generation finishes</label><select id="returnToEditAfterGenerate"><option value="false">Stay on Generate and review results</option><option value="true">Open Edit automatically</option></select><p>Choose whether a completed CLI run takes you straight to the editor.</p></div>
     </div>
-    <p class="settings-note">Ctrl+Z undoes the last lyric edit and Ctrl+Y redoes it (Ctrl+Shift+Z also redoes). Keyboard behavior: Space starts/pauses playback when focus is outside an editable text cell; Ctrl+Space pauses and returns the playhead to the position it was at before playback started. Press F in TTML words view to add a timed word cue. When a lyric text field is focused, Space and all arrow keys remain normal text-editing keys. In TTML mode, drag the empty word track to box-select within the current line; Shift-drag empty lane/waveform space to box-select across lines. Drag any selected word to move the whole selection; Ctrl-drag a selected word moves only that word. Shift-drag snaps the selection edge first to the playhead when close, otherwise to adaptive timeline grid marks. Shift-drag a word's start/end handle to resize and snap that edge in the same way (10s, 5s, 1s, 0.5s, 0.1s, 0.05s, or 0.01s intervals selected automatically for the current zoom). In TTML words view, Ctrl+A selects words on the current line and Ctrl+Shift+A selects all word cues; in editable line text, Ctrl+A still selects only that text line. Click empty word-track space to deselect; dragging there box-selects. Drag the red playhead or left-drag the waveform to seek; the translucent markers show where the playhead time falls in overlapping line windows. Middle-drag pans only within each line's configured edge context. Ctrl+mouse wheel zooms at the cursor and redraws at most once per animation frame. While dragging a word near a lane edge, the view auto-scrolls at the configured speed. In TTML mode, Shift+←/→ moves the playhead to the nearest word boundary; plain ←/→ nudges a selected word or seeks in small increments if no word is selected.</p>
   </section>
   <p class="footer-note">Audio and lyric files are opened locally by your browser. This app does not upload them. Press <span class="shortcut">Esc</span> to leave a lyric text field and return to keyboard navigation.</p>
 </main>
@@ -301,7 +433,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   let pendingZoomRender = null;
   let settings = {
     nudgeStep: 0.02, shiftMultiplier: 5, replayLead: 2.0, txtSpacing: 3.0,
-    language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320
+    language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, returnToEditAfterGenerate: false
   };
   try { settings = {...settings, ...JSON.parse(localStorage.getItem('lyrics-aligner-ui-settings') || '{}')}; } catch (_) {}
   let toastTimer = null;
@@ -420,10 +552,10 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     restoreHistoryState(next);toast('Redo.');
   }
   function saveSettings() {
-    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed']) {
+    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate']) {
       const el=$(key); if (!el) continue;
       settings[key] = ['language','defaultTab','downloadBase'].includes(key) ? el.value :
-        key==='autoFollow' ? el.value==='true' : Number(el.value);
+        (key==='autoFollow'||key==='returnToEditAfterGenerate') ? el.value==='true' : Number(el.value);
     }
     settings.nudgeStep=Math.min(1,Math.max(.001,Number(settings.nudgeStep)||.02));
     settings.shiftMultiplier=Math.min(50,Math.max(2,Math.round(Number(settings.shiftMultiplier)||5)));
@@ -439,6 +571,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed']) $(key).value=settings[key];
     document.documentElement.style.setProperty('--playhead-label-size',`${settings.playheadLabelSize}px`);
     $('autoFollow').value=String(settings.autoFollow);
+    $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));
   }
   function fmtTime(sec, places=3) {
     sec=Math.max(0,Number(sec)||0); const mins=Math.floor(sec/60), secs=sec-mins*60;
@@ -464,11 +597,190 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if (row.wordCues && row.wordCues.length) end=Math.max(end,...row.wordCues.map(c=>c.end||0));
     return Math.max(row.start+.05,end);
   }
-  function activeScreen() { return !$('settingsScreen').classList.contains('hidden') ? 'settings' : 'edit'; }
+  function activeScreen() {
+    if(!$('generateScreen').classList.contains('hidden'))return 'generate';
+    if(!$('settingsScreen').classList.contains('hidden'))return 'settings';
+    return 'edit';
+  }
   function setScreen(screen) {
-    $('editScreen').classList.toggle('hidden',screen!=='edit'); $('settingsScreen').classList.toggle('hidden',screen!=='settings');
-    $('navEdit').classList.toggle('active',screen==='edit'); $('navSettings').classList.toggle('active',screen==='settings');
-    $('navEdit').setAttribute('aria-current',screen==='edit'?'page':'false'); $('navSettings').setAttribute('aria-current',screen==='settings'?'page':'false');
+    $('editScreen').classList.toggle('hidden',screen!=='edit');$('generateScreen').classList.toggle('hidden',screen!=='generate');$('settingsScreen').classList.toggle('hidden',screen!=='settings');
+    for(const [id,name] of [['navEdit','edit'],['navGenerate','generate'],['navSettings','settings']]){
+      $(id).classList.toggle('active',screen===name);$(id).setAttribute('aria-current',screen===name?'page':'false');
+    }
+    if(screen==='generate')refreshGenerateCapabilities();
+  }
+
+  const genFiles={audio:null,lyrics:null,singerConfig:null,lineOffsets:null,phraseOffsets:null};
+  let genCapabilities=null,genActiveRunId=null,genPollTimer=null,genRunBusy=false,genResultTab='logs',genLastSnapshot=null,genDiagnosisLoadedFor=null,genIsInstallRun=false;
+  const GEN_FILE_INPUTS=[['audio','genAudioFile','genAudioName'],['lyrics','genLyricsFile','genLyricsName'],['singerConfig','genSingerFile','genSingerName'],['lineOffsets','genLineOffsetsFile','genLineOffsetsName'],['phraseOffsets','genPhraseOffsetsFile','genPhraseOffsetsName']];
+  function genSetFile(key,file){
+    if(!file)return;genFiles[key]=file;
+    const nameId={audio:'genAudioName',lyrics:'genLyricsName',singerConfig:'genSingerName',lineOffsets:'genLineOffsetsName',phraseOffsets:'genPhraseOffsetsName'}[key];
+    if(nameId){$(nameId).textContent=file.name;$(nameId).classList.remove('empty');}
+    updateGenerateConfigVisibility();renderGenerateInstallPrompts();
+  }
+  function genWireFileInputs(){
+    for(const [key,inputId] of GEN_FILE_INPUTS){
+      $(inputId).addEventListener('change',()=>{if($(inputId).files?.[0])genSetFile(key,$(inputId).files[0]);});
+      const zone=$({audio:'genAudioDrop',lyrics:'genLyricsDrop',singerConfig:'genSingerDrop',lineOffsets:'genLineOffsetsDrop',phraseOffsets:'genPhraseOffsetsDrop'}[key]);
+      zone.addEventListener('click',e=>{if(!e.target.closest('label,button,input'))$(inputId).click();});
+      zone.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('label,button,input')){e.preventDefault();$(inputId).click();}});
+      zone.addEventListener('dragenter',e=>{e.preventDefault();e.stopPropagation();zone.classList.add('dragover');});
+      zone.addEventListener('dragover',e=>{e.preventDefault();e.stopPropagation();zone.classList.add('dragover');if(e.dataTransfer)e.dataTransfer.dropEffect='copy';});
+      zone.addEventListener('dragleave',e=>{e.preventDefault();e.stopPropagation();zone.classList.remove('dragover');});
+      zone.addEventListener('drop',e=>{e.preventDefault();e.stopPropagation();zone.classList.remove('dragover');if(e.dataTransfer?.files?.[0])genSetFile(key,e.dataTransfer.files[0]);});
+    }
+  }
+  function updateGenerateConfigVisibility(){
+    const mode=$('genMode').value,doctor=mode==='doctor',adjust=mode==='adjust',tifa=$('genAligner').value==='tifa';
+    $('genAudioDrop').classList.toggle('hidden',doctor||adjust);$('genLyricsDrop').classList.toggle('hidden',doctor);
+    for(const id of ['genAlignOptions','genLanguageWrap','genDeviceWrap'])$(id).classList.toggle('hidden',doctor||adjust);
+    $('genOffsetWrap').classList.toggle('hidden',doctor);$('genQuickToggles').classList.toggle('hidden',doctor||adjust);
+    $('genLyricsTitle').textContent=adjust?'Existing LRC to adjust':'Lyrics / transcript';
+    $('genLyricsHelp').textContent=adjust?'Choose an LRC; output defaults to a separate adjusted file.':'Plain text or LRC for alignment; LRC for timing adjustment.';
+    $('genRefine').disabled=tifa||adjust||doctor;$('genRefine').closest('label').style.opacity=$('genRefine').disabled?'.55':'1';
+    $('genContextRepair').closest('label').toggleAttribute('hidden',adjust||doctor);renderGenerateInstallPrompts();
+  }
+  function genGetConfig(modeOverride=null){
+    return {mode:modeOverride||$('genMode').value,aligner:$('genAligner').value,language:$('genLanguage').value.trim()||'en',device:$('genDevice').value,offset:$('genOffset').value||'0',
+      wordLevel:$('genWordLevel').checked,separateVocals:$('genSeparateVocals').checked,refine:$('genRefine').checked,instrumentalCues:$('genInstrumentalCues').checked,
+      outputPath:$('genOutputPath').value.trim(),ttmlOutputPath:$('genTtmlOutputPath').value.trim(),reviewReport:$('genReviewReport').checked,reviewReportPath:$('genReviewReportPath').value.trim(),
+      overwrite:$('genOverwrite').checked,dryRun:$('genDryRun').checked,alignModel:$('genAlignModel').value.trim(),tifaRoot:$('genAligner').value==='tifa' ? $('genTifaRoot').value.trim() : '',tifaPython:$('genAligner').value==='tifa' ? $('genTifaPython').value.trim() : '',tifaModel:$('genAligner').value==='tifa' ? $('genTifaModel').value.trim() : '',
+      tifaChunkSeconds:$('genTifaChunkSeconds').value||'42',tifaContext:$('genTifaContext').value||'1.8',tifaDiagnosticsPath:$('genAligner').value==='tifa' ? $('genTifaDiagnosticsPath').value.trim() : '',contextRepair:$('genContextRepair').checked,
+      refineWindow:$('genRefineWindow').value||'0.8',instrumentalThreshold:$('genInstrumentalThreshold').value||'6',demucsModel:$('genDemucsModel').value.trim()||'htdemucs',demucsSegment:$('genDemucsSegment').value||'6',vocalOutput:$('genVocalOutput').value.trim()};
+  }
+  async function genFetchJson(url,options={}){
+    const response=await fetch(url,options);let result={};try{result=await response.json();}catch(_){}
+    if(!response.ok)throw new Error(result.error||('Local API returned HTTP '+response.status+'.'));return result;
+  }
+  async function refreshGenerateCapabilities(){try{genCapabilities=await genFetchJson('/api/capabilities');}catch(_){genCapabilities=null;}renderGenerateInstallPrompts();}
+  function renderGenerateInstallPrompts(){
+    const panel=$('genInstallPrompt');if(!panel)return;const issues=[],mode=$('genMode').value,adjust=mode==='adjust',doctor=mode==='doctor';
+    if(!genCapabilities){panel.classList.remove('hidden');panel.textContent='Setup checks require the local Python server. Launch Savant with lyrics_editor.py, then reload this page.';return;}
+    if(!adjust&&!genCapabilities.ffmpeg)issues.push({kind:'ffmpeg',title:'FFmpeg is missing',detail:'The CLI requires FFmpeg on PATH.'});
+    if(!adjust&&(!genCapabilities.whisperx||!genCapabilities.torch))issues.push({kind:'base',title:'Base dependencies may be missing',detail:'WhisperX and PyTorch are required.'});
+    if(!adjust&&$('genAligner').value==='tifa'&&!genCapabilities.tifa)issues.push({kind:'tifa',title:'TIFA is not fully installed',detail:'TIFA needs source, a separate environment, and model weights.'});
+    if(!adjust&&$('genSeparateVocals').checked&&!genCapabilities.vocalSeparation)issues.push({kind:'vocal',title:'Vocal separation is not installed',detail:'Install demucs-infer to use optional vocal isolation.'});
+    if(doctor&&genLastSnapshot?.logs){
+      const logs=genLastSnapshot.logs;
+      if(/FFmpeg:\s*NOT FOUND|FFmpeg was not found/i.test(logs)&&!issues.some(i=>i.kind==='ffmpeg'))issues.push({kind:'ffmpeg',title:'FFmpeg is missing',detail:'Diagnostics could not find ffmpeg on PATH.'});
+      if(/PyTorch:\s*ERROR|WhisperX:\s*ERROR|alignment dependencies are missing/i.test(logs)&&!issues.some(i=>i.kind==='base'))issues.push({kind:'base',title:'Base dependencies may be missing',detail:'Diagnostics report missing Python packages.'});
+      if(/Vocal separation: not installed/i.test(logs)&&$('genSeparateVocals').checked&&!issues.some(i=>i.kind==='vocal'))issues.push({kind:'vocal',title:'Vocal separation is not installed',detail:'This is optional unless enabled.'});
+      if(/TIFA:\s*not installed|TIFA pretrained model:\s*NOT FOUND|TIFA Python:\s*ERROR/i.test(logs)&&$('genAligner').value==='tifa'&&!issues.some(i=>i.kind==='tifa'))issues.push({kind:'tifa',title:'TIFA setup is incomplete',detail:'Diagnostics could not find its source, environment, or checkpoint.'});
+    }
+    if(!issues.length){panel.classList.add('hidden');panel.textContent='';return;}
+    panel.classList.remove('hidden');panel.textContent='';const heading=document.createElement('strong');heading.textContent='Setup help';panel.append(heading);
+    for(const issue of issues){
+      const row=document.createElement('div');row.className='generate-install-item';const desc=document.createElement('div'),title=document.createElement('strong'),detail=document.createElement('span');
+      title.textContent=issue.title;detail.textContent=issue.detail;desc.append(title,detail);row.append(desc);
+      const option=genCapabilities.installers?.[issue.kind],button=document.createElement('button');button.type='button';button.className='small';
+      if(option?.available){button.textContent=option.method==='pip'&&issue.kind==='base'?'Install WhisperX':option.method==='pip'&&issue.kind==='vocal'?'Install demucs-infer':option.label;button.addEventListener('click',()=>startGeneratorInstall(issue.kind,option.label));}
+      else{button.textContent=issue.kind==='tifa'?'Setup instructions':'Install instructions';button.addEventListener('click',()=>showInstallGuidance(issue.kind,option?.description||issue.detail));}
+      row.append(button);panel.append(row);
+    }
+  }
+  function showInstallGuidance(kind,detail){
+    const guides={ffmpeg:'Install FFmpeg system-wide and add ffmpeg to PATH. On Windows: winget install --id Gyan.FFmpeg.Shared --exact. Restart Savant and rerun diagnostics.',
+      tifa:'TIFA needs a source checkout, isolated environment, and TIFA-1.0-ST model. install-tifa.bat is not present in this project checkout, so automatic TIFA setup is unavailable; follow the README setup instructions.',
+      base:'Install the supported Python environment and WhisperX, then restart Savant and rerun diagnostics.',
+      vocal:'Install demucs-infer into the Python environment used by Savant, then rerun diagnostics.'};
+    selectGenerateResult('logs');$('genLogs').textContent=guides[kind]||detail;toast('Setup instructions shown in Logs.');
+  }
+  function selectGenerateResult(tab){
+    genResultTab=tab;for(const button of document.querySelectorAll('[data-gen-result]')){const active=button.dataset.genResult===tab;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));}
+    for(const key of ['logs','clean','raw','files'])$('genResult'+key[0].toUpperCase()+key.slice(1)).classList.toggle('hidden',key!==tab);
+    if(tab==='raw'&&genLastSnapshot)loadGenerateDiagnosis(genLastSnapshot.id);
+  }
+  function genSetProgress(snapshot){
+    $('generateRunStatus').classList.remove('hidden');$('genCurrentStep').textContent=snapshot.step||'Working…';
+    const overall=Math.max(0,Math.min(100,Number(snapshot.overallProgress)||0)),step=Math.max(0,Math.min(100,Number(snapshot.stepProgress)||0));
+    $('genOverallText').textContent=overall+'% overall';$('genOverallBar').style.width=overall+'%';$('genOverallBar').parentElement.setAttribute('aria-valuenow',String(overall));
+    $('genStepText').textContent=step===0&&snapshot.status==='running'?'Working…':step+'%';$('genStepBar').style.width=step+'%';$('genStepBar').parentElement.setAttribute('aria-valuenow',String(step));$('genStepBar').classList.toggle('indeterminate',snapshot.status==='running'&&step===0);
+    $('genRunStatusBadge').textContent=({queued:'Queued',running:'Running',success:'Completed',warning:'Completed with warnings',failed:'Failed'})[snapshot.status]||snapshot.status;
+    $('genFooterStatus').textContent=snapshot.error||((snapshot.status==='success'||snapshot.status==='warning')?'Finished. Review outputs and logs.':snapshot.status==='failed'?'Task failed. Open Logs for details.':'Working locally…');
+  }
+  function genRenderArtifacts(snapshot){
+    const container=$('genArtifacts');container.textContent='';const artifacts=snapshot.artifacts||[];
+    if(!artifacts.length){const p=document.createElement('p');p.className='generate-muted';p.textContent='No output files registered for this run.';container.append(p);return;}
+    for(const artifact of artifacts){
+      const row=document.createElement('div');row.className='generate-artifact-row';const info=document.createElement('div');info.className='generate-artifact-info';
+      const title=document.createElement('strong');title.textContent=artifact.label||artifact.name;const sub=document.createElement('span');sub.textContent=(artifact.available?'Ready':'Waiting for file')+' · '+artifact.path;info.append(title,sub);
+      const actions=document.createElement('div');actions.className='generate-artifact-actions';
+      if(artifact.key==='tifa-diagnosis'&&artifact.available){const view=document.createElement('button');view.type='button';view.className='small';view.textContent='View raw JSON';view.addEventListener('click',()=>{selectGenerateResult('raw');loadGenerateDiagnosis(snapshot.id);});actions.append(view);}
+      const open=document.createElement('button');open.type='button';open.className='small';open.textContent='Open file';open.disabled=!artifact.available;open.addEventListener('click',()=>openGenerateArtifact(snapshot.id,artifact.key,'file'));
+      const folder=document.createElement('button');folder.type='button';folder.className='small';folder.textContent='Open in Explorer';folder.disabled=!artifact.available;folder.addEventListener('click',()=>openGenerateArtifact(snapshot.id,artifact.key,'folder'));
+      actions.append(open,folder);row.append(info,actions);container.append(row);
+    }
+  }
+  async function openGenerateArtifact(runId,key,mode){try{await genFetchJson('/api/open-artifact',{method:'POST',headers:{'Content-Type':'application/json','X-Savant-UI':'1'},body:JSON.stringify({runId,artifactKey:key,mode})});}catch(error){toast(error.message,true);}}
+  async function loadGenerateDiagnosis(runId){
+    if(genDiagnosisLoadedFor===runId&&$('genRawDiagnosis').textContent.trim().startsWith('{'))return;
+    try{const response=await fetch('/api/runs/'+encodeURIComponent(runId)+'/diagnosis'),data=await response.json();if(!response.ok)throw new Error(data.error||'No diagnosis file is available.');
+      $('genRawDiagnosis').textContent=JSON.stringify(data,null,2);renderCleanDiagnosis(data);genDiagnosisLoadedFor=runId;
+    }catch(error){$('genRawDiagnosis').textContent=error.message;renderCleanDiagnosis(null);}
+  }
+  function renderCleanDiagnosis(payload){
+    const host=$('genCleanDiagnosis');host.textContent='';if(!payload){const p=document.createElement('p');p.className='generate-muted';p.textContent='A readable diagnosis summary is not available for this run.';host.append(p);return;}
+    const diagnosis=payload.diagnosis&&typeof payload.diagnosis==='object'?payload.diagnosis:payload;
+    const stats=[['Aligner',payload.aligner||'—'],['Language',payload.language||'—']];
+    for(const key of ['agreement','confidence','determinacy','monotonicity']){const value=diagnosis&&typeof diagnosis==='object'?(diagnosis[key]??payload[key]):payload[key];if(value!==undefined&&value!==null)stats.push([key,typeof value==='number'?value.toFixed(3):String(value)]);}
+    const chunks=Array.isArray(payload.chunks)?payload.chunks:[],notes=Array.isArray(payload.notes)?payload.notes:[];stats.push(['Chunks',String(chunks.length)],['Notes',String(notes.length)]);
+    const grid=document.createElement('div');grid.className='generate-diagnosis-stat-grid';stats.forEach(([label,value])=>{const card=document.createElement('div');card.className='generate-diagnosis-stat';const l=document.createElement('span'),v=document.createElement('strong');l.textContent=label;v.textContent=value;card.append(l,v);grid.append(card);});host.append(grid);
+    if(chunks.length){const table=document.createElement('table');table.className='generate-diagnosis-chunks';const thead=document.createElement('thead'),headRow=document.createElement('tr');for(const label of ['Chunk','Lines','Seconds','Matched units','Boundary']){const th=document.createElement('th');th.textContent=label;headRow.append(th);}thead.append(headRow);table.append(thead);
+      const tbody=document.createElement('tbody');for(const chunk of chunks){const tr=document.createElement('tr'),cells=[chunk.chunk??'—',String(chunk.line_start??'—')+'–'+String(chunk.line_end??'—'),String(chunk.audio_start??'—')+'–'+String(chunk.audio_end??'—'),String(chunk.matched_units??'—')+'/'+String(chunk.total_units??'—'),chunk.pause_aligned_boundary?'Pause':'Line fallback'];cells.forEach(value=>{const td=document.createElement('td');td.textContent=String(value);tr.append(td);});tbody.append(tr);}table.append(tbody);host.append(table);}
+    if(notes.length){const list=document.createElement('ul');list.className='generate-diagnosis-notes';notes.forEach(note=>{const li=document.createElement('li');li.textContent=String(note);list.append(li);});host.append(list);}
+    const note=document.createElement('p');note.className='generate-muted';note.textContent='Model self-consistency metrics are not calibrated probabilities that every timestamp is correct.';host.append(note);
+  }
+  async function startGenerator(modeOverride=null){
+    if(genRunBusy){toast('A generation or install task is already running.',true);return;}const config=genGetConfig(modeOverride),mode=config.mode;
+    if(mode==='align'&&(!genFiles.audio||!genFiles.lyrics)){toast('Choose both audio and lyrics before running.',true);return;}
+    if(mode==='adjust'&&!genFiles.lyrics){toast('Choose an existing LRC to adjust.',true);return;}
+    if(mode==='adjust'&&!/\.lrc$/i.test(genFiles.lyrics.name)){toast('Adjust mode requires an .lrc file.',true);return;}
+    if(mode==='align'&&/\.ttml?$/i.test(genFiles.lyrics.name)){toast('Use TXT or LRC source lyrics for alignment; TTML can be opened in the editor.',true);return;}
+    const form=new FormData();form.append('config',JSON.stringify(config));
+    if(mode==='align'&&genFiles.audio)form.append('audio',genFiles.audio,genFiles.audio.name);
+    if(mode!=='doctor'&&genFiles.lyrics)form.append('lyrics',genFiles.lyrics,genFiles.lyrics.name);
+    if(mode==='align'&&genFiles.singerConfig)form.append('singerConfig',genFiles.singerConfig,genFiles.singerConfig.name);
+    if((mode==='align'||mode==='adjust')&&genFiles.lineOffsets)form.append('lineOffsets',genFiles.lineOffsets,genFiles.lineOffsets.name);
+    if((mode==='align'||mode==='adjust')&&genFiles.phraseOffsets)form.append('phraseOffsets',genFiles.phraseOffsets,genFiles.phraseOffsets.name);
+    await startGeneratorRequest('/api/generate',form,'Run generator',false);
+  }
+  async function startGeneratorInstall(kind,label){
+    if(genRunBusy)return;const option=genCapabilities?.installers?.[kind];if(!option?.available){showInstallGuidance(kind,option?.description||'No installer is available.');return;}
+    const warnings={base:'This installs WhisperX / base packages in the Python environment used by Savant.',vocal:'This installs optional demucs-infer in the Python environment used by Savant.',tifa:'This runs the separate TIFA installer and may download model code and weights.',ffmpeg:'This runs winget to install FFmpeg system-wide.'};
+    if(!window.confirm((warnings[kind]||'Run the requested installer?')+'\n\nContinue with '+(label||option.label)+'?'))return;
+    await startGeneratorRequest('/api/install',JSON.stringify({kind}),label||option.label,true);
+  }
+  async function startGeneratorRequest(url,body,label,isInstall=false){
+    genRunBusy=true;genIsInstallRun=isInstall;$('genRunButton').disabled=true;$('genRunButton').textContent=isInstall?'Installing…':'Running…';$('genFooterStatus').textContent=label+'…';
+    $('generateRunStatus').classList.remove('hidden');$('genCurrentStep').textContent=label+'…';$('genOverallBar').style.width='1%';$('genOverallText').textContent='Starting';$('genStepBar').classList.add('indeterminate');
+    selectGenerateResult('logs');$('genLogs').textContent=isInstall?'Starting '+label+'…\n':'Uploading files to the local Savant server and starting the CLI…\n';
+    try{const response=await fetch(url,{method:'POST',headers:{'X-Savant-UI':'1',...(isInstall?{'Content-Type':'application/json'}:{})},body}),result=await response.json();if(!response.ok)throw new Error(result.error||'The local task could not be started.');
+      genActiveRunId=result.runId;genDiagnosisLoadedFor=null;genLastSnapshot={id:result.runId,status:'queued',logs:$('genLogs').textContent,artifacts:[]};await pollGeneratorRun(result.runId);
+    }catch(error){genRunBusy=false;$('genRunButton').disabled=false;$('genRunButton').textContent='▶ Run generator';$('genFooterStatus').textContent=error.message;toast(error.message,true);}
+  }
+  async function pollGeneratorRun(runId){
+    if(genPollTimer)clearTimeout(genPollTimer);if(!genRunBusy||genActiveRunId!==runId)return;
+    try{const snapshot=await genFetchJson('/api/runs/'+encodeURIComponent(runId));genLastSnapshot=snapshot;genSetProgress(snapshot);$('genLogs').textContent=snapshot.logs||'(No output yet.)';if(genResultTab==='logs')$('genLogs').scrollTop=$('genLogs').scrollHeight;
+      genRenderArtifacts(snapshot);renderGenerateInstallPrompts();if((snapshot.artifacts||[]).some(a=>a.key==='tifa-diagnosis'&&a.available))await loadGenerateDiagnosis(runId);
+      if(['success','warning','failed'].includes(snapshot.status)){
+        genRunBusy=false;$('genRunButton').disabled=false;$('genRunButton').textContent='▶ Run generator';await refreshGenerateCapabilities();renderGenerateInstallPrompts();
+        if(genIsInstallRun&&snapshot.status==='success')toast('Install task finished. Run diagnostics to verify it.');
+        if(!genIsInstallRun&&snapshot.status!=='failed'&&settings.returnToEditAfterGenerate){setScreen('edit');toast('Generation finished. Review output files or continue editing.');}
+        genIsInstallRun=false;return;
+      }
+    }catch(error){$('genFooterStatus').textContent='Could not refresh local job status: '+error.message;}
+    genPollTimer=setTimeout(()=>pollGeneratorRun(runId),1000);
+  }
+  function setGeneratePane(pane){
+    const advanced=pane==='advanced';$('generateConfigurationPane').classList.toggle('hidden',advanced);$('generateAdvancedPane').classList.toggle('hidden',!advanced);
+    $('generateConfigTab').classList.toggle('active',!advanced);$('generateAdvancedTab').classList.toggle('active',advanced);$('generateConfigTab').setAttribute('aria-selected',String(!advanced));$('generateAdvancedTab').setAttribute('aria-selected',String(advanced));
+  }
+  function wireGeneratePanel(){
+    genWireFileInputs();$('generateConfigTab').addEventListener('click',()=>setGeneratePane('configuration'));$('generateAdvancedTab').addEventListener('click',()=>setGeneratePane('advanced'));
+    $('genMode').addEventListener('change',updateGenerateConfigVisibility);$('genAligner').addEventListener('change',updateGenerateConfigVisibility);$('genSeparateVocals').addEventListener('change',renderGenerateInstallPrompts);
+    $('genRunButton').addEventListener('click',()=>startGenerator());$('genDoctorButton').addEventListener('click',()=>{$('genMode').value='doctor';updateGenerateConfigVisibility();startGenerator('doctor');});
+    for(const button of document.querySelectorAll('[data-gen-result]'))button.addEventListener('click',()=>selectGenerateResult(button.dataset.genResult));updateGenerateConfigVisibility();
   }
   function cleanPlainLine(line) {
     let s=line.trim(); if (!s) return '';
@@ -630,7 +942,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       timeInput.addEventListener('keydown',e=>{ if(e.key==='Enter'){timeInput.blur();} if(e.key==='Escape'){timeInput.value=fmtTime(row.start);timeInput.blur();} });
       textEditor.addEventListener('focus',()=>setSelected(i,false));
       textEditor.addEventListener('input',()=>{
-        const historyBefore=captureHistoryState();
+        const historyBefore=captureHistoryState(),hadWordTiming=hasWordTiming;
         const newText=textEditor.textContent.replace(/\u00a0/g,' ');
         if(newText!==row.text && row.wordCues && row.wordCues.length){
           const pieces=[...newText.matchAll(/\S+\s*/g)].map(m=>m[0]);
@@ -639,14 +951,21 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
             row.text=newText; row.originalText=newText;
           } else {
             row.text=newText; row.wordCues=null;
-            toast('Word count changed; stale word timings were cleared for this line.',true);
+            if(hadWordTiming&&newText.trim()){
+              ensureWordCues(row,i);
+              toast('Word count changed; starter word timings were created for this line.');
+            }else toast('Word count changed; stale word timings were cleared for this line.',true);
           }
-        } else { row.text=newText; }
+        } else {
+          row.text=newText;
+          if(hadWordTiming&&newText.trim()&&(!row.wordCues||!row.wordCues.length))ensureWordCues(row,i);
+        }
         row.originalText=row.text;
         hasWordTiming=rows.some(r=>r.wordCues&&r.wordCues.length);
-        $('viewWords').disabled=!hasWordTiming;
+        $('viewWords').disabled=!rows.some(r=>String(r.text||'').trim());
         if(gridMode==='words'&&!hasWordTiming)gridMode='lines';
         lastEditedIndex=i; replayFromAnchor=true; updatePreview(); updateStatus(); updateLiveHighlight();
+        syncEditorActionBar();
         commitHistoryChange(historyBefore);
       });
       textEditor.addEventListener('paste',e=>{
@@ -667,15 +986,24 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     updateLiveHighlight();
   }
   function setGridMode(mode) {
-    if(mode==='words'&&!hasWordTiming){toast('Import a word-timed TTML file first to edit individual TTML cues.',true);return;}
-    gridMode=mode==='words'?'words':'lines';
+    const nextMode=mode==='words'?'words':'lines';
+    let historyBefore=null,generatedCues=false;
+    if(nextMode==='words'){
+      if(!rows.some(row=>String(row.text||'').trim())){toast('Add lyric text before switching to TTML word timing.',true);return;}
+      historyBefore=captureHistoryState();
+      rows.forEach((row,index)=>{
+        if(String(row.text||'').trim()&&(!row.wordCues||!row.wordCues.length)){
+          ensureWordCues(row,index);
+          if(row.wordCues?.length)generatedCues=true;
+        }
+      });
+      hasWordTiming=rows.some(row=>row.wordCues?.length);
+    }
+    gridMode=nextMode;
     $('viewLines').classList.toggle('primary',gridMode==='lines');
     $('viewWords').classList.toggle('primary',gridMode==='words');
-    $('viewWords').disabled=!hasWordTiming;
-    $('addLine').disabled=gridMode==='words';
-    $('deleteLine').disabled=gridMode==='words';
-    $('addWord').classList.toggle('hidden',gridMode!=='words');
-    $('addWord').disabled=gridMode!=='words'||!hasWordTiming;
+    $('viewWords').disabled=!rows.some(row=>String(row.text||'').trim());
+    syncEditorActionBar();
     renderGrid();
     if(gridMode==='words'){
       const refs=allWordRefs();
@@ -685,6 +1013,23 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         selectWord(chosen.lineIndex,chosen.cueIndex,false);
       }
     }
+    if(generatedCues){
+      updatePreview();updateStatus();commitHistoryChange(historyBefore);
+      toast('Starter word timings created. Select any word block to refine it.');
+    }
+  }
+  function syncEditorActionBar(){
+    const wordMode=gridMode==='words';
+    $('editorActionsLabel').textContent=wordMode?'TTML word actions':'LRC line actions';
+    $('addLine').classList.toggle('hidden',wordMode);
+    $('addWord').classList.toggle('hidden',!wordMode);
+    $('addLine').disabled=wordMode;
+    $('addWord').disabled=!wordMode||!hasWordTiming;
+    $('deleteLine').textContent=wordMode?'Delete word(s)':'Delete line';
+    $('deleteLine').setAttribute('aria-label',wordMode?'Delete selected word cues':'Delete selected line');
+    $('deleteLine').disabled=wordMode
+      ? !(selectedWordKeys.size||selectedWordRef)
+      : selectedIndex<0||selectedIndex>=rows.length;
   }
   function allWordRefs() {
     const refs=[];
@@ -734,6 +1079,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function refreshWordSelection(){
     for(const clip of $('timelineLanes').querySelectorAll('.word-clip[data-line-index]'))clip.classList.toggle('selected',selectedWordKeys.has(wordKey(Number(clip.dataset.lineIndex),Number(clip.dataset.cueIndex))));
     $('gridStatus').textContent=`${rows.length} lyric lane(s) · ${allWordRefs().length} timed word(s) · ${selectedWordKeys.size>1?`${selectedWordKeys.size} words selected · `:''}drag or box-select to refine TTML`;
+    syncEditorActionBar();
   }
   function selectWord(lineIndex,cueIndex,focus=false,extend=false,toggle=false) {
     flushActiveWordInspectorField();
@@ -1145,16 +1491,15 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     }
   }
   function renderGrid() {
-    $('viewWords').disabled=!hasWordTiming;
+    $('viewWords').disabled=!rows.some(row=>String(row.text||'').trim());
     $('viewLines').classList.toggle('primary',gridMode==='lines');$('viewWords').classList.toggle('primary',gridMode==='words');
-    $('gridDescription').textContent=gridMode==='words'?'TTML timeline: every lyric row has its own waveform strip and word clips, with no song-wide horizontal scrolling. Box-select and shift multiple words.':'Edit line starts and lyrics. Changing a line start moves its TTML word cues by the same amount.';
+    $('gridDescription').textContent=gridMode==='words'?'Adjust each word cue against its line waveform; select or box-select words to edit them.':'Edit line starts and lyrics. When word timing exists, changes to a line’s word count create starter cues for further editing.';
     if(gridMode==='words')renderWordGrid();else {
       $('wordTimelineEditor').classList.add('hidden');$('lineTableWrap').classList.remove('hidden');
       $('gridHead').innerHTML='<tr><th class="num">#</th><th class="time">Time</th><th>Lyric</th></tr>';
       $('addLine').disabled=false;$('deleteLine').disabled=false;renderLineGrid();
     }
-    if(gridMode==='words'){$('addLine').disabled=true;$('deleteLine').disabled=true;}
-    updateLiveHighlight();
+    updateLiveHighlight();syncEditorActionBar();
   }
 
   function shiftRowTime(index,newTime,fromDirect=false) {
@@ -1180,7 +1525,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     for(const tr of $('gridBody').querySelectorAll('tr[data-index]'))tr.classList.toggle('selected',Number(tr.dataset.index)===index);
     if(settings.autoFollow){const tr=$('gridBody').querySelector(`tr[data-index="${index}"]`);tr?.scrollIntoView({block:'nearest'});}
     if(focusRow){const row=$('gridBody').querySelector(`tr[data-index="${index}"]`);row?.focus();}
-    updateStatus();
+    syncEditorActionBar();updateStatus();
   }
   function nudgeSelected(delta) {
     if(selectedIndex<0||selectedIndex>=rows.length)return;
@@ -1366,10 +1711,16 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const index=selectedIndex>=0?selectedIndex+1:rows.length; rows.splice(index,0,makeRow(start,'')); selectedIndex=index;lastEditedIndex=index;replayFromAnchor=true;renderGrid();setSelected(index,true);const input=$('gridBody').querySelector(`tr[data-index="${index}"] .lyric-editor`);input?.focus();updatePreview();updateStatus();commitHistoryChange(historyBefore);
   }
   function deleteLine(){
-    if(gridMode==='words')setGridMode('lines');
     if(selectedIndex<0||selectedIndex>=rows.length)return;
     const historyBefore=captureHistoryState();
-    rows.splice(selectedIndex,1);selectedIndex=Math.min(selectedIndex,rows.length-1);lastEditedIndex=selectedIndex;replayFromAnchor=true;hasWordTiming=rows.some(r=>r.wordCues&&r.wordCues.length);renderGrid();if(selectedIndex>=0)setSelected(selectedIndex,true);updatePreview();updateStatus();commitHistoryChange(historyBefore);
+    rows.splice(selectedIndex,1);selectedIndex=Math.min(selectedIndex,rows.length-1);lastEditedIndex=selectedIndex;replayFromAnchor=true;selectedWordRef=null;selectedWordKeys.clear();hasWordTiming=rows.some(r=>r.wordCues&&r.wordCues.length);renderGrid();if(selectedIndex>=0)setSelected(selectedIndex,true);updatePreview();updateStatus();commitHistoryChange(historyBefore);
+  }
+  function deleteEditorSelection(){
+    if(gridMode==='words'){
+      const refs=selectedWordKeys.size?[...selectedWordKeys].map(parseWordKey):(selectedWordRef?[{...selectedWordRef}]:[]);
+      deleteWordCues(refs,'deleted');return;
+    }
+    deleteLine();
   }
 
   function drawWaveform(){$('waveformStatus').textContent=waveformPeaks?'Waveform ready · shown per lyric line':(player.src?'Waveform loading / unavailable':'Waveform waits for audio');}
@@ -1451,6 +1802,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     handleDroppedFiles(Array.from(e.dataTransfer.files));
   });
   $('navEdit').addEventListener('click',()=>setScreen('edit'));$('navSettings').addEventListener('click',()=>setScreen('settings'));
+  $('navGenerate').addEventListener('click',()=>setScreen('generate'));wireGeneratePanel();
   $('viewLines').addEventListener('click',()=>setGridMode('lines'));$('viewWords').addEventListener('click',()=>setGridMode('words'));
   function minimumTimelineZoom(){return Math.max(2,computeFitZoom()/4);}
   function applyTimelineZoom(next,fit=false,anchor=null){
@@ -1537,7 +1889,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   $('tabLrc').addEventListener('click',()=>{outputMode='lrc';updatePreview();});$('tabTtml').addEventListener('click',()=>{outputMode='ttml';updatePreview();});
   $('saveLrc').addEventListener('click',exportLrc);$('saveLrcTop').addEventListener('click',exportLrc);$('saveTtml').addEventListener('click',exportTtml);$('saveTtmlTop').addEventListener('click',exportTtml);
   $('copyPreview').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(outputMode==='lrc'?lrcOutput():ttmlOutput());toast('Preview copied to clipboard.');}catch(_){toast('Clipboard access was blocked by the browser. Select the preview and copy manually.',true);}});
-  $('addLine').addEventListener('click',addLine);$('deleteLine').addEventListener('click',deleteLine);
+  $('addLine').addEventListener('click',addLine);$('deleteLine').addEventListener('click',deleteEditorSelection);
   $('wordStart').addEventListener('change',()=>{if(selectedWordRef)setWordTime(selectedWordRef.lineIndex,selectedWordRef.cueIndex,'start',$('wordStart').value);});
   $('wordEnd').addEventListener('change',()=>{if(selectedWordRef)setWordTime(selectedWordRef.lineIndex,selectedWordRef.cueIndex,'end',$('wordEnd').value);});
   $('wordText').addEventListener('change',()=>editSelectedWordText($('wordText').value));
@@ -1702,7 +2054,13 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     addContextAction(menu,'Paste',pasteContextTarget,{shortcut:'Ctrl+V'});
     addMenuSeparator(menu);addContextAction(menu,'Undo',undoEditorChange,{disabled:!undoHistory.length,shortcut:'Ctrl+Z'});addContextAction(menu,'Redo',redoEditorChange,{disabled:!redoHistory.length,shortcut:'Ctrl+Y'});
     if(gridMode==='words'){addMenuSeparator(menu);addContextAction(menu,'Make new word',addWordCue,{disabled:!hasWordTiming,shortcut:'F'});}
-    if(target?.lineIndex!==undefined){addMenuSeparator(menu);addContextAction(menu,'Insert line above this line',()=>insertLineAt(target.lineIndex));addContextAction(menu,'Insert line below this line',()=>insertLineAt(target.lineIndex+1));}
+    if(gridMode==='lines'&&target?.lineIndex!==undefined){
+      addMenuSeparator(menu);
+      addContextAction(menu,'Insert line above this line',()=>insertLineAt(target.lineIndex));
+      addContextAction(menu,'Insert line below this line',()=>insertLineAt(target.lineIndex+1));
+      const deleteLineAction=addContextAction(menu,'Delete line',()=>removeLineAt(target.lineIndex),{footer:true});
+      deleteLineAction.classList.add('danger');
+    }
     if(gridMode==='words'&&target?.type==='word'){
       addMenuSeparator(menu);addContextAction(menu,'Copy preset from word',()=>copyWordPreset(target));addContextAction(menu,'Paste preset',()=>pasteWordPreset(target),{disabled:!styleClipboard});
       addMenuSeparator(menu);addMenuHeading(menu,'Apply saved agent preset');
@@ -1762,7 +2120,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if(target.type==='text'&&target.selectionEnd>target.selectionStart){replaceEditorTextRange(target.lineIndex,target.selectionStart,target.selectionEnd,'');return;}
     if(copied?.kind==='words'){
       const refs=selectedWordKeys.has(wordKey(target.lineIndex,target.cueIndex))?[...selectedWordKeys].map(parseWordKey):[{lineIndex:target.lineIndex,cueIndex:target.cueIndex}];
-      deleteWordCues(refs);
+      deleteWordCues(refs,'cut');
     }else if(target.lineIndex!==undefined)removeLineAt(target.lineIndex);
   }
   async function pasteContextTarget(preferSystem=true){
@@ -1799,18 +2157,21 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       const firstCue=row.wordCues.indexOf(newCues[0]);selectedWordRef={lineIndex:index,cueIndex:firstCue};selectedWordKeys=new Set(newCues.map(c=>wordKey(index,row.wordCues.indexOf(c))));
       rerenderWordTimelinePreservingView();updateWordInspector();updatePreview();updateStatus();commitHistoryChange(historyBefore);toast('Pasted '+newCues.length+' word cue(s).');
     }else if(clipboard.kind==='lines'){
-      const target=requestedTarget,at=target?.lineIndex??selectedIndex,index=Math.max(0,Math.min(rows.length,at<0?rows.length:at+1)),historyBefore=captureHistoryState(),clones=JSON.parse(JSON.stringify(clipboard.rows));
+      const target=requestedTarget,at=target?.lineIndex??selectedIndex,index=Math.max(0,Math.min(rows.length,at<0?rows.length:at+1)),historyBefore=captureHistoryState(),clones=JSON.parse(JSON.stringify(clipboard.rows)),preserveWordTiming=hasWordTiming;
       if(gridMode==='words')setGridMode('lines');
       const base=rows[Math.max(0,index-1)],baseStart=base?base.start:0,first=clones[0]?.start||0,offset=base?Math.max(0,baseStart+settings.txtSpacing-first):0;
       clones.forEach(row=>{row.start+=offset;row.wordCues?.forEach(c=>{c.start+=offset;c.end+=offset;});});
-      rows.splice(index,0,...clones);selectedIndex=index;lastEditedIndex=index;hasWordTiming=rows.some(r=>r.wordCues?.length);renderGrid();setSelected(index,true);updatePreview();updateStatus();commitHistoryChange(historyBefore);toast('Pasted '+clones.length+' lyric line(s).');
+      rows.splice(index,0,...clones);
+      if(preserveWordTiming)clones.forEach((row,offsetIndex)=>{if(String(row.text||'').trim()&&(!row.wordCues||!row.wordCues.length))ensureWordCues(row,index+offsetIndex);});
+      selectedIndex=index;lastEditedIndex=index;hasWordTiming=rows.some(r=>r.wordCues?.length);renderGrid();setSelected(index,true);updatePreview();updateStatus();commitHistoryChange(historyBefore);toast('Pasted '+clones.length+' lyric line(s).');
     }
   }
-    function deleteWordCues(refs){
+    function deleteWordCues(refs,verb='deleted'){
     if(!refs.length)return;const historyBefore=captureHistoryState(),grouped=new Map();refs.forEach(ref=>{if(!grouped.has(ref.lineIndex))grouped.set(ref.lineIndex,new Set());grouped.get(ref.lineIndex).add(ref.cueIndex);});
     for(const [lineIndex,indices] of grouped){const row=rows[lineIndex];if(!row?.wordCues)continue;row.wordCues=row.wordCues.filter((_,i)=>!indices.has(i));row.text=row.wordCues.map(c=>c.text).join('');row.originalText=row.text;if(!row.wordCues.length)row.wordCues=null;}
     selectedWordKeys.clear();const next=allWordRefs()[0];selectedWordRef=next?{lineIndex:next.lineIndex,cueIndex:next.cueIndex}:null;selectedIndex=selectedWordRef?.lineIndex??Math.max(0,selectedIndex);hasWordTiming=rows.some(r=>r.wordCues?.length);
-    rerenderWordTimelinePreservingView();updateWordInspector();updatePreview();updateStatus();commitHistoryChange(historyBefore);toast('Word cue(s) cut.');
+    if(!hasWordTiming&&gridMode==='words')gridMode='lines';
+    rerenderWordTimelinePreservingView();updateWordInspector();updatePreview();updateStatus();commitHistoryChange(historyBefore);toast(`Word cue(s) ${verb}.`);
   }
   function removeLineAt(index){if(index<0||index>=rows.length)return;const historyBefore=captureHistoryState();if(gridMode==='words')setGridMode('lines');rows.splice(index,1);selectedIndex=Math.min(index,rows.length-1);lastEditedIndex=selectedIndex;replayFromAnchor=true;hasWordTiming=rows.some(r=>r.wordCues?.length);selectedWordRef=null;selectedWordKeys.clear();renderGrid();if(selectedIndex>=0)setSelected(selectedIndex,true);updatePreview();updateStatus();commitHistoryChange(historyBefore);}
   function insertLineAt(index){
@@ -1820,7 +2181,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   }
   function ensureWordCues(row,lineIndex){
     if(row.wordCues?.length)return;const tokens=[...String(row.text||'').matchAll(/\S+\s*/g)].map(m=>m[0]);if(!tokens.length){row.wordCues=[];return;}
-    const start=row.start,end=Math.max(start+.3,getLineEnd(lineIndex)),step=(end-start)/tokens.length;
+    // Evenly spaced starter cues, with a small minimum duration so every word is a usable block.
+    const start=row.start,end=Math.max(getLineEnd(lineIndex),start+Math.max(.3,tokens.length*.18)),step=(end-start)/tokens.length;
     row.wordCues=tokens.map((text,i)=>({text,start:start+i*step,end:start+(i+1)*step,agent:row.lineAgent||'',style:row.lineStyle||'',ttsStyle:row.lineFontStyle||'',ttsWeight:row.lineFontWeight||'',color:row.lineColor||''}));row.text=row.wordCues.map(c=>c.text).join('');row.originalText=row.text;
   }
   function addWordCue(){
@@ -1894,8 +2256,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       flushActiveWordInspectorField();
     }
   },true);
-  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);toast('Settings saved.');});
-  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320};syncSettingsForm();saveSettings();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
+  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);toast('Settings saved.');});
+  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,returnToEditAfterGenerate:false};syncSettingsForm();saveSettings();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
   document.addEventListener('keydown',e=>{
     if(e.ctrlKey&&e.key.toLowerCase()==='s'){e.preventDefault();if(gridMode==='words')exportTtml();else exportLrc();return;}
     const target=e.target; const lyricEditing=target instanceof HTMLElement&&Boolean(target.closest('.lyric-editor,#wordText'));
@@ -1945,12 +2307,12 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     }else if(e.key==='Enter'&&selectedIndex>=0){e.preventDefault();if(gridMode==='words'&&selectedWordRef){$('wordText').focus();}else{const input=$('gridBody').querySelector(`tr[data-index="${selectedIndex}"] .lyric-editor`);input?.focus();}}
     else if(e.key==='Home'&&rows.length){e.preventDefault();setSelected(0,true);}
     else if(e.key==='End'&&rows.length){e.preventDefault();setSelected(rows.length-1,true);}
-    else if(e.key==='Delete'&&selectedIndex>=0){e.preventDefault();deleteLine();}
+    else if(e.key==='Delete'&&selectedIndex>=0){e.preventDefault();deleteEditorSelection();}
   });
   refreshAgentPresetSelect();
   document.addEventListener('click',e=>{const target=e.target;if(target instanceof HTMLElement&&!target.closest('.toast'))$('toast').classList.add('hidden');});
   window.addEventListener('beforeunload',()=>{if(audioUrl)URL.revokeObjectURL(audioUrl);});
-  syncSettingsForm();outputMode=settings.defaultTab;updatePreview();renderGrid();updateStatus();
+  syncSettingsForm();outputMode=settings.defaultTab;updatePreview();renderGrid();updateStatus();refreshGenerateCapabilities();
 })();
 </script>
 </body>

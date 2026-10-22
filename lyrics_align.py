@@ -1032,8 +1032,19 @@ def adjust_lrc_timestamps(
     return "\n".join(result) + ("\n" if text.endswith(("\n", "\r")) else ""), lyric_row
 
 
+def gui_progress(overall: int, step: str, step_percent: int = 0) -> None:
+    """Emit machine-readable progress only when the local GUI launched this CLI."""
+    if os.environ.get("SAVANT_GUI_PROGRESS") == "1":
+        print("@@SAVANT_PROGRESS@@" + json.dumps({
+            "overall": max(0, min(100, int(overall))),
+            "step": step,
+            "step_percent": max(0, min(100, int(step_percent))),
+        }), flush=True)
+
+
 def adjust_existing_lrc(args: argparse.Namespace) -> int:
     """Adjust a previously generated LRC without running the alignment model again."""
+    gui_progress(5, "Validate input LRC")
     source_path = args.adjust_lrc.expanduser().resolve()
     if not source_path.is_file():
         raise FileNotFoundError(f"LRC file not found: {source_path}")
@@ -1072,6 +1083,7 @@ def adjust_existing_lrc(args: argparse.Namespace) -> int:
     adjusted_text, row_count = adjust_lrc_timestamps(source_text, args.offset, line_offsets)
 
     if args.dry_run:
+        gui_progress(100, "Dry run complete", 100)
         print("Dry run: no files were written and no model was loaded.")
         print(f"Input LRC: {source_path}")
         print(f"Output:    {output_path}")
@@ -1081,8 +1093,10 @@ def adjust_existing_lrc(args: argparse.Namespace) -> int:
         print(f"Phrase-specific corrections matched: {len(phrase_offsets)}")
         return 0
 
+    gui_progress(75, "Write adjusted LRC")
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(adjusted_text, encoding="utf-8", newline="\n")
+    gui_progress(100, "Adjustment complete", 100)
     print(f"Wrote: {output_path}")
     print(f"Adjusted rows: {row_count}")
     print(f"Global timing offset: {args.offset:+.2f}s; per-line corrections: {len(line_offsets)}; phrase-specific matches: {len(phrase_offsets)}")
@@ -2035,6 +2049,7 @@ def line_review_report(
 
 
 def align(args: argparse.Namespace) -> int:
+    gui_progress(3, "Validate inputs")
     audio_path = args.audio.expanduser().resolve()
     lyrics_path = args.lyrics.expanduser().resolve()
     output_path = args.output.expanduser().resolve() if args.output else audio_path.with_suffix(".lrc")
@@ -2126,6 +2141,7 @@ def align(args: argparse.Namespace) -> int:
         review_path = None
 
     if args.dry_run:
+        gui_progress(100, "Dry run complete", 100)
         print("Dry run: no audio model was loaded and no files were written.")
         print(f"Audio:      {audio_path}")
         print(f"Lyrics:     {lyrics_path}")
@@ -2161,6 +2177,7 @@ def align(args: argparse.Namespace) -> int:
             print(f"Review report: {review_path}")
         return 0
 
+    gui_progress(10, "Check FFmpeg and load alignment libraries")
     if not shutil.which("ffmpeg"):
         raise RuntimeError("FFmpeg was not found on PATH. Install FFmpeg or add its bin directory to PATH, then open a new CMD window.")
 
@@ -2174,6 +2191,7 @@ def align(args: argparse.Namespace) -> int:
         ) from exc
 
     device = select_device(args.device, torch)
+    gui_progress(18, "Load forced-alignment model")
     print(f"Loading local forced-alignment model for language '{args.language}' on {device}...")
     if args.align_model:
         align_model, metadata = whisperx.load_align_model(
@@ -2182,6 +2200,7 @@ def align(args: argparse.Namespace) -> int:
     else:
         align_model, metadata = whisperx.load_align_model(language_code=args.language, device=device)
 
+    gui_progress(31, "Prepare audio" )
     aligned_audio = load_alignment_audio(
         audio_path, whisperx,
         separate_vocals=args.separate_vocals,
@@ -2191,16 +2210,19 @@ def align(args: argparse.Namespace) -> int:
         vocal_output=args.vocal_output,
         overwrite=args.overwrite,
     )
+    gui_progress(43, "Audio ready", 100)
     duration = len(aligned_audio) / 16000.0
     if duration <= 0:
         raise ValueError("The audio file appears to be empty or could not be decoded.")
 
+    gui_progress(46, "First-pass lyric alignment")
     print(f"Aligning {len(lines)} lyric lines against {duration:.1f} seconds of {'vocal stem' if args.separate_vocals else 'audio'}...")
     segment = {"start": 0.0, "end": duration, "text": transcript}
     result = whisperx.align(
         [segment], align_model, metadata, aligned_audio, device,
         return_char_alignments=False,
     )
+    gui_progress(60, "First-pass alignment complete", 100)
     aligned_words = aligner_word_list(result)
     if not aligned_words:
         raise RuntimeError(
@@ -2212,6 +2234,7 @@ def align(args: argparse.Namespace) -> int:
     refined_changes: list[str] = []
     tifa_diagnostics_payload: dict[str, Any] | None = None
     if args.aligner == "tifa":
+        gui_progress(63, "Run singing-trained TIFA alignment")
         print("Switching from WhisperX coarse timing to TIFA's singing-trained forced aligner...")
         # TIFA runs in its own Python environment. Release the coarse aligner and CUDA
         # cache first so both models do not compete for GTX 1650 VRAM.
@@ -2245,6 +2268,7 @@ def align(args: argparse.Namespace) -> int:
         print(f"Short-word context repair: {len(context_repair_notes)} automatic correction(s).")
         refined_changes.extend(compare_line_timing_models(lines, coarse_mapped_by_line, mapped_by_line))
         changed_count = sum(1 for note in refined_changes if note.startswith("Model disagreement"))
+        gui_progress(80, "TIFA alignment and review complete", 100)
         print(f"TIFA complete. {changed_count} lyric line(s) materially differ from the WhisperX coarse pass and should be reviewed.")
         for change in refined_changes:
             print(f"  {change}")
@@ -2256,16 +2280,19 @@ def align(args: argparse.Namespace) -> int:
             )
             print(f"Wrote TIFA diagnostic report: {tifa_diagnostics_path}")
     elif args.refine:
+        gui_progress(64, "Refine line timings")
         print(f"Running second-pass line refinement (±{args.refine_window:g}s local windows)...")
         mapped_by_line, refined_changes = refine_line_alignments(
             lines, units_by_line, mapped_by_line, aligned_audio, duration,
             align_model, metadata, device, whisperx, args.refine_window,
         )
         changed_count = sum(1 for change in refined_changes if " -> " in change)
+        gui_progress(80, "Line refinement complete", 100)
         print(f"Refinement complete. Lines with timestamp changes of at least 0.03s: {changed_count}.")
         for change in refined_changes:
             print(f"  {change}")
 
+    gui_progress(82, "Build LRC and optional TTML output")
     output_lines, warnings = create_lrc_lines(
         lines, units_by_line, aligned_words, args.offset, line_offsets=line_offsets,
         mapped_by_line=mapped_by_line,
@@ -2289,6 +2316,7 @@ def align(args: argparse.Namespace) -> int:
             unit_speakers_by_line=unit_speakers_by_line,
         )
 
+    gui_progress(90, "Write output files")
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text("\n".join(output_lines) + "\n", encoding="utf-8", newline="\n")
     print(f"Wrote: {output_path}")
@@ -2318,6 +2346,7 @@ def align(args: argparse.Namespace) -> int:
         review_path.parent.mkdir(parents=True, exist_ok=True)
         review_path.write_text(report_text, encoding="utf-8", newline="\n")
         print(f"Wrote alignment review report: {review_path}")
+    gui_progress(100, "Generation complete", 100)
     print("Review the LRC in a player before using it in your library; this tool flags suspicious timing but cannot guarantee singing-perfect alignment.")
     return 0 if timestamped_lyrics == len(lines) else 1
 

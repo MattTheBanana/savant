@@ -236,6 +236,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       <button id="generateConfigTab" class="active" role="tab" aria-selected="true" aria-controls="generateConfigurationPane">Configuration</button>
       <button id="generateAdvancedTab" role="tab" aria-selected="false" aria-controls="generateAdvancedPane">Advanced options</button>
     </div>
+    <div id="genInstallPrompt" class="generate-install-prompt hidden" aria-live="polite"></div>
     <section id="generateConfigurationPane" class="generate-pane" role="tabpanel" aria-labelledby="generateConfigTab">
       <div class="generate-drop-grid">
         <div id="genAudioDrop" class="generate-drop-zone" tabindex="0" role="button" aria-label="Choose or drop an audio file">
@@ -305,7 +306,6 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         </div>
       </div>
       <div class="generate-tools-row"><div><h3>Run diagnostics</h3><p>Check Python, FFmpeg, WhisperX, PyTorch, CUDA, and optional installs.</p></div><button id="genDoctorButton" class="small">Run system diagnostics</button></div>
-      <div id="genInstallPrompt" class="generate-install-prompt hidden" aria-live="polite"></div>
       <section class="generate-results">
         <div class="generate-results-head"><div><h3>Run activity and diagnostics</h3><p>Inspect logs, clean TIFA summaries, raw JSON, and generated files.</p></div><span id="genRunStatusBadge" class="badge">No run yet</span></div>
         <div class="generate-result-tabs" role="tablist" aria-label="Run results">

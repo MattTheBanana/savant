@@ -58,7 +58,6 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .header-left{display:flex;align-items:center;gap:18px;min-width:0}
 .header-nav{padding:7px 11px;background:transparent;border-color:transparent;color:var(--muted);font-size:13px}
 .header-nav.active{background:var(--panel2);border-color:var(--border);color:var(--text)}
-.header-settings{width:36px;height:36px;padding:0;display:grid;place-items:center;font-size:21px;line-height:1}
 .header-right{gap:7px}
 .shell{padding-bottom:calc(var(--player-dock-height) + 24px)}
 .editor-layout{grid-template-columns:minmax(0,1fr)}
@@ -113,7 +112,6 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   .header-nav{padding:6px 8px}
   .header-right{gap:4px}
   .header-right button{font-size:10px;padding:5px 6px}
-  .header-settings{width:31px;height:32px;font-size:19px}
   .shell{padding:10px 10px calc(var(--player-dock-height) + 18px)}
   .toolbar{gap:6px;padding:4px 0 8px}
   .import-group{gap:5px;flex:1 1 auto}
@@ -146,12 +144,12 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   <div class="header-left">
     <div class="brand"><div class="brand-mark">♫</div><div><h1>Savant</h1><p>Local lyric timing editor</p></div></div>
     <button id="navEdit" class="header-nav active" aria-current="page">Edit</button>
+    <button id="navSettings" class="header-nav" aria-label="Preferences" title="Preferences">Preferences</button>
   </div>
   <div class="header-right">
     <span class="badge">LOCAL ONLY</span>
     <button id="saveLrcTop" class="small" title="Export line-timed lyrics">Export LRC</button>
     <button id="saveTtmlTop" class="small primary" title="Export word-timed lyrics">Export TTML</button>
-    <button id="navSettings" class="header-settings" aria-label="Settings" title="Settings"><span aria-hidden="true">⚙</span></button>
   </div>
 </header>
 <main class="shell">

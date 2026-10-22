@@ -432,7 +432,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   let pendingZoomRender = null;
   let settings = {
     nudgeStep: 0.02, shiftMultiplier: 5, replayLead: 2.0, txtSpacing: 3.0,
-    language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320
+    language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, returnToEditAfterGenerate: false
   };
   try { settings = {...settings, ...JSON.parse(localStorage.getItem('lyrics-aligner-ui-settings') || '{}')}; } catch (_) {}
   let toastTimer = null;
@@ -595,11 +595,184 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if (row.wordCues && row.wordCues.length) end=Math.max(end,...row.wordCues.map(c=>c.end||0));
     return Math.max(row.start+.05,end);
   }
-  function activeScreen() { return !$('settingsScreen').classList.contains('hidden') ? 'settings' : 'edit'; }
+  function activeScreen() {
+    if(!$('generateScreen').classList.contains('hidden'))return 'generate';
+    if(!$('settingsScreen').classList.contains('hidden'))return 'settings';
+    return 'edit';
+  }
   function setScreen(screen) {
-    $('editScreen').classList.toggle('hidden',screen!=='edit'); $('settingsScreen').classList.toggle('hidden',screen!=='settings');
-    $('navEdit').classList.toggle('active',screen==='edit'); $('navSettings').classList.toggle('active',screen==='settings');
-    $('navEdit').setAttribute('aria-current',screen==='edit'?'page':'false'); $('navSettings').setAttribute('aria-current',screen==='settings'?'page':'false');
+    $('editScreen').classList.toggle('hidden',screen!=='edit');$('generateScreen').classList.toggle('hidden',screen!=='generate');$('settingsScreen').classList.toggle('hidden',screen!=='settings');
+    for(const [id,name] of [['navEdit','edit'],['navGenerate','generate'],['navSettings','settings']]){
+      $(id).classList.toggle('active',screen===name);$(id).setAttribute('aria-current',screen===name?'page':'false');
+    }
+    if(screen==='generate')refreshGenerateCapabilities();
+  }
+
+  const genFiles={audio:null,lyrics:null,singerConfig:null,lineOffsets:null,phraseOffsets:null};
+  let genCapabilities=null,genActiveRunId=null,genPollTimer=null,genRunBusy=false,genResultTab='logs',genLastSnapshot=null,genDiagnosisLoadedFor=null,genIsInstallRun=false;
+  const GEN_FILE_INPUTS=[['audio','genAudioFile','genAudioName'],['lyrics','genLyricsFile','genLyricsName'],['singerConfig','genSingerFile','genSingerName'],['lineOffsets','genLineOffsetsFile','genLineOffsetsName'],['phraseOffsets','genPhraseOffsetsFile','genPhraseOffsetsName']];
+  function genSetFile(key,file){
+    if(!file)return;genFiles[key]=file;
+    const nameId={audio:'genAudioName',lyrics:'genLyricsName',singerConfig:'genSingerName',lineOffsets:'genLineOffsetsName',phraseOffsets:'genPhraseOffsetsName'}[key];
+    if(nameId){$(nameId).textContent=file.name;$(nameId).classList.remove('empty');}
+    updateGenerateConfigVisibility();renderGenerateInstallPrompts();
+  }
+  function genWireFileInputs(){
+    for(const [key,inputId] of GEN_FILE_INPUTS){
+      $(inputId).addEventListener('change',()=>{if($(inputId).files?.[0])genSetFile(key,$(inputId).files[0]);});
+      const zone=$({audio:'genAudioDrop',lyrics:'genLyricsDrop',singerConfig:'genSingerDrop',lineOffsets:'genLineOffsetsDrop',phraseOffsets:'genPhraseOffsetsDrop'}[key]);
+      zone.addEventListener('click',e=>{if(!e.target.closest('label,button,input'))$(inputId).click();});
+      zone.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('label,button,input')){e.preventDefault();$(inputId).click();}});
+      zone.addEventListener('dragover',e=>{e.preventDefault();e.stopPropagation();zone.classList.add('dragover');if(e.dataTransfer)e.dataTransfer.dropEffect='copy';});
+      zone.addEventListener('dragleave',e=>{e.preventDefault();e.stopPropagation();zone.classList.remove('dragover');});
+      zone.addEventListener('drop',e=>{e.preventDefault();e.stopPropagation();zone.classList.remove('dragover');if(e.dataTransfer?.files?.[0])genSetFile(key,e.dataTransfer.files[0]);});
+    }
+  }
+  function updateGenerateConfigVisibility(){
+    const mode=$('genMode').value,doctor=mode==='doctor',adjust=mode==='adjust',tifa=$('genAligner').value==='tifa';
+    $('genAudioDrop').classList.toggle('hidden',doctor||adjust);$('genLyricsDrop').classList.toggle('hidden',doctor);
+    for(const id of ['genAlignOptions','genLanguageWrap','genDeviceWrap'])$(id).classList.toggle('hidden',doctor||adjust);
+    $('genOffsetWrap').classList.toggle('hidden',doctor);$('genQuickToggles').classList.toggle('hidden',doctor||adjust);
+    $('genLyricsTitle').textContent=adjust?'Existing LRC to adjust':'Lyrics / transcript';
+    $('genLyricsHelp').textContent=adjust?'Choose an LRC; output defaults to a separate adjusted file.':'Plain text or LRC for alignment; LRC for timing adjustment.';
+    $('genRefine').disabled=tifa||adjust||doctor;$('genRefine').closest('label').style.opacity=$('genRefine').disabled?'.55':'1';
+    $('genContextRepair').closest('label').toggleAttribute('hidden',adjust||doctor);renderGenerateInstallPrompts();
+  }
+  function genGetConfig(modeOverride=null){
+    return {mode:modeOverride||$('genMode').value,aligner:$('genAligner').value,language:$('genLanguage').value.trim()||'en',device:$('genDevice').value,offset:$('genOffset').value||'0',
+      wordLevel:$('genWordLevel').checked,separateVocals:$('genSeparateVocals').checked,refine:$('genRefine').checked,instrumentalCues:$('genInstrumentalCues').checked,
+      outputPath:$('genOutputPath').value.trim(),ttmlOutputPath:$('genTtmlOutputPath').value.trim(),reviewReport:$('genReviewReport').checked,reviewReportPath:$('genReviewReportPath').value.trim(),
+      overwrite:$('genOverwrite').checked,dryRun:$('genDryRun').checked,alignModel:$('genAlignModel').value.trim(),tifaRoot:$('genTifaRoot').value.trim(),tifaPython:$('genTifaPython').value.trim(),tifaModel:$('genTifaModel').value.trim(),
+      tifaChunkSeconds:$('genTifaChunkSeconds').value||'42',tifaContext:$('genTifaContext').value||'1.8',tifaDiagnosticsPath:$('genTifaDiagnosticsPath').value.trim(),contextRepair:$('genContextRepair').checked,
+      refineWindow:$('genRefineWindow').value||'0.8',instrumentalThreshold:$('genInstrumentalThreshold').value||'6',demucsModel:$('genDemucsModel').value.trim()||'htdemucs',demucsSegment:$('genDemucsSegment').value||'6',vocalOutput:$('genVocalOutput').value.trim()};
+  }
+  async function genFetchJson(url,options={}){
+    const response=await fetch(url,options);let result={};try{result=await response.json();}catch(_){}
+    if(!response.ok)throw new Error(result.error||('Local API returned HTTP '+response.status+'.'));return result;
+  }
+  async function refreshGenerateCapabilities(){try{genCapabilities=await genFetchJson('/api/capabilities');}catch(_){genCapabilities=null;}renderGenerateInstallPrompts();}
+  function renderGenerateInstallPrompts(){
+    const panel=$('genInstallPrompt');if(!panel)return;const issues=[],mode=$('genMode').value,adjust=mode==='adjust',doctor=mode==='doctor';
+    if(!genCapabilities){panel.classList.remove('hidden');panel.textContent='Setup checks require the local Python server. Launch Savant with lyrics_editor.py, then reload this page.';return;}
+    if(!adjust&&!doctor&&!genCapabilities.ffmpeg)issues.push({kind:'ffmpeg',title:'FFmpeg is missing',detail:'The CLI requires FFmpeg on PATH.'});
+    if(!adjust&&!doctor&&(!genCapabilities.whisperx||!genCapabilities.torch))issues.push({kind:'base',title:'Base dependencies may be missing',detail:'WhisperX and PyTorch are required.'});
+    if(!adjust&&!doctor&&$('genAligner').value==='tifa'&&!genCapabilities.tifa)issues.push({kind:'tifa',title:'TIFA is not fully installed',detail:'TIFA needs source, a separate environment, and model weights.'});
+    if(!adjust&&!doctor&&$('genSeparateVocals').checked&&!genCapabilities.vocalSeparation)issues.push({kind:'vocal',title:'Vocal separation is not installed',detail:'Install demucs-infer to use optional vocal isolation.'});
+    if(doctor&&genLastSnapshot?.logs){
+      const logs=genLastSnapshot.logs;
+      if(/FFmpeg:\s*NOT FOUND|FFmpeg was not found/i.test(logs)&&!issues.some(i=>i.kind==='ffmpeg'))issues.push({kind:'ffmpeg',title:'FFmpeg is missing',detail:'Diagnostics could not find ffmpeg on PATH.'});
+      if(/WhisperX:\s*ERROR|alignment dependencies are missing/i.test(logs)&&!issues.some(i=>i.kind==='base'))issues.push({kind:'base',title:'Base dependencies may be missing',detail:'Diagnostics report missing packages.'});
+      if(/Vocal separation: not installed/i.test(logs)&&$('genSeparateVocals').checked&&!issues.some(i=>i.kind==='vocal'))issues.push({kind:'vocal',title:'Vocal separation is not installed',detail:'This is optional unless enabled.'});
+    }
+    if(!issues.length){panel.classList.add('hidden');panel.textContent='';return;}
+    panel.classList.remove('hidden');panel.textContent='';const heading=document.createElement('strong');heading.textContent='Setup help';panel.append(heading);
+    for(const issue of issues){
+      const row=document.createElement('div');row.className='generate-install-item';const desc=document.createElement('div'),title=document.createElement('strong'),detail=document.createElement('span');
+      title.textContent=issue.title;detail.textContent=issue.detail;desc.append(title,detail);row.append(desc);
+      const option=genCapabilities.installers?.[issue.kind],button=document.createElement('button');button.type='button';button.className='small';
+      if(option?.available){button.textContent=option.method==='pip'&&issue.kind==='base'?'Install WhisperX':option.method==='pip'&&issue.kind==='vocal'?'Install demucs-infer':option.label;button.addEventListener('click',()=>startGeneratorInstall(issue.kind,option.label));}
+      else{button.textContent=issue.kind==='tifa'?'Setup instructions':'Install instructions';button.addEventListener('click',()=>showInstallGuidance(issue.kind,option?.description||issue.detail));}
+      row.append(button);panel.append(row);
+    }
+  }
+  function showInstallGuidance(kind,detail){
+    const guides={ffmpeg:'Install FFmpeg system-wide and add ffmpeg to PATH. On Windows: winget install --id Gyan.FFmpeg.Shared --exact. Restart Savant and rerun diagnostics.',
+      tifa:'TIFA needs a source checkout, isolated environment, and TIFA-1.0-ST model. install-tifa.bat is not present in this project checkout, so automatic TIFA setup is unavailable; follow the README setup instructions.',
+      base:'Install the supported Python environment and WhisperX, then restart Savant and rerun diagnostics.',
+      vocal:'Install demucs-infer into the Python environment used by Savant, then rerun diagnostics.'};
+    selectGenerateResult('logs');$('genLogs').textContent=guides[kind]||detail;toast('Setup instructions shown in Logs.');
+  }
+  function selectGenerateResult(tab){
+    genResultTab=tab;for(const button of document.querySelectorAll('[data-gen-result]')){const active=button.dataset.genResult===tab;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));}
+    for(const key of ['logs','clean','raw','files'])$('genResult'+key[0].toUpperCase()+key.slice(1)).classList.toggle('hidden',key!==tab);
+    if(tab==='raw'&&genLastSnapshot)loadGenerateDiagnosis(genLastSnapshot.id);
+  }
+  function genSetProgress(snapshot){
+    $('generateRunStatus').classList.remove('hidden');$('genCurrentStep').textContent=snapshot.step||'Working…';
+    const overall=Math.max(0,Math.min(100,Number(snapshot.overallProgress)||0)),step=Math.max(0,Math.min(100,Number(snapshot.stepProgress)||0));
+    $('genOverallText').textContent=overall+'% overall';$('genOverallBar').style.width=overall+'%';$('genOverallBar').parentElement.setAttribute('aria-valuenow',String(overall));
+    $('genStepText').textContent=step+'%';$('genStepBar').style.width=step+'%';$('genStepBar').parentElement.setAttribute('aria-valuenow',String(step));$('genStepBar').classList.toggle('indeterminate',snapshot.status==='running'&&step===0);
+    $('genRunStatusBadge').textContent=({queued:'Queued',running:'Running',success:'Completed',warning:'Completed with warnings',failed:'Failed'})[snapshot.status]||snapshot.status;
+    $('genFooterStatus').textContent=snapshot.error||((snapshot.status==='success'||snapshot.status==='warning')?'Finished. Review outputs and logs.':snapshot.status==='failed'?'Task failed. Open Logs for details.':'Working locally…');
+  }
+  function genRenderArtifacts(snapshot){
+    const container=$('genArtifacts');container.textContent='';const artifacts=snapshot.artifacts||[];
+    if(!artifacts.length){const p=document.createElement('p');p.className='generate-muted';p.textContent='No output files registered for this run.';container.append(p);return;}
+    for(const artifact of artifacts){
+      const row=document.createElement('div');row.className='generate-artifact-row';const info=document.createElement('div');info.className='generate-artifact-info';
+      const title=document.createElement('strong');title.textContent=artifact.label||artifact.name;const sub=document.createElement('span');sub.textContent=(artifact.available?'Ready':'Waiting for file')+' · '+artifact.path;info.append(title,sub);
+      const actions=document.createElement('div');actions.className='generate-artifact-actions';
+      if(artifact.key==='tifa-diagnosis'&&artifact.available){const view=document.createElement('button');view.type='button';view.className='small';view.textContent='View raw JSON';view.addEventListener('click',()=>{selectGenerateResult('raw');loadGenerateDiagnosis(snapshot.id);});actions.append(view);}
+      const open=document.createElement('button');open.type='button';open.className='small';open.textContent='Open file';open.disabled=!artifact.available;open.addEventListener('click',()=>openGenerateArtifact(snapshot.id,artifact.key,'file'));
+      const folder=document.createElement('button');folder.type='button';folder.className='small';folder.textContent='Open in Explorer';folder.disabled=!artifact.available;folder.addEventListener('click',()=>openGenerateArtifact(snapshot.id,artifact.key,'folder'));
+      actions.append(open,folder);row.append(info,actions);container.append(row);
+    }
+  }
+  async function openGenerateArtifact(runId,key,mode){try{await genFetchJson('/api/open-artifact',{method:'POST',headers:{'Content-Type':'application/json','X-Savant-UI':'1'},body:JSON.stringify({runId,artifactKey:key,mode})});}catch(error){toast(error.message,true);}}
+  async function loadGenerateDiagnosis(runId){
+    if(genDiagnosisLoadedFor===runId&&$('genRawDiagnosis').textContent.trim().startsWith('{'))return;
+    try{const response=await fetch('/api/runs/'+encodeURIComponent(runId)+'/diagnosis'),data=await response.json();if(!response.ok)throw new Error(data.error||'No diagnosis file is available.');
+      $('genRawDiagnosis').textContent=JSON.stringify(data,null,2);renderCleanDiagnosis(data);genDiagnosisLoadedFor=runId;
+    }catch(error){$('genRawDiagnosis').textContent=error.message;renderCleanDiagnosis(null);}
+  }
+  function renderCleanDiagnosis(payload){
+    const host=$('genCleanDiagnosis');host.textContent='';if(!payload){const p=document.createElement('p');p.className='generate-muted';p.textContent='A readable diagnosis summary is not available for this run.';host.append(p);return;}
+    const diagnosis=payload.diagnosis&&typeof payload.diagnosis==='object'?payload.diagnosis:payload;
+    const stats=[['Aligner',payload.aligner||'—'],['Language',payload.language||'—']];
+    for(const key of ['agreement','confidence','determinacy','monotonicity']){const value=diagnosis&&typeof diagnosis==='object'?(diagnosis[key]??payload[key]):payload[key];if(value!==undefined&&value!==null)stats.push([key,typeof value==='number'?value.toFixed(3):String(value)]);}
+    const chunks=Array.isArray(payload.chunks)?payload.chunks:[],notes=Array.isArray(payload.notes)?payload.notes:[];stats.push(['Chunks',String(chunks.length)],['Notes',String(notes.length)]);
+    const grid=document.createElement('div');grid.className='generate-diagnosis-stat-grid';stats.forEach(([label,value])=>{const card=document.createElement('div');card.className='generate-diagnosis-stat';const l=document.createElement('span'),v=document.createElement('strong');l.textContent=label;v.textContent=value;card.append(l,v);grid.append(card);});host.append(grid);
+    if(chunks.length){const table=document.createElement('table');table.className='generate-diagnosis-chunks';const thead=document.createElement('thead'),headRow=document.createElement('tr');for(const label of ['Chunk','Lines','Seconds','Matched units','Boundary']){const th=document.createElement('th');th.textContent=label;headRow.append(th);}thead.append(headRow);table.append(thead);
+      const tbody=document.createElement('tbody');for(const chunk of chunks){const tr=document.createElement('tr'),cells=[chunk.chunk??'—',String(chunk.line_start??'—')+'–'+String(chunk.line_end??'—'),String(chunk.audio_start??'—')+'–'+String(chunk.audio_end??'—'),String(chunk.matched_units??'—')+'/'+String(chunk.total_units??'—'),chunk.pause_aligned_boundary?'Pause':'Line fallback'];cells.forEach(value=>{const td=document.createElement('td');td.textContent=String(value);tr.append(td);});tbody.append(tr);}table.append(tbody);host.append(table);}
+    if(notes.length){const list=document.createElement('ul');list.className='generate-diagnosis-notes';notes.forEach(note=>{const li=document.createElement('li');li.textContent=String(note);list.append(li);});host.append(list);}
+    const note=document.createElement('p');note.className='generate-muted';note.textContent='Model self-consistency metrics are not calibrated probabilities that every timestamp is correct.';host.append(note);
+  }
+  async function startGenerator(modeOverride=null){
+    if(genRunBusy){toast('A generation or install task is already running.',true);return;}const config=genGetConfig(modeOverride),mode=config.mode;
+    if(mode==='align'&&(!genFiles.audio||!genFiles.lyrics)){toast('Choose both audio and lyrics before running.',true);return;}
+    if(mode==='adjust'&&!genFiles.lyrics){toast('Choose an existing LRC to adjust.',true);return;}
+    if(mode==='adjust'&&!/\.lrc$/i.test(genFiles.lyrics.name)){toast('Adjust mode requires an .lrc file.',true);return;}
+    if(mode==='align'&&/\.ttml?$/i.test(genFiles.lyrics.name)){toast('Use TXT or LRC source lyrics for alignment; TTML can be opened in the editor.',true);return;}
+    const form=new FormData();form.append('config',JSON.stringify(config));if(genFiles.audio)form.append('audio',genFiles.audio,genFiles.audio.name);if(genFiles.lyrics)form.append('lyrics',genFiles.lyrics,genFiles.lyrics.name);
+    for(const key of ['singerConfig','lineOffsets','phraseOffsets'])if(genFiles[key])form.append(key,genFiles[key],genFiles[key].name);
+    await startGeneratorRequest('/api/generate',form,'Run generator',false);
+  }
+  async function startGeneratorInstall(kind,label){
+    if(genRunBusy)return;const option=genCapabilities?.installers?.[kind];if(!option?.available){showInstallGuidance(kind,option?.description||'No installer is available.');return;}
+    const warnings={base:'This installs WhisperX / base packages in the Python environment used by Savant.',vocal:'This installs optional demucs-infer in the Python environment used by Savant.',tifa:'This runs the separate TIFA installer and may download model code and weights.',ffmpeg:'This runs winget to install FFmpeg system-wide.'};
+    if(!window.confirm((warnings[kind]||'Run the requested installer?')+'\n\nContinue with '+(label||option.label)+'?'))return;
+    await startGeneratorRequest('/api/install',JSON.stringify({kind}),label||option.label,true);
+  }
+  async function startGeneratorRequest(url,body,label,isInstall=false){
+    genRunBusy=true;genIsInstallRun=isInstall;$('genRunButton').disabled=true;$('genRunButton').textContent=isInstall?'Installing…':'Running…';$('genFooterStatus').textContent=label+'…';
+    $('generateRunStatus').classList.remove('hidden');$('genCurrentStep').textContent=label+'…';$('genOverallBar').style.width='1%';$('genOverallText').textContent='Starting';$('genStepBar').classList.add('indeterminate');
+    selectGenerateResult('logs');$('genLogs').textContent=isInstall?'Starting '+label+'…\n':'Uploading files to the local Savant server and starting the CLI…\n';
+    try{const response=await fetch(url,{method:'POST',headers:{'X-Savant-UI':'1',...(isInstall?{'Content-Type':'application/json'}:{})},body}),result=await response.json();if(!response.ok)throw new Error(result.error||'The local task could not be started.');
+      genActiveRunId=result.runId;genDiagnosisLoadedFor=null;genLastSnapshot={id:result.runId,status:'queued',logs:$('genLogs').textContent,artifacts:[]};await pollGeneratorRun(result.runId);
+    }catch(error){genRunBusy=false;$('genRunButton').disabled=false;$('genRunButton').textContent='▶ Run generator';$('genFooterStatus').textContent=error.message;toast(error.message,true);}
+  }
+  async function pollGeneratorRun(runId){
+    if(genPollTimer)clearTimeout(genPollTimer);if(!genRunBusy||genActiveRunId!==runId)return;
+    try{const snapshot=await genFetchJson('/api/runs/'+encodeURIComponent(runId));genLastSnapshot=snapshot;genSetProgress(snapshot);$('genLogs').textContent=snapshot.logs||'(No output yet.)';if(genResultTab==='logs')$('genLogs').scrollTop=$('genLogs').scrollHeight;
+      genRenderArtifacts(snapshot);renderGenerateInstallPrompts();if((snapshot.artifacts||[]).some(a=>a.key==='tifa-diagnosis'&&a.available))await loadGenerateDiagnosis(runId);
+      if(['success','warning','failed'].includes(snapshot.status)){
+        genRunBusy=false;$('genRunButton').disabled=false;$('genRunButton').textContent='▶ Run generator';await refreshGenerateCapabilities();renderGenerateInstallPrompts();
+        if(genIsInstallRun&&snapshot.status==='success')toast('Install task finished. Run diagnostics to verify it.');
+        if(!genIsInstallRun&&snapshot.status!=='failed'&&settings.returnToEditAfterGenerate){setScreen('edit');toast('Generation finished. Review output files or continue editing.');}
+        genIsInstallRun=false;return;
+      }
+    }catch(error){$('genFooterStatus').textContent='Could not refresh local job status: '+error.message;}
+    genPollTimer=setTimeout(()=>pollGeneratorRun(runId),1000);
+  }
+  function setGeneratePane(pane){
+    const advanced=pane==='advanced';$('generateConfigurationPane').classList.toggle('hidden',advanced);$('generateAdvancedPane').classList.toggle('hidden',!advanced);
+    $('generateConfigTab').classList.toggle('active',!advanced);$('generateAdvancedTab').classList.toggle('active',advanced);$('generateConfigTab').setAttribute('aria-selected',String(!advanced));$('generateAdvancedTab').setAttribute('aria-selected',String(advanced));
+  }
+  function wireGeneratePanel(){
+    genWireFileInputs();$('generateConfigTab').addEventListener('click',()=>setGeneratePane('configuration'));$('generateAdvancedTab').addEventListener('click',()=>setGeneratePane('advanced'));
+    $('genMode').addEventListener('change',updateGenerateConfigVisibility);$('genAligner').addEventListener('change',renderGenerateInstallPrompts);$('genSeparateVocals').addEventListener('change',renderGenerateInstallPrompts);
+    $('genRunButton').addEventListener('click',()=>startGenerator());$('genDoctorButton').addEventListener('click',()=>startGenerator('doctor'));
+    for(const button of document.querySelectorAll('[data-gen-result]'))button.addEventListener('click',()=>selectGenerateResult(button.dataset.genResult));updateGenerateConfigVisibility();
   }
   function cleanPlainLine(line) {
     let s=line.trim(); if (!s) return '';
@@ -1621,6 +1794,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     handleDroppedFiles(Array.from(e.dataTransfer.files));
   });
   $('navEdit').addEventListener('click',()=>setScreen('edit'));$('navSettings').addEventListener('click',()=>setScreen('settings'));
+  $('navGenerate').addEventListener('click',()=>setScreen('generate'));wireGeneratePanel();
   $('viewLines').addEventListener('click',()=>setGridMode('lines'));$('viewWords').addEventListener('click',()=>setGridMode('words'));
   function minimumTimelineZoom(){return Math.max(2,computeFitZoom()/4);}
   function applyTimelineZoom(next,fit=false,anchor=null){
@@ -2130,7 +2304,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   refreshAgentPresetSelect();
   document.addEventListener('click',e=>{const target=e.target;if(target instanceof HTMLElement&&!target.closest('.toast'))$('toast').classList.add('hidden');});
   window.addEventListener('beforeunload',()=>{if(audioUrl)URL.revokeObjectURL(audioUrl);});
-  syncSettingsForm();outputMode=settings.defaultTab;updatePreview();renderGrid();updateStatus();
+  syncSettingsForm();outputMode=settings.defaultTab;updatePreview();renderGrid();updateStatus();refreshGenerateCapabilities();
 })();
 </script>
 </body>

@@ -143,6 +143,10 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   const $ = id => document.getElementById(id);
   const player = $('player');
   let rows = [];
+  const undoHistory = [];
+  const redoHistory = [];
+  const HISTORY_LIMIT = 100;
+  let restoringHistory = false;
   let selectedIndex = -1;
   let lastEditedIndex = -1;
   let replayFromAnchor = true;
@@ -185,6 +189,64 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function toast(message, error=false) {
     const el=$('toast'); el.textContent=message; el.classList.remove('hidden','error'); if(error) el.classList.add('error');
     clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.add('hidden'),4200);
+  }
+  function captureHistoryState() {
+    const active=document.activeElement;
+    let focus=null;
+    if(active instanceof HTMLElement){
+      if(active.matches('.lyric-editor'))focus={type:'line-editor',index:Number(active.closest('tr[data-index]')?.dataset.index)};
+      else if(active.matches('.time-input'))focus={type:'time-input',index:Number(active.closest('tr[data-index]')?.dataset.index)};
+      else if(/^word(Start|End|Text|Agent|Style|FontStyle|FontWeight|Color)$/.test(active.id))focus={type:'word-field',id:active.id};
+    }
+    return {
+      rows:JSON.parse(JSON.stringify(rows)),
+      metadata:[...metadata],ttmlHeadInner,sourceFormat,hasWordTiming,importedLyricsName,
+      lyricFileName:$('lyricsFileName')?.textContent||'',
+      selectedIndex,lastEditedIndex,replayFromAnchor,gridMode,
+      selectedWordRef:selectedWordRef?{...selectedWordRef}:null,
+      selectedWordKeys:[...selectedWordKeys],focus
+    };
+  }
+  function historyContent(state) {
+    return JSON.stringify({rows:state.rows,metadata:state.metadata,ttmlHeadInner:state.ttmlHeadInner,sourceFormat:state.sourceFormat,hasWordTiming:state.hasWordTiming,importedLyricsName:state.importedLyricsName});
+  }
+  function commitHistoryChange(before) {
+    if(restoringHistory||!before)return;
+    const after=captureHistoryState();
+    if(historyContent(before)===historyContent(after))return;
+    undoHistory.push(before);
+    if(undoHistory.length>HISTORY_LIMIT)undoHistory.shift();
+    redoHistory.length=0;
+  }
+  function restoreHistoryState(state) {
+    restoringHistory=true;
+    try{
+      rows=JSON.parse(JSON.stringify(state.rows));
+      metadata=[...state.metadata];ttmlHeadInner=state.ttmlHeadInner;sourceFormat=state.sourceFormat;
+      hasWordTiming=state.hasWordTiming;importedLyricsName=state.importedLyricsName;
+      selectedIndex=state.selectedIndex;lastEditedIndex=state.lastEditedIndex;replayFromAnchor=state.replayFromAnchor;
+      gridMode=state.gridMode;selectedWordRef=state.selectedWordRef?{...state.selectedWordRef}:null;
+      selectedWordKeys=new Set(state.selectedWordKeys||[]);
+      $('lyricsFileName').textContent=state.lyricFileName;
+      renderGrid();updatePreview();updateStatus();updateWordInspector();
+      const focus=state.focus;
+      if(focus?.type==='line-editor'){
+        const editor=$('gridBody').querySelector(`tr[data-index="${focus.index}"] .lyric-editor`);
+        if(editor){editor.focus();const range=document.createRange();range.selectNodeContents(editor);range.collapse(false);const selection=window.getSelection();selection?.removeAllRanges();selection?.addRange(range);}
+      }else if(focus?.type==='time-input')$('gridBody').querySelector(`tr[data-index="${focus.index}"] .time-input`)?.focus();
+      else if(focus?.type==='word-field')$(focus.id)?.focus();
+    }finally{restoringHistory=false;}
+  }
+  function undoEditorChange() {
+    if(!undoHistory.length){toast('Nothing to undo.');return;}
+    const current=captureHistoryState(),previous=undoHistory.pop();redoHistory.push(current);
+    restoreHistoryState(previous);toast('Undo.');
+  }
+  function redoEditorChange() {
+    if(!redoHistory.length){toast('Nothing to redo.');return;}
+    const current=captureHistoryState(),next=redoHistory.pop();undoHistory.push(current);
+    if(undoHistory.length>HISTORY_LIMIT)undoHistory.shift();
+    restoreHistoryState(next);toast('Redo.');
   }
   function saveSettings() {
     for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed']) {
@@ -325,6 +387,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     return {rows:lines.map((line,i)=>makeRow(i*settings.txtSpacing,line)),metadata:[],head:'',format:'txt',wordTiming:false};
   }
   function importParsed(parsed,name) {
+    const historyBefore=captureHistoryState();
     rows=parsed.rows; metadata=parsed.metadata||[]; ttmlHeadInner=parsed.head||''; sourceFormat=parsed.format; hasWordTiming=Boolean(parsed.wordTiming); gridMode='lines'; selectedWordRef=null; selectedWordKeys.clear();
     importedLyricsName=(name||'lyrics').replace(/\.(lrc|ttml|xml|txt)$/i,'')||'lyrics';
     selectedIndex=rows.length?0:-1; lastEditedIndex=-1; replayFromAnchor=true;
@@ -332,6 +395,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     else renderGrid();
     updatePreview(); updateStatus();
     $('lyricsFileName').textContent=name||'Lyrics imported';
+    commitHistoryChange(historyBefore);
     toast(`Loaded ${rows.length} lyric line(s) from ${name}.`);
   }
   async function loadLyrics(file) {
@@ -392,6 +456,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       timeInput.addEventListener('keydown',e=>{ if(e.key==='Enter'){timeInput.blur();} if(e.key==='Escape'){timeInput.value=fmtTime(row.start);timeInput.blur();} });
       textEditor.addEventListener('focus',()=>setSelected(i,false));
       textEditor.addEventListener('input',()=>{
+        const historyBefore=captureHistoryState();
         const newText=textEditor.textContent.replace(/\u00a0/g,' ');
         if(newText!==row.text && row.wordCues && row.wordCues.length){
           const pieces=[...newText.matchAll(/\S+\s*/g)].map(m=>m[0]);
@@ -408,6 +473,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         $('viewWords').disabled=!hasWordTiming;
         if(gridMode==='words'&&!hasWordTiming)gridMode='lines';
         lastEditedIndex=i; replayFromAnchor=true; updatePreview(); updateStatus(); updateLiveHighlight();
+        commitHistoryChange(historyBefore);
       });
       textEditor.addEventListener('paste',e=>{
         e.preventDefault();
@@ -510,11 +576,13 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const row=rows[lineIndex],cue=row?.wordCues?.[cueIndex];if(!cue)return;
     if(field==='start'&&parsed>=cue.end){toast('A word start must be earlier than its end.',true);updateWordInspector();return;}
     if(field==='end'&&parsed<=cue.start){toast('A word end must be later than its start.',true);updateWordInspector();return;}
+    const historyBefore=captureHistoryState();
     cue[field]=parsed;
     if(cueIndex===0&&field==='start')row.start=parsed; // LRC line timestamp follows first word start.
     if(row.rawEnd===null||row.rawEnd<cue.end)row.rawEnd=cue.end;
     lastEditedIndex=lineIndex;selectedIndex=lineIndex;selectedWordRef={lineIndex,cueIndex};replayFromAnchor=true;
     rerenderWordTimelinePreservingView();updateWordInspector();updatePreview();updateStatus();updateLiveHighlight();
+    commitHistoryChange(historyBefore);
   }
   function setWordTime(lineIndex,cueIndex,field,value) {
     const parsed=parseTime(value);
@@ -523,6 +591,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   }
   function editSelectedWordText(value) {
     const record=cueForRef();if(!record)return;
+    const historyBefore=captureHistoryState();
     const {row,cue,lineIndex,cueIndex}=record;
     const old=String(cue.text||'');const leading=(old.match(/^\s*/)||[''])[0],trailing=(old.match(/\s*$/)||[''])[0];
     cue.text=leading+String(value).trim()+trailing;
@@ -532,15 +601,18 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const laneLabel=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-label span:last-child`);
     if(laneLabel){laneLabel.textContent=row.text;laneLabel.title=row.text;}
     updateWordInspector();updatePreview();updateStatus();updateLiveHighlight();
+    commitHistoryChange(historyBefore);
   }
   function nudgeSelectedWord(delta) {
     const record=cueForRef();if(!record)return;
+    const historyBefore=captureHistoryState();
     const refs=[...selectedWordKeys].map(parseWordKey).map(ref=>({...ref,cue:rows[ref.lineIndex]?.wordCues?.[ref.cueIndex]})).filter(ref=>ref.cue);
     if(!refs.length)refs.push({lineIndex:record.lineIndex,cueIndex:record.cueIndex,cue:record.cue});
     const minStart=Math.min(...refs.map(ref=>ref.cue.start));const shift=Math.max(-minStart,delta);
     for(const ref of refs){const {lineIndex,cueIndex,cue}=ref;const row=rows[lineIndex];cue.start=Math.max(0,cue.start+shift);cue.end=Math.max(cue.start+.01,cue.end+shift);if(cueIndex===0)row.start=cue.start;if(row.rawEnd===null||row.rawEnd<cue.end)row.rawEnd=cue.end;}
     lastEditedIndex=record.lineIndex;selectedIndex=record.lineIndex;replayFromAnchor=true;
     rerenderWordTimelinePreservingView();updateWordInspector();updatePreview();updateStatus();updateLiveHighlight();
+    commitHistoryChange(historyBefore);
   }
   function moveSelectedWord(direction) {
     const refs=allWordRefs();if(!refs.length)return;
@@ -766,7 +838,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       const pps=Number(lane?.dataset.pps)||timelinePps;
       const playheadTime=Number(player.currentTime)||0,itemMin=Math.min(...items.map(item=>item.start)),itemMax=Math.max(...items.map(item=>item.end));
       const initialSnapSide=itemMax<=playheadTime?'end':itemMin>=playheadTime?'start':Math.abs(playheadTime-itemMax)<=Math.abs(itemMin-playheadTime)?'end':'start';
-      wordDragState={pointerId:e.pointerId,lineIndex,cueIndex,mode:shiftDrag?'pending':edge==='start'?'start':edge==='end'?'end':'move',startX:e.clientX,lastClientX:e.clientX,downX:e.clientX,downY:e.clientY,origStart:cue.start,origEnd:cue.end,pps,gridInterval:Number(lane?.querySelector('.timeline-grid-overlay')?.dataset.interval)||timelineGridInterval(pps),items,groupMove:items.length>1,changed:false,autoDelta:0,lastAutoTime:performance.now(),snapToPlayhead:shiftDrag,snapSide:shiftDrag?initialSnapSide:null,initialSnapSide,snapUsed:false,snapTarget:''};
+      wordDragState={pointerId:e.pointerId,lineIndex,cueIndex,mode:shiftDrag?'pending':edge==='start'?'start':edge==='end'?'end':'move',startX:e.clientX,lastClientX:e.clientX,downX:e.clientX,downY:e.clientY,origStart:cue.start,origEnd:cue.end,pps,gridInterval:Number(lane?.querySelector('.timeline-grid-overlay')?.dataset.interval)||timelineGridInterval(pps),items,groupMove:items.length>1,changed:false,historyBefore:captureHistoryState(),autoDelta:0,lastAutoTime:performance.now(),snapToPlayhead:shiftDrag,snapSide:shiftDrag?initialSnapSide:null,initialSnapSide,snapUsed:false,snapTarget:''};
       clip.setPointerCapture?.(e.pointerId);if(!shiftDrag&&!autoScrollFrame)autoScrollFrame=requestAnimationFrame(runDragAutoScroll);e.preventDefault();
     });
     clip.addEventListener('pointermove',e=>{
@@ -779,8 +851,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     });
     const endDrag=e=>{
       if(!wordDragState||wordDragState.pointerId!==e.pointerId||wordDragState.lineIndex!==lineIndex||wordDragState.cueIndex!==cueIndex)return;
-      const d=wordDragState,changed=d.changed,wasGroupMove=d.groupMove,snapped=d.snapUsed,snapTarget=d.snapTarget;wordDragState=null;if(autoScrollFrame){cancelAnimationFrame(autoScrollFrame);autoScrollFrame=null;}
-      if(changed){lastEditedIndex=lineIndex;selectedIndex=lineIndex;replayFromAnchor=true;rerenderWordTimelinePreservingView();refreshWordSelection();updatePreview();updateStatus();updateLiveHighlight();updateWordInspector();toast(wasGroupMove?'Selected words shifted together.':snapped?(snapTarget==='grid'?'Word snapped to timeline grid.':'Word snapped to playhead.'):'Word timing updated.');}
+      const d=wordDragState,changed=d.changed,wasGroupMove=d.groupMove,snapped=d.snapUsed,snapTarget=d.snapTarget,historyBefore=d.historyBefore;wordDragState=null;if(autoScrollFrame){cancelAnimationFrame(autoScrollFrame);autoScrollFrame=null;}
+      if(changed){lastEditedIndex=lineIndex;selectedIndex=lineIndex;replayFromAnchor=true;rerenderWordTimelinePreservingView();refreshWordSelection();updatePreview();updateStatus();updateLiveHighlight();updateWordInspector();commitHistoryChange(historyBefore);toast(wasGroupMove?'Selected words shifted together.':snapped?(snapTarget==='grid'?'Word snapped to timeline grid.':'Word snapped to playhead.'):'Word timing updated.');}
     };
     clip.addEventListener('pointerup',endDrag);clip.addEventListener('pointercancel',endDrag);
   }
@@ -873,13 +945,16 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   }
 
   function shiftRowTime(index,newTime,fromDirect=false) {
-    const row=rows[index]; if(!row)return; const delta=newTime-row.start; row.start=Math.max(0,newTime);
+    const row=rows[index]; if(!row)return;
+    const historyBefore=captureHistoryState();
+    const delta=newTime-row.start; row.start=Math.max(0,newTime);
     if(Math.abs(delta)>1e-9&&row.rawEnd!==null) row.rawEnd=Math.max(row.start+.05,row.rawEnd+delta);
     if(Math.abs(delta)>1e-9&&row.wordCues) row.wordCues=row.wordCues.map(c=>({...c,start:Math.max(0,c.start+delta),end:Math.max(0.01,c.end+delta)}));
     if(fromDirect||Math.abs(delta)>0) lastEditedIndex=index;
     if(Math.abs(delta)>0) replayFromAnchor=true;
     const tr=$('gridBody').querySelector(`tr[data-index="${index}"]`); if(tr){const input=tr.querySelector('.time-input');if(input&&document.activeElement!==input)input.value=fmtTime(row.start);}
     updatePreview();
+    commitHistoryChange(historyBefore);
   }
   function setSelected(index,focusRow=false) {
     if(index<0||index>=rows.length)return;
@@ -1062,11 +1137,17 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function exportLrc(){ if(!rows.length){toast('Load lyrics before exporting.',true);return;}download(baseName()+'.lrc',lrcOutput(),'text/plain;charset=utf-8'); }
   function exportTtml(){ if(!rows.length){toast('Load lyrics before exporting.',true);return;}download(baseName()+'.ttml',ttmlOutput(),'application/ttml+xml;charset=utf-8'); }
   function addLine() {
+    const historyBefore=captureHistoryState();
     if(gridMode==='words')setGridMode('lines');
     const start=selectedIndex>=0&&rows[selectedIndex]?rows[selectedIndex].start+settings.txtSpacing:(rows.length?rows[rows.length-1].start+settings.txtSpacing:0);
-    const index=selectedIndex>=0?selectedIndex+1:rows.length; rows.splice(index,0,makeRow(start,'')); selectedIndex=index;lastEditedIndex=index;replayFromAnchor=true;renderGrid();setSelected(index,true);const input=$('gridBody').querySelector(`tr[data-index="${index}"] .lyric-editor`);input?.focus();updatePreview();updateStatus();
+    const index=selectedIndex>=0?selectedIndex+1:rows.length; rows.splice(index,0,makeRow(start,'')); selectedIndex=index;lastEditedIndex=index;replayFromAnchor=true;renderGrid();setSelected(index,true);const input=$('gridBody').querySelector(`tr[data-index="${index}"] .lyric-editor`);input?.focus();updatePreview();updateStatus();commitHistoryChange(historyBefore);
   }
-  function deleteLine(){if(gridMode==='words')setGridMode('lines');if(selectedIndex<0||selectedIndex>=rows.length)return;rows.splice(selectedIndex,1);selectedIndex=Math.min(selectedIndex,rows.length-1);lastEditedIndex=selectedIndex;replayFromAnchor=true;hasWordTiming=rows.some(r=>r.wordCues&&r.wordCues.length);renderGrid();if(selectedIndex>=0)setSelected(selectedIndex,true);updatePreview();updateStatus();}
+  function deleteLine(){
+    if(gridMode==='words')setGridMode('lines');
+    if(selectedIndex<0||selectedIndex>=rows.length)return;
+    const historyBefore=captureHistoryState();
+    rows.splice(selectedIndex,1);selectedIndex=Math.min(selectedIndex,rows.length-1);lastEditedIndex=selectedIndex;replayFromAnchor=true;hasWordTiming=rows.some(r=>r.wordCues&&r.wordCues.length);renderGrid();if(selectedIndex>=0)setSelected(selectedIndex,true);updatePreview();updateStatus();commitHistoryChange(historyBefore);
+  }
 
   function drawWaveform(){$('waveformStatus').textContent=waveformPeaks?'Waveform ready · shown per lyric line':(player.src?'Waveform loading / unavailable':'Waveform waits for audio');}
   async function buildWaveform(file) {
@@ -1237,11 +1318,11 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   $('wordStart').addEventListener('change',()=>{if(selectedWordRef)setWordTime(selectedWordRef.lineIndex,selectedWordRef.cueIndex,'start',$('wordStart').value);});
   $('wordEnd').addEventListener('change',()=>{if(selectedWordRef)setWordTime(selectedWordRef.lineIndex,selectedWordRef.cueIndex,'end',$('wordEnd').value);});
   $('wordText').addEventListener('change',()=>editSelectedWordText($('wordText').value));
-  $('wordAgent').addEventListener('change',()=>{const rec=cueForRef();if(rec){rec.cue.agent=$('wordAgent').value.trim();updatePreview();updateStatus();const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);if(clip)clip.title=`${String(rec.cue.text||'').trim()} · ${fmtTime(rec.cue.start)}–${fmtTime(rec.cue.end)}${rec.cue.agent?' · '+rec.cue.agent:''}`;toast('TTML singer/agent updated.');}});
-  $('wordStyle').addEventListener('change',()=>{const rec=cueForRef();if(rec){rec.cue.style=$('wordStyle').value.trim();updatePreview();toast('TTML style reference updated.');}});
-  $('wordFontStyle').addEventListener('change',()=>{const rec=cueForRef();if(rec){rec.cue.ttsStyle=$('wordFontStyle').value;const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);clip?.classList.toggle('singer-italic',rec.cue.ttsStyle==='italic');updatePreview();}});
-  $('wordFontWeight').addEventListener('change',()=>{const rec=cueForRef();if(rec){rec.cue.ttsWeight=$('wordFontWeight').value;const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);clip?.classList.toggle('singer-bold',['bold','bolder','700','800','900'].includes(String(rec.cue.ttsWeight).toLowerCase()));updatePreview();}});
-  $('wordColor').addEventListener('change',()=>{const rec=cueForRef();if(rec){const val=$('wordColor').value.trim();if(val&&!safeCssColor(val)){toast('Use a CSS color such as #ffffff, rgb(255,255,255), or white.',true);$('wordColor').value=rec.cue.color||'';return;}rec.cue.color=val;const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);if(clip)clip.style.color=val;updatePreview();}});
+  $('wordAgent').addEventListener('change',()=>{const rec=cueForRef();if(rec){const historyBefore=captureHistoryState();rec.cue.agent=$('wordAgent').value.trim();updatePreview();updateStatus();const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);if(clip)clip.title=`${String(rec.cue.text||'').trim()} · ${fmtTime(rec.cue.start)}–${fmtTime(rec.cue.end)}${rec.cue.agent?' · '+rec.cue.agent:''}`;commitHistoryChange(historyBefore);toast('TTML singer/agent updated.');}});
+  $('wordStyle').addEventListener('change',()=>{const rec=cueForRef();if(rec){const historyBefore=captureHistoryState();rec.cue.style=$('wordStyle').value.trim();updatePreview();commitHistoryChange(historyBefore);toast('TTML style reference updated.');}});
+  $('wordFontStyle').addEventListener('change',()=>{const rec=cueForRef();if(rec){const historyBefore=captureHistoryState();rec.cue.ttsStyle=$('wordFontStyle').value;const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);clip?.classList.toggle('singer-italic',rec.cue.ttsStyle==='italic');updatePreview();commitHistoryChange(historyBefore);}});
+  $('wordFontWeight').addEventListener('change',()=>{const rec=cueForRef();if(rec){const historyBefore=captureHistoryState();rec.cue.ttsWeight=$('wordFontWeight').value;const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);clip?.classList.toggle('singer-bold',['bold','bolder','700','800','900'].includes(String(rec.cue.ttsWeight).toLowerCase()));updatePreview();commitHistoryChange(historyBefore);}});
+  $('wordColor').addEventListener('change',()=>{const rec=cueForRef();if(rec){const val=$('wordColor').value.trim();if(val&&!safeCssColor(val)){toast('Use a CSS color such as #ffffff, rgb(255,255,255), or white.',true);$('wordColor').value=rec.cue.color||'';return;}const historyBefore=captureHistoryState();rec.cue.color=val;const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);if(clip)clip.style.color=val;updatePreview();commitHistoryChange(historyBefore);}});
   for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);toast('Settings saved.');});
   $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320};syncSettingsForm();saveSettings();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
   document.addEventListener('keydown',e=>{
@@ -1251,6 +1332,14 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if(e.code==='Space'&&!lyricEditing){e.preventDefault();playPause();return;}
     const editableLine=target instanceof HTMLElement?target.closest('.lyric-editor'):null;
     if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='a'&&editableLine){e.preventDefault();e.stopPropagation();const range=document.createRange();range.selectNodeContents(editableLine);const sel=window.getSelection();sel?.removeAllRanges();sel?.addRange(range);return;}
+    if((e.ctrlKey||e.metaKey)&&!e.altKey&&activeScreen()==='edit'&&target instanceof HTMLElement&&!target.closest('input,textarea,select')){
+      const key=e.key.toLowerCase();
+      if(key==='z'||key==='y'){
+        e.preventDefault();e.stopPropagation();
+        if(key==='y'||(key==='z'&&e.shiftKey))redoEditorChange();else undoEditorChange();
+        return;
+      }
+    }
     if(formFocus)return;
     if(activeScreen()!=='edit')return;
     if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='a'&&gridMode==='words'){

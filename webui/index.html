@@ -401,16 +401,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       <div class="generate-progress-heading"><strong id="genOverallText">0% overall</strong></div>
       <div class="generate-progress-stage-wrap">
         <span id="genCurrentStep" class="generate-current-step">Preparing generator…</span>
-        <div id="genSegmentTrack" class="generate-segment-track" role="progressbar" aria-label="Generation progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-          <span class="generate-segment"><span class="generate-segment-fill"></span></span>
-          <span class="generate-segment"><span class="generate-segment-fill"></span></span>
-          <span class="generate-segment"><span class="generate-segment-fill"></span></span>
-          <span class="generate-segment"><span class="generate-segment-fill"></span></span>
-          <span class="generate-segment"><span class="generate-segment-fill"></span></span>
-          <span class="generate-segment"><span class="generate-segment-fill"></span></span>
-          <span class="generate-segment"><span class="generate-segment-fill"></span></span>
-          <span class="generate-segment"><span class="generate-segment-fill"></span></span>
-        </div>
+        <div id="genSegmentTrack" class="generate-segment-track" role="progressbar" aria-label="Generation progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
       </div>
     </section>
     <div class="generate-run-footer"><button id="genRunButton" class="primary generate-run-button"><span aria-hidden="true">▶</span> Run Generator</button><span id="genFooterStatus" class="generate-muted">Choose an audio file and lyrics to begin.</span><button id="genImportButton" class="generate-run-button" type="button" disabled>Import Output to Edit</button></div>
@@ -715,7 +706,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 
   const genFiles={audio:null,lyrics:null,singerConfig:null,lineOffsets:null,phraseOffsets:null};
   let genCapabilities=null,genActiveRunId=null,genPollTimer=null,genRunBusy=false,genResultTab='logs',genLastSnapshot=null,genDiagnosisLoadedFor=null,genIsInstallRun=false;
-  let genDefaultOutputName='',genOutputNameCustom=false,genCompletedNeedsConfigChange=false,genOutputReady=false;
+  let genDefaultOutputName='',genOutputNameCustom=false,genCompletedNeedsConfigChange=false,genOutputReady=false,genImportedRunId=null;
   const GEN_FILE_INPUTS=[['audio','genAudioFile','genAudioName'],['lyrics','genLyricsFile','genLyricsName'],['singerConfig','genSingerFile','genSingerName'],['lineOffsets','genLineOffsetsFile','genLineOffsetsName'],['phraseOffsets','genPhraseOffsetsFile','genPhraseOffsetsName']];
   function genSetFile(key,file){
     if(!file)return;genMarkConfigChanged();genFiles[key]=file;
@@ -746,7 +737,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function genSetImportButton(snapshot){
     const artifacts=snapshot?.artifacts||[];
     genOutputReady=!genIsInstallRun&&['success','warning'].includes(snapshot?.status)&&artifacts.some(a=>a.key==='output-lrc'&&a.available);
-    $('genImportButton').disabled=!genOutputReady;
+    $('genImportButton').disabled=!genOutputReady||genImportedRunId===snapshot?.id;
   }
   async function genImportOutput(runId=genLastSnapshot?.id,automatic=false){
     if(!runId||!genLastSnapshot||genLastSnapshot.id!==runId||!['success','warning'].includes(genLastSnapshot.status)){
@@ -765,7 +756,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       const lyricArtifact=ttml||lrc,endpoint='/api/runs/'+encodeURIComponent(runId)+'/artifacts/'+encodeURIComponent(lyricArtifact.key);
       const response=await fetch(endpoint);if(!response.ok){let error='Could not read generated output.';try{error=(await response.json()).error||error;}catch(_){}throw new Error(error);}
       const blob=await response.blob(),file=new File([blob],lyricArtifact.name,{type:blob.type||'text/plain'});
-      await loadLyrics(file);setScreen('edit');
+      await loadLyrics(file);setScreen('edit');genImportedRunId=runId;
       toast(ttml?'Imported source audio and generated TTML into Edit.':'Imported source audio and generated LRC into Edit.');
     }catch(error){$('genImportButton').disabled=false;toast('Import failed: '+error.message,true);}
     finally{genSetImportButton(genLastSnapshot);}
@@ -792,9 +783,11 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     $('genContextRepair').closest('label').toggleAttribute('hidden',adjust||doctor||$('genAligner').value!=='tifa');renderGenerateInstallPrompts();
   }
   function genGetConfig(modeOverride=null){
-    return {mode:modeOverride||$('genMode').value,aligner:$('genAligner').value,language:$('genLanguage').value.trim()||'en',device:$('genDevice').value,offset:$('genOffset').value||'0',
+    const mode=modeOverride||$('genMode').value;
+    const outputName=$('genOutputName').value.trim();
+    return {mode,aligner:$('genAligner').value,language:$('genLanguage').value.trim()||'en',device:$('genDevice').value,offset:$('genOffset').value||'0',
       wordLevel:$('genWordLevel').checked,separateVocals:$('genSeparateVocals').checked,instrumentalCues:$('genInstrumentalCues').checked,
-      outputDirectory:$('genOutputDirectory').value.trim(),outputName:$('genOutputName').value.trim(),outputPath:$('genOutputPath').value.trim(),ttmlOutputPath:$('genTtmlOutputPath').value.trim(),reviewReport:$('genReviewReport').checked,reviewReportPath:$('genReviewReportPath').value.trim(),
+      outputDirectory:$('genOutputDirectory').value.trim(),outputName:mode==='adjust'&&!genOutputNameCustom?((outputName||genDefaultOutputName||'lyrics')+'.adjusted'):outputName,outputPath:$('genOutputPath').value.trim(),ttmlOutputPath:$('genTtmlOutputPath').value.trim(),reviewReport:$('genReviewReport').checked,reviewReportPath:$('genReviewReportPath').value.trim(),
       overwrite:$('genOverwrite').checked,dryRun:$('genDryRun').checked,alignModel:$('genAlignModel').value.trim(),tifaRoot:$('genAligner').value==='tifa' ? $('genTifaRoot').value.trim() : '',tifaPython:$('genAligner').value==='tifa' ? $('genTifaPython').value.trim() : '',tifaModel:$('genAligner').value==='tifa' ? $('genTifaModel').value.trim() : '',
       tifaChunkSeconds:$('genTifaChunkSeconds').value||'42',tifaContext:$('genTifaContext').value||'1.8',tifaDiagnosticsPath:$('genAligner').value==='tifa' ? $('genTifaDiagnosticsPath').value.trim() : '',contextRepair:$('genContextRepair').checked,
       instrumentalThreshold:$('genInstrumentalThreshold').value||'6',demucsModel:$('genDemucsModel').value.trim()||'htdemucs',demucsSegment:$('genDemucsSegment').value||'6',vocalOutput:$('genVocalOutput').value.trim()};
@@ -853,30 +846,39 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const overall=Math.max(0,Math.min(100,Number(snapshot.overallProgress)||0));
     const stages=genProgressStages(snapshot),step=String(snapshot.step||'Working…'),lower=step.toLowerCase();
     let active=0;
-    if(['success','warning'].includes(snapshot.status))active=stages.length-1;
-    else if(snapshot.status==='failed')active=Math.min(stages.length-1,stages.length-2);
-    else if(/complete|finished|dry run complete/.test(lower))active=stages.length-1;
-    else if(/write|save output/.test(lower))active=stages.length-2;
-    else if(/build/.test(lower))active=Math.min(stages.length-3,stages.length-1);
+    if(['success','warning'].includes(snapshot.status)||overall>=100||/generation complete|adjustment complete|dry run complete|install task complete/.test(lower))active=stages.length-1;
+    else if(/validat/.test(lower))active=0;
+    else if(/load|model|ffmpeg|alignment libraries|install/.test(lower))active=Math.min(1,stages.length-1);
+    else if(/prepare audio|audio ready|separate vocals/.test(lower))active=Math.min(2,stages.length-1);
+    else if(/first-pass|lyric alignment/.test(lower))active=Math.min(3,stages.length-1);
     else if(/tifa|refine/.test(lower))active=Math.min(4,stages.length-1);
-    else if(/first-pass|aligning|lyric alignment/.test(lower))active=Math.min(3,stages.length-1);
-    else if(/audio/.test(lower))active=Math.min(2,stages.length-1);
-    else if(/model|ffmpeg|alignment libraries|install/.test(lower))active=Math.min(1,stages.length-1);
-    else if(/validat|queued|starting/.test(lower))active=0;
+    else if(/build lrc|build output/.test(lower))active=Math.min(5,stages.length-1);
+    else if(/write output|write adjusted|write lrc/.test(lower))active=Math.max(0,stages.length-2);
+    else if(snapshot.status==='failed')active=Math.min(stages.length-1,stages.length-2);
     else{
       const thresholds=stages.length===8?[3,18,43,60,80,82,90,100]:stages.map((_,i)=>(i+1)*100/stages.length);
-      active=Math.max(0,thresholds.findIndex(v=>overall<v));if(active<0)active=stages.length-1;
+      active=Math.max(0,thresholds.findIndex(value=>overall<value));if(active<0)active=stages.length-1;
     }
-    const segments=[...$('genSegmentTrack').querySelectorAll('.generate-segment')];
+    const track=$('genSegmentTrack');
+    if(track.children.length!==stages.length){
+      track.textContent='';
+      for(const label of stages){
+        const segment=document.createElement('span');segment.className='generate-segment';segment.title=label;
+        segment.setAttribute('aria-label',label);
+        const fill=document.createElement('span');fill.className='generate-segment-fill';segment.append(fill);track.append(segment);
+      }
+    }
+    const segments=[...track.querySelectorAll('.generate-segment')];
     segments.forEach((segment,index)=>{
-      segment.classList.toggle('complete',index<active||['success','warning'].includes(snapshot.status));
-      segment.classList.toggle('active',index===active&& !['success','warning'].includes(snapshot.status));
+      const done=index<active||['success','warning'].includes(snapshot.status);
+      const current=index===active&&!done;
+      segment.classList.toggle('complete',done);segment.classList.toggle('active',current);
       const fill=segment.querySelector('.generate-segment-fill');
-      fill.style.width=index<active||['success','warning'].includes(snapshot.status)?'100%':index===active?(Number(snapshot.stepProgress)>0?Math.max(18,Math.min(100,Number(snapshot.stepProgress)))+'%':'48%'):'0%';
-      segment.setAttribute('aria-label',stages[index]||'Progress step');
+      fill.style.width=done?'100%':current?(Number(snapshot.stepProgress)>0?Math.max(18,Math.min(100,Number(snapshot.stepProgress)))+'%':'48%'):'0%';
+      segment.title=stages[index];segment.setAttribute('aria-label',stages[index]);
     });
     $('genOverallText').textContent=overall+'% overall';
-    $('genSegmentTrack').setAttribute('aria-valuenow',String(overall));
+    track.setAttribute('aria-valuenow',String(overall));
     $('genCurrentStep').textContent=['success','warning'].includes(snapshot.status)?(snapshot.status==='warning'?'Completed With Warnings':'Generation Complete'):snapshot.status==='failed'?'Generation Failed':step;
     $('genCurrentStep').title=step;
     $('genCurrentStep').style.left=((active+0.5)/stages.length*100)+'%';
@@ -939,7 +941,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     await startGeneratorRequest('/api/install',JSON.stringify({kind}),label||option.label,true);
   }
   async function startGeneratorRequest(url,body,label,isInstall=false){
-    genRunBusy=true;genIsInstallRun=isInstall;$('genRunButton').disabled=true;$('genRunButton').textContent=isInstall?'Installing…':'Running…';$('genFooterStatus').textContent=label+'…';
+    genRunBusy=true;genIsInstallRun=isInstall;if(!isInstall)genImportedRunId=null;$('genRunButton').disabled=true;$('genRunButton').textContent=isInstall?'Installing…':'Running…';$('genFooterStatus').textContent=label+'…';
     $('genImportButton').disabled=true;genOutputReady=false;genCompletedNeedsConfigChange=false;
     $('generateRunStatus').classList.remove('hidden','finished','failed');$('genCurrentStep').textContent=label+'…';$('genOverallText').textContent='0% overall';$('genSegmentTrack').setAttribute('aria-valuenow','0');
     $('genSegmentTrack').querySelectorAll('.generate-segment').forEach((segment,index)=>{segment.classList.toggle('active',index===0);segment.classList.remove('complete');segment.querySelector('.generate-segment-fill').style.width=index===0?'35%':'0%';});
@@ -1230,6 +1232,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     $('addWord').classList.toggle('hidden',!wordMode);
     $('addLine').disabled=wordMode;
     $('addWord').disabled=!wordMode||!hasWordTiming;
+    $('zoomOut').disabled=!wordMode;$('zoomIn').disabled=!wordMode;$('zoomFit').disabled=!wordMode;
     $('deleteTtmlLine').classList.toggle('hidden',!wordMode);
     $('deleteTtmlLine').disabled=!wordMode||selectedIndex<0||selectedIndex>=rows.length;
     $('deleteLine').textContent=wordMode?'Delete word(s)':'Delete line';

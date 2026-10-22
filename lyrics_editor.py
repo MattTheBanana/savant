@@ -56,6 +56,7 @@ def _run_snapshot(run: dict) -> dict:
             "error": run.get("error"),
             "logs": run.get("logs", ""),
             "runDirectory": str(run["directory"]),
+            "sourceAudioName": run.get("source_audio_name", ""),
             "artifacts": [],
         }
         for key, meta in run.get("artifacts", {}).items():
@@ -64,7 +65,7 @@ def _run_snapshot(run: dict) -> dict:
             snapshot["artifacts"].append({
                 "key": key,
                 "label": meta.get("label", key),
-                "name": path.name,
+                "name": meta.get("name") or path.name,
                 "path": str(path),
                 "kind": meta.get("kind", "file"),
                 "available": available,
@@ -152,6 +153,13 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
     directory: Path = run["directory"]
     saved = {name: _save_upload(directory / "inputs", name, item) for name, item in files.items()}
     run["saved_inputs"] = saved
+    if "audio" in saved:
+        original_audio_name = Path(files["audio"][0].replace("\\", "/")).name if "audio" in files else saved["audio"].name
+        run["source_audio_name"] = original_audio_name
+        run.setdefault("artifacts", {})["input-audio"] = {
+            "label": "Source audio", "path": str(saved["audio"]), "kind": "input",
+            "name": original_audio_name,
+        }
     operation = str(config.get("mode", "align"))
     run["operation"] = operation
 
@@ -173,8 +181,18 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
         output_path = Path(output_path_text).expanduser().resolve()
     else:
         source = saved.get("lyrics") if operation == "adjust" else saved.get("audio")
-        output_stem = (source.stem if source else "lyrics")
-        output_path = directory / (f"{output_stem}.adjusted.lrc" if operation == "adjust" else f"{output_stem}.lrc")
+        fallback_stem = source.stem if source else "lyrics"
+        raw_output_name = str(config.get("outputName", "")).strip()
+        if raw_output_name:
+            # Only accept a filename, not path separators supplied in the UI.
+            output_name = Path(raw_output_name.replace("\\", "/")).name
+            output_stem = re.sub(r"\.(?:lrc|ttml|txt|xml)$", "", output_name, flags=re.IGNORECASE).strip(" .")
+            output_stem = _safe_name(output_stem, fallback_stem)
+        else:
+            output_stem = fallback_stem + (".adjusted" if operation == "adjust" else "")
+        output_directory_text = str(config.get("outputDirectory", "")).strip()
+        output_directory = Path(output_directory_text).expanduser().resolve() if output_directory_text else directory
+        output_path = output_directory / f"{output_stem}.lrc"
     _add_flag(command, "--output", output_path)
     run["artifacts"]["output-lrc"] = {"label": "Output LRC", "path": str(output_path), "kind": "output"}
 
@@ -415,6 +433,20 @@ class Handler(BaseHTTPRequestHandler):
         self._send_bytes(json.dumps(value, ensure_ascii=False).encode("utf-8"),
                          "application/json; charset=utf-8", status)
 
+    def _send_file(self, path: Path) -> None:
+        stat = path.stat()
+        safe_name = re.sub(r'[^A-Za-z0-9._() -]', "_", path.name)
+        self.send_response(200)
+        self.send_header("Content-Type", mimetypes.guess_type(path.name)[0] or "application/octet-stream")
+        self.send_header("Content-Length", str(stat.st_size))
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Content-Security-Policy", "default-src 'self' 'unsafe-inline' blob: data:; media-src blob: data:; connect-src 'self'; img-src 'self' data: blob:")
+        self.send_header("Content-Disposition", f'inline; filename="{safe_name}"')
+        self.end_headers()
+        with path.open("rb") as stream:
+            shutil.copyfileobj(stream, self.wfile, length=1024 * 1024)
+
     def _api_mutation_allowed(self) -> bool:
         # Require the UI's custom header; cross-origin HTML forms cannot set it.
         return self.headers.get("X-Savant-UI") == "1"
@@ -443,6 +475,24 @@ class Handler(BaseHTTPRequestHandler):
                 self._send_json({"error": "Run not found."}, 404)
                 return
             self._send_json(_run_snapshot(run))
+            return
+        match = re.fullmatch(r"/api/runs/([A-Za-z0-9_-]+)/artifacts/([A-Za-z0-9_-]+)", route.path)
+        if match:
+            run_id, artifact_key = match.groups()
+            with RUNS_LOCK:
+                run = RUNS.get(run_id)
+                meta = run.get("artifacts", {}).get(artifact_key) if run else None
+            if not meta:
+                self._send_json({"error": "Unknown artifact."}, 404)
+                return
+            path = Path(meta["path"])
+            if not path.is_file():
+                self._send_json({"error": "This artifact is not ready yet."}, 404)
+                return
+            try:
+                self._send_file(path)
+            except OSError as exc:
+                self._send_json({"error": f"Could not read artifact: {exc}"}, 500)
             return
         match = re.fullmatch(r"/api/runs/([A-Za-z0-9_-]+)/diagnosis", route.path)
         if match:
@@ -497,6 +547,41 @@ class Handler(BaseHTTPRequestHandler):
         route = urlparse(self.path)
         if not self._api_mutation_allowed():
             self._send_json({"error": "This local API only accepts requests from the Savant UI."}, 403)
+            return
+        if route.path == "/api/select-folder":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if length > 100_000:
+                    raise ValueError("Invalid folder selection request.")
+                payload = json.loads(self.rfile.read(length).decode("utf-8"))
+                kind = str(payload.get("kind", ""))
+                if kind not in {"audio", "lyrics"}:
+                    raise ValueError("Choose either the audio or lyrics folder.")
+                filename = str(payload.get("audioName" if kind == "audio" else "lyricsName", "")).strip()
+                title = f"Choose the folder containing {filename}" if filename else f"Choose the output folder (source: {kind})"
+                try:
+                    import tkinter as tk
+                    from tkinter import filedialog
+                    root = tk.Tk()
+                    root.withdraw()
+                    try:
+                        root.attributes("-topmost", True)
+                    except tk.TclError:
+                        pass
+                    try:
+                        selected = filedialog.askdirectory(
+                            parent=root, title=title, initialdir=str(Path.home()), mustexist=True
+                        )
+                    finally:
+                        root.destroy()
+                except Exception as exc:
+                    raise RuntimeError(f"The system folder picker is unavailable: {exc}") from exc
+                if not selected:
+                    self._send_json({"cancelled": True})
+                else:
+                    self._send_json({"cancelled": False, "path": str(Path(selected).expanduser().resolve())})
+            except (ValueError, OSError, json.JSONDecodeError, RuntimeError) as exc:
+                self._send_json({"error": str(exc)}, 400)
             return
         if route.path == "/api/generate":
             try:

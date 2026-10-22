@@ -625,6 +625,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       const zone=$({audio:'genAudioDrop',lyrics:'genLyricsDrop',singerConfig:'genSingerDrop',lineOffsets:'genLineOffsetsDrop',phraseOffsets:'genPhraseOffsetsDrop'}[key]);
       zone.addEventListener('click',e=>{if(!e.target.closest('label,button,input'))$(inputId).click();});
       zone.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('label,button,input')){e.preventDefault();$(inputId).click();}});
+      zone.addEventListener('dragenter',e=>{e.preventDefault();e.stopPropagation();zone.classList.add('dragover');});
       zone.addEventListener('dragover',e=>{e.preventDefault();e.stopPropagation();zone.classList.add('dragover');if(e.dataTransfer)e.dataTransfer.dropEffect='copy';});
       zone.addEventListener('dragleave',e=>{e.preventDefault();e.stopPropagation();zone.classList.remove('dragover');});
       zone.addEventListener('drop',e=>{e.preventDefault();e.stopPropagation();zone.classList.remove('dragover');if(e.dataTransfer?.files?.[0])genSetFile(key,e.dataTransfer.files[0]);});

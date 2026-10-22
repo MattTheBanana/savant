@@ -97,7 +97,7 @@ Run `python lyrics_align.py --help` for the live help text and `python lyrics_al
 | Option | Purpose |
 | --- | --- |
 | `--language CODE` | Alignment language (default: `en`). Availability depends on the aligner/model. |
-| `--aligner whisperx|tifa` | Choose the alignment backend (default: `whisperx`). TIFA is singing-aware and currently supports English in this integration. |
+| `--aligner whisperx` or `--aligner tifa` | Choose the alignment backend (default: `whisperx`). TIFA is singing-aware and currently supports English in this integration. |
 | `--align-model NAME` | Custom Hugging Face/wav2vec2 model for the WhisperX backend. |
 | `--device auto|cpu|cuda` | Select the inference device (default: `auto`). |
 | `--offset SECONDS` | Shift all output timings. Negative is earlier; positive is later. |
@@ -158,8 +158,8 @@ The browser editor has a separate, small set of options:
 
 | Option | Purpose |
 | --- | --- |
-| `python lyrics_editor.py --port PORT` | Use a different local port (default: `8765`). |
-| `python lyrics_editor.py --no-browser` | Print the URL without opening it automatically. |
+| `--port PORT` | Use a different local port (default: `8765`). |
+| `--no-browser` | Print the URL without opening it automatically. |
 
 ## Common workflows
 

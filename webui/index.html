@@ -230,11 +230,12 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       $('lyricsFileName').textContent=state.lyricFileName;
       renderGrid();updatePreview();updateStatus();updateWordInspector();
       const focus=state.focus;
+      // Keep text-editor focus for repeated Ctrl+Z/Ctrl+Y while typing, but
+      // don't steal focus back into timestamp/inspector inputs after an undo.
       if(focus?.type==='line-editor'){
         const editor=$('gridBody').querySelector(`tr[data-index="${focus.index}"] .lyric-editor`);
         if(editor){editor.focus();const range=document.createRange();range.selectNodeContents(editor);range.collapse(false);const selection=window.getSelection();selection?.removeAllRanges();selection?.addRange(range);}
-      }else if(focus?.type==='time-input')$('gridBody').querySelector(`tr[data-index="${focus.index}"] .time-input`)?.focus();
-      else if(focus?.type==='word-field')$(focus.id)?.focus();
+      }
     }finally{restoringHistory=false;}
   }
   function undoEditorChange() {

@@ -160,6 +160,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   let sourceFormat = '';
   let gridMode = 'lines';
   let selectedWordRef = null;
+  let wordInspectorShownKey = null;
   let activePlaybackIndex = -1;
   let activeWordIndex = -1;
   let livePlaybackFrame = null;
@@ -531,13 +532,25 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   }
   function updateWordInspector() {
     const record=cueForRef();
-    if(!record){$('wordInspector').classList.add('hidden');$('wordInspectorHeading').textContent='Selected word';$('wordInspectorMeta').textContent='Choose a word block above';return;}
-    const {row,cue,lineIndex,cueIndex}=record;
+    if(!record){
+      wordInspectorShownKey=null;
+      $('wordInspector').classList.add('hidden');$('wordInspectorHeading').textContent='Selected word';$('wordInspectorMeta').textContent='Choose a word block above';
+      for(const id of ['wordStart','wordEnd','wordText','wordAgent','wordStyle','wordFontStyle','wordFontWeight','wordColor'])$(id).value='';
+      return;
+    }
+    const {row,cue,lineIndex,cueIndex}=record,key=wordKey(lineIndex,cueIndex);
+    const changedWord=wordInspectorShownKey!==key;
     $('wordInspector').classList.remove('hidden');
     $('wordInspectorHeading').textContent=`${selectedWordKeys.size>1?`${selectedWordKeys.size} words selected · `:''}Line ${lineIndex+1} · Word ${cueIndex+1}: ${String(cue.text||'').trim()||'(empty)'}`;
     $('wordInspectorMeta').textContent=`${fmtTime(cue.start)} – ${fmtTime(cue.end)} · line starts ${fmtTime(row.start)}`;
     const values={wordStart:fmtTime(cue.start),wordEnd:fmtTime(cue.end),wordText:String(cue.text||'').trim(),wordAgent:cue.agent||'',wordStyle:cue.style||'',wordFontStyle:cue.ttsStyle||'',wordFontWeight:cue.ttsWeight||'',wordColor:cue.color||''};
-    for(const [id,value] of Object.entries(values)){const el=$(id);if(el&&document.activeElement!==el)el.value=value;}
+    // A field can retain focus across pointer selection. Always replace its
+    // value when the selected cue changes, otherwise the old word's text or
+    // style appears to be carried over to the new word.
+    for(const [id,value] of Object.entries(values)){const el=$(id);if(el&&(changedWord||document.activeElement!==el))el.value=value;}
+    wordInspectorShownKey=key;
+    const active=document.activeElement;
+    if(changedWord&&active instanceof HTMLElement&&active.closest('#wordInspector')&&wordInspectorFieldIds.includes(active.id))active.blur();
   }
   function wordKey(lineIndex,cueIndex){return `${lineIndex}:${cueIndex}`;}
   function parseWordKey(key){const [lineIndex,cueIndex]=String(key).split(':').map(Number);return {lineIndex,cueIndex};}
@@ -1322,26 +1335,39 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   $('wordText').addEventListener('change',()=>editSelectedWordText($('wordText').value));
   $('wordAgent').addEventListener('change',()=>{const rec=cueForRef();if(rec){const historyBefore=captureHistoryState();rec.cue.agent=$('wordAgent').value.trim();updatePreview();updateStatus();const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);if(clip)clip.title=`${String(rec.cue.text||'').trim()} · ${fmtTime(rec.cue.start)}–${fmtTime(rec.cue.end)}${rec.cue.agent?' · '+rec.cue.agent:''}`;commitHistoryChange(historyBefore);toast('TTML singer/agent updated.');}});
   $('wordStyle').addEventListener('change',()=>{const rec=cueForRef();if(rec){const historyBefore=captureHistoryState();rec.cue.style=$('wordStyle').value.trim();updatePreview();commitHistoryChange(historyBefore);toast('TTML style reference updated.');}});
-  $('wordFontStyle').addEventListener('change',()=>{const rec=cueForRef();if(rec){const historyBefore=captureHistoryState();rec.cue.ttsStyle=$('wordFontStyle').value;const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);clip?.classList.toggle('singer-italic',rec.cue.ttsStyle==='italic');updatePreview();commitHistoryChange(historyBefore);}});
-  $('wordFontWeight').addEventListener('change',()=>{const rec=cueForRef();if(rec){const historyBefore=captureHistoryState();rec.cue.ttsWeight=$('wordFontWeight').value;const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);clip?.classList.toggle('singer-bold',['bold','bolder','700','800','900'].includes(String(rec.cue.ttsWeight).toLowerCase()));updatePreview();commitHistoryChange(historyBefore);}});
+  $('wordFontStyle').addEventListener('change',()=>{const rec=cueForRef();if(rec){const historyBefore=captureHistoryState();rec.cue.ttsStyle=$('wordFontStyle').value;syncWordCueEmphasis(rec);updatePreview();commitHistoryChange(historyBefore);}});
+  $('wordFontWeight').addEventListener('change',()=>{const rec=cueForRef();if(rec){const historyBefore=captureHistoryState();rec.cue.ttsWeight=$('wordFontWeight').value;syncWordCueEmphasis(rec);updatePreview();commitHistoryChange(historyBefore);}});
   $('wordColor').addEventListener('change',()=>{const rec=cueForRef();if(rec){const val=$('wordColor').value.trim();if(val&&!safeCssColor(val)){toast('Use a CSS color such as #ffffff, rgb(255,255,255), or white.',true);$('wordColor').value=rec.cue.color||'';return;}const historyBefore=captureHistoryState();rec.cue.color=val;const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);if(clip)clip.style.color=val;updatePreview();commitHistoryChange(historyBefore);}});
+  function syncWordCueEmphasis(record){
+    const {lineIndex,cueIndex,cue}=record;
+    const italic=['italic','oblique'].includes(String(cue.ttsStyle||'').toLowerCase());
+    const bold=['bold','bolder','700','800','900'].includes(String(cue.ttsWeight||'').toLowerCase());
+    const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${lineIndex}"][data-cue-index="${cueIndex}"]`);
+    clip?.classList.toggle('singer-italic',italic);clip?.classList.toggle('singer-bold',bold);
+    const token=$('gridBody').querySelector(`tr[data-index="${lineIndex}"] .lyric-editor .word-token[data-word-index="${cueIndex}"]`);
+    token?.classList.toggle('singer-italic',italic);token?.classList.toggle('singer-bold',bold);
+  }
   const wordInspectorFieldIds=['wordStart','wordEnd','wordText','wordAgent','wordStyle','wordFontStyle','wordFontWeight','wordColor'];
+  function wordInspectorFieldNeedsCommit(id,record=cueForRef()){
+    if(!record)return false;
+    const value=$(id)?.value??'',cue=record.cue;
+    if(id==='wordStart'||id==='wordEnd'){const parsed=parseTime(value);return parsed!==null&&Math.abs(parsed-cue[id==='wordStart'?'start':'end'])>1e-8;}
+    if(id==='wordText')return value.trim()!==String(cue.text||'').trim();
+    if(id==='wordAgent')return value.trim()!==String(cue.agent||'');
+    if(id==='wordStyle')return value.trim()!==String(cue.style||'');
+    if(id==='wordFontStyle')return value!==String(cue.ttsStyle||'');
+    if(id==='wordFontWeight')return value!==String(cue.ttsWeight||'');
+    if(id==='wordColor')return value.trim()!==String(cue.color||'');
+    return false;
+  }
   function flushActiveWordInspectorField(){
     const active=document.activeElement;
     if(!(active instanceof HTMLElement)||!wordInspectorFieldIds.includes(active.id))return;
-    // Dispatch first so the existing field-specific validation and history
-    // handlers save the old selected word, then drop focus before selection changes.
-    active.dispatchEvent(new Event('change',{bubbles:true}));
+    // Commit while selectedWordRef still points at the old word; don't re-fire
+    // change for style dropdowns whose change handler has already saved them.
+    if(wordInspectorFieldNeedsCommit(active.id))active.dispatchEvent(new Event('change',{bubbles:true}));
     active.blur();
   }
-  $('wordInspector').addEventListener('focusout',e=>{
-    const field=e.target;
-    if(field instanceof HTMLElement&&wordInspectorFieldIds.includes(field.id)){
-      // Text inputs normally emit change on blur; explicitly commit as well so
-      // clicks, tabbing, and browser differences all save the last field value.
-      field.dispatchEvent(new Event('change',{bubbles:true}));
-    }
-  });
   document.addEventListener('pointerdown',e=>{
     const active=document.activeElement;
     if(active instanceof HTMLElement&&wordInspectorFieldIds.includes(active.id)&&!$('wordInspector').contains(e.target)){

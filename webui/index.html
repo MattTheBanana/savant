@@ -99,7 +99,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
               <div class="word-inspector-field word-inspector-text"><label for="wordText">Word / text</label><input id="wordText" type="text" aria-label="Selected word text"></div>
               <div class="word-inspector-field"><label for="wordAgent">Singer / agent</label><input id="wordAgent" type="text" aria-label="Selected word singer agent"></div>
               <div class="word-inspector-field"><label for="wordStyle">TTML style ref <span class="word-style-help" title="A TTML style ID references styling definitions; it is separate from the singer/agent metadata.">ⓘ</span></label><input id="wordStyle" type="text" aria-label="Selected word TTML style reference" title="TTML style references point to styling definitions; singer/agent is separate metadata."></div>
-              <div class="word-inspector-field"><label>Emphasis</label><div class="word-format-toggles"><button type="button" id="wordItalicToggle" class="word-format-toggle" aria-label="Italic" aria-pressed="false" title="Italic (I)"><em>I</em></button><button type="button" id="wordBoldToggle" class="word-format-toggle" aria-label="Bold" aria-pressed="false" title="Bold (B)"><strong>B</strong></button></div><input id="wordFontStyle" type="hidden" value=""><input id="wordFontWeight" type="hidden" value=""></div>
+              <div class="word-inspector-field"><label>Emphasis</label><div class="word-format-toggles"><button type="button" id="wordItalicToggle" class="word-format-toggle" aria-label="Italic" aria-pressed="false" title="Toggle italic"><em>I</em></button><button type="button" id="wordBoldToggle" class="word-format-toggle" aria-label="Bold" aria-pressed="false" title="Toggle bold"><strong>B</strong></button></div><input id="wordFontStyle" type="hidden" value=""><input id="wordFontWeight" type="hidden" value=""></div>
               <div class="word-inspector-field"><label for="wordColor">Text color</label><input id="wordColor" class="color-text-input" type="text" placeholder="#ffffff" aria-label="Selected word text color" autocomplete="off"></div>
               <div class="agent-preset-row"><label for="agentPresetSelect">Agent preset</label><select id="agentPresetSelect"><option value="">Apply saved preset…</option></select><button type="button" id="saveAgentPreset" class="small">+ New preset</button></div>
             </div>
@@ -1539,7 +1539,11 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       }catch(_){toast('Browser clipboard access is unavailable. Copy something in the editor first.',true);return;}
     }
     if(editorClipboard.kind==='text'){
-      if(requestedTarget?.type==='word'&&gridMode==='words'){editSelectedWordText(editorClipboard.text);toast('Pasted text into the selected word.');return;}
+      if(gridMode==='words'){
+        if(requestedTarget?.type==='word'){editSelectedWordText(editorClipboard.text);toast('Pasted text into the selected word.');}
+        else toast('Right-click a word to paste text into it.',true);
+        return;
+      }
       const lineIndex=Number.isInteger(requestedTarget?.lineIndex)?requestedTarget.lineIndex:selectedIndex,editor=$('gridBody').querySelector(`tr[data-index="${lineIndex}"] .lyric-editor`);
       if(!editor){toast('Select a lyric line to paste text into.',true);return;}
       const isTextTarget=requestedTarget?.type==='text',a=isTextTarget?requestedTarget.selectionStart:editor.textContent.length,b=isTextTarget?requestedTarget.selectionEnd:a;

@@ -734,8 +734,12 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if(mode==='adjust'&&!genFiles.lyrics){toast('Choose an existing LRC to adjust.',true);return;}
     if(mode==='adjust'&&!/\.lrc$/i.test(genFiles.lyrics.name)){toast('Adjust mode requires an .lrc file.',true);return;}
     if(mode==='align'&&/\.ttml?$/i.test(genFiles.lyrics.name)){toast('Use TXT or LRC source lyrics for alignment; TTML can be opened in the editor.',true);return;}
-    const form=new FormData();form.append('config',JSON.stringify(config));if(genFiles.audio)form.append('audio',genFiles.audio,genFiles.audio.name);if(genFiles.lyrics)form.append('lyrics',genFiles.lyrics,genFiles.lyrics.name);
-    for(const key of ['singerConfig','lineOffsets','phraseOffsets'])if(genFiles[key])form.append(key,genFiles[key],genFiles[key].name);
+    const form=new FormData();form.append('config',JSON.stringify(config));
+    if(mode==='align'&&genFiles.audio)form.append('audio',genFiles.audio,genFiles.audio.name);
+    if(mode!=='doctor'&&genFiles.lyrics)form.append('lyrics',genFiles.lyrics,genFiles.lyrics.name);
+    if(mode==='align'&&genFiles.singerConfig)form.append('singerConfig',genFiles.singerConfig,genFiles.singerConfig.name);
+    if((mode==='align'||mode==='adjust')&&genFiles.lineOffsets)form.append('lineOffsets',genFiles.lineOffsets,genFiles.lineOffsets.name);
+    if((mode==='align'||mode==='adjust')&&genFiles.phraseOffsets)form.append('phraseOffsets',genFiles.phraseOffsets,genFiles.phraseOffsets.name);
     await startGeneratorRequest('/api/generate',form,'Run generator',false);
   }
   async function startGeneratorInstall(kind,label){

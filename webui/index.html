@@ -588,6 +588,13 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     span=laneVisibleSpan(lineIndex,span);start=clampLaneWindowStart(lineIndex,start,span);
     const end=start+span,pps=timelineTrackWidth/span;
     lane.dataset.windowStart=String(start);lane.dataset.windowEnd=String(end);lane.dataset.pps=String(pps);
+    const grid=lane.querySelector('.timeline-grid-overlay');
+    if(grid){
+      const interval=timelineGridInterval(pps),pixels=interval*pps;
+      grid.dataset.interval=String(interval);
+      grid.style.backgroundSize=`${pixels}px 100%, ${pixels*5}px 100%`;
+      grid.style.backgroundPosition=`${-start*pps}px 0, ${-start*pps}px 0`;
+    }
     drawLaneWaveform(lane.querySelector('.lane-waveform-canvas'),start,end);
     for(const clip of lane.querySelectorAll('.word-clip[data-line-index]'))syncWordClip(lineIndex,Number(clip.dataset.cueIndex));
     updatePlayheadOnLane(lineIndex);

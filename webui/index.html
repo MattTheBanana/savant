@@ -14,6 +14,8 @@ tbody tr.selected.playing{background:#24434d;box-shadow:inset 4px 0 var(--accent
 td.lyric .lyric-editor{display:block;width:100%;min-width:120px;min-height:34px;padding:8px 7px;border:1px solid transparent;border-radius:6px;color:var(--text);font-size:13px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;outline:none;cursor:text}
 td.lyric .lyric-editor:focus{background:#0e1622;border-color:#527d83}
 td.lyric .lyric-editor:empty::before{content:'Enter lyric…';color:#61738a}
+td.lyric .lyric-editor.singer-italic,td.lyric .word-token.singer-italic{font-style:italic}
+td.lyric .lyric-editor.singer-bold,td.lyric .word-token.singer-bold{font-weight:800}
 td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(--accent);border-radius:4px;box-shadow:0 0 0 2px #76e4c155;padding:1px 0}
 .drop-overlay{position:fixed;inset:12px;z-index:50;display:grid;place-items:center;border:3px dashed var(--accent);border-radius:20px;background:#0b1422ed;box-shadow:0 0 0 9999px #02060bb0;pointer-events:none;text-align:center;padding:24px}
 .drop-overlay.hidden{display:none!important}.drop-card{max-width:560px;padding:28px;border-radius:18px;border:1px solid #476d70;background:#172838;box-shadow:0 18px 60px #0008}.drop-icon{font-size:42px;color:var(--accent);margin-bottom:8px}.drop-card h2{font-size:22px;margin:0 0 8px}.drop-card p{color:#c2d0e0;margin:0;line-height:1.6}.drop-card .drop-types{font-family:var(--mono);font-size:12px;margin-top:14px;color:#a9d8cf}
@@ -345,6 +347,11 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   }
   function renderWordAwareEditor(editor,row) {
     editor.replaceChildren();
+    editor.classList.remove('singer-italic','singer-bold');
+    const lineStyle=String(row.lineFontStyle||'').toLowerCase();
+    const lineWeight=String(row.lineFontWeight||'').toLowerCase();
+    editor.classList.toggle('singer-italic',['italic','oblique'].includes(lineStyle));
+    editor.classList.toggle('singer-bold',['bold','bolder','700','800','900'].includes(lineWeight));
     const tokens=[...String(row.text??'').matchAll(/\S+|\s+/g)];
     const textTokens=tokens.filter(m=>/^\S+$/.test(m[0]));
     const canHighlightWords=Boolean(row.wordCues&&row.wordCues.length&&row.text===row.originalText&&textTokens.length===row.wordCues.length);
@@ -353,7 +360,12 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     for(const token of tokens){
       if(/^\s+$/.test(token[0])) editor.append(document.createTextNode(token[0]));
       else {
-        const span=document.createElement('span'); span.className='word-token'; span.dataset.wordIndex=String(wordIndex++); span.textContent=token[0]; editor.append(span);
+        const cue=row.wordCues[wordIndex];
+        const span=document.createElement('span');span.className='word-token';span.dataset.wordIndex=String(wordIndex);span.textContent=token[0];
+        const style=String(cue?.ttsStyle||'').toLowerCase(),weight=String(cue?.ttsWeight||'').toLowerCase();
+        if(['italic','oblique'].includes(style))span.classList.add('singer-italic');
+        if(['bold','bolder','700','800','900'].includes(weight))span.classList.add('singer-bold');
+        wordIndex++;editor.append(span);
       }
     }
   }
@@ -673,23 +685,40 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       const playhead=Number(player.currentTime)||0;
       const rawMinStart=Math.min(...d.items.map(item=>item.start))+delta;
       const rawMaxEnd=Math.max(...d.items.map(item=>item.end))+delta;
-      // Keep the same edge latched while the selected piece straddles the
-      // playhead; switch edges only after the whole selection crosses it.
+      // Playhead snapping follows the whole selection's near edge so a group
+      // crosses the playhead as one unit, rather than snapping individual clips.
       if(!d.snapSide)d.snapSide=d.initialSnapSide||(rawMinStart<=playhead?'end':'start');
       if(d.snapSide==='end'&&rawMinStart>=playhead)d.snapSide='start';
       else if(d.snapSide==='start'&&rawMaxEnd<=playhead)d.snapSide='end';
-      const edge=d.snapSide==='end'?rawMaxEnd:rawMinStart;
+      const groupEdge=d.snapSide==='end'?rawMaxEnd:rawMinStart;
       const threshold=Math.max(.004,Math.min(.12,10/Math.max(1,d.pps)));
-      const playheadDelta=playhead-edge;
-      // The playhead is the strongest snap target. Only fall back to the
-      // adaptive time grid when the playhead is outside the magnetic range.
-      if(Math.abs(playheadDelta)<=threshold){delta+=playheadDelta;d.snapUsed=true;d.snapTarget='playhead';}
+      const playheadDelta=playhead-groupEdge;
+      // Keep playhead snapping highest priority.
+      if(Math.abs(playheadDelta)<=threshold){delta+=playheadDelta;d.snapUsed=true;d.snapTarget='playhead';d.gridSnapEdge='';}
       else{
+        // Grid snapping uses the word actually grabbed, not the outer edge of
+        // the selection. Either its start (head) or end (tail) may be the
+        // closest magnetic edge; every selected word receives the same shift.
+        const dragged=d.items.find(item=>item.lineIndex===d.lineIndex&&item.cueIndex===d.cueIndex)
+          ||{start:d.origStart,end:d.origEnd};
         const interval=Number(d.gridInterval)||timelineGridInterval(d.pps);
-        const gridTarget=Math.round(edge/interval)*interval,gridDelta=gridTarget-edge;
-        if(Math.abs(gridDelta)<=threshold){delta+=gridDelta;d.snapUsed=true;d.snapTarget='grid';}
+        const start=dragged.start+delta,end=dragged.end+delta;
+        const startTarget=Math.round(start/interval)*interval,endTarget=Math.round(end/interval)*interval;
+        const candidates=[
+          {edge:'start',offset:startTarget-start},
+          {edge:'end',offset:endTarget-end}
+        ].filter(candidate=>Math.abs(candidate.offset)<=threshold);
+        let candidate=candidates.sort((a,b)=>Math.abs(a.offset)-Math.abs(b.offset))[0];
+        // Avoid switching head/tail anchors during a drag when the current
+        // anchor remains close to a grid line; this removes visible jitter.
+        if(d.gridSnapEdge){
+          const latched=candidates.find(item=>item.edge===d.gridSnapEdge);
+          if(latched&&Math.abs(latched.offset)<=threshold*1.35)candidate=latched;
+        }
+        if(candidate){delta+=candidate.offset;d.snapUsed=true;d.snapTarget='grid';d.gridSnapEdge=candidate.edge;}
+        else d.gridSnapEdge='';
       }
-    }else if(!d.snapToPlayhead)d.snapSide=null;
+    }else if(!d.snapToPlayhead){d.snapSide=null;d.gridSnapEdge='';}
     if(d.mode==='start')cue.start=Math.max(0,Math.min(d.origEnd-.01,d.origStart+delta));
     else if(d.mode==='end')cue.end=Math.max(d.origStart+.01,d.origEnd+delta);
     else {

@@ -549,6 +549,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       wordInspectorShownKey=null;
       $('wordInspector').classList.add('hidden');$('wordInspectorHeading').textContent='Selected word';$('wordInspectorMeta').textContent='Choose a word block above';
       for(const id of ['wordStart','wordEnd','wordText','wordAgent','wordStyle','wordFontStyle','wordFontWeight','wordColor'])$(id).value='';
+      syncFormatToggleUI(null);
       return;
     }
     const {row,cue,lineIndex,cueIndex}=record,key=wordKey(lineIndex,cueIndex);
@@ -1410,7 +1411,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   }
   function toggleWordEmphasis(kind){
     const records=selectedCueRecords();if(!records.length)return;const historyBefore=captureHistoryState(),field=kind==='italic'?'ttsStyle':'ttsWeight';
-    const on=kind==='italic'?['italic','oblique'].includes(String(records[0].cue[field]||'').toLowerCase()):['bold','bolder','700','800','900'].includes(String(records[0].cue[field]||'').toLowerCase()),value=on?'':kind==='italic'?'italic':'bold';
+    const on=kind==='italic'?['italic','oblique'].includes(String(records[0].cue[field]||'').toLowerCase()):['bold','bolder','700','800','900'].includes(String(records[0].cue[field]||'').toLowerCase()),value=on?'normal':kind==='italic'?'italic':'bold';
     for(const rec of records){rec.cue[field]=value;syncWordCueEmphasis(rec);}
     $('wordFontStyle').value=cueForRef()?.cue.ttsStyle||'';$('wordFontWeight').value=cueForRef()?.cue.ttsWeight||'';syncFormatToggleUI(cueForRef()?.cue);updatePreview();updateStatus();commitHistoryChange(historyBefore);
   }
@@ -1507,11 +1508,12 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function pasteContextTarget(){
     if(!editorClipboard)return;
     if(editorClipboard.kind==='words'){
+      const historyBefore=captureHistoryState();
       if(gridMode!=='words'){if(!hasWordTiming){toast('Word paste requires TTML word timing.',true);return;}setGridMode('words');}
       const index=Number.isInteger(contextMenuTarget?.lineIndex)?contextMenuTarget.lineIndex:selectedWordRef?.lineIndex??Math.max(0,selectedIndex),row=rows[index];if(!row){toast('Select a lyric line for the pasted words.',true);return;}
-      if(!row.wordCues)row.wordCues=[];const refs=editorClipboard.cues,first=Math.min(...refs.map(c=>c.start)),anchor=selectedWordRef?.lineIndex===index&&row.wordCues[selectedWordRef.cueIndex]?row.wordCues[selectedWordRef.cueIndex].end:row.wordCues.length?Math.max(...row.wordCues.map(c=>c.end)):Math.max(row.start,Number(player.currentTime)||0);
+      if(!row.wordCues)ensureWordCues(row,index);const refs=editorClipboard.cues,first=Math.min(...refs.map(c=>c.start)),anchor=selectedWordRef?.lineIndex===index&&row.wordCues[selectedWordRef.cueIndex]?row.wordCues[selectedWordRef.cueIndex].end:row.wordCues.length?Math.max(...row.wordCues.map(c=>c.end)):Math.max(row.start,Number(player.currentTime)||0);
       const newCues=refs.map(c=>{const {sourceLineIndex,...cue}=JSON.parse(JSON.stringify(c));const duration=Math.max(.02,cue.end-cue.start);cue.start=Math.max(0,anchor+(c.start-first));cue.end=cue.start+duration;return cue;});
-      const historyBefore=captureHistoryState();row.wordCues.push(...newCues);row.wordCues.sort((a,b)=>a.start-b.start);row.text=row.wordCues.map(c=>c.text).join('');row.originalText=row.text;hasWordTiming=true;selectedIndex=index;lastEditedIndex=index;
+      row.wordCues.push(...newCues);row.wordCues.sort((a,b)=>a.start-b.start);row.text=row.wordCues.map(c=>c.text).join('');row.originalText=row.text;hasWordTiming=true;selectedIndex=index;lastEditedIndex=index;
       const firstCue=row.wordCues.indexOf(newCues[0]);selectedWordRef={lineIndex:index,cueIndex:firstCue};selectedWordKeys=new Set(newCues.map(c=>wordKey(index,row.wordCues.indexOf(c))));
       rerenderWordTimelinePreservingView();updateWordInspector();updatePreview();updateStatus();commitHistoryChange(historyBefore);toast(`Pasted ${newCues.length} word cue(s).`);
     }else{

@@ -551,10 +551,10 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     restoreHistoryState(next);toast('Redo.');
   }
   function saveSettings() {
-    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed']) {
+    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate']) {
       const el=$(key); if (!el) continue;
       settings[key] = ['language','defaultTab','downloadBase'].includes(key) ? el.value :
-        key==='autoFollow' ? el.value==='true' : Number(el.value);
+        (key==='autoFollow'||key==='returnToEditAfterGenerate') ? el.value==='true' : Number(el.value);
     }
     settings.nudgeStep=Math.min(1,Math.max(.001,Number(settings.nudgeStep)||.02));
     settings.shiftMultiplier=Math.min(50,Math.max(2,Math.round(Number(settings.shiftMultiplier)||5)));
@@ -570,6 +570,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed']) $(key).value=settings[key];
     document.documentElement.style.setProperty('--playhead-label-size',`${settings.playheadLabelSize}px`);
     $('autoFollow').value=String(settings.autoFollow);
+    $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));
   }
   function fmtTime(sec, places=3) {
     sec=Math.max(0,Number(sec)||0); const mins=Math.floor(sec/60), secs=sec-mins*60;
@@ -2248,8 +2249,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       flushActiveWordInspectorField();
     }
   },true);
-  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);toast('Settings saved.');});
-  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320};syncSettingsForm();saveSettings();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
+  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);toast('Settings saved.');});
+  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,returnToEditAfterGenerate:false};syncSettingsForm();saveSettings();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
   document.addEventListener('keydown',e=>{
     if(e.ctrlKey&&e.key.toLowerCase()==='s'){e.preventDefault();if(gridMode==='words')exportTtml();else exportLrc();return;}
     const target=e.target; const lyricEditing=target instanceof HTMLElement&&Boolean(target.closest('.lyric-editor,#wordText'));

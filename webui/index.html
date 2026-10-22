@@ -1190,8 +1190,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       $('gridHead').innerHTML='<tr><th class="num">#</th><th class="time">Time</th><th>Lyric</th></tr>';
       $('addLine').disabled=false;$('deleteLine').disabled=false;renderLineGrid();
     }
-    if(gridMode==='words'){$('addLine').disabled=true;$('deleteLine').disabled=true;}
-    updateLiveHighlight();
+    updateLiveHighlight();syncEditorActionBar();
   }
 
   function shiftRowTime(index,newTime,fromDirect=false) {
@@ -1998,7 +1997,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     }else if(e.key==='Enter'&&selectedIndex>=0){e.preventDefault();if(gridMode==='words'&&selectedWordRef){$('wordText').focus();}else{const input=$('gridBody').querySelector(`tr[data-index="${selectedIndex}"] .lyric-editor`);input?.focus();}}
     else if(e.key==='Home'&&rows.length){e.preventDefault();setSelected(0,true);}
     else if(e.key==='End'&&rows.length){e.preventDefault();setSelected(rows.length-1,true);}
-    else if(e.key==='Delete'&&selectedIndex>=0){e.preventDefault();deleteLine();}
+    else if(e.key==='Delete'&&selectedIndex>=0){e.preventDefault();deleteEditorSelection();}
   });
   refreshAgentPresetSelect();
   document.addEventListener('click',e=>{const target=e.target;if(target instanceof HTMLElement&&!target.closest('.toast'))$('toast').classList.add('hidden');});

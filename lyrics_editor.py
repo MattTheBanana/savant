@@ -171,7 +171,7 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
 
     output_path_text = str(config.get("outputPath", "")).strip()
     if output_path_text:
-        output_path = Path(output_path_text).expanduser()
+        output_path = Path(output_path_text).expanduser().resolve()
     else:
         source = saved.get("lyrics") if operation == "adjust" else saved.get("audio")
         output_stem = (source.stem if source else "lyrics")
@@ -193,7 +193,6 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
         _add_flag(command, "--demucs-segment", config.get("demucsSegment") or "6")
         _add_flag(command, "--refine-window", config.get("refineWindow") or "0.80")
         _add_flag(command, "--instrumental-threshold", config.get("instrumentalThreshold") or "6.0")
-        _add_flag(command, "--offset", config.get("offset") or "0")
         _add_switch(command, "--word-level", config, "wordLevel")
         _add_switch(command, "--separate-vocals", config, "separateVocals")
         _add_switch(command, "--refine", config, "refine")
@@ -234,6 +233,12 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
             report = Path(report_text).expanduser() if report_text else directory / "alignment-review.txt"
             _add_flag(command, "--review-report", report)
             run["artifacts"]["review-report"] = {"label": "Alignment review report", "path": str(report), "kind": "report"}
+        for field_name, arg_name in (("lineOffsets", "--line-offsets"), ("phraseOffsets", "--phrase-offsets")):
+            if field_name in saved:
+                _add_flag(command, arg_name, saved[field_name])
+
+    if operation == "adjust":
+        _add_flag(command, "--offset", config.get("offset") or "0")
         for field_name, arg_name in (("lineOffsets", "--line-offsets"), ("phraseOffsets", "--phrase-offsets")):
             if field_name in saved:
                 _add_flag(command, arg_name, saved[field_name])

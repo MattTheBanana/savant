@@ -51,39 +51,124 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 @media(max-width:950px){.timeline-viewport{max-height:65vh}.word-inspector-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.word-inspector-text{grid-column:1/-1}.timeline-inner{--label-width:118px}}
 @media(max-width:540px){.timeline-toolbar{align-items:flex-start}.timeline-help{max-width:100%}.word-inspector-fields{grid-template-columns:1fr 1fr}.timeline-inner{--label-width:94px}.timeline-lane-row{min-height:116px}.timeline-lane-content{grid-template-rows:62px 48px}.lane-waveform-wrapper,.lane-waveform-canvas{height:62px}.lane-playhead-handle{height:62px}}
 @media(max-width:1000px){.editor-layout{grid-template-columns:1fr}.table-wrap,.preview{max-height:none}.audio-panel{grid-template-columns:1fr}.status{margin-left:0}}@media(max-width:620px){.app-header{padding:12px}.shell{padding:12px}.brand p{display:none}.file-name{max-width:180px}.settings-grid{grid-template-columns:1fr}.toolbar{align-items:flex-start}.toolbar>*{max-width:100%}th.time,td.time{width:128px}th.num,td.num{width:42px}.panel-actions{margin-left:auto}}
-.word-format-toggles{display:flex;gap:6px}.word-format-toggle{min-width:40px;padding:6px 12px;font-size:15px}.word-format-toggle[aria-pressed="true"]{background:#245346;border-color:#367b66;color:#fff}.word-style-help{font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}.agent-preset-row{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid #2a394c;padding-top:9px}.agent-preset-row select{flex:1;min-width:150px;background:#09111b;border:1px solid #34455a;border-radius:6px;color:var(--text);padding:8px}.color-text-input{font-family:var(--mono);font-weight:700}.color-picker-popover{position:fixed;z-index:80;width:min(320px,calc(100vw - 20px));padding:11px;border:1px solid #496079;border-radius:12px;background:#111a28;box-shadow:0 18px 55px #000a}.color-picker-tabs{display:flex;gap:5px;margin-bottom:9px}.color-picker-tabs button{flex:1;min-width:0;padding:7px 4px;font-size:12px}.color-picker-tabs button.active{background:#245346;border-color:#367b66}.color-swatches{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin-bottom:10px}.color-swatch{height:22px;padding:0;border:1px solid #ffffff40;border-radius:5px;min-width:0}.color-picker-content{display:grid;gap:9px}.sv-pad{height:142px;border:1px solid #ffffff55;border-radius:6px;touch-action:none;cursor:crosshair}.color-range{display:grid;grid-template-columns:62px 1fr 38px;gap:8px;align-items:center;font-size:11px;color:#c0cede}.color-range input{width:100%;min-width:0;padding:0;accent-color:#76e4c1}.color-range output{text-align:right;font-family:var(--mono)}.color-picker-preview{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px}.color-picker-preview span{width:24px;height:18px;border:1px solid #ffffff55;border-radius:4px}.editor-context-menu{position:fixed;z-index:90;min-width:230px;max-width:min(320px,calc(100vw - 20px));max-height:min(75vh,620px);overflow:auto;padding:5px;border:1px solid #455972;border-radius:10px;background:#101927;box-shadow:0 18px 55px #000b}.editor-context-menu button{display:block;width:100%;text-align:left;padding:7px 10px;background:transparent;border-color:transparent;border-radius:6px;font-size:12px}.editor-context-menu button:hover{background:#26384d;border-color:#405773}.editor-context-menu .context-menu-heading{padding:8px 10px 3px;color:#91a5bd;font-size:10px;text-transform:uppercase;letter-spacing:.08em}.editor-context-menu .context-menu-separator{height:1px;background:#2e3d51;margin:5px 3px}.editor-context-menu .context-menu-footer{border-top:1px solid #2e3d51;margin-top:5px;padding-top:5px}.editor-context-menu button:disabled{opacity:.4;cursor:not-allowed}.color-picker-popover.hidden,.editor-context-menu.hidden{display:none!important}
+.word-format-toggles{display:flex;gap:6px}.word-format-toggle{min-width:40px;padding:6px 12px;font-size:15px}.word-format-toggle[aria-pressed="true"]{background:#245346;border-color:#367b66;color:#fff}.word-style-help{font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}.agent-preset-row{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid #2a394c;padding-top:9px}.agent-preset-picker{position:relative;flex:1;min-width:150px}.agent-preset-picker>button{width:100%;text-align:left}.agent-preset-menu{position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:100;min-width:220px;max-height:260px;overflow:auto;padding:5px;border:1px solid #455972;border-radius:9px;background:#101927;box-shadow:0 14px 35px #000b}.agent-preset-option{display:flex;align-items:center;gap:5px;padding:2px}.agent-preset-option button{border-radius:6px;padding:6px 8px;font-size:12px}.agent-preset-option .agent-preset-apply{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;background:transparent;border-color:transparent}.agent-preset-option .agent-preset-delete{flex:0 0 30px;width:30px;padding:5px;color:#ffb5b5;background:#39232c;border-color:#613640;font-size:17px;line-height:1}.agent-preset-option .agent-preset-delete:hover{background:#642a38;border-color:#a04a5d}.agent-preset-empty{padding:9px;color:var(--muted);font-size:12px}.agent-preset-menu.hidden{display:none!important}.color-text-input{font-family:var(--mono);font-weight:700}.color-picker-popover{position:fixed;z-index:80;width:min(320px,calc(100vw - 20px));padding:11px;border:1px solid #496079;border-radius:12px;background:#111a28;box-shadow:0 18px 55px #000a}.color-picker-tabs{display:flex;gap:5px;margin-bottom:9px}.color-picker-tabs button{flex:1;min-width:0;padding:7px 4px;font-size:12px}.color-picker-tabs button.active{background:#245346;border-color:#367b66}.color-swatches{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin-bottom:10px}.color-swatch{height:22px;padding:0;border:1px solid #ffffff40;border-radius:5px;min-width:0}.color-picker-content{display:grid;gap:9px}.sv-pad{height:142px;border:1px solid #ffffff55;border-radius:6px;touch-action:none;cursor:crosshair}.color-range{display:grid;grid-template-columns:62px 1fr 38px;gap:8px;align-items:center;font-size:11px;color:#c0cede}.color-range input{width:100%;min-width:0;padding:0;accent-color:#76e4c1}.color-range output{text-align:right;font-family:var(--mono)}.color-picker-preview{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px}.color-picker-preview span{width:24px;height:18px;border:1px solid #ffffff55;border-radius:4px}.editor-context-menu{position:fixed;z-index:90;min-width:230px;max-width:min(320px,calc(100vw - 20px));max-height:min(75vh,620px);overflow:auto;padding:5px;border:1px solid #455972;border-radius:10px;background:#101927;box-shadow:0 18px 55px #000b}.editor-context-menu button{display:block;width:100%;text-align:left;padding:7px 10px;background:transparent;border-color:transparent;border-radius:6px;font-size:12px}.editor-context-menu button:hover{background:#26384d;border-color:#405773}.editor-context-menu .context-menu-heading{padding:8px 10px 3px;color:#91a5bd;font-size:10px;text-transform:uppercase;letter-spacing:.08em}.editor-context-menu .context-menu-separator{height:1px;background:#2e3d51;margin:5px 3px}.editor-context-menu .context-menu-footer{border-top:1px solid #2e3d51;margin-top:5px;padding-top:5px}.editor-context-menu button:disabled{opacity:.4;cursor:not-allowed}.color-picker-popover.hidden,.editor-context-menu.hidden{display:none!important}
+
+:root{--app-header-height:68px;--player-dock-height:82px}
+.app-header{height:var(--app-header-height);min-height:var(--app-header-height);padding:9px 18px;z-index:80}
+.header-left{display:flex;align-items:center;gap:18px;min-width:0}
+.header-nav{padding:7px 11px;background:transparent;border-color:transparent;color:var(--muted);font-size:13px}
+.header-nav.active{background:var(--panel2);border-color:var(--border);color:var(--text)}
+.header-settings{width:36px;height:36px;padding:0;display:grid;place-items:center;font-size:21px;line-height:1}
+.header-right{gap:7px}
+.shell{padding-bottom:calc(var(--player-dock-height) + 24px)}
+.editor-layout{grid-template-columns:minmax(0,1fr)}
+.toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:transparent;border:0;border-bottom:1px solid #263244;border-radius:0;padding:5px 0 10px;margin-bottom:10px}
+.import-group{display:flex;align-items:center;gap:8px;min-width:0}
+.file-label{padding:6px 10px;white-space:nowrap}
+.file-name{max-width:min(220px,19vw);min-width:60px}
+.status{margin-left:auto;font-size:11px}
+.drag-drop-note{display:none}
+.player-dock{position:fixed;left:0;right:0;bottom:0;height:var(--player-dock-height);z-index:80;margin:0!important;border-radius:0!important;border-left:0;border-right:0;border-bottom:0;padding:8px 16px;grid-template-columns:minmax(155px,.8fr) minmax(240px,2fr) auto;gap:14px;box-shadow:0 -8px 28px #0005}
+.player-dock-title{min-width:0;overflow:hidden}
+.player-dock .audio-title{font-size:13px}
+.player-dock .audio-sub{font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.player-dock audio{width:100%;min-width:0;height:38px}
+.player-dock .audio-time{font-size:11px}
+.preview-backdrop{position:fixed;left:0;right:0;top:var(--app-header-height);bottom:var(--player-dock-height);z-index:50;background:#02060bb8;backdrop-filter:blur(1px);transition:opacity .18s ease}
+.preview-backdrop.hidden{display:none!important}
+.preview-drawer{position:fixed;left:0;top:var(--app-header-height);bottom:var(--player-dock-height);width:min(560px,calc(100vw - 28px));z-index:55;display:flex;flex-direction:column;border-radius:0 12px 12px 0;box-shadow:18px 0 45px #0008;transform:translateX(-103%);visibility:hidden;transition:transform .2s ease,visibility .2s ease;overflow:hidden}
+.preview-drawer.open{transform:translateX(0);visibility:visible}
+.preview-drawer .drawer-head{flex:0 0 auto}
+.preview-drawer .preview{flex:1;min-height:0;max-height:none;width:100%}
+.preview-drawer .preview-info{flex:0 0 auto}
+.preview-drawer .grid-footer{flex:0 0 auto}
+.preview-shelf-tab{position:fixed;left:0;top:calc(var(--app-header-height) + 22vh);z-index:49;writing-mode:vertical-rl;transform:rotate(180deg);border-radius:8px 8px 0 0;padding:13px 8px;background:#172536;border-color:#465b73;color:#dfeafa;font-size:12px;letter-spacing:.02em;box-shadow:0 7px 22px #0006}
+.preview-shelf-tab[hidden]{display:none!important}
+.agent-preset-menu{position:fixed;left:0;right:auto;top:0;z-index:110;width:min(300px,calc(100vw - 20px));min-width:220px;max-height:min(320px,calc(100vh - 20px));overflow:auto;padding:5px;border:1px solid #455972;border-radius:9px;background:#101927;box-shadow:0 14px 35px #000b}
+.agent-preset-picker{position:relative;flex:1;min-width:150px}
+.timeline-controls-menu{position:fixed;left:0;top:0;z-index:110;width:min(420px,calc(100vw - 20px));max-height:min(70vh,560px);overflow:auto;padding:12px;border:1px solid #455972;border-radius:10px;background:#101927;box-shadow:0 18px 50px #000b}
+.timeline-controls-menu.hidden{display:none!important}
+.floating-menu-title{font-size:12px;font-weight:700;color:#e9f1fb;margin:0 0 9px}
+.floating-menu-row{display:grid;grid-template-columns:minmax(125px,.72fr) minmax(0,1.28fr);gap:10px;align-items:start;padding:7px 0;border-top:1px solid #26364a;font-size:12px;color:#c2cfdf}
+.floating-menu-row .shortcut{white-space:normal;overflow-wrap:anywhere;font-size:10px;text-align:center}
+.floating-menu-foot{border-top:1px solid #26364a;margin-top:6px;padding-top:9px;font-size:11px;color:var(--muted)}
+#timelineControlsTrigger{white-space:nowrap}
+.timeline-toolbar{gap:8px;margin-bottom:8px}
+.timeline-toolbar-group{gap:6px}
+.timeline-help{display:none}
+.word-inspector{scroll-margin-top:8px}
+@media(max-width:1000px){
+  .header-right .badge{display:none}
+  .player-dock{grid-template-columns:minmax(110px,.7fr) minmax(170px,1.7fr) auto;gap:8px;padding:7px 10px}
+  .player-dock .audio-sub{display:none}
+}
+@media(max-width:620px){
+  :root{--app-header-height:60px;--player-dock-height:76px}
+  .app-header{padding:7px 9px;gap:7px}
+  .header-left{gap:7px}
+  .brand{gap:7px}
+  .brand-mark{height:34px;width:34px}
+  .brand h1{font-size:14px}
+  .brand p{display:none}
+  .header-nav{padding:6px 8px}
+  .header-right{gap:4px}
+  .header-right button{font-size:10px;padding:5px 6px}
+  .header-settings{width:31px;height:32px;font-size:19px}
+  .shell{padding:10px 10px calc(var(--player-dock-height) + 18px)}
+  .toolbar{gap:6px;padding:4px 0 8px}
+  .import-group{gap:5px;flex:1 1 auto}
+  .file-label{font-size:11px;padding:6px 7px}
+  .file-name{font-size:10px;max-width:100px;min-width:0}
+  .status{flex:1 1 100%;margin-left:0}
+  .player-dock{grid-template-columns:minmax(74px,.65fr) minmax(125px,1.35fr) auto;gap:5px;padding:6px}
+  .player-dock .audio-title{font-size:11px}
+  .player-dock audio{height:36px}
+  .player-dock .audio-time{font-size:9px}
+  .preview-drawer .panel-head{padding:10px}
+  .preview-drawer .panel-head p{display:none}
+  .preview-drawer .grid-footer{padding:8px;gap:6px}
+  .preview-drawer .grid-footer button{font-size:10px;padding:5px 6px}
+  .floating-menu-row{grid-template-columns:1fr;gap:4px}
+  .floating-menu-row .shortcut{text-align:left;border:0;background:transparent;padding:0;font-size:11px}
+  .preview-shelf-tab{top:calc(var(--app-header-height) + 25vh)}
+}
+@media(prefers-reduced-motion:reduce){.preview-drawer,.preview-backdrop{transition:none}}
+
+/* Right-aligned, muted keyboard hints in the context menu. */
+.editor-context-menu button{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.editor-context-menu .context-menu-label{min-width:0;text-align:left}
+.editor-context-menu .context-menu-shortcut{flex:0 0 auto;margin-left:auto;color:#75869b;font-size:10px;font-weight:500;white-space:nowrap}
+.editor-context-menu button.danger .context-menu-label{color:#ffb5b5}
 </style>
 </head>
 <body>
 <header class="app-header">
-  <div class="brand"><div class="brand-mark">♫</div><div><h1>Savant</h1><p>Local lyric timing editor</p></div></div>
-  <div class="header-right"><span class="badge">LOCAL ONLY</span><button id="saveLrcTop" class="small">Export LRC</button><button id="saveTtmlTop" class="small primary">Export TTML</button></div>
+  <div class="header-left">
+    <div class="brand"><div class="brand-mark">♫</div><div><h1>Savant</h1><p>Local lyric timing editor</p></div></div>
+    <button id="navEdit" class="header-nav active" aria-current="page">Edit</button>
+  </div>
+  <div class="header-right">
+    <span class="badge">LOCAL ONLY</span>
+    <button id="saveLrcTop" class="small" title="Export line-timed lyrics">Export LRC</button>
+    <button id="saveTtmlTop" class="small primary" title="Export word-timed lyrics">Export TTML</button>
+    <button id="navSettings" class="header-settings" aria-label="Settings" title="Settings"><span aria-hidden="true">⚙</span></button>
+  </div>
 </header>
 <main class="shell">
-  <nav class="nav" aria-label="Application screens"><button id="navEdit" class="active" aria-current="page">01 · Edit lyrics</button><button id="navSettings">02 · Settings</button></nav>
   <section id="editScreen">
     <div class="toolbar">
-      <label class="file-label" for="audioFile">♫ Import audio</label><input id="audioFile" type="file" accept="audio/*">
-      <span id="audioFileName" class="file-name">No audio selected</span>
-      <label class="file-label" for="lyricsFile">↥ Import LRC / TTML / TXT</label><input id="lyricsFile" type="file" accept=".lrc,.ttml,.xml,.txt,text/plain,application/xml">
-      <span id="lyricsFileName" class="file-name">No lyrics loaded</span>
-      <span class="drag-drop-note">Tip: drop audio + LRC / TTML / TXT files anywhere</span>
+      <div class="import-group"><label class="file-label" for="audioFile">♫ Import audio</label><input id="audioFile" type="file" accept="audio/*"><span id="audioFileName" class="file-name">No audio selected</span></div>
+      <div class="import-group"><label class="file-label" for="lyricsFile">↥ Import lyrics</label><input id="lyricsFile" type="file" accept=".lrc,.ttml,.xml,.txt,text/plain,application/xml"><span id="lyricsFileName" class="file-name">No lyrics loaded</span></div>
       <span id="status" class="status"><strong>Ready</strong> · import files to begin</span>
     </div>
-    <div class="audio-panel">
-      <div><div id="audioTitle" class="audio-title">No audio loaded</div><div id="audioSub" class="audio-sub">Choose a local audio file to play and review timings.</div></div>
-      <audio id="player" controls preload="metadata"></audio>
-      <div id="timeReadout" class="audio-time">00:00.000 / 00:00.000</div>
-    </div>
-    <div class="editor-layout">
+    <div class="editor-layout">    <div class="editor-layout">
       <section class="panel" aria-label="Lyrics editing grid">
-        <div class="panel-head"><div><h2>Lyric timing grid</h2><p id="gridDescription">Edit line timestamps here; switch to TTML words for per-word timing and speaker edits.</p></div><div class="panel-actions"><button id="viewLines" class="small active">Lines / LRC</button><button id="viewWords" class="small" disabled>TTML words</button><button id="addLine" class="small">+ Line</button><button id="deleteLine" class="small danger">Delete</button></div></div>
+        <div class="panel-head"><div><h2>Lyric timing grid</h2><p id="gridDescription">Edit line timestamps here; switch to TTML words for per-word timing and speaker edits.</p></div><div class="panel-actions"><button id="viewLines" class="small active" title="Sync line by line" aria-label="LRC — Sync line by line">LRC</button><button id="viewWords" class="small" disabled title="Sync word by word" aria-label="TTML — Sync word by word">TTML</button><button id="addLine" class="small">+ Line</button><button id="deleteLine" class="small danger">Delete</button></div></div>
         <div id="lineTableWrap" class="table-wrap"><table><thead id="gridHead"><tr><th class="num">#</th><th class="time">Time</th><th>Lyric</th></tr></thead><tbody id="gridBody"><tr><td colspan="3" style="padding:30px;text-align:center;color:#91a1b5">Import an LRC, TTML, or TXT lyrics file.</td></tr></tbody></table></div>
         <div id="wordTimelineEditor" class="word-timeline-editor hidden">
           <div class="timeline-toolbar">
             <div class="timeline-toolbar-group"><button id="zoomOut" class="small" aria-label="Zoom out line detail">−</button><button id="zoomIn" class="small" aria-label="Zoom in line detail">+</button><button id="zoomFit" class="small" title="Fit the longest lyric line across the lane with configured edge context">Fit lines</button><button id="addWord" class="small" title="Add a timed word cue (F)">+ Word</button><span id="timelineZoomLabel" class="timeline-zoom-label">Fit longest line</span></div>
-            <div class="timeline-toolbar-group"><span class="timeline-help">Each row wraps its waveform above its words. Ctrl + wheel zooms around the cursor; drag the red playhead or left-drag the waveform to seek; middle-drag pans within this line's edge context. Drag the empty word track to box-select this line, or Shift-drag an empty lane/waveform to select across lines. Drag any selected word to move the group; Shift-drag snaps first to the playhead, then to the adaptive time grid. Hold Shift while dragging a word's start or end handle to snap that specific edge using the same behavior. Ctrl+A selects this line's words; Ctrl+Shift+A selects all words.</span></div>
-            <span id="waveformStatus" class="timeline-zoom-label">Waveform waits for audio</span>
+            <div class="timeline-toolbar-group"><span id="waveformStatus" class="timeline-zoom-label">Waveform waits for audio</span><button id="timelineControlsTrigger" class="small" type="button" aria-haspopup="dialog" aria-expanded="false">Controls ▾</button></div>
           </div>
           <div id="timelineViewport" class="timeline-viewport" aria-label="Wrapped word timing timeline">
             <div id="timelineInner" class="timeline-inner">
@@ -101,17 +186,11 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
               <div class="word-inspector-field"><label for="wordStyle">TTML style ref <span class="word-style-help" title="A TTML style ID references styling definitions; it is separate from the singer/agent metadata.">ⓘ</span></label><input id="wordStyle" type="text" aria-label="Selected word TTML style reference" title="TTML style references point to styling definitions; singer/agent is separate metadata."></div>
               <div class="word-inspector-field"><label>Emphasis</label><div class="word-format-toggles"><button type="button" id="wordItalicToggle" class="word-format-toggle" aria-label="Italic" aria-pressed="false" title="Toggle italic"><em>I</em></button><button type="button" id="wordBoldToggle" class="word-format-toggle" aria-label="Bold" aria-pressed="false" title="Toggle bold"><strong>B</strong></button></div><input id="wordFontStyle" type="hidden" value=""><input id="wordFontWeight" type="hidden" value=""></div>
               <div class="word-inspector-field"><label for="wordColor">Text color</label><input id="wordColor" class="color-text-input" type="text" placeholder="#ffffff" aria-label="Selected word text color" autocomplete="off"></div>
-              <div class="agent-preset-row"><label for="agentPresetSelect">Agent preset</label><select id="agentPresetSelect"><option value="">Apply saved preset…</option></select><button type="button" id="saveAgentPreset" class="small">+ New preset</button></div>
+              <div class="agent-preset-row"><label for="agentPresetTrigger">Agent preset</label><div class="agent-preset-picker"><button type="button" id="agentPresetTrigger" class="small" aria-haspopup="menu" aria-expanded="false">Agent presets ▾</button></div><button type="button" id="saveAgentPreset" class="small">+ New preset</button></div>
             </div>
           </div>
         </div>
         <div class="grid-footer"><span id="gridStatus">0 lines</span><span><span class="shortcut">↑</span>/<span class="shortcut">↓</span> select · <span class="shortcut">←</span>/<span class="shortcut">→</span> nudge or seek · <span class="shortcut">Shift+←/→</span> word edges · <span class="shortcut">Ctrl+Z</span> undo · <span class="shortcut">Ctrl+Y</span> redo · <span class="shortcut">Space</span> play/pause · <span class="shortcut">Ctrl+Space</span> block pause · <span class="shortcut">F</span> add word (TTML)</span></div>
-      </section>
-      <section class="panel" aria-label="Lyrics output preview">
-        <div class="panel-head"><div><h2 id="previewTitle">Output preview · LRC</h2><p id="previewSub">Standard line-timed lyrics</p></div><div class="preview-tabs"><button id="tabLrc" class="active">LRC</button><button id="tabTtml">TTML</button></div></div>
-        <pre id="preview" class="preview" tabindex="0">; Import lyrics to preview exported text.</pre>
-        <div id="previewInfo" class="preview-info">LRC is compatible with common players. TTML can preserve word cues when imported from an existing word-timed TTML.</div>
-        <div class="grid-footer"><button id="copyPreview" class="small">Copy preview</button><div class="panel-actions"><button id="saveLrc" class="small">Download LRC</button><button id="saveTtml" class="small primary">Download TTML</button></div></div>
       </section>
     </div>
   </section>
@@ -134,6 +213,33 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   </section>
   <p class="footer-note">Audio and lyric files are opened locally by your browser. This app does not upload them. Press <span class="shortcut">Esc</span> to leave a lyric text field and return to keyboard navigation.</p>
 </main>
+<div id="previewBackdrop" class="preview-backdrop hidden" aria-hidden="true"></div>
+<button id="previewShelfToggle" class="preview-shelf-tab" type="button" aria-controls="previewDrawer" aria-expanded="false">Output preview</button>
+<section id="previewDrawer" class="panel preview-drawer" role="dialog" aria-modal="true" aria-label="Output preview">
+  <div class="panel-head drawer-head"><div><h2 id="previewTitle">Output preview · LRC</h2><p id="previewSub">Standard line-timed lyrics</p></div><div class="preview-tabs"><button id="tabLrc" class="active" title="Sync line by line">LRC</button><button id="tabTtml" title="Sync word by word">TTML</button><button id="previewClose" class="small" aria-label="Close output preview" title="Close">×</button></div></div>
+  <pre id="preview" class="preview" tabindex="0">; Import lyrics to preview exported text.</pre>
+  <div id="previewInfo" class="preview-info">LRC is compatible with common players. TTML can preserve word cues when imported from an existing word-timed TTML.</div>
+  <div class="grid-footer"><button id="copyPreview" class="small">Copy preview</button><div class="panel-actions"><button id="saveLrc" class="small">Download LRC</button><button id="saveTtml" class="small primary">Download TTML</button></div></div>
+</section>
+<div id="timelineControlsMenu" class="timeline-controls-menu hidden" role="dialog" aria-label="TTML timeline controls">
+  <div class="floating-menu-title">TTML timeline controls</div>
+  <div class="floating-menu-row"><span class="shortcut">Drag playhead</span><span>Seek the audio to a precise time.</span></div>
+  <div class="floating-menu-row"><span class="shortcut">Left-drag waveform</span><span>Seek by dragging the waveform.</span></div>
+  <div class="floating-menu-row"><span class="shortcut">Middle-drag</span><span>Pan within the line’s edge context.</span></div>
+  <div class="floating-menu-row"><span class="shortcut">Drag word</span><span>Move selected word(s); Ctrl-drag one selected word to move only it.</span></div>
+  <div class="floating-menu-row"><span class="shortcut">Shift-drag</span><span>Snap the word or resized edge to the playhead when close, then to the adaptive time grid.</span></div>
+  <div class="floating-menu-row"><span class="shortcut">Drag empty track</span><span>Box-select words in one line; Shift-drag empty lane or waveform space to select across lines.</span></div>
+  <div class="floating-menu-row"><span class="shortcut">Ctrl+A</span><span>Select words on this line; Ctrl+Shift+A selects all word cues.</span></div>
+  <div class="floating-menu-row"><span class="shortcut">Shift+← / →</span><span>Seek to the nearest word boundary. Plain arrows nudge the selected word or seek.</span></div>
+  <div class="floating-menu-row"><span class="shortcut">F</span><span>Add a timed word cue.</span></div>
+  <div class="floating-menu-foot">Ctrl+wheel zooms around the cursor. Fit lines resets the timeline scale.</div>
+</div>
+<div id="agentPresetMenu" class="agent-preset-menu hidden" role="menu" aria-label="Saved agent presets"></div>
+<div id="playerDock" class="audio-panel player-dock">
+  <div class="player-dock-title"><div id="audioTitle" class="audio-title">No audio loaded</div><div id="audioSub" class="audio-sub">Choose a local audio file to play and review timings.</div></div>
+  <audio id="player" controls preload="metadata"></audio>
+  <div id="timeReadout" class="audio-time">00:00.000 / 00:00.000</div>
+</div>
 <div id="dropOverlay" class="drop-overlay hidden" aria-hidden="true">
   <div class="drop-card"><div class="drop-icon">↧</div><h2>Drop files to load them</h2><p>Drop an audio file and a lyric file together, or drop either one independently. Audio and lyrics stay on this computer.</p><p class="drop-types">Audio: FLAC · MP3 · WAV · M4A · OGG · OPUS<br>Lyrics: LRC · TTML · XML · TXT</p></div>
 </div>
@@ -182,6 +288,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   let colorPickerHue = 0;
   let colorPickerHistoryBefore = null;
   let editorClipboard = null;
+  let styleClipboard = null;
   let contextMenuTarget = null;
   let marqueeState = null;
   let suppressTimelineClick = false;
@@ -203,6 +310,55 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const el=$('toast'); el.textContent=message; el.classList.remove('hidden','error'); if(error) el.classList.add('error');
     clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.add('hidden'),4200);
   }
+  function positionFloatingMenu(trigger,menu){
+    menu.classList.remove('hidden');
+    const padding=10,gap=6,rect=trigger.getBoundingClientRect();
+    const headerHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-header-height'))||68;
+    const dockHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--player-dock-height'))||82;
+    const topLimit=headerHeight+padding,bottomLimit=Math.max(topLimit+90,window.innerHeight-dockHeight-padding);
+    const width=menu.offsetWidth||Math.min(320,window.innerWidth-padding*2);
+    const maxLeft=Math.max(padding,window.innerWidth-width-padding);
+    const left=Math.max(padding,Math.min(maxLeft,rect.left));
+    menu.style.maxHeight=Math.max(90,bottomLimit-topLimit)+'px';
+    const height=menu.offsetHeight;
+    const below=rect.bottom+gap,above=rect.top-height-gap;
+    const top=below+height<=bottomLimit?below:Math.max(topLimit,Math.min(bottomLimit-height,above));
+    menu.style.left=Math.round(left)+'px';menu.style.top=Math.round(top)+'px';
+  }
+  function toggleFloatingMenu(trigger,menu){
+    const opening=menu.classList.contains('hidden');
+    if(opening)positionFloatingMenu(trigger,menu);else menu.classList.add('hidden');
+    trigger.setAttribute('aria-expanded',String(opening));
+  }
+  function captureTimelineView(){
+    const viewport=$('timelineViewport'),editor=$('wordTimelineEditor');
+    if(!viewport||!editor||editor.classList.contains('hidden'))return null;
+    const viewportRect=viewport.getBoundingClientRect();
+    const lanes=[...$('timelineLanes').querySelectorAll('.timeline-lane-row')];
+    const anchor=lanes.find(lane=>{const rect=lane.getBoundingClientRect();return rect.bottom>viewportRect.top&&rect.top<viewportRect.bottom;});
+    return {scrollTop:viewport.scrollTop,lineIndex:anchor?Number(anchor.dataset.lineIndex):null,offset:anchor?anchor.getBoundingClientRect().top-viewportRect.top:0};
+  }
+  function restoreTimelineView(view){
+    if(!view)return;
+    const viewport=$('timelineViewport'),editor=$('wordTimelineEditor');
+    if(!viewport||!editor||editor.classList.contains('hidden'))return;
+    let targetTop=Number(view.scrollTop)||0;
+    if(Number.isInteger(view.lineIndex)){
+      const anchor=$('timelineLanes').querySelector('.timeline-lane-row[data-line-index="'+view.lineIndex+'"]');
+      if(anchor){
+        const viewportTop=viewport.getBoundingClientRect().top;
+        targetTop=viewport.scrollTop+(anchor.getBoundingClientRect().top-viewportTop)-(Number(view.offset)||0);
+      }
+    }
+    viewport.scrollTop=Math.max(0,Math.min(targetTop,Math.max(0,viewport.scrollHeight-viewport.clientHeight)));
+  }
+  function scrollTimelineElementIntoView(element){
+    const viewport=$('timelineViewport');if(!viewport||!element)return;
+    const rect=viewport.getBoundingClientRect(),item=element.getBoundingClientRect();
+    const top=rect.top+viewport.clientTop,bottom=rect.bottom-viewport.clientTop;
+    if(item.top<top)viewport.scrollTop-=top-item.top;
+    else if(item.bottom>bottom)viewport.scrollTop+=item.bottom-bottom;
+  }
   function captureHistoryState() {
     const active=document.activeElement;
     let focus=null;
@@ -213,6 +369,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     }
     return {
       rows:JSON.parse(JSON.stringify(rows)),
+      timelineView:captureTimelineView(),
       metadata:[...metadata],ttmlHeadInner,sourceFormat,hasWordTiming,importedLyricsName,
       lyricFileName:$('lyricsFileName')?.textContent||'',
       selectedIndex,lastEditedIndex,replayFromAnchor,gridMode,
@@ -241,7 +398,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       gridMode=state.gridMode;selectedWordRef=state.selectedWordRef?{...state.selectedWordRef}:null;
       selectedWordKeys=new Set(state.selectedWordKeys||[]);
       $('lyricsFileName').textContent=state.lyricFileName;
-      renderGrid();updatePreview();updateStatus();updateWordInspector();
+      renderGrid();updatePreview();updateStatus();updateWordInspector();restoreTimelineView(state.timelineView);
       const focus=state.focus;
       // Keep text-editor focus for repeated Ctrl+Z/Ctrl+Y while typing, but
       // don't steal focus back into timestamp/inspector inputs after an undo.
@@ -428,11 +585,13 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     editor.classList.remove('singer-italic','singer-bold');
     const lineStyle=String(row.lineFontStyle||'').toLowerCase();
     const lineWeight=String(row.lineFontWeight||'').toLowerCase();
-    editor.classList.toggle('singer-italic',['italic','oblique'].includes(lineStyle));
-    editor.classList.toggle('singer-bold',['bold','bolder','700','800','900'].includes(lineWeight));
     const tokens=[...String(row.text??'').matchAll(/\S+|\s+/g)];
     const textTokens=tokens.filter(m=>/^\S+$/.test(m[0]));
     const canHighlightWords=Boolean(row.wordCues&&row.wordCues.length&&row.text===row.originalText&&textTokens.length===row.wordCues.length);
+    // Word-level cue styles must control each token independently; putting a
+    // line class on this contenteditable parent would override every child.
+    editor.classList.toggle('singer-italic',!canHighlightWords&&['italic','oblique'].includes(lineStyle));
+    editor.classList.toggle('singer-bold',!canHighlightWords&&['bold','bolder','700','800','900'].includes(lineWeight));
     if(!canHighlightWords){editor.textContent=row.text;return;}
     let wordIndex=0;
     for(const token of tokens){
@@ -587,7 +746,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     let ref=$('timelineLanes').querySelector(`.word-clip[data-line-index="${lineIndex}"][data-cue-index="${cueIndex}"]`);
     const content=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`),cue=rows[lineIndex]?.wordCues?.[cueIndex];
     if(content&&cue&&(cue.start<Number(content.dataset.windowStart)-.01||cue.end>Number(content.dataset.windowEnd)+.01)){rerenderWordTimelinePreservingView();ref=$('timelineLanes').querySelector(`.word-clip[data-line-index="${lineIndex}"][data-cue-index="${cueIndex}"]`);}
-    if(settings.autoFollow&&ref)ref.scrollIntoView({block:'nearest'});
+    if(settings.autoFollow&&ref)scrollTimelineElementIntoView(ref);
     if(focus)ref?.focus();
     updateWordInspector();updateStatus();
   }
@@ -1085,7 +1244,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         else marker?.classList.remove('visible');
       }
       for(const clip of $('timelineLanes').querySelectorAll('.word-clip[data-line-index]'))clip.classList.toggle('playing-word-row',Number(clip.dataset.lineIndex)===nextIndex&&Number(clip.dataset.cueIndex)===nextWord);
-      if(nextIndex!==activePlaybackIndex&&!player.paused&&settings.autoFollow&&activeScreen()==='edit'&&nextIndex>=0){const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${nextIndex}"]`);lane?.scrollIntoView({block:'nearest'});}
+      if(nextIndex!==activePlaybackIndex&&!player.paused&&settings.autoFollow&&activeScreen()==='edit'&&nextIndex>=0){const lane=$('timelineLanes').querySelector('.timeline-lane-row[data-line-index="'+nextIndex+'"]');if(lane)scrollTimelineElementIntoView(lane);}
       activePlaybackIndex=nextIndex;activeWordIndex=nextWord;return;
     }
     if(activePlaybackIndex!==nextIndex){
@@ -1423,8 +1582,19 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     $('wordFontStyle').value=cueForRef()?.cue.ttsStyle||'';$('wordFontWeight').value=cueForRef()?.cue.ttsWeight||'';syncFormatToggleUI(cueForRef()?.cue);updatePreview();updateStatus();commitHistoryChange(historyBefore);
   }
   function refreshAgentPresetSelect(){
-    const select=$('agentPresetSelect');if(!select)return;const chosen=select.value;select.textContent='';const blank=document.createElement('option');blank.value='';blank.textContent='Apply saved preset…';select.append(blank);
-    agentPresets.forEach(p=>{const option=document.createElement('option');option.value=String(p.id);option.textContent=p.name;select.append(option);});select.value=agentPresets.some(p=>String(p.id)===chosen)?chosen:'';
+    const trigger=$('agentPresetTrigger'),menu=$('agentPresetMenu');if(!trigger||!menu)return;
+    menu.textContent='';
+    if(!agentPresets.length){const empty=document.createElement('div');empty.className='agent-preset-empty';empty.textContent='No saved presets yet';menu.append(empty);return;}
+    agentPresets.forEach(p=>{
+      const row=document.createElement('div');row.className='agent-preset-option';
+      const apply=document.createElement('button');apply.type='button';apply.className='agent-preset-apply';apply.textContent=p.name;apply.title=p.name;apply.setAttribute('role','menuitem');apply.addEventListener('click',()=>{menu.classList.add('hidden');trigger.setAttribute('aria-expanded','false');applyAgentPreset(p.id);});
+      const remove=document.createElement('button');remove.type='button';remove.className='agent-preset-delete';remove.textContent='×';remove.title=`Delete preset ${p.name}`;remove.setAttribute('aria-label',`Delete preset ${p.name}`);remove.addEventListener('click',e=>{
+        e.stopPropagation();
+        if(!confirm(`make sure you want to delete ${p.name}`))return;
+        agentPresets=agentPresets.filter(item=>String(item.id)!==String(p.id));persistAgentPresets();refreshAgentPresetSelect();toast(`Deleted agent preset “${p.name}”.`);
+      });
+      row.append(apply,remove);menu.append(row);
+    });
   }
   function persistAgentPresets(){try{localStorage.setItem('savant-agent-presets',JSON.stringify(agentPresets));}catch(_){toast('Could not save agent presets in this browser.',true);}}
   function saveAgentPreset(){
@@ -1432,7 +1602,29 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const name=prompt('Name this agent preset:',rec.cue.agent||'New agent preset');if(name===null)return;const clean=name.trim();if(!clean){toast('Preset name cannot be empty.',true);return;}
     agentPresets=agentPresets.filter(p=>p.name.toLowerCase()!==clean.toLowerCase());
     agentPresets.push({id:Date.now(),name:clean,agent:rec.cue.agent||'',style:rec.cue.style||'',ttsStyle:rec.cue.ttsStyle||'',ttsWeight:rec.cue.ttsWeight||'',color:rec.cue.color||''});
-    persistAgentPresets();refreshAgentPresetSelect();$('agentPresetSelect').value=String(agentPresets[agentPresets.length-1].id);toast(`Saved agent preset “${clean}”.`);
+    persistAgentPresets();refreshAgentPresetSelect();$('agentPresetMenu').classList.add('hidden');$('agentPresetTrigger').setAttribute('aria-expanded','false');toast(`Saved agent preset “${clean}”.`);
+  }
+  function copyWordPreset(target){
+    const cue=rows[target?.lineIndex]?.wordCues?.[target?.cueIndex];if(!cue){toast('Right-click a timed word to copy its styling.',true);return;}
+    styleClipboard={agent:String(cue.agent||''),style:String(cue.style||''),ttsStyle:String(cue.ttsStyle||''),ttsWeight:String(cue.ttsWeight||''),color:String(cue.color||'')};
+    toast('Copied styling preset from word.');
+  }
+  function pasteWordPreset(target){
+    if(!styleClipboard){toast('Copy a word preset first.',true);return;}
+    const key=wordKey(target.lineIndex,target.cueIndex);
+    const refs=(selectedWordKeys.has(key)?[...selectedWordKeys].map(parseWordKey):[{lineIndex:target.lineIndex,cueIndex:target.cueIndex}])
+      .filter(ref=>rows[ref.lineIndex]?.wordCues?.[ref.cueIndex]);
+    if(!refs.length){toast('Select one or more timed words first.',true);return;}
+    const historyBefore=captureHistoryState();
+    for(const ref of refs){
+      const cue=rows[ref.lineIndex].wordCues[ref.cueIndex];
+      cue.agent=styleClipboard.agent;cue.style=styleClipboard.style;cue.ttsStyle=styleClipboard.ttsStyle;cue.ttsWeight=styleClipboard.ttsWeight;cue.color=styleClipboard.color;
+      syncWordCueEmphasis({row:rows[ref.lineIndex],cue,lineIndex:ref.lineIndex,cueIndex:ref.cueIndex});
+      const clip=$('timelineLanes').querySelector('.word-clip[data-line-index="'+ref.lineIndex+'"][data-cue-index="'+ref.cueIndex+'"]');
+      if(clip)clip.style.color=safeCssColor(cue.color)||'';
+    }
+    updateWordInspector();updatePreview();updateStatus();commitHistoryChange(historyBefore);
+    toast('Pasted preset onto '+refs.length+' word(s).');
   }
   function applyAgentPreset(presetId){
     const preset=agentPresets.find(p=>String(p.id)===String(presetId));if(!preset)return;const records=selectedCueRecords();if(!records.length){toast('Select a word to apply an agent preset.',true);return;}
@@ -1479,25 +1671,52 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   }
   function renderColorPicker(){$('colorPickerPopover').querySelectorAll('[data-color-tab]').forEach(button=>{const active=button.dataset.colorTab===colorPickerTab;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));});renderColorSwatches();renderColorPickerContent();}
   function openColorPicker(){
-    const input=$('wordColor'),pop=$('colorPickerPopover');if(!cueForRef())return;colorPickerHue=rgbToHsv(hexToRgb(input.value||cueForRef()?.cue.color||'#ffffff')).h;const rect=input.getBoundingClientRect();
-    pop.style.left=`${Math.max(10,Math.min(window.innerWidth-330,rect.left))}px`;pop.style.top=`${Math.max(10,Math.min(window.innerHeight-355,rect.bottom+6))}px`;pop.classList.remove('hidden');colorPickerHistoryBefore=null;colorPickerTab='palette';renderColorPicker();
+    const input=$('wordColor'),pop=$('colorPickerPopover'),record=cueForRef();if(!record)return;
+    colorPickerHue=rgbToHsv(hexToRgb(input.value||record.cue.color||'#ffffff')).h;
+    colorPickerHistoryBefore=null;colorPickerTab='palette';pop.classList.remove('hidden');renderColorPicker();
+    const rect=input.getBoundingClientRect(),padding=10,gap=12;
+    const headerHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-header-height'))||68;
+    const dockHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--player-dock-height'))||82;
+    const width=pop.offsetWidth||Math.min(320,window.innerWidth-padding*2),height=pop.offsetHeight||355;
+    const maxLeft=Math.max(padding,window.innerWidth-width-padding),right=rect.right+gap,left=rect.left-width-gap;
+    // Open to the right by default; use the left side only if the viewport doesn't allow it.
+    const x=right+width<=window.innerWidth-padding?right:left>=padding?left:Math.max(padding,Math.min(maxLeft,right));
+    const minTop=headerHeight+padding,maxTop=Math.max(minTop,window.innerHeight-dockHeight-height-padding);
+    const desiredTop=rect.bottom+16,top=Math.max(minTop,Math.min(maxTop,desiredTop));
+    pop.style.left=Math.round(Math.max(padding,Math.min(maxLeft,x)))+'px';pop.style.top=Math.round(top)+'px';
   }
   function closeColorPicker(){if($('colorPickerPopover').classList.contains('hidden'))return;$('colorPickerPopover').classList.add('hidden');finishColorPickerHistory();}
   function addMenuSeparator(menu){const el=document.createElement('div');el.className='context-menu-separator';menu.append(el);}
   function addMenuHeading(menu,text){const el=document.createElement('div');el.className='context-menu-heading';el.textContent=text;menu.append(el);}
-  function addContextAction(menu,label,action,{disabled=false,footer=false}={}){
-    const button=document.createElement('button');button.type='button';button.textContent=label;button.disabled=disabled;button.setAttribute('role','menuitem');if(footer)button.classList.add('context-menu-footer');
+  function addContextAction(menu,label,action,{disabled=false,footer=false,shortcut=''}={}){
+    const button=document.createElement('button');button.type='button';button.disabled=disabled;button.setAttribute('role','menuitem');if(footer)button.classList.add('context-menu-footer');
+    const title=document.createElement('span');title.className='context-menu-label';title.textContent=label;button.append(title);
+    if(shortcut){const keys=document.createElement('span');keys.className='context-menu-shortcut';keys.textContent=shortcut;keys.setAttribute('aria-hidden','true');button.append(keys);}
     button.addEventListener('click',()=>{const previous=contextMenuTarget;hideEditorContextMenu();contextMenuTarget=previous;try{if(!disabled)action();}finally{contextMenuTarget=null;}});menu.append(button);return button;
   }
   function hideEditorContextMenu(){$('editorContextMenu').classList.add('hidden');contextMenuTarget=null;}
   function showEditorContextMenu(event,target){
     const menu=$('editorContextMenu');contextMenuTarget=target;menu.textContent='';
-    addContextAction(menu,'Copy',copyContextTarget,{disabled:!target});addContextAction(menu,'Cut',cutContextTarget,{disabled:!target});addContextAction(menu,'Paste',pasteContextTarget);
-    addMenuSeparator(menu);addContextAction(menu,'Undo',undoEditorChange,{disabled:!undoHistory.length});addContextAction(menu,'Redo',redoEditorChange,{disabled:!redoHistory.length});
-    if(gridMode==='words'){addMenuSeparator(menu);addContextAction(menu,'Make new word  ·  F',addWordCue,{disabled:!hasWordTiming});}
+    addContextAction(menu,'Copy',copyContextTarget,{disabled:!target,shortcut:'Ctrl+C'});
+    addContextAction(menu,'Cut',cutContextTarget,{disabled:!target,shortcut:'Ctrl+X'});
+    addContextAction(menu,'Paste',pasteContextTarget,{shortcut:'Ctrl+V'});
+    addMenuSeparator(menu);addContextAction(menu,'Undo',undoEditorChange,{disabled:!undoHistory.length,shortcut:'Ctrl+Z'});addContextAction(menu,'Redo',redoEditorChange,{disabled:!redoHistory.length,shortcut:'Ctrl+Y'});
+    if(gridMode==='words'){addMenuSeparator(menu);addContextAction(menu,'Make new word',addWordCue,{disabled:!hasWordTiming,shortcut:'F'});}
     if(target?.lineIndex!==undefined){addMenuSeparator(menu);addContextAction(menu,'Insert line above this line',()=>insertLineAt(target.lineIndex));addContextAction(menu,'Insert line below this line',()=>insertLineAt(target.lineIndex+1));}
-    if(gridMode==='words'&&target?.type==='word'){addMenuSeparator(menu);addMenuHeading(menu,'Apply agent preset');if(agentPresets.length)agentPresets.forEach(p=>addContextAction(menu,p.name,()=>applyAgentPreset(p.id)));else{const empty=document.createElement('button');empty.type='button';empty.textContent='No saved presets yet';empty.disabled=true;menu.append(empty);}addContextAction(menu,'+ Save new agent preset…',saveAgentPreset,{footer:true,disabled:!cueForRef()});}
-    menu.classList.remove('hidden');const x=Math.max(6,Math.min(event.clientX,innerWidth-menu.offsetWidth-6)),y=Math.max(6,Math.min(event.clientY,innerHeight-menu.offsetHeight-6));menu.style.left=`${x}px`;menu.style.top=`${y}px`;
+    if(gridMode==='words'&&target?.type==='word'){
+      addMenuSeparator(menu);addContextAction(menu,'Copy preset from word',()=>copyWordPreset(target));addContextAction(menu,'Paste preset',()=>pasteWordPreset(target),{disabled:!styleClipboard});
+      addMenuSeparator(menu);addMenuHeading(menu,'Apply saved agent preset');
+      if(agentPresets.length)agentPresets.forEach(p=>addContextAction(menu,p.name,()=>applyAgentPreset(p.id)));
+      else{const empty=document.createElement('button');empty.type='button';empty.textContent='No saved presets yet';empty.disabled=true;menu.append(empty);}
+      addContextAction(menu,'+ Save new agent preset…',saveAgentPreset,{footer:true,disabled:!cueForRef()});
+      addMenuSeparator(menu);const key=wordKey(target.lineIndex,target.cueIndex),refs=selectedWordKeys.has(key)?[...selectedWordKeys].map(parseWordKey):[{lineIndex:target.lineIndex,cueIndex:target.cueIndex}];
+      const deleteAction=addContextAction(menu,'Delete word',()=>deleteWordCues(refs.filter(ref=>rows[ref.lineIndex]?.wordCues?.[ref.cueIndex])),{footer:true});deleteAction.classList.add('danger');
+    }
+    menu.classList.remove('hidden');
+    const pad=6,header=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-header-height'))||68,dock=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--player-dock-height'))||82;
+    menu.style.maxHeight=Math.max(100,window.innerHeight-header-dock-pad*2)+'px';
+    const x=Math.max(pad,Math.min(event.clientX,window.innerWidth-menu.offsetWidth-pad)),minY=header+pad,maxY=Math.max(minY,window.innerHeight-dock-menu.offsetHeight-pad);
+    menu.style.left=x+'px';menu.style.top=Math.max(minY,Math.min(event.clientY,maxY))+'px';
   }
   function editorTextOffset(root,node,offset){
     if(!node||!root.contains(node))return root.textContent.length;
@@ -1515,57 +1734,79 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     renderWordAwareEditor(editor,rows[lineIndex]);editor.focus();setEditorCaretAtTextOffset(editor,a+insertText.length);
   }
   function writeNativeClipboard(value){try{const result=navigator.clipboard?.writeText(String(value??''));result?.catch(()=>{});}catch(_){}}
+  function clipboardPlainText(data){
+    if(!data)return '';
+    if(data.kind==='text')return String(data.text??'');
+    if(data.kind==='words')return (data.cues||[]).map(c=>c.text||'').join('');
+    if(data.kind==='lines')return (data.rows||[]).map(r=>r.text||'').join('\n');
+    return '';
+  }
   function copyContextTarget(){
-    const target=contextMenuTarget;if(!target)return;
-    if(target.type==='text'&&target.selectionEnd>target.selectionStart){editorClipboard={kind:'text',text:target.selectionText||'',sourceLineIndex:target.lineIndex};writeNativeClipboard(editorClipboard.text);toast('Copied selected lyric text.');return;}
-    if(target.type==='word'&&gridMode==='words'){
+    const target=contextMenuTarget;if(!target){editorClipboard=null;return false;}
+    let next=null;
+    if(target.type==='text'&&target.selectionEnd>target.selectionStart)next={kind:'text',text:target.selectionText||'',sourceLineIndex:target.lineIndex};
+    else if(target.type==='word'&&gridMode==='words'){
       const refs=selectedWordKeys.has(wordKey(target.lineIndex,target.cueIndex))?[...selectedWordKeys].map(parseWordKey):[{lineIndex:target.lineIndex,cueIndex:target.cueIndex}];
       const cues=refs.map(ref=>{const cue=rows[ref.lineIndex]?.wordCues?.[ref.cueIndex];return cue?{...JSON.parse(JSON.stringify(cue)),sourceLineIndex:ref.lineIndex}:null;}).filter(Boolean).sort((a,b)=>a.start-b.start);
-      if(cues.length)editorClipboard={kind:'words',cues};else toast('No word cues to copy.',true);
-    }else{const row=rows[target.lineIndex];if(row)editorClipboard={kind:'lines',rows:[JSON.parse(JSON.stringify(row))]};}
-    if(editorClipboard){const text=editorClipboard.kind==='words'?editorClipboard.cues.map(c=>c.text||'').join(''):editorClipboard.kind==='lines'?editorClipboard.rows.map(r=>r.text||'').join('\n'):editorClipboard.text;writeNativeClipboard(text);toast('Copied to Savant clipboard.');}
+      if(cues.length)next={kind:'words',cues};
+    }else{
+      const row=rows[target.lineIndex];if(row)next={kind:'lines',rows:[JSON.parse(JSON.stringify(row))]};
+    }
+    if(!next){editorClipboard=null;toast('Nothing to copy from this selection.',true);return false;}
+    next.plainText=clipboardPlainText(next);editorClipboard=next;writeNativeClipboard(next.plainText);
+    toast(next.kind==='text'?'Copied selected lyric text.':'Copied to Savant clipboard.');return true;
   }
   function cutContextTarget(){
-    const target=contextMenuTarget;if(!target)return;copyContextTarget();if(!editorClipboard)return;
+    const target=contextMenuTarget;if(!target||!copyContextTarget())return;
+    const copied=editorClipboard;
     if(target.type==='text'&&target.selectionEnd>target.selectionStart){replaceEditorTextRange(target.lineIndex,target.selectionStart,target.selectionEnd,'');return;}
-    if(editorClipboard.kind==='words'){const refs=selectedWordKeys.has(wordKey(target.lineIndex,target.cueIndex))?[...selectedWordKeys].map(parseWordKey):[{lineIndex:target.lineIndex,cueIndex:target.cueIndex}];deleteWordCues(refs);}else removeLineAt(target.lineIndex);
+    if(copied?.kind==='words'){
+      const refs=selectedWordKeys.has(wordKey(target.lineIndex,target.cueIndex))?[...selectedWordKeys].map(parseWordKey):[{lineIndex:target.lineIndex,cueIndex:target.cueIndex}];
+      deleteWordCues(refs);
+    }else if(target.lineIndex!==undefined)removeLineAt(target.lineIndex);
   }
-  async function pasteContextTarget(){
-    const requestedTarget=contextMenuTarget;
-    if(!editorClipboard){
-      try{const text=await navigator.clipboard.readText();if(!text){toast('The system clipboard is empty.',true);return;}
-        if(requestedTarget?.type==='word'&&gridMode==='words'){editSelectedWordText(text);toast('Pasted text into the selected word.');return;}
-        if(gridMode==='words'){toast('Right-click a word to paste text into it.',true);return;}editorClipboard={kind:'text',text,sourceLineIndex:null};
-      }catch(_){toast('Browser clipboard access is unavailable. Copy something in the editor first.',true);return;}
+  async function pasteContextTarget(preferSystem=true){
+    const requestedTarget=contextMenuTarget;let clipboard=editorClipboard;
+    if(preferSystem&&navigator.clipboard?.readText){
+      try{
+        const systemText=await navigator.clipboard.readText();
+        if(systemText&&(!clipboard||systemText!==clipboardPlainText(clipboard))){clipboard={kind:'text',text:systemText,sourceLineIndex:null,plainText:systemText};editorClipboard=clipboard;}
+        else if(!clipboard&&systemText){clipboard={kind:'text',text:systemText,sourceLineIndex:null,plainText:systemText};editorClipboard=clipboard;}
+      }catch(_){}
     }
-    if(editorClipboard.kind==='text'){
+    if(!clipboard){toast('The clipboard is empty or browser clipboard access is unavailable.',true);return;}
+    if(clipboard.kind==='text'){
       if(gridMode==='words'){
-        if(requestedTarget?.type==='word'){editSelectedWordText(editorClipboard.text);toast('Pasted text into the selected word.');}
+        if(requestedTarget?.type==='word'){editSelectedWordText(clipboard.text);toast('Pasted text into the selected word.');}
         else toast('Right-click a word to paste text into it.',true);
         return;
       }
-      const lineIndex=Number.isInteger(requestedTarget?.lineIndex)?requestedTarget.lineIndex:selectedIndex,editor=$('gridBody').querySelector(`tr[data-index="${lineIndex}"] .lyric-editor`);
+      const lineIndex=Number.isInteger(requestedTarget?.lineIndex)?requestedTarget.lineIndex:selectedIndex,editor=$('gridBody').querySelector('tr[data-index="'+lineIndex+'"] .lyric-editor');
       if(!editor){toast('Select a lyric line to paste text into.',true);return;}
       const isTextTarget=requestedTarget?.type==='text',a=isTextTarget?requestedTarget.selectionStart:editor.textContent.length,b=isTextTarget?requestedTarget.selectionEnd:a;
-      replaceEditorTextRange(lineIndex,a,b,editorClipboard.text);toast('Pasted lyric text.');return;
+      replaceEditorTextRange(lineIndex,a,b,clipboard.text);toast('Pasted lyric text.');return;
     }
-    if(editorClipboard.kind==='words'){
+    if(clipboard.kind==='words'){
       const historyBefore=captureHistoryState();
       if(gridMode!=='words'){if(!hasWordTiming){toast('Word paste requires TTML word timing.',true);return;}setGridMode('words');}
-      const index=Number.isInteger(requestedTarget?.lineIndex)?requestedTarget.lineIndex:selectedWordRef?.lineIndex??Math.max(0,selectedIndex),row=rows[index];if(!row){toast('Select a lyric line for the pasted words.',true);return;}
-      if(!row.wordCues)ensureWordCues(row,index);const refs=editorClipboard.cues,first=Math.min(...refs.map(c=>c.start)),anchor=selectedWordRef?.lineIndex===index&&row.wordCues[selectedWordRef.cueIndex]?row.wordCues[selectedWordRef.cueIndex].end:row.wordCues.length?Math.max(...row.wordCues.map(c=>c.end)):Math.max(row.start,Number(player.currentTime)||0);
-      const newCues=refs.map(c=>{const {sourceLineIndex,...cue}=JSON.parse(JSON.stringify(c));const duration=Math.max(.02,cue.end-cue.start);cue.start=Math.max(0,anchor+(c.start-first));cue.end=cue.start+duration;return cue;});
+      const index=Number.isInteger(requestedTarget?.lineIndex)?requestedTarget.lineIndex:(selectedWordRef?.lineIndex??Math.max(0,selectedIndex)),row=rows[index];
+      if(!row){toast('Select a lyric line for the pasted words.',true);return;}
+      if(!row.wordCues)ensureWordCues(row,index);
+      const refs=clipboard.cues,first=Math.min(...refs.map(c=>c.start));
+      const anchor=selectedWordRef?.lineIndex===index&&row.wordCues[selectedWordRef.cueIndex]?row.wordCues[selectedWordRef.cueIndex].end:row.wordCues.length?Math.max(...row.wordCues.map(c=>c.end)):Math.max(row.start,Number(player.currentTime)||0);
+      const newCues=refs.map(c=>{const {sourceLineIndex,plainText,...cue}=JSON.parse(JSON.stringify(c));const duration=Math.max(.02,cue.end-cue.start);cue.start=Math.max(0,anchor+(c.start-first));cue.end=cue.start+duration;return cue;});
       row.wordCues.push(...newCues);row.wordCues.sort((a,b)=>a.start-b.start);row.text=row.wordCues.map(c=>c.text).join('');row.originalText=row.text;hasWordTiming=true;selectedIndex=index;lastEditedIndex=index;
       const firstCue=row.wordCues.indexOf(newCues[0]);selectedWordRef={lineIndex:index,cueIndex:firstCue};selectedWordKeys=new Set(newCues.map(c=>wordKey(index,row.wordCues.indexOf(c))));
-      rerenderWordTimelinePreservingView();updateWordInspector();updatePreview();updateStatus();commitHistoryChange(historyBefore);toast(`Pasted ${newCues.length} word cue(s).`);
-    }else{
-      const target=requestedTarget,at=target?.lineIndex??selectedIndex,index=Math.max(0,Math.min(rows.length,at<0?rows.length:at+1)),historyBefore=captureHistoryState(),clones=JSON.parse(JSON.stringify(editorClipboard.rows));
-      if(gridMode==='words')setGridMode('lines');const base=rows[Math.max(0,index-1)],baseStart=base?base.start:0,first=clones[0]?.start||0,offset=base?Math.max(0,baseStart+settings.txtSpacing-first):0;
+      rerenderWordTimelinePreservingView();updateWordInspector();updatePreview();updateStatus();commitHistoryChange(historyBefore);toast('Pasted '+newCues.length+' word cue(s).');
+    }else if(clipboard.kind==='lines'){
+      const target=requestedTarget,at=target?.lineIndex??selectedIndex,index=Math.max(0,Math.min(rows.length,at<0?rows.length:at+1)),historyBefore=captureHistoryState(),clones=JSON.parse(JSON.stringify(clipboard.rows));
+      if(gridMode==='words')setGridMode('lines');
+      const base=rows[Math.max(0,index-1)],baseStart=base?base.start:0,first=clones[0]?.start||0,offset=base?Math.max(0,baseStart+settings.txtSpacing-first):0;
       clones.forEach(row=>{row.start+=offset;row.wordCues?.forEach(c=>{c.start+=offset;c.end+=offset;});});
-      rows.splice(index,0,...clones);selectedIndex=index;lastEditedIndex=index;hasWordTiming=rows.some(r=>r.wordCues?.length);renderGrid();setSelected(index,true);updatePreview();updateStatus();commitHistoryChange(historyBefore);toast(`Pasted ${clones.length} lyric line(s).`);
+      rows.splice(index,0,...clones);selectedIndex=index;lastEditedIndex=index;hasWordTiming=rows.some(r=>r.wordCues?.length);renderGrid();setSelected(index,true);updatePreview();updateStatus();commitHistoryChange(historyBefore);toast('Pasted '+clones.length+' lyric line(s).');
     }
   }
-  function deleteWordCues(refs){
+    function deleteWordCues(refs){
     if(!refs.length)return;const historyBefore=captureHistoryState(),grouped=new Map();refs.forEach(ref=>{if(!grouped.has(ref.lineIndex))grouped.set(ref.lineIndex,new Set());grouped.get(ref.lineIndex).add(ref.cueIndex);});
     for(const [lineIndex,indices] of grouped){const row=rows[lineIndex];if(!row?.wordCues)continue;row.wordCues=row.wordCues.filter((_,i)=>!indices.has(i));row.text=row.wordCues.map(c=>c.text).join('');row.originalText=row.text;if(!row.wordCues.length)row.wordCues=null;}
     selectedWordKeys.clear();const next=allWordRefs()[0];selectedWordRef=next?{lineIndex:next.lineIndex,cueIndex:next.cueIndex}:null;selectedIndex=selectedWordRef?.lineIndex??Math.max(0,selectedIndex);hasWordTiming=rows.some(r=>r.wordCues?.length);
@@ -1605,13 +1846,27 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       setSelected(lineIndex,false);showEditorContextMenu(e,{type:'text',lineIndex,selectionStart:a,selectionEnd:b,selectionText:selected});
     }else{const lineIndex=Number(lane?.dataset.lineIndex??tr?.dataset.index);if(!Number.isFinite(lineIndex))return;if(tr)setSelected(lineIndex,false);else{selectedIndex=lineIndex;lastEditedIndex=lineIndex;}showEditorContextMenu(e,{type:'line',lineIndex});}
   });
-  document.addEventListener('pointerdown',e=>{const pop=$('colorPickerPopover');if(!pop.classList.contains('hidden')&&!pop.contains(e.target)&&e.target!==$('wordColor'))closeColorPicker();const menu=$('editorContextMenu');if(!menu.classList.contains('hidden')&&!menu.contains(e.target))hideEditorContextMenu();},true);
+  document.addEventListener('pointerdown',e=>{
+    const pop=$('colorPickerPopover');if(!pop.classList.contains('hidden')&&!pop.contains(e.target)&&e.target!==$('wordColor'))closeColorPicker();
+    const menu=$('editorContextMenu');if(!menu.classList.contains('hidden')&&!menu.contains(e.target))hideEditorContextMenu();
+    const presets=$('agentPresetMenu');if(!presets.classList.contains('hidden')&&!presets.contains(e.target)&&e.target!==$('agentPresetTrigger')){presets.classList.add('hidden');$('agentPresetTrigger').setAttribute('aria-expanded','false');}
+    const controls=$('timelineControlsMenu');if(!controls.classList.contains('hidden')&&!controls.contains(e.target)&&e.target!==$('timelineControlsTrigger')){controls.classList.add('hidden');$('timelineControlsTrigger').setAttribute('aria-expanded','false');}
+  },true);
   $('colorPickerPopover').addEventListener('click',e=>{const tab=e.target.closest?.('[data-color-tab]');if(tab){colorPickerTab=tab.dataset.colorTab;renderColorPicker();}});
   $('wordColor').addEventListener('click',openColorPicker);
   $('wordColor').addEventListener('input',()=>{const value=$('wordColor').value.trim();$('wordColor').style.color=safeCssColor(value)||'var(--text)';if(/^#[0-9a-f]{3,8}$/i.test(value)){$('colorPreviewSwatch').style.background=value;$('colorPreviewHex').textContent=value;const hsv=rgbToHsv(hexToRgb(value));if(hsv.s>0.001)colorPickerHue=hsv.h;}});
   $('wordItalicToggle').addEventListener('click',()=>toggleWordEmphasis('italic'));$('wordBoldToggle').addEventListener('click',()=>toggleWordEmphasis('bold'));
   $('addWord').addEventListener('click',addWordCue);$('saveAgentPreset').addEventListener('click',saveAgentPreset);
-  $('agentPresetSelect').addEventListener('change',e=>{if(e.target.value)applyAgentPreset(e.target.value);e.target.value='';});
+  $('agentPresetTrigger').addEventListener('click',()=>toggleFloatingMenu($('agentPresetTrigger'),$('agentPresetMenu')));
+  $('timelineControlsTrigger').addEventListener('click',()=>toggleFloatingMenu($('timelineControlsTrigger'),$('timelineControlsMenu')));
+  function setPreviewDrawer(open){
+    const drawer=$('previewDrawer'),backdrop=$('previewBackdrop'),toggle=$('previewShelfToggle');
+    drawer.classList.toggle('open',open);backdrop.classList.toggle('hidden',!open);toggle.setAttribute('aria-expanded',String(open));toggle.hidden=open;
+    if(open)$('previewClose').focus();else toggle.focus({preventScroll:true});
+  }
+  $('previewShelfToggle').addEventListener('click',()=>setPreviewDrawer(true));
+  $('previewClose').addEventListener('click',()=>setPreviewDrawer(false));
+  $('previewBackdrop').addEventListener('click',()=>setPreviewDrawer(false));
   const wordInspectorFieldIds=['wordStart','wordEnd','wordText','wordAgent','wordStyle','wordFontStyle','wordFontWeight','wordColor'];
   function wordInspectorFieldNeedsCommit(id,record=cueForRef()){
     if(!record)return false;
@@ -1646,6 +1901,9 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const target=e.target; const lyricEditing=target instanceof HTMLElement&&Boolean(target.closest('.lyric-editor,#wordText'));
     const formFocus=target instanceof HTMLElement&&Boolean(target.closest('input,textarea,select,[contenteditable="true"]'));
     if(e.key==='Escape'&&!$('editorContextMenu').classList.contains('hidden')){hideEditorContextMenu();e.preventDefault();return;}
+    if(e.key==='Escape'&&!$('agentPresetMenu').classList.contains('hidden')){$('agentPresetMenu').classList.add('hidden');$('agentPresetTrigger').setAttribute('aria-expanded','false');e.preventDefault();return;}
+    if(e.key==='Escape'&&!$('timelineControlsMenu').classList.contains('hidden')){$('timelineControlsMenu').classList.add('hidden');$('timelineControlsTrigger').setAttribute('aria-expanded','false');e.preventDefault();return;}
+    if(e.key==='Escape'&&$('previewDrawer').classList.contains('open')){setPreviewDrawer(false);e.preventDefault();return;}
     if(e.key==='Escape'&&!$('colorPickerPopover').classList.contains('hidden')){closeColorPicker();e.preventDefault();return;}
     if(e.code==='Space'&&e.ctrlKey&&!lyricEditing){e.preventDefault();blockPause();return;}
     if(e.code==='Space'&&!lyricEditing){e.preventDefault();playPause();return;}

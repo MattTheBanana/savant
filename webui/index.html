@@ -777,7 +777,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   }
   function wireGeneratePanel(){
     genWireFileInputs();$('generateConfigTab').addEventListener('click',()=>setGeneratePane('configuration'));$('generateAdvancedTab').addEventListener('click',()=>setGeneratePane('advanced'));
-    $('genMode').addEventListener('change',updateGenerateConfigVisibility);$('genAligner').addEventListener('change',renderGenerateInstallPrompts);$('genSeparateVocals').addEventListener('change',renderGenerateInstallPrompts);
+    $('genMode').addEventListener('change',updateGenerateConfigVisibility);$('genAligner').addEventListener('change',updateGenerateConfigVisibility);$('genSeparateVocals').addEventListener('change',renderGenerateInstallPrompts);
     $('genRunButton').addEventListener('click',()=>startGenerator());$('genDoctorButton').addEventListener('click',()=>{$('genMode').value='doctor';updateGenerateConfigVisibility();startGenerator('doctor');});
     for(const button of document.querySelectorAll('[data-gen-result]'))button.addEventListener('click',()=>selectGenerateResult(button.dataset.genResult));updateGenerateConfigVisibility();
   }

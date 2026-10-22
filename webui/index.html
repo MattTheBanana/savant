@@ -282,6 +282,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   let colorPickerHue = 0;
   let colorPickerHistoryBefore = null;
   let editorClipboard = null;
+  let styleClipboard = null;
   let contextMenuTarget = null;
   let marqueeState = null;
   let suppressTimelineClick = false;
@@ -303,6 +304,55 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const el=$('toast'); el.textContent=message; el.classList.remove('hidden','error'); if(error) el.classList.add('error');
     clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.add('hidden'),4200);
   }
+  function positionFloatingMenu(trigger,menu){
+    menu.classList.remove('hidden');
+    const padding=10,gap=6,rect=trigger.getBoundingClientRect();
+    const headerHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-header-height'))||68;
+    const dockHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--player-dock-height'))||82;
+    const topLimit=headerHeight+padding,bottomLimit=Math.max(topLimit+90,window.innerHeight-dockHeight-padding);
+    const width=menu.offsetWidth||Math.min(320,window.innerWidth-padding*2);
+    const maxLeft=Math.max(padding,window.innerWidth-width-padding);
+    const left=Math.max(padding,Math.min(maxLeft,rect.left));
+    menu.style.maxHeight=Math.max(90,bottomLimit-topLimit)+'px';
+    const height=menu.offsetHeight;
+    const below=rect.bottom+gap,above=rect.top-height-gap;
+    const top=below+height<=bottomLimit?below:Math.max(topLimit,Math.min(bottomLimit-height,above));
+    menu.style.left=Math.round(left)+'px';menu.style.top=Math.round(top)+'px';
+  }
+  function toggleFloatingMenu(trigger,menu){
+    const opening=menu.classList.contains('hidden');
+    if(opening)positionFloatingMenu(trigger,menu);else menu.classList.add('hidden');
+    trigger.setAttribute('aria-expanded',String(opening));
+  }
+  function captureTimelineView(){
+    const viewport=$('timelineViewport'),editor=$('wordTimelineEditor');
+    if(!viewport||!editor||editor.classList.contains('hidden'))return null;
+    const viewportRect=viewport.getBoundingClientRect();
+    const lanes=[...$('timelineLanes').querySelectorAll('.timeline-lane-row')];
+    const anchor=lanes.find(lane=>{const rect=lane.getBoundingClientRect();return rect.bottom>viewportRect.top&&rect.top<viewportRect.bottom;});
+    return {scrollTop:viewport.scrollTop,lineIndex:anchor?Number(anchor.dataset.lineIndex):null,offset:anchor?anchor.getBoundingClientRect().top-viewportRect.top:0};
+  }
+  function restoreTimelineView(view){
+    if(!view)return;
+    const viewport=$('timelineViewport'),editor=$('wordTimelineEditor');
+    if(!viewport||!editor||editor.classList.contains('hidden'))return;
+    let targetTop=Number(view.scrollTop)||0;
+    if(Number.isInteger(view.lineIndex)){
+      const anchor=$('timelineLanes').querySelector('.timeline-lane-row[data-line-index="'+view.lineIndex+'"]');
+      if(anchor){
+        const viewportTop=viewport.getBoundingClientRect().top;
+        targetTop=viewport.scrollTop+(anchor.getBoundingClientRect().top-viewportTop)-(Number(view.offset)||0);
+      }
+    }
+    viewport.scrollTop=Math.max(0,Math.min(targetTop,Math.max(0,viewport.scrollHeight-viewport.clientHeight)));
+  }
+  function scrollTimelineElementIntoView(element){
+    const viewport=$('timelineViewport');if(!viewport||!element)return;
+    const rect=viewport.getBoundingClientRect(),item=element.getBoundingClientRect();
+    const top=rect.top+viewport.clientTop,bottom=rect.bottom-viewport.clientTop;
+    if(item.top<top)viewport.scrollTop-=top-item.top;
+    else if(item.bottom>bottom)viewport.scrollTop+=item.bottom-bottom;
+  }
   function captureHistoryState() {
     const active=document.activeElement;
     let focus=null;
@@ -313,6 +363,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     }
     return {
       rows:JSON.parse(JSON.stringify(rows)),
+      timelineView:captureTimelineView(),
       metadata:[...metadata],ttmlHeadInner,sourceFormat,hasWordTiming,importedLyricsName,
       lyricFileName:$('lyricsFileName')?.textContent||'',
       selectedIndex,lastEditedIndex,replayFromAnchor,gridMode,
@@ -341,7 +392,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       gridMode=state.gridMode;selectedWordRef=state.selectedWordRef?{...state.selectedWordRef}:null;
       selectedWordKeys=new Set(state.selectedWordKeys||[]);
       $('lyricsFileName').textContent=state.lyricFileName;
-      renderGrid();updatePreview();updateStatus();updateWordInspector();
+      renderGrid();updatePreview();updateStatus();updateWordInspector();restoreTimelineView(state.timelineView);
       const focus=state.focus;
       // Keep text-editor focus for repeated Ctrl+Z/Ctrl+Y while typing, but
       // don't steal focus back into timestamp/inspector inputs after an undo.
@@ -689,7 +740,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     let ref=$('timelineLanes').querySelector(`.word-clip[data-line-index="${lineIndex}"][data-cue-index="${cueIndex}"]`);
     const content=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`),cue=rows[lineIndex]?.wordCues?.[cueIndex];
     if(content&&cue&&(cue.start<Number(content.dataset.windowStart)-.01||cue.end>Number(content.dataset.windowEnd)+.01)){rerenderWordTimelinePreservingView();ref=$('timelineLanes').querySelector(`.word-clip[data-line-index="${lineIndex}"][data-cue-index="${cueIndex}"]`);}
-    if(settings.autoFollow&&ref)ref.scrollIntoView({block:'nearest'});
+    if(settings.autoFollow&&ref)scrollTimelineElementIntoView(ref);
     if(focus)ref?.focus();
     updateWordInspector();updateStatus();
   }
@@ -1187,7 +1238,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         else marker?.classList.remove('visible');
       }
       for(const clip of $('timelineLanes').querySelectorAll('.word-clip[data-line-index]'))clip.classList.toggle('playing-word-row',Number(clip.dataset.lineIndex)===nextIndex&&Number(clip.dataset.cueIndex)===nextWord);
-      if(nextIndex!==activePlaybackIndex&&!player.paused&&settings.autoFollow&&activeScreen()==='edit'&&nextIndex>=0){const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${nextIndex}"]`);lane?.scrollIntoView({block:'nearest'});}
+      if(nextIndex!==activePlaybackIndex&&!player.paused&&settings.autoFollow&&activeScreen()==='edit'&&nextIndex>=0){const lane=$('timelineLanes').querySelector('.timeline-lane-row[data-line-index="'+nextIndex+'"]');if(lane)scrollTimelineElementIntoView(lane);}
       activePlaybackIndex=nextIndex;activeWordIndex=nextWord;return;
     }
     if(activePlaybackIndex!==nextIndex){
@@ -1595,14 +1646,16 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const input=$('wordColor'),pop=$('colorPickerPopover'),record=cueForRef();if(!record)return;
     colorPickerHue=rgbToHsv(hexToRgb(input.value||record.cue.color||'#ffffff')).h;
     colorPickerHistoryBefore=null;colorPickerTab='palette';pop.classList.remove('hidden');renderColorPicker();
-    const rect=input.getBoundingClientRect(),padding=10,gap=12,width=pop.offsetWidth||Math.min(320,window.innerWidth-padding*2),height=pop.offsetHeight||355;
-    const maxLeft=Math.max(padding,window.innerWidth-width-padding),leftOfInput=rect.left-width-gap,rightOfInput=rect.right+gap;
-    // Prefer the space to the left of the hex field so the picker doesn't cover the inspector.
-    // If the viewport is too narrow, try the right before clamping the panel fully onscreen.
-    let left=leftOfInput>=padding?leftOfInput:rightOfInput+width<=window.innerWidth-padding?rightOfInput:Math.max(padding,Math.min(maxLeft,leftOfInput));
-    const maxTop=Math.max(padding,window.innerHeight-height-padding),desiredTop=rect.bottom+16;
-    const top=Math.max(padding,Math.min(maxTop,desiredTop));
-    pop.style.left=`${Math.round(left)}px`;pop.style.top=`${Math.round(top)}px`;
+    const rect=input.getBoundingClientRect(),padding=10,gap=12;
+    const headerHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-header-height'))||68;
+    const dockHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--player-dock-height'))||82;
+    const width=pop.offsetWidth||Math.min(320,window.innerWidth-padding*2),height=pop.offsetHeight||355;
+    const maxLeft=Math.max(padding,window.innerWidth-width-padding),right=rect.right+gap,left=rect.left-width-gap;
+    // Open to the right by default; use the left side only if the viewport doesn't allow it.
+    const x=right+width<=window.innerWidth-padding?right:left>=padding?left:Math.max(padding,Math.min(maxLeft,right));
+    const minTop=headerHeight+padding,maxTop=Math.max(minTop,window.innerHeight-dockHeight-height-padding);
+    const desiredTop=rect.bottom+16,top=Math.max(minTop,Math.min(maxTop,desiredTop));
+    pop.style.left=Math.round(Math.max(padding,Math.min(maxLeft,x)))+'px';pop.style.top=Math.round(top)+'px';
   }
   function closeColorPicker(){if($('colorPickerPopover').classList.contains('hidden'))return;$('colorPickerPopover').classList.add('hidden');finishColorPickerHistory();}
   function addMenuSeparator(menu){const el=document.createElement('div');el.className='context-menu-separator';menu.append(el);}

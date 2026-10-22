@@ -1085,7 +1085,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if(rows.length) { renderGrid(); setSelected(0,true); }
     else renderGrid();
     updatePreview(); updateStatus();
-    $('lyricsFileName').textContent=name||'Lyrics imported';
+    $('lyricsFileName').textContent=name||'Lyrics imported';$('lyricsFileName').title=name||'Lyrics imported';
     commitHistoryChange(historyBefore);
     toast(`Loaded ${rows.length} lyric line(s) from ${name}.`);
   }
@@ -1207,6 +1207,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       });
       hasWordTiming=rows.some(row=>row.wordCues?.length);
     }
+    activePlaybackIndex=-1;activeWordIndex=-1;
     gridMode=nextMode;
     $('viewLines').classList.toggle('primary',gridMode==='lines');
     $('viewWords').classList.toggle('primary',gridMode==='words');
@@ -1973,7 +1974,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if(!file)return;
     if(audioUrl)URL.revokeObjectURL(audioUrl);
     audioUrl=URL.createObjectURL(file);audioName=file.name.replace(/\.[^.]+$/,'');player.src=audioUrl;player.load();
-    $('audioTitle').textContent=file.name;$('audioSub').textContent=`${(file.size/1048576).toFixed(1)} MB · local browser playback`;$('audioFileName').textContent=file.name;
+    $('audioTitle').textContent=file.name;$('audioSub').textContent=`${(file.size/1048576).toFixed(1)} MB · local browser playback`;$('audioFileName').textContent=file.name;$('audioFileName').title=file.name;
     if(gridMode==='words')renderWordGrid();
     buildWaveform(file);
     updateLiveHighlight();toast(`Loaded audio ${file.name}.`);

@@ -626,7 +626,12 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const record=cueForRef();if(!record)return;
     const historyBefore=captureHistoryState();
     const {row,cue,lineIndex,cueIndex}=record;
-    const old=String(cue.text||'');const leading=(old.match(/^\s*/)||[''])[0],trailing=(old.match(/\s*$/)||[''])[0];
+    const old=String(cue.text||'');let leading=(old.match(/^\s*/)||[''])[0],trailing=(old.match(/\s*$/)||[''])[0];
+    if(!old.trim()&&String(value).trim()){
+      const previous=String(row.wordCues[cueIndex-1]?.text||''),next=String(row.wordCues[cueIndex+1]?.text||'');
+      leading=cueIndex>0&&!/\s$/.test(previous)?' ':'';
+      trailing=cueIndex+1<row.wordCues.length&&!/^\s/.test(next)?' ':'';
+    }
     cue.text=leading+String(value).trim()+trailing;
     row.text=row.wordCues.map(c=>c.text).join('');row.originalText=row.text;
     const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${lineIndex}"][data-cue-index="${cueIndex}"] .word-label`);
@@ -1381,7 +1386,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   $('wordStyle').addEventListener('change',()=>{const rec=cueForRef();if(rec){const historyBefore=captureHistoryState();rec.cue.style=$('wordStyle').value.trim();updatePreview();commitHistoryChange(historyBefore);toast('TTML style reference updated.');}});
   $('wordFontStyle').addEventListener('change',()=>{const rec=cueForRef();if(rec){const historyBefore=captureHistoryState();rec.cue.ttsStyle=$('wordFontStyle').value;syncWordCueEmphasis(rec);updatePreview();commitHistoryChange(historyBefore);}});
   $('wordFontWeight').addEventListener('change',()=>{const rec=cueForRef();if(rec){const historyBefore=captureHistoryState();rec.cue.ttsWeight=$('wordFontWeight').value;syncWordCueEmphasis(rec);updatePreview();commitHistoryChange(historyBefore);}});
-  $('wordColor').addEventListener('change',()=>{const rec=cueForRef();if(rec){const val=$('wordColor').value.trim();if(val&&!safeCssColor(val)){toast('Use a CSS color such as #ffffff, rgb(255,255,255), or white.',true);$('wordColor').value=rec.cue.color||'';return;}const historyBefore=captureHistoryState();rec.cue.color=val;const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);if(clip)clip.style.color=val;updatePreview();commitHistoryChange(historyBefore);}});
+  $('wordColor').addEventListener('change',()=>{const rec=cueForRef();if(rec){const val=$('wordColor').value.trim();if(val&&!safeCssColor(val)){toast('Use a CSS color such as #ffffff, rgb(255,255,255), or white.',true);$('wordColor').value=rec.cue.color||'';return;}const historyBefore=captureHistoryState();rec.cue.color=val;syncWordCueEmphasis(rec);const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);if(clip)clip.style.color=val;const input=$('wordColor');input.style.color=safeCssColor(val)||'var(--text)';updatePreview();commitHistoryChange(historyBefore);}});
   function syncWordCueEmphasis(record){
     const {lineIndex,cueIndex,cue}=record;
     const italic=['italic','oblique'].includes(String(cue.ttsStyle||'').toLowerCase());
@@ -1439,7 +1444,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function finishColorPickerHistory(){if(colorPickerHistoryBefore){commitHistoryChange(colorPickerHistoryBefore);colorPickerHistoryBefore=null;}}
   function applyPickerColor(hex){
     hex=normalizedHex(hex);const hsv=rgbToHsv(hexToRgb(hex));if(hsv.s>0.001)colorPickerHue=hsv.h;const input=$('wordColor');input.value=hex;input.style.color=hex;$('colorPreviewSwatch').style.background=hex;$('colorPreviewHex').textContent=hex;
-    const rec=cueForRef();if(rec){beginColorPickerHistory();rec.cue.color=hex;const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);if(clip)clip.style.color=hex;updatePreview();}
+    const rec=cueForRef();if(rec){beginColorPickerHistory();rec.cue.color=hex;syncWordCueEmphasis(rec);const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);if(clip)clip.style.color=hex;updatePreview();}
   }
   function pickerHSVFromInput(){return {...rgbToHsv(hexToRgb($('wordColor').value||cueForRef()?.cue.color||'#ffffff')),h:colorPickerHue};}
   function updatePickerPreview(){

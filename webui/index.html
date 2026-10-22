@@ -1617,6 +1617,11 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         if(key==='y'||(key==='z'&&e.shiftKey))redoEditorChange();else undoEditorChange();
         return;
       }
+      if(['c','x','v'].includes(key)&&!target.closest('[contenteditable="true"]')){
+        const fallbackLine=selectedIndex>=0&&selectedIndex<rows.length?selectedIndex:lastEditedIndex>=0&&lastEditedIndex<rows.length?lastEditedIndex:-1;
+        contextMenuTarget=gridMode==='words'&&selectedWordRef?{type:'word',lineIndex:selectedWordRef.lineIndex,cueIndex:selectedWordRef.cueIndex}:fallbackLine>=0?{type:'line',lineIndex:fallbackLine}:null;
+        if(contextMenuTarget){e.preventDefault();if(key==='c')copyContextTarget();else if(key==='x')cutContextTarget();else pasteContextTarget();contextMenuTarget=null;return;}
+      }
     }
     if(formFocus)return;
     if(activeScreen()!=='edit')return;

@@ -51,6 +51,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 @media(max-width:950px){.timeline-viewport{max-height:65vh}.word-inspector-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.word-inspector-text{grid-column:1/-1}.timeline-inner{--label-width:118px}}
 @media(max-width:540px){.timeline-toolbar{align-items:flex-start}.timeline-help{max-width:100%}.word-inspector-fields{grid-template-columns:1fr 1fr}.timeline-inner{--label-width:94px}.timeline-lane-row{min-height:116px}.timeline-lane-content{grid-template-rows:62px 48px}.lane-waveform-wrapper,.lane-waveform-canvas{height:62px}.lane-playhead-handle{height:62px}}
 @media(max-width:1000px){.editor-layout{grid-template-columns:1fr}.table-wrap,.preview{max-height:none}.audio-panel{grid-template-columns:1fr}.status{margin-left:0}}@media(max-width:620px){.app-header{padding:12px}.shell{padding:12px}.brand p{display:none}.file-name{max-width:180px}.settings-grid{grid-template-columns:1fr}.toolbar{align-items:flex-start}.toolbar>*{max-width:100%}th.time,td.time{width:128px}th.num,td.num{width:42px}.panel-actions{margin-left:auto}}
+.word-format-toggles{display:flex;gap:6px}.word-format-toggle{min-width:40px;padding:6px 12px;font-size:15px}.word-format-toggle[aria-pressed="true"]{background:#245346;border-color:#367b66;color:#fff}.word-style-help{font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}.agent-preset-row{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid #2a394c;padding-top:9px}.agent-preset-row select{flex:1;min-width:150px;background:#09111b;border:1px solid #34455a;border-radius:6px;color:var(--text);padding:8px}.color-text-input{font-family:var(--mono);font-weight:700}.color-picker-popover{position:fixed;z-index:80;width:min(320px,calc(100vw - 20px));padding:11px;border:1px solid #496079;border-radius:12px;background:#111a28;box-shadow:0 18px 55px #000a}.color-picker-tabs{display:flex;gap:5px;margin-bottom:9px}.color-picker-tabs button{flex:1;min-width:0;padding:7px 4px;font-size:12px}.color-picker-tabs button.active{background:#245346;border-color:#367b66}.color-swatches{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin-bottom:10px}.color-swatch{height:22px;padding:0;border:1px solid #ffffff40;border-radius:5px;min-width:0}.color-picker-content{display:grid;gap:9px}.sv-pad{height:142px;border:1px solid #ffffff55;border-radius:6px;touch-action:none;cursor:crosshair}.color-range{display:grid;grid-template-columns:62px 1fr 38px;gap:8px;align-items:center;font-size:11px;color:#c0cede}.color-range input{width:100%;min-width:0;padding:0;accent-color:#76e4c1}.color-range output{text-align:right;font-family:var(--mono)}.color-picker-preview{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px}.color-picker-preview span{width:24px;height:18px;border:1px solid #ffffff55;border-radius:4px}.editor-context-menu{position:fixed;z-index:90;min-width:230px;max-width:min(320px,calc(100vw - 20px));max-height:min(75vh,620px);overflow:auto;padding:5px;border:1px solid #455972;border-radius:10px;background:#101927;box-shadow:0 18px 55px #000b}.editor-context-menu button{display:block;width:100%;text-align:left;padding:7px 10px;background:transparent;border-color:transparent;border-radius:6px;font-size:12px}.editor-context-menu button:hover{background:#26384d;border-color:#405773}.editor-context-menu .context-menu-heading{padding:8px 10px 3px;color:#91a5bd;font-size:10px;text-transform:uppercase;letter-spacing:.08em}.editor-context-menu .context-menu-separator{height:1px;background:#2e3d51;margin:5px 3px}.editor-context-menu .context-menu-footer{border-top:1px solid #2e3d51;margin-top:5px;padding-top:5px}.editor-context-menu button:disabled{opacity:.4;cursor:not-allowed}.color-picker-popover.hidden,.editor-context-menu.hidden{display:none!important}
 </style>
 </head>
 <body>
@@ -80,7 +81,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         <div id="lineTableWrap" class="table-wrap"><table><thead id="gridHead"><tr><th class="num">#</th><th class="time">Time</th><th>Lyric</th></tr></thead><tbody id="gridBody"><tr><td colspan="3" style="padding:30px;text-align:center;color:#91a1b5">Import an LRC, TTML, or TXT lyrics file.</td></tr></tbody></table></div>
         <div id="wordTimelineEditor" class="word-timeline-editor hidden">
           <div class="timeline-toolbar">
-            <div class="timeline-toolbar-group"><button id="zoomOut" class="small" aria-label="Zoom out line detail">−</button><button id="zoomIn" class="small" aria-label="Zoom in line detail">+</button><button id="zoomFit" class="small" title="Fit the longest lyric line across the lane with configured edge context">Fit lines</button><span id="timelineZoomLabel" class="timeline-zoom-label">Fit longest line</span></div>
+            <div class="timeline-toolbar-group"><button id="zoomOut" class="small" aria-label="Zoom out line detail">−</button><button id="zoomIn" class="small" aria-label="Zoom in line detail">+</button><button id="zoomFit" class="small" title="Fit the longest lyric line across the lane with configured edge context">Fit lines</button><button id="addWord" class="small" title="Add a timed word cue (F)">+ Word</button><span id="timelineZoomLabel" class="timeline-zoom-label">Fit longest line</span></div>
             <div class="timeline-toolbar-group"><span class="timeline-help">Each row wraps its waveform above its words. Ctrl + wheel zooms around the cursor; drag the red playhead or left-drag the waveform to seek; middle-drag pans within this line's edge context. Drag the empty word track to box-select this line, or Shift-drag an empty lane/waveform to select across lines. Drag any selected word to move the group; Shift-drag snaps first to the playhead, then to the adaptive time grid. Hold Shift while dragging a word's start or end handle to snap that specific edge using the same behavior. Ctrl+A selects this line's words; Ctrl+Shift+A selects all words.</span></div>
             <span id="waveformStatus" class="timeline-zoom-label">Waveform waits for audio</span>
           </div>
@@ -97,10 +98,10 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
               <div class="word-inspector-field"><label for="wordEnd">End</label><input id="wordEnd" type="text" inputmode="decimal" aria-label="Selected word end timestamp"></div>
               <div class="word-inspector-field word-inspector-text"><label for="wordText">Word / text</label><input id="wordText" type="text" aria-label="Selected word text"></div>
               <div class="word-inspector-field"><label for="wordAgent">Singer / agent</label><input id="wordAgent" type="text" aria-label="Selected word singer agent"></div>
-              <div class="word-inspector-field"><label for="wordStyle">Style ref</label><input id="wordStyle" type="text" aria-label="Selected word style reference"></div>
-              <div class="word-inspector-field"><label for="wordFontStyle">Font style</label><select id="wordFontStyle"><option value="">Default</option><option value="normal">Normal</option><option value="italic">Italic</option><option value="oblique">Oblique</option></select></div>
-              <div class="word-inspector-field"><label for="wordFontWeight">Font weight</label><select id="wordFontWeight"><option value="">Default</option><option value="normal">Normal</option><option value="bold">Bold</option><option value="700">700</option><option value="800">800</option></select></div>
-              <div class="word-inspector-field"><label for="wordColor">Text color</label><input id="wordColor" type="text" placeholder="#ffffff" aria-label="Selected word text color"></div>
+              <div class="word-inspector-field"><label for="wordStyle">TTML style ref <span class="word-style-help" title="A TTML style ID references styling definitions; it is separate from the singer/agent metadata.">ⓘ</span></label><input id="wordStyle" type="text" aria-label="Selected word TTML style reference" title="TTML style references point to styling definitions; singer/agent is separate metadata."></div>
+              <div class="word-inspector-field"><label>Emphasis</label><div class="word-format-toggles"><button type="button" id="wordItalicToggle" class="word-format-toggle" aria-label="Italic" aria-pressed="false" title="Italic (I)"><em>I</em></button><button type="button" id="wordBoldToggle" class="word-format-toggle" aria-label="Bold" aria-pressed="false" title="Bold (B)"><strong>B</strong></button></div><input id="wordFontStyle" type="hidden" value=""><input id="wordFontWeight" type="hidden" value=""></div>
+              <div class="word-inspector-field"><label for="wordColor">Text color</label><input id="wordColor" class="color-text-input" type="text" placeholder="#ffffff" aria-label="Selected word text color" autocomplete="off"></div>
+              <div class="agent-preset-row"><label for="agentPresetSelect">Agent preset</label><select id="agentPresetSelect"><option value="">Apply saved preset…</option></select><button type="button" id="saveAgentPreset" class="small">+ New preset</button></div>
             </div>
           </div>
         </div>
@@ -137,6 +138,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   <div class="drop-card"><div class="drop-icon">↧</div><h2>Drop files to load them</h2><p>Drop an audio file and a lyric file together, or drop either one independently. Audio and lyrics stay on this computer.</p><p class="drop-types">Audio: FLAC · MP3 · WAV · M4A · OGG · OPUS<br>Lyrics: LRC · TTML · XML · TXT</p></div>
 </div>
 <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+<div id="editorContextMenu" class="editor-context-menu hidden" role="menu" aria-label="Editor context menu"></div>
+<div id="colorPickerPopover" class="color-picker-popover hidden" role="dialog" aria-label="Text color picker"><div class="color-picker-tabs" role="tablist"><button type="button" data-color-tab="palette" class="active" role="tab" aria-selected="true">Palette</button><button type="button" data-color-tab="hsv" role="tab" aria-selected="false">HSV</button><button type="button" data-color-tab="rgb" role="tab" aria-selected="false">RGB</button></div><div id="colorSwatches" class="color-swatches" aria-label="Preset colors"></div><div id="colorPickerContent" class="color-picker-content"></div><div class="color-picker-preview"><span id="colorPreviewSwatch"></span><output id="colorPreviewHex">#ffffff</output></div></div>
 <script>
 (() => {
   'use strict';
@@ -173,6 +176,12 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   let timelineTrackWidth = 600;
   let timelineGeometryReady = false;
   let selectedWordKeys = new Set();
+  let agentPresets = [];
+  try { agentPresets = JSON.parse(localStorage.getItem('savant-agent-presets') || '[]'); if(!Array.isArray(agentPresets))agentPresets=[]; } catch (_) { agentPresets=[]; }
+  let colorPickerTab = 'palette';
+  let colorPickerHistoryBefore = null;
+  let editorClipboard = null;
+  let contextMenuTarget = null;
   let marqueeState = null;
   let suppressTimelineClick = false;
   let waveformBuildToken = 0;
@@ -504,6 +513,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     $('viewWords').disabled=!hasWordTiming;
     $('addLine').disabled=gridMode==='words';
     $('deleteLine').disabled=gridMode==='words';
+    $('addWord').classList.toggle('hidden',gridMode!=='words');
+    $('addWord').disabled=gridMode!=='words'||!hasWordTiming;
     renderGrid();
     if(gridMode==='words'){
       const refs=allWordRefs();
@@ -550,6 +561,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     // value when the selected cue changes, otherwise the old word's text or
     // style appears to be carried over to the new word.
     for(const [id,value] of Object.entries(values)){const el=$(id);if(el&&(changedWord||document.activeElement!==el))el.value=value;}
+    const colorInput=$('wordColor');if(colorInput)colorInput.style.color=safeCssColor(cue.color)||'var(--text)';
+    syncFormatToggleUI(cue);
     wordInspectorShownKey=key;
     const active=document.activeElement;
     if(changedWord&&active instanceof HTMLElement&&active.closest('#wordInspector')&&wordInspectorFieldIds.includes(active.id))active.blur();
@@ -585,7 +598,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${lineIndex}"][data-cue-index="${cueIndex}"]`);
     const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`);
     const windowStart=Number(lane?.dataset.windowStart)||0,pps=Number(lane?.dataset.pps)||timelinePps;
-    if(clip&&cue){clip.style.left=`${(cue.start-windowStart)*pps}px`;clip.style.width=`${Math.max(12,(cue.end-cue.start)*pps)}px`;clip.title=`${String(cue.text||'').trim()} · ${fmtTime(cue.start)}–${fmtTime(cue.end)}${cue.agent?' · '+cue.agent:''}`;}
+    if(clip&&cue){clip.style.left=`${(cue.start-windowStart)*pps}px`;clip.style.width=`${Math.max(12,(cue.end-cue.start)*pps)}px`;clip.title=`${String(cue.text||'').trim()} · ${fmtTime(cue.start)}–${fmtTime(cue.end)}${cue.agent?' · '+cue.agent:''}`;clip.style.color=safeCssColor(cue.color)||'';clip.classList.toggle('singer-italic',['italic','oblique'].includes(String(cue.ttsStyle||'').toLowerCase()));clip.classList.toggle('singer-bold',['bold','bolder','700','800','900'].includes(String(cue.ttsWeight||'').toLowerCase()));}
     const label=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-label`);
     if(label&&row){const timeSpan=label.querySelector('.lane-start');if(timeSpan)timeSpan.textContent=fmtTime(row.start,2);}
   }

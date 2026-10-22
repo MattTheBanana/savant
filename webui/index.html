@@ -81,7 +81,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         <div id="wordTimelineEditor" class="word-timeline-editor hidden">
           <div class="timeline-toolbar">
             <div class="timeline-toolbar-group"><button id="zoomOut" class="small" aria-label="Zoom out line detail">−</button><button id="zoomIn" class="small" aria-label="Zoom in line detail">+</button><button id="zoomFit" class="small" title="Fit the longest lyric line across the lane with configured edge context">Fit lines</button><span id="timelineZoomLabel" class="timeline-zoom-label">Fit longest line</span></div>
-            <div class="timeline-toolbar-group"><span class="timeline-help">Each row wraps its waveform above its words. Ctrl + wheel zooms around the cursor; drag the red playhead or left-drag the waveform to seek; middle-drag pans within this line's edge context. Drag the empty word track to box-select this line, or Shift-drag an empty lane/waveform to select across lines. Drag any selected word to move the group; Shift-drag snaps first to the playhead, then to the adaptive time grid. Ctrl+A selects this line's words; Ctrl+Shift+A selects all words.</span></div>
+            <div class="timeline-toolbar-group"><span class="timeline-help">Each row wraps its waveform above its words. Ctrl + wheel zooms around the cursor; drag the red playhead or left-drag the waveform to seek; middle-drag pans within this line's edge context. Drag the empty word track to box-select this line, or Shift-drag an empty lane/waveform to select across lines. Drag any selected word to move the group; Shift-drag snaps first to the playhead, then to the adaptive time grid. Hold Shift while dragging a word's start or end handle to snap that specific edge using the same behavior. Ctrl+A selects this line's words; Ctrl+Shift+A selects all words.</span></div>
             <span id="waveformStatus" class="timeline-zoom-label">Waveform waits for audio</span>
           </div>
           <div id="timelineViewport" class="timeline-viewport" aria-label="Wrapped word timing timeline">
@@ -129,7 +129,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       <div class="setting"><label for="dragAutoScrollSpeed">Word-drag edge scroll speed (px/sec)</label><input id="dragAutoScrollSpeed" type="number" min="40" max="1600" step="20" value="320"><p>How quickly the waveform view advances when dragging a word near or beyond a lane edge.</p></div>
       <div class="setting"><label for="downloadBase">Export filename suffix</label><select id="downloadBase"><option value="same">Use imported lyrics base name</option><option value="audio">Use audio base name</option></select><p>Controls the default downloaded filename.</p></div>
     </div>
-    <p class="settings-note">Ctrl+Z undoes the last lyric edit and Ctrl+Y redoes it (Ctrl+Shift+Z also redoes). Keyboard behavior: Space starts/pauses playback when focus is outside an editable text cell; Ctrl+Space pauses and returns the playhead to the position it was at before playback started. When a lyric text field is focused, Space and all arrow keys remain normal text-editing keys. In TTML mode, drag the empty word track to box-select within the current line; Shift-drag empty lane/waveform space to box-select across lines. Drag any selected word to move the whole selection; Ctrl-drag a selected word moves only that word. Shift-drag snaps the selection edge first to the playhead when close, otherwise to adaptive timeline grid marks (10s, 5s, 1s, 0.5s, 0.1s, 0.05s, or 0.01s intervals selected automatically for the current zoom). In TTML words view, Ctrl+A selects words on the current line and Ctrl+Shift+A selects all word cues; in editable line text, Ctrl+A still selects only that text line. Click empty word-track space to deselect; dragging there box-selects. Drag the red playhead or left-drag the waveform to seek; the translucent markers show where the playhead time falls in overlapping line windows. Middle-drag pans only within each line's configured edge context. Ctrl+mouse wheel zooms at the cursor and redraws at most once per animation frame. While dragging a word near a lane edge, the view auto-scrolls at the configured speed. In TTML mode, Shift+←/→ moves the playhead to the nearest word boundary; plain ←/→ nudges a selected word or seeks in small increments if no word is selected.</p>
+    <p class="settings-note">Ctrl+Z undoes the last lyric edit and Ctrl+Y redoes it (Ctrl+Shift+Z also redoes). Keyboard behavior: Space starts/pauses playback when focus is outside an editable text cell; Ctrl+Space pauses and returns the playhead to the position it was at before playback started. When a lyric text field is focused, Space and all arrow keys remain normal text-editing keys. In TTML mode, drag the empty word track to box-select within the current line; Shift-drag empty lane/waveform space to box-select across lines. Drag any selected word to move the whole selection; Ctrl-drag a selected word moves only that word. Shift-drag snaps the selection edge first to the playhead when close, otherwise to adaptive timeline grid marks. Shift-drag a word's start/end handle to resize and snap that edge in the same way (10s, 5s, 1s, 0.5s, 0.1s, 0.05s, or 0.01s intervals selected automatically for the current zoom). In TTML words view, Ctrl+A selects words on the current line and Ctrl+Shift+A selects all word cues; in editable line text, Ctrl+A still selects only that text line. Click empty word-track space to deselect; dragging there box-selects. Drag the red playhead or left-drag the waveform to seek; the translucent markers show where the playhead time falls in overlapping line windows. Middle-drag pans only within each line's configured edge context. Ctrl+mouse wheel zooms at the cursor and redraws at most once per animation frame. While dragging a word near a lane edge, the view auto-scrolls at the configured speed. In TTML mode, Shift+←/→ moves the playhead to the nearest word boundary; plain ←/→ nudges a selected word or seeks in small increments if no word is selected.</p>
   </section>
   <p class="footer-note">Audio and lyric files are opened locally by your browser. This app does not upload them. Press <span class="shortcut">Esc</span> to leave a lyric text field and return to keyboard navigation.</p>
 </main>
@@ -770,7 +770,24 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const row=rows[d.lineIndex],cue=row?.wordCues?.[d.cueIndex];if(!cue)return;
     let delta=(d.lastClientX-d.startX)/Math.max(1,d.pps)+(d.autoDelta||0);
     d.snapUsed=false;d.snapTarget='';
-    if(d.mode==='move'&&d.snapToPlayhead&&d.items.length){
+    if(d.snapToPlayhead&&(d.mode==='start'||d.mode==='end')){
+      // When resizing, magnetize only the edge the user is dragging.
+      const edge=d.mode,rawEdge=(edge==='start'?d.origStart:d.origEnd)+delta;
+      const playhead=Number(player.currentTime)||0;
+      const threshold=Math.max(.004,Math.min(.12,10/Math.max(1,d.pps)));
+      const playheadDelta=playhead-rawEdge;
+      if(Math.abs(playheadDelta)<=threshold){
+        delta+=playheadDelta;d.snapUsed=true;d.snapTarget='playhead';d.gridSnapEdge='';
+      }else{
+        const interval=Number(d.gridInterval)||timelineGridInterval(d.pps);
+        const gridTarget=Math.round(rawEdge/interval)*interval,gridDelta=gridTarget-rawEdge;
+        const remainsLatched=d.gridSnapEdge===edge&&Math.abs(gridDelta)<=threshold*1.35;
+        if(Math.abs(gridDelta)<=threshold||remainsLatched){
+          delta+=gridDelta;d.snapUsed=true;d.snapTarget='grid';d.gridSnapEdge=edge;
+        }else d.gridSnapEdge='';
+      }
+      d.snapSide=null;
+    }else if(d.mode==='move'&&d.snapToPlayhead&&d.items.length){
       const playhead=Number(player.currentTime)||0;
       const rawMinStart=Math.min(...d.items.map(item=>item.start))+delta;
       const rawMaxEnd=Math.max(...d.items.map(item=>item.end))+delta;
@@ -840,23 +857,22 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     clip.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();selectWord(lineIndex,cueIndex,false);$('wordText').focus();}});
     clip.addEventListener('pointerdown',e=>{
       if(e.button!==0)return;
-      const key=wordKey(lineIndex,cueIndex),shiftDrag=e.shiftKey,ctrlDrag=(e.ctrlKey||e.metaKey)&&selectedWordKeys.has(key)&&selectedWordKeys.size>1;
-      if(shiftDrag){
-        // Shift-click extends selection; Shift-drag also enables playhead snap.
+      const key=wordKey(lineIndex,cueIndex),shiftDrag=e.shiftKey,edge=e.target instanceof HTMLElement?e.target.dataset.resize:'',ctrlDrag=(e.ctrlKey||e.metaKey)&&selectedWordKeys.has(key)&&selectedWordKeys.size>1;
+      if(shiftDrag&&!edge){
+        // Shift-click extends selection; Shift-drag a word body also enables playhead snap.
         if(!selectedWordKeys.has(key))selectWord(lineIndex,cueIndex,false,true,false);
         else{selectedIndex=lineIndex;selectedWordRef={lineIndex,cueIndex};lastEditedIndex=lineIndex;updateWordInspector();}
       }else if(!selectedWordKeys.has(key))selectWord(lineIndex,cueIndex,false);
       else{selectedIndex=lineIndex;selectedWordRef={lineIndex,cueIndex};lastEditedIndex=lineIndex;updateWordInspector();}
       const row=rows[lineIndex],cue=row?.wordCues?.[cueIndex];if(!cue)return;
-      const edge=e.target instanceof HTMLElement?e.target.dataset.resize:'';
-      const groupKeys=shiftDrag?[...selectedWordKeys]:(!ctrlDrag&&selectedWordKeys.has(key)&&selectedWordKeys.size>1&&edge===''?[...selectedWordKeys]:[key]);
+      const groupKeys=edge?[key]:(shiftDrag?[...selectedWordKeys]:(!ctrlDrag&&selectedWordKeys.has(key)&&selectedWordKeys.size>1?[...selectedWordKeys]:[key]));
       const items=groupKeys.map(k=>{const ref=parseWordKey(k),c=rows[ref.lineIndex]?.wordCues?.[ref.cueIndex];return c?{...ref,start:c.start,end:c.end}:null;}).filter(Boolean);
       const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`);
       const pps=Number(lane?.dataset.pps)||timelinePps;
       const playheadTime=Number(player.currentTime)||0,itemMin=Math.min(...items.map(item=>item.start)),itemMax=Math.max(...items.map(item=>item.end));
       const initialSnapSide=itemMax<=playheadTime?'end':itemMin>=playheadTime?'start':Math.abs(playheadTime-itemMax)<=Math.abs(itemMin-playheadTime)?'end':'start';
-      wordDragState={pointerId:e.pointerId,lineIndex,cueIndex,mode:shiftDrag?'pending':edge==='start'?'start':edge==='end'?'end':'move',startX:e.clientX,lastClientX:e.clientX,downX:e.clientX,downY:e.clientY,origStart:cue.start,origEnd:cue.end,pps,gridInterval:Number(lane?.querySelector('.timeline-grid-overlay')?.dataset.interval)||timelineGridInterval(pps),items,groupMove:items.length>1,changed:false,historyBefore:captureHistoryState(),autoDelta:0,lastAutoTime:performance.now(),snapToPlayhead:shiftDrag,snapSide:shiftDrag?initialSnapSide:null,initialSnapSide,snapUsed:false,snapTarget:''};
-      clip.setPointerCapture?.(e.pointerId);if(!shiftDrag&&!autoScrollFrame)autoScrollFrame=requestAnimationFrame(runDragAutoScroll);e.preventDefault();
+      wordDragState={pointerId:e.pointerId,lineIndex,cueIndex,mode:edge==='start'?'start':edge==='end'?'end':shiftDrag?'pending':'move',startX:e.clientX,lastClientX:e.clientX,downX:e.clientX,downY:e.clientY,origStart:cue.start,origEnd:cue.end,pps,gridInterval:Number(lane?.querySelector('.timeline-grid-overlay')?.dataset.interval)||timelineGridInterval(pps),items,groupMove:items.length>1,changed:false,historyBefore:captureHistoryState(),autoDelta:0,lastAutoTime:performance.now(),snapToPlayhead:shiftDrag,snapSide:shiftDrag?initialSnapSide:null,initialSnapSide,snapUsed:false,snapTarget:''};
+      clip.setPointerCapture?.(e.pointerId);if((!shiftDrag||edge)&&!autoScrollFrame)autoScrollFrame=requestAnimationFrame(runDragAutoScroll);e.preventDefault();
     });
     clip.addEventListener('pointermove',e=>{
       const d=wordDragState;if(!d||d.pointerId!==e.pointerId||d.lineIndex!==lineIndex||d.cueIndex!==cueIndex)return;

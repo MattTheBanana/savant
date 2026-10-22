@@ -34,9 +34,10 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .timeline-lane-content{position:relative;display:grid;grid-template-rows:66px 50px;min-width:0;width:100%;overflow:hidden;border-bottom:1px solid #2a3748}
 .lane-waveform-wrapper{height:66px;position:relative;overflow:hidden;background:linear-gradient(180deg,#101b28,#0c1520);border-bottom:1px solid #354359}
 .lane-waveform-canvas{display:block;width:100%;height:66px;pointer-events:auto;cursor:crosshair}
-.lane-word-track{position:relative;min-width:0;width:100%;height:50px;overflow:hidden;background-image:linear-gradient(90deg,#27334488 1px,transparent 1px);background-size:var(--grid-step,35px) 100%;cursor:crosshair}
+.lane-word-track{position:relative;min-width:0;width:100%;height:50px;overflow:hidden;background:transparent;cursor:crosshair}
+.timeline-grid-overlay{position:absolute;inset:0;pointer-events:none;z-index:1;background-image:linear-gradient(90deg,#384d6455 1px,transparent 1px),linear-gradient(90deg,#7e99b866 1px,transparent 1px);background-repeat:repeat-x}
 .lane-word-track:before{content:'';position:absolute;left:0;right:0;top:24px;border-top:1px solid #243347;pointer-events:none}
-.word-clip{position:absolute;top:7px;height:35px;min-width:12px;border:1px solid #4c7891;border-radius:6px;background:linear-gradient(180deg,#2a5265,#1b384b);color:#edf7ff;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden;padding:0 5px;font-size:12px;line-height:1.2;cursor:grab;user-select:none;touch-action:none;box-shadow:0 2px 4px #0003}
+.word-clip{position:absolute;top:7px;height:35px;min-width:12px;border:1px solid #4c7891;border-radius:6px;background:linear-gradient(180deg,#2a5265,#1b384b);color:#edf7ff;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden;padding:0 5px;font-size:12px;line-height:1.2;cursor:grab;user-select:none;touch-action:none;z-index:2;box-shadow:0 2px 4px #0003}
 .word-clip:hover{border-color:#89c8e4;background:linear-gradient(180deg,#32647a,#214457);z-index:3}.word-clip:focus-visible{outline:2px solid var(--accent);outline-offset:1px;z-index:4}.word-clip.selected{border:2px solid var(--accent);background:linear-gradient(180deg,#256d63,#1b4e4a);z-index:4;box-shadow:0 0 0 2px #76e4c122}
 .word-clip.playing-word-row{border-color:#e8d28c;background:linear-gradient(180deg,#9b7a2c,#765a20);color:#fff7dd;box-shadow:0 0 0 2px #f1cc6130;z-index:5;font-weight:850}.word-clip.playing-word-row.selected{border-color:#fff0b8;box-shadow:0 0 0 2px #f1cc6155}
 .word-clip.singer-italic{font-style:italic}.word-clip.singer-bold{font-weight:800}.word-clip .word-label{overflow:hidden;text-overflow:ellipsis;min-width:0;padding:0 2px;pointer-events:none}
@@ -78,7 +79,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         <div id="wordTimelineEditor" class="word-timeline-editor hidden">
           <div class="timeline-toolbar">
             <div class="timeline-toolbar-group"><button id="zoomOut" class="small" aria-label="Zoom out line detail">−</button><button id="zoomIn" class="small" aria-label="Zoom in line detail">+</button><button id="zoomFit" class="small" title="Fit the longest lyric line across the lane with configured edge context">Fit lines</button><span id="timelineZoomLabel" class="timeline-zoom-label">Fit longest line</span></div>
-            <div class="timeline-toolbar-group"><span class="timeline-help">Each row wraps its waveform above its words. Ctrl + wheel zooms around the cursor; drag the red playhead or left-drag the waveform to seek; middle-drag pans within this line's edge context. Drag the empty word track to box-select this line, or Shift-drag an empty lane/waveform to select across lines. Drag a selected word to move the group; Shift-drag a word to snap the selection to the playhead.</span></div>
+            <div class="timeline-toolbar-group"><span class="timeline-help">Each row wraps its waveform above its words. Ctrl + wheel zooms around the cursor; drag the red playhead or left-drag the waveform to seek; middle-drag pans within this line's edge context. Drag the empty word track to box-select this line, or Shift-drag an empty lane/waveform to select across lines. Drag any selected word to move the group; Shift-drag snaps first to the playhead, then to the adaptive time grid. Ctrl+A selects this line's words; Ctrl+Shift+A selects all words.</span></div>
             <span id="waveformStatus" class="timeline-zoom-label">Waveform waits for audio</span>
           </div>
           <div id="timelineViewport" class="timeline-viewport" aria-label="Wrapped word timing timeline">
@@ -126,7 +127,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       <div class="setting"><label for="dragAutoScrollSpeed">Word-drag edge scroll speed (px/sec)</label><input id="dragAutoScrollSpeed" type="number" min="40" max="1600" step="20" value="320"><p>How quickly the waveform view advances when dragging a word near or beyond a lane edge.</p></div>
       <div class="setting"><label for="downloadBase">Export filename suffix</label><select id="downloadBase"><option value="same">Use imported lyrics base name</option><option value="audio">Use audio base name</option></select><p>Controls the default downloaded filename.</p></div>
     </div>
-    <p class="settings-note">Keyboard behavior: Space starts/pauses playback when focus is outside an editable text cell. When a lyric text field is focused, Space and all arrow keys remain normal text-editing keys. In TTML mode, drag the empty word track to box-select within the current line; Shift-drag empty lane/waveform space to box-select across lines. Drag any selected word to move the whole selection; Ctrl-drag a selected word moves only that word. Shift-drag a word or selection to snap its near edge to the red playhead, switching edges after the selection crosses it. Drag the red playhead or left-drag the waveform to seek; the translucent markers show where the playhead time falls in overlapping line windows. Middle-drag pans only within each line's configured edge context. Ctrl+mouse wheel zooms at the cursor and redraws at most once per animation frame. While dragging a word near a lane edge, the view auto-scrolls at the configured speed. In TTML mode, Shift+←/→ moves the playhead to the nearest word boundary; plain ←/→ nudges a selected word or seeks in small increments if no word is selected. In line text, Ctrl+A selects only that line.</p>
+    <p class="settings-note">Keyboard behavior: Space starts/pauses playback when focus is outside an editable text cell. When a lyric text field is focused, Space and all arrow keys remain normal text-editing keys. In TTML mode, drag the empty word track to box-select within the current line; Shift-drag empty lane/waveform space to box-select across lines. Drag any selected word to move the whole selection; Ctrl-drag a selected word moves only that word. Shift-drag snaps the selection edge first to the playhead when close, otherwise to adaptive timeline grid marks (10s, 5s, 1s, 0.5s, 0.1s, 0.05s, or 0.01s intervals selected automatically for the current zoom). In TTML words view, Ctrl+A selects words on the current line and Ctrl+Shift+A selects all word cues; in editable line text, Ctrl+A still selects only that text line. Click empty word-track space to deselect; dragging there box-selects. Drag the red playhead or left-drag the waveform to seek; the translucent markers show where the playhead time falls in overlapping line windows. Middle-drag pans only within each line's configured edge context. Ctrl+mouse wheel zooms at the cursor and redraws at most once per animation frame. While dragging a word near a lane edge, the view auto-scrolls at the configured speed. In TTML mode, Shift+←/→ moves the playhead to the nearest word boundary; plain ←/→ nudges a selected word or seeks in small increments if no word is selected.</p>
   </section>
   <p class="footer-note">Audio and lyric files are opened locally by your browser. This app does not upload them. Press <span class="shortcut">Esc</span> to leave a lyric text field and return to keyboard navigation.</p>
 </main>
@@ -263,25 +264,55 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const pNodes=byLocal(doc,'p');
     const head=byLocal(doc,'head')[0];
     const headInner=head?[...head.childNodes].map(n=>new XMLSerializer().serializeToString(n)).join(''):'';
+    const styleNodes=new Map(byLocal(doc,'style').map(node=>[
+      node.getAttributeNS('http://www.w3.org/XML/1998/namespace','id')||node.getAttribute('xml:id')||node.getAttribute('id'),
+      node
+    ]).filter(([id])=>id));
+    const styleProps=['fontStyle','fontWeight','color'];
+    const styleRefs=node=>(node.getAttribute('style')||'').trim().split(/\s+/).filter(Boolean);
+    const ttsValue=(node,name)=>node.getAttributeNS('http://www.w3.org/ns/ttml#styling',name)||node.getAttribute('tts:'+name)||'';
+    const mergeStyles=(target,source)=>{for(const prop of styleProps)if(source[prop])target[prop]=source[prop];return target;};
+    function resolveStyleRef(id,trail=new Set()){
+      const node=styleNodes.get(id);if(!node||trail.has(id))return {};
+      const nextTrail=new Set(trail);nextTrail.add(id);const resolved={};
+      for(const ref of styleRefs(node))mergeStyles(resolved,resolveStyleRef(ref,nextTrail));
+      for(const prop of styleProps){const value=ttsValue(node,prop);if(value)resolved[prop]=value;}
+      return resolved;
+    }
+    function resolvedNodeStyle(node,inherited={}){
+      const resolved={...inherited};
+      for(const ref of styleRefs(node))mergeStyles(resolved,resolveStyleRef(ref));
+      for(const prop of styleProps){const value=ttsValue(node,prop);if(value)resolved[prop]=value;}
+      return resolved;
+    }
     const out=[];
     for(const p of pNodes){
       const begin=p.getAttribute('begin')||p.getAttribute('start'); const start=parseTime(begin);
       if(start===null) continue;
       const rawText=(p.textContent||'').replace(/\s+/g,' ').trim(); if(!rawText) continue;
+      const lineAgent=p.getAttribute('ttm:agent')||p.getAttributeNS('http://www.w3.org/ns/ttml#metadata','agent')||'';
+      const lineStyle=p.getAttribute('style')||'';
+      const lineResolved=resolvedNodeStyle(p);
+      const lineFontStyle=lineResolved.fontStyle||'';
+      const lineFontWeight=lineResolved.fontWeight||'';
+      const lineColor=lineResolved.color||'';
       const children=[...p.children].filter(n=>n.localName.toLowerCase()==='span');
-      let cues=children.map(span=>{
+      const cues=children.map(span=>{
         const txt=(span.textContent||''); if(!txt) return null;
-        let a=parseTime(span.getAttribute('begin')), b=parseTime(span.getAttribute('end'));
+        const a=parseTime(span.getAttribute('begin')), b=parseTime(span.getAttribute('end'));
         // Child cue times in this tool's TTML exports are expressed on the global timeline.
-        if(a!==null && b!==null && b>a) return {text:txt,start:a,end:b,agent:span.getAttribute('ttm:agent')||span.getAttributeNS('http://www.w3.org/ns/ttml#metadata','agent')||'',style:span.getAttribute('style')||'',ttsStyle:span.getAttribute('tts:fontStyle')||'',ttsWeight:span.getAttribute('tts:fontWeight')||'',color:span.getAttribute('tts:color')||''};
+        if(a!==null && b!==null && b>a){
+          const resolved=resolvedNodeStyle(span,lineResolved);
+          return {
+            text:txt,start:a,end:b,
+            agent:span.getAttribute('ttm:agent')||span.getAttributeNS('http://www.w3.org/ns/ttml#metadata','agent')||lineAgent,
+            style:span.getAttribute('style')||lineStyle,
+            ttsStyle:resolved.fontStyle||'',ttsWeight:resolved.fontWeight||'',color:resolved.color||''
+          };
+        }
         return null;
       }).filter(Boolean);
       const end=parseTime(p.getAttribute('end'));
-      const lineAgent=p.getAttribute('ttm:agent')||p.getAttributeNS('http://www.w3.org/ns/ttml#metadata','agent')||'';
-      const lineStyle=p.getAttribute('style')||'';
-      const lineFontStyle=p.getAttribute('tts:fontStyle')||'';
-      const lineFontWeight=p.getAttribute('tts:fontWeight')||'';
-      const lineColor=p.getAttribute('tts:color')||'';
       out.push(makeRow(start,rawText,{wordCues:cues.length?cues:null,rawEnd:end,lineAgent,lineStyle,lineFontStyle,lineFontWeight,lineColor}));
     }
     out.sort((a,b)=>a.start-b.start);
@@ -622,10 +653,15 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const s=String(value||'').trim();
     return /^(#[0-9a-f]{3,8}|rgba?\([\d\s.,%+-]+\)|hsla?\([\d\s.,%+-]+\)|[a-z]{3,20})$/i.test(s)?s:'';
   }
+  function timelineGridInterval(pps) {
+    const intervals=[10,5,1,.5,.1,.05,.01],scale=Math.max(1,Number(pps)||1);
+    return intervals.reduce((best,value)=>Math.abs(Math.log(Math.max(.001,value*scale)/72))<Math.abs(Math.log(Math.max(.001,best*scale)/72))?value:best,intervals[0]);
+  }
   function applyWordDragState(d) {
     if(d.mode==='pending')return;
     const row=rows[d.lineIndex],cue=row?.wordCues?.[d.cueIndex];if(!cue)return;
     let delta=(d.lastClientX-d.startX)/Math.max(1,d.pps)+(d.autoDelta||0);
+    d.snapUsed=false;d.snapTarget='';
     if(d.mode==='move'&&d.snapToPlayhead&&d.items.length){
       const playhead=Number(player.currentTime)||0;
       const rawMinStart=Math.min(...d.items.map(item=>item.start))+delta;
@@ -636,8 +672,16 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       if(d.snapSide==='end'&&rawMinStart>=playhead)d.snapSide='start';
       else if(d.snapSide==='start'&&rawMaxEnd<=playhead)d.snapSide='end';
       const edge=d.snapSide==='end'?rawMaxEnd:rawMinStart;
-      const threshold=Math.max(.025,Math.min(.12,8/Math.max(1,d.pps)));
-      if(Math.abs(playhead-edge)<=threshold){delta+=playhead-edge;d.snapUsed=true;}
+      const threshold=Math.max(.004,Math.min(.12,10/Math.max(1,d.pps)));
+      const playheadDelta=playhead-edge;
+      // The playhead is the strongest snap target. Only fall back to the
+      // adaptive time grid when the playhead is outside the magnetic range.
+      if(Math.abs(playheadDelta)<=threshold){delta+=playheadDelta;d.snapUsed=true;d.snapTarget='playhead';}
+      else{
+        const interval=Number(d.gridInterval)||timelineGridInterval(d.pps);
+        const gridTarget=Math.round(edge/interval)*interval,gridDelta=gridTarget-edge;
+        if(Math.abs(gridDelta)<=threshold){delta+=gridDelta;d.snapUsed=true;d.snapTarget='grid';}
+      }
     }else if(!d.snapToPlayhead)d.snapSide=null;
     if(d.mode==='start')cue.start=Math.max(0,Math.min(d.origEnd-.01,d.origStart+delta));
     else if(d.mode==='end')cue.end=Math.max(d.origStart+.01,d.origEnd+delta);
@@ -683,9 +727,10 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       const groupKeys=shiftDrag?[...selectedWordKeys]:(!ctrlDrag&&selectedWordKeys.has(key)&&selectedWordKeys.size>1&&edge===''?[...selectedWordKeys]:[key]);
       const items=groupKeys.map(k=>{const ref=parseWordKey(k),c=rows[ref.lineIndex]?.wordCues?.[ref.cueIndex];return c?{...ref,start:c.start,end:c.end}:null;}).filter(Boolean);
       const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`);
+      const pps=Number(lane?.dataset.pps)||timelinePps;
       const playheadTime=Number(player.currentTime)||0,itemMin=Math.min(...items.map(item=>item.start)),itemMax=Math.max(...items.map(item=>item.end));
       const initialSnapSide=itemMax<=playheadTime?'end':itemMin>=playheadTime?'start':Math.abs(playheadTime-itemMax)<=Math.abs(itemMin-playheadTime)?'end':'start';
-      wordDragState={pointerId:e.pointerId,lineIndex,cueIndex,mode:shiftDrag?'pending':edge==='start'?'start':edge==='end'?'end':'move',startX:e.clientX,lastClientX:e.clientX,downX:e.clientX,downY:e.clientY,origStart:cue.start,origEnd:cue.end,pps:Number(lane?.dataset.pps)||timelinePps,items,groupMove:items.length>1,changed:false,autoDelta:0,lastAutoTime:performance.now(),snapToPlayhead:shiftDrag,snapSide:shiftDrag?initialSnapSide:null,initialSnapSide,snapUsed:false};
+      wordDragState={pointerId:e.pointerId,lineIndex,cueIndex,mode:shiftDrag?'pending':edge==='start'?'start':edge==='end'?'end':'move',startX:e.clientX,lastClientX:e.clientX,downX:e.clientX,downY:e.clientY,origStart:cue.start,origEnd:cue.end,pps,gridInterval:Number(lane?.querySelector('.timeline-grid-overlay')?.dataset.interval)||timelineGridInterval(pps),items,groupMove:items.length>1,changed:false,autoDelta:0,lastAutoTime:performance.now(),snapToPlayhead:shiftDrag,snapSide:shiftDrag?initialSnapSide:null,initialSnapSide,snapUsed:false,snapTarget:''};
       clip.setPointerCapture?.(e.pointerId);if(!shiftDrag&&!autoScrollFrame)autoScrollFrame=requestAnimationFrame(runDragAutoScroll);e.preventDefault();
     });
     clip.addEventListener('pointermove',e=>{
@@ -698,8 +743,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     });
     const endDrag=e=>{
       if(!wordDragState||wordDragState.pointerId!==e.pointerId||wordDragState.lineIndex!==lineIndex||wordDragState.cueIndex!==cueIndex)return;
-      const d=wordDragState,changed=d.changed,wasGroupMove=d.groupMove,snapped=d.snapUsed;wordDragState=null;if(autoScrollFrame){cancelAnimationFrame(autoScrollFrame);autoScrollFrame=null;}
-      if(changed){lastEditedIndex=lineIndex;selectedIndex=lineIndex;replayFromAnchor=true;rerenderWordTimelinePreservingView();refreshWordSelection();updatePreview();updateStatus();updateLiveHighlight();updateWordInspector();toast(wasGroupMove?'Selected words shifted together.':snapped?'Word snapped to playhead.':'Word timing updated.');}
+      const d=wordDragState,changed=d.changed,wasGroupMove=d.groupMove,snapped=d.snapUsed,snapTarget=d.snapTarget;wordDragState=null;if(autoScrollFrame){cancelAnimationFrame(autoScrollFrame);autoScrollFrame=null;}
+      if(changed){lastEditedIndex=lineIndex;selectedIndex=lineIndex;replayFromAnchor=true;rerenderWordTimelinePreservingView();refreshWordSelection();updatePreview();updateStatus();updateLiveHighlight();updateWordInspector();toast(wasGroupMove?'Selected words shifted together.':snapped?(snapTarget==='grid'?'Word snapped to timeline grid.':'Word snapped to playhead.'):'Word timing updated.');}
     };
     clip.addEventListener('pointerup',endDrag);clip.addEventListener('pointercancel',endDrag);
   }
@@ -721,7 +766,12 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       const content=document.createElement('div');content.className='timeline-lane-content';content.style.width=`${timelineTrackWidth}px`;content.dataset.windowStart=String(win.start);content.dataset.windowEnd=String(win.end);content.dataset.pps=String(pps);
       const waveWrap=document.createElement('div');waveWrap.className='lane-waveform-wrapper';
       const canvas=document.createElement('canvas');canvas.className='lane-waveform-canvas';canvas.setAttribute('aria-label',`Waveform for line ${lineIndex+1}: ${row.text}`);canvas.dataset.lineIndex=String(lineIndex);waveWrap.append(canvas);drawLaneWaveform(canvas,win.start,win.end);
-      const track=document.createElement('div');track.className='lane-word-track';track.dataset.lineIndex=String(lineIndex);track.style.setProperty('--grid-step',`${Math.max(20,Math.min(100,Math.round(timelineTrackWidth/12)))}px`);
+      const track=document.createElement('div');track.className='lane-word-track';track.dataset.lineIndex=String(lineIndex);
+      const grid=document.createElement('div');grid.className='timeline-grid-overlay';grid.setAttribute('aria-hidden','true');
+      const gridInterval=timelineGridInterval(pps),gridPixels=gridInterval*pps;
+      grid.dataset.interval=String(gridInterval);
+      grid.style.backgroundSize=`${gridPixels}px 100%, ${gridPixels*5}px 100%`;
+      grid.style.backgroundPosition=`${-win.start*pps}px 0, ${-win.start*pps}px 0`;
       if(!row.wordCues||!row.wordCues.length){const note=document.createElement('div');note.className='word-clip no-cue';note.style.left=`${Math.max(0,(row.start-win.start)*pps)}px`;note.style.width=`${Math.min(timelineTrackWidth,Math.max(80,Math.min(400,row.text.length*7+30)))}px`;note.textContent=row.text||'(no timed words)';note.title='This line has no word-level timing cues';track.append(note);}
       else row.wordCues.forEach((cue,cueIndex)=>{
         cueCount++;const clip=document.createElement('div');clip.className='word-clip';clip.dataset.lineIndex=String(lineIndex);clip.dataset.cueIndex=String(cueIndex);clip.tabIndex=0;clip.setAttribute('role','button');clip.setAttribute('aria-label',`Line ${lineIndex+1}, word ${cueIndex+1}, ${String(cue.text||'').trim()}, ${fmtTime(cue.start)} to ${fmtTime(cue.end)}`);
@@ -736,13 +786,13 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         attachClipInteractions(clip,lineIndex,cueIndex);track.append(clip);
       });
       const playhead=document.createElement('div');playhead.className='lane-playhead visible';playhead.dataset.lineIndex=String(lineIndex);playhead.setAttribute('aria-hidden','true');const playheadHandle=document.createElement('span');playheadHandle.className='lane-playhead-handle';playheadHandle.setAttribute('aria-hidden','true');const playheadLabel=document.createElement('span');playheadLabel.className='lane-playhead-time';playhead.append(playheadHandle,playheadLabel);
-      content.append(waveWrap,track,playhead);lane.append(label,content);frag.append(lane);
+      content.append(waveWrap,track,grid,playhead);lane.append(label,content);frag.append(lane);
     }
     tbody.append(frag);$('gridStatus').textContent=`${rows.length} lyric lane(s) · ${cueCount} timed word(s) · box-select to shift multiple words`;
     $('wordInspector').classList.toggle('hidden',!cueForRef());updateWordInspector();refreshWordSelection();updateLiveHighlight();
   }
   function startMarquee(e,lineIndex=null) {
-    if(e.button!==0||(!e.shiftKey&&lineIndex===null)||e.target.closest('.word-clip'))return;
+    if(e.button!==0||(!e.shiftKey&&lineIndex===null)||e.target.closest('.word-clip:not(.no-cue)'))return;
     const content=e.target.closest('.timeline-lane-content');if(!content)return;
     marqueeState={pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,x:e.clientX,y:e.clientY,moved:false,lineIndex};
     $('timelineLanes').setPointerCapture?.(e.pointerId);e.preventDefault();
@@ -766,6 +816,12 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     function finishMarquee(e) {
     const m=marqueeState;if(!m||m.pointerId!==e.pointerId)return;marqueeState=null;$('timelineSelectionBox').classList.remove('visible');
     if(m.moved){suppressTimelineClick=true;setTimeout(()=>{suppressTimelineClick=false;},0);const first=[...selectedWordKeys][0];if(first){selectedWordRef=parseWordKey(first);selectedIndex=selectedWordRef.lineIndex;lastEditedIndex=selectedIndex;}else selectedWordRef=null;updateWordInspector();updateStatus();toast(`${selectedWordKeys.size} word(s) selected. Drag a selected clip or use arrow keys to shift the group.`);}
+    else if(m.lineIndex!==null){
+      // Pointer capture may retarget the synthetic click to the lane container.
+      // Clear here as well so a plain click in empty track space always deselects.
+      selectedWordKeys.clear();selectedWordRef=null;selectedIndex=m.lineIndex;lastEditedIndex=m.lineIndex;
+      refreshWordSelection();updateWordInspector();updateStatus();
+    }
   }
   function renderGrid() {
     $('viewWords').disabled=!hasWordTiming;
@@ -1111,7 +1167,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   $('timelineLanes').addEventListener('pointerdown',e=>{
     const marker=e.target.closest?.('.lane-playhead:not(.ghost)');
     if(e.button===0&&marker){startPlayheadDrag(e,marker);return;}
-    if(e.target.closest?.('.word-clip'))return;
+    if(e.target.closest?.('.word-clip:not(.no-cue)'))return;
     const track=e.target.closest?.('.lane-word-track');
     if(e.button===0&&track&&!e.shiftKey){startMarquee(e,Number(track.dataset.lineIndex));return;}
     if(e.button===0&&e.shiftKey){startMarquee(e);return;}
@@ -1131,7 +1187,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   $('timelineLanes').addEventListener('pointerup',e=>{finishMarquee(e);endWaveInteraction(e);});
   $('timelineLanes').addEventListener('pointercancel',e=>{finishMarquee(e);endWaveInteraction(e);});
   $('timelineLanes').addEventListener('click',e=>{
-    if(suppressTimelineClick){suppressTimelineClick=false;return;}if(e.target.closest('.word-clip')||e.target.closest('.lane-waveform-canvas'))return;
+    if(suppressTimelineClick){suppressTimelineClick=false;return;}if(e.target.closest('.word-clip:not(.no-cue)')||e.target.closest('.lane-waveform-canvas'))return;
     const track=e.target.closest('.lane-word-track');if(track){selectedWordKeys.clear();selectedWordRef=null;selectedIndex=Number(track.dataset.lineIndex);lastEditedIndex=selectedIndex;refreshWordSelection();updateWordInspector();updateStatus();return;}
     if(e.target.closest('.timeline-lane-content')){selectedWordKeys.clear();selectedWordRef=null;refreshWordSelection();updateWordInspector();updateStatus();}
   });
@@ -1161,6 +1217,16 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='a'&&editableLine){e.preventDefault();e.stopPropagation();const range=document.createRange();range.selectNodeContents(editableLine);const sel=window.getSelection();sel?.removeAllRanges();sel?.addRange(range);return;}
     if(formFocus)return;
     if(activeScreen()!=='edit')return;
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='a'&&gridMode==='words'){
+      e.preventDefault();e.stopPropagation();
+      const fallbackLine=selectedIndex>=0&&selectedIndex<rows.length?selectedIndex:lastEditedIndex>=0&&lastEditedIndex<rows.length?lastEditedIndex:0;
+      const currentLine=selectedWordRef?.lineIndex??fallbackLine;
+      const refs=e.shiftKey?allWordRefs():allWordRefs().filter(ref=>ref.lineIndex===currentLine);
+      selectedWordKeys=new Set(refs.map(ref=>wordKey(ref.lineIndex,ref.cueIndex)));
+      selectedWordRef=refs.length?{lineIndex:refs[0].lineIndex,cueIndex:refs[0].cueIndex}:null;
+      selectedIndex=selectedWordRef?.lineIndex??currentLine;lastEditedIndex=selectedIndex;
+      refreshWordSelection();updateWordInspector();updateStatus();return;
+    }
     if(e.key==='ArrowUp'){e.preventDefault();if(gridMode==='words')moveSelectedWord(-1);else setSelected(Math.max(0,selectedIndex-1),true);}
     else if(e.key==='ArrowDown'){e.preventDefault();if(gridMode==='words')moveSelectedWord(1);else setSelected(Math.min(rows.length-1,selectedIndex+1),true);}
     else if(e.key==='ArrowLeft'||e.key==='ArrowRight'){

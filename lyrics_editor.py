@@ -256,7 +256,13 @@ def _capability_snapshot() -> dict:
     tifa_root = ROOT / "vendor" / "TIFA"
     tifa_python = ROOT / ".tifa-venv" / "Scripts" / "python.exe"
     tifa_model = ROOT / "models" / "TIFA-1.0-ST"
-    tifa_ready = (tifa_root / "infer.py").is_file() and tifa_python.is_file() and tifa_model.is_dir()
+    tifa_model_ready = any(
+        candidate.suffix.lower() == ".pt"
+        and (candidate.parent / "config.yaml").is_file()
+        and (candidate.parent / "vocabulary.json").is_file()
+        for candidate in tifa_model.rglob("*.pt")
+    ) if tifa_model.is_dir() else False
+    tifa_ready = (tifa_root / "infer.py").is_file() and tifa_python.is_file() and tifa_model_ready
     installers = {
         "base": {"label": "Install base dependencies", "available": True,
                  "method": "script" if (ROOT / "install.bat").is_file() else "pip",

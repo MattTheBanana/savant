@@ -1499,8 +1499,24 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if(gridMode==='words'&&target?.type==='word'){addMenuSeparator(menu);addMenuHeading(menu,'Apply agent preset');if(agentPresets.length)agentPresets.forEach(p=>addContextAction(menu,p.name,()=>applyAgentPreset(p.id)));else{const empty=document.createElement('button');empty.type='button';empty.textContent='No saved presets yet';empty.disabled=true;menu.append(empty);}addContextAction(menu,'+ Save new agent preset…',saveAgentPreset,{footer:true,disabled:!cueForRef()});}
     menu.classList.remove('hidden');const x=Math.max(6,Math.min(event.clientX,innerWidth-menu.offsetWidth-6)),y=Math.max(6,Math.min(event.clientY,innerHeight-menu.offsetHeight-6));menu.style.left=`${x}px`;menu.style.top=`${y}px`;
   }
+  function editorTextOffset(root,node,offset){
+    if(!node||!root.contains(node))return root.textContent.length;
+    try{const range=document.createRange();range.selectNodeContents(root);range.setEnd(node,offset);return range.toString().length;}catch(_){return 0;}
+  }
+  function setEditorCaretAtTextOffset(root,offset){
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let node=walker.nextNode(),remaining=Math.max(0,offset),last=null;
+    while(node){last=node;if(remaining<=node.textContent.length){const range=document.createRange();range.setStart(node,remaining);range.collapse(true);const sel=window.getSelection();sel?.removeAllRanges();sel?.addRange(range);return;}remaining-=node.textContent.length;node=walker.nextNode();}
+    if(!last){last=document.createTextNode('');root.append(last);}const range=document.createRange();range.setStart(last,last.textContent.length);range.collapse(true);const sel=window.getSelection();sel?.removeAllRanges();sel?.addRange(range);
+  }
+  function replaceEditorTextRange(lineIndex,start,end,insertText){
+    const editor=$('gridBody').querySelector(`tr[data-index="${lineIndex}"] .lyric-editor`),row=rows[lineIndex];if(!editor||!row)return;
+    const old=editor.textContent.replace(/\u00a0/g,' '),a=Math.max(0,Math.min(old.length,start)),b=Math.max(a,Math.min(old.length,end)),next=old.slice(0,a)+insertText+old.slice(b);
+    editor.textContent=next;editor.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText',data:insertText}));
+    renderWordAwareEditor(editor,rows[lineIndex]);editor.focus();setEditorCaretAtTextOffset(editor,a+insertText.length);
+  }
   function copyContextTarget(){
     const target=contextMenuTarget;if(!target)return;
+    if(target.type==='text'&&target.selectionEnd>target.selectionStart){editorClipboard={kind:'text',text:target.selectionText||'',sourceLineIndex:target.lineIndex};toast('Copied selected lyric text.');return;}
     if(target.type==='word'&&gridMode==='words'){
       const refs=selectedWordKeys.has(wordKey(target.lineIndex,target.cueIndex))?[...selectedWordKeys].map(parseWordKey):[{lineIndex:target.lineIndex,cueIndex:target.cueIndex}];
       const cues=refs.map(ref=>{const cue=rows[ref.lineIndex]?.wordCues?.[ref.cueIndex];return cue?{...JSON.parse(JSON.stringify(cue)),sourceLineIndex:ref.lineIndex}:null;}).filter(Boolean).sort((a,b)=>a.start-b.start);
@@ -1510,10 +1526,17 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   }
   function cutContextTarget(){
     const target=contextMenuTarget;if(!target)return;copyContextTarget();if(!editorClipboard)return;
+    if(target.type==='text'&&target.selectionEnd>target.selectionStart){replaceEditorTextRange(target.lineIndex,target.selectionStart,target.selectionEnd,'');return;}
     if(editorClipboard.kind==='words'){const refs=selectedWordKeys.has(wordKey(target.lineIndex,target.cueIndex))?[...selectedWordKeys].map(parseWordKey):[{lineIndex:target.lineIndex,cueIndex:target.cueIndex}];deleteWordCues(refs);}else removeLineAt(target.lineIndex);
   }
   function pasteContextTarget(){
     if(!editorClipboard)return;
+    if(editorClipboard.kind==='text'){
+      const lineIndex=Number.isInteger(contextMenuTarget?.lineIndex)?contextMenuTarget.lineIndex:selectedIndex,editor=$('gridBody').querySelector(`tr[data-index="${lineIndex}"] .lyric-editor`);
+      if(!editor){toast('Select a lyric line to paste text into.',true);return;}
+      const isTextTarget=contextMenuTarget?.type==='text',a=isTextTarget?contextMenuTarget.selectionStart:editor.textContent.length,b=isTextTarget?contextMenuTarget.selectionEnd:a;
+      replaceEditorTextRange(lineIndex,a,b,editorClipboard.text);toast('Pasted lyric text.');return;
+    }
     if(editorClipboard.kind==='words'){
       const historyBefore=captureHistoryState();
       if(gridMode!=='words'){if(!hasWordTiming){toast('Word paste requires TTML word timing.',true);return;}setGridMode('words');}
@@ -1559,10 +1582,16 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   }
   document.addEventListener('contextmenu',e=>{
     if(activeScreen()!=='edit'||!$('editScreen').contains(e.target))return;
-    const clip=e.target instanceof Element?e.target.closest('.word-clip[data-line-index][data-cue-index]'):null,lane=e.target instanceof Element?e.target.closest('.timeline-lane-row[data-line-index]'):null,tr=e.target instanceof Element?e.target.closest('tr[data-index]'):null;
+    const clip=e.target instanceof Element?e.target.closest('.word-clip[data-line-index][data-cue-index]'):null,lane=e.target instanceof Element?e.target.closest('.timeline-lane-row[data-line-index]'):null,editor=e.target instanceof Element?e.target.closest('.lyric-editor'):null,tr=e.target instanceof Element?e.target.closest('tr[data-index]'):null;
     if(!clip&&!lane&&!tr)return;e.preventDefault();closeColorPicker();
     if(clip){const lineIndex=Number(clip.dataset.lineIndex),cueIndex=Number(clip.dataset.cueIndex),key=wordKey(lineIndex,cueIndex);if(!selectedWordKeys.has(key))selectWord(lineIndex,cueIndex,false);else{selectedWordRef={lineIndex,cueIndex};selectedIndex=lineIndex;lastEditedIndex=lineIndex;updateWordInspector();}showEditorContextMenu(e,{type:'word',lineIndex,cueIndex});}
-    else{const lineIndex=Number(lane?.dataset.lineIndex??tr?.dataset.index);if(!Number.isFinite(lineIndex))return;if(tr)setSelected(lineIndex,false);else{selectedIndex=lineIndex;lastEditedIndex=lineIndex;}showEditorContextMenu(e,{type:'line',lineIndex});}
+    else if(editor&&tr){
+      const lineIndex=Number(tr.dataset.index),selection=window.getSelection();let a=editor.textContent.length,b=a,selected='';
+      if(selection?.rangeCount&&editor.contains(selection.anchorNode)&&editor.contains(selection.focusNode)){
+        const range=selection.getRangeAt(0),startOffset=editorTextOffset(editor,range.startContainer,range.startOffset),endOffset=editorTextOffset(editor,range.endContainer,range.endOffset);a=Math.min(startOffset,endOffset);b=Math.max(startOffset,endOffset);selected=editor.textContent.slice(a,b);
+      }
+      setSelected(lineIndex,false);showEditorContextMenu(e,{type:'text',lineIndex,selectionStart:a,selectionEnd:b,selectionText:selected});
+    }else{const lineIndex=Number(lane?.dataset.lineIndex??tr?.dataset.index);if(!Number.isFinite(lineIndex))return;if(tr)setSelected(lineIndex,false);else{selectedIndex=lineIndex;lastEditedIndex=lineIndex;}showEditorContextMenu(e,{type:'line',lineIndex});}
   });
   document.addEventListener('pointerdown',e=>{const pop=$('colorPickerPopover');if(!pop.classList.contains('hidden')&&!pop.contains(e.target)&&e.target!==$('wordColor'))closeColorPicker();const menu=$('editorContextMenu');if(!menu.classList.contains('hidden')&&!menu.contains(e.target))hideEditorContextMenu();},true);
   $('colorPickerPopover').addEventListener('click',e=>{const tab=e.target.closest?.('[data-color-tab]');if(tab){colorPickerTab=tab.dataset.colorTab;renderColorPicker();}});

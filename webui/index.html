@@ -546,6 +546,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     $('gridStatus').textContent=`${rows.length} lyric lane(s) · ${allWordRefs().length} timed word(s) · ${selectedWordKeys.size>1?`${selectedWordKeys.size} words selected · `:''}drag or box-select to refine TTML`;
   }
   function selectWord(lineIndex,cueIndex,focus=false,extend=false,toggle=false) {
+    flushActiveWordInspectorField();
     const key=wordKey(lineIndex,cueIndex);
     if(toggle){if(selectedWordKeys.has(key))selectedWordKeys.delete(key);else selectedWordKeys.add(key);if(!selectedWordKeys.size)selectedWordKeys.add(key);}
     else if(extend)selectedWordKeys.add(key);
@@ -1324,6 +1325,29 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   $('wordFontStyle').addEventListener('change',()=>{const rec=cueForRef();if(rec){const historyBefore=captureHistoryState();rec.cue.ttsStyle=$('wordFontStyle').value;const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);clip?.classList.toggle('singer-italic',rec.cue.ttsStyle==='italic');updatePreview();commitHistoryChange(historyBefore);}});
   $('wordFontWeight').addEventListener('change',()=>{const rec=cueForRef();if(rec){const historyBefore=captureHistoryState();rec.cue.ttsWeight=$('wordFontWeight').value;const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);clip?.classList.toggle('singer-bold',['bold','bolder','700','800','900'].includes(String(rec.cue.ttsWeight).toLowerCase()));updatePreview();commitHistoryChange(historyBefore);}});
   $('wordColor').addEventListener('change',()=>{const rec=cueForRef();if(rec){const val=$('wordColor').value.trim();if(val&&!safeCssColor(val)){toast('Use a CSS color such as #ffffff, rgb(255,255,255), or white.',true);$('wordColor').value=rec.cue.color||'';return;}const historyBefore=captureHistoryState();rec.cue.color=val;const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${rec.lineIndex}"][data-cue-index="${rec.cueIndex}"]`);if(clip)clip.style.color=val;updatePreview();commitHistoryChange(historyBefore);}});
+  const wordInspectorFieldIds=['wordStart','wordEnd','wordText','wordAgent','wordStyle','wordFontStyle','wordFontWeight','wordColor'];
+  function flushActiveWordInspectorField(){
+    const active=document.activeElement;
+    if(!(active instanceof HTMLElement)||!wordInspectorFieldIds.includes(active.id))return;
+    // Dispatch first so the existing field-specific validation and history
+    // handlers save the old selected word, then drop focus before selection changes.
+    active.dispatchEvent(new Event('change',{bubbles:true}));
+    active.blur();
+  }
+  $('wordInspector').addEventListener('focusout',e=>{
+    const field=e.target;
+    if(field instanceof HTMLElement&&wordInspectorFieldIds.includes(field.id)){
+      // Text inputs normally emit change on blur; explicitly commit as well so
+      // clicks, tabbing, and browser differences all save the last field value.
+      field.dispatchEvent(new Event('change',{bubbles:true}));
+    }
+  });
+  document.addEventListener('pointerdown',e=>{
+    const active=document.activeElement;
+    if(active instanceof HTMLElement&&wordInspectorFieldIds.includes(active.id)&&!$('wordInspector').contains(e.target)){
+      flushActiveWordInspectorField();
+    }
+  },true);
   for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);toast('Settings saved.');});
   $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320};syncSettingsForm();saveSettings();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
   document.addEventListener('keydown',e=>{

@@ -197,9 +197,9 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         <div class="panel-head"><div><h2>Lyric timing grid</h2><p id="gridDescription">Edit line timing in LRC view or fine-tune individual word cues in TTML view.</p></div><div class="panel-actions"><button id="viewLines" class="small active" title="Sync line by line" aria-label="LRC — Sync line by line">LRC</button><button id="viewWords" class="small" disabled title="Sync word by word" aria-label="TTML — Sync word by word">TTML</button></div></div>
         <div class="editor-action-bar" aria-label="Editing actions">
           <span id="editorActionsLabel" class="editor-actions-label">LRC line actions</span>
-          <button id="addLine" class="small">+ Add line</button>
-          <button id="addWord" class="small" title="Add a timed word cue (F)">+ Add word</button>
-          <button id="deleteLine" class="small danger">Delete line</button>
+          <button id="addLine" class="small">+ Add Line</button>
+          <button id="addWord" class="small" title="Add a timed word cue (F)">+ Add Word</button>
+          <button id="deleteLine" class="small danger">Delete Line</button>
         </div>
         <div id="lineTableWrap" class="table-wrap"><table><thead id="gridHead"><tr><th class="num">#</th><th class="time">Time</th><th>Lyric</th></tr></thead><tbody id="gridBody"><tr><td colspan="3" style="padding:30px;text-align:center;color:#91a1b5">Import an LRC, TTML, or TXT lyrics file.</td></tr></tbody></table></div>
         <div id="wordTimelineEditor" class="word-timeline-editor hidden">
@@ -235,7 +235,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     <div class="panel-head generate-heading"><div><h2>Generate lyric timings</h2><p>Run the local command-line aligner here, then review its logs and output files.</p></div><span class="badge">LOCAL CLI</span></div>
     <div class="generate-subnav" role="tablist" aria-label="Generator configuration">
       <button id="generateConfigTab" class="active" role="tab" aria-selected="true" aria-controls="generateConfigurationPane">Configuration</button>
-      <button id="generateAdvancedTab" role="tab" aria-selected="false" aria-controls="generateAdvancedPane">Advanced options</button>
+      <button id="generateAdvancedTab" role="tab" aria-selected="false" aria-controls="generateAdvancedPane">Advanced Options</button>
     </div>
     <div id="genInstallPrompt" class="generate-install-prompt hidden" aria-live="polite"></div>
     <section id="generateConfigurationPane" class="generate-pane" role="tabpanel" aria-labelledby="generateConfigTab">
@@ -252,7 +252,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         </div>
       </div>
       <div class="generate-basic-grid">
-        <div class="setting"><label for="genMode">Task</label><select id="genMode"><option value="align">Align audio to lyrics</option><option value="adjust">Adjust an existing LRC</option><option value="doctor">Run system diagnostics only</option></select><p>Choose the CLI operation.</p></div>
+        <div class="setting"><label for="genMode">Task</label><select id="genMode"><option value="align">Align audio to lyrics</option><option value="adjust">Adjust an existing LRC</option><option value="doctor">Run System Diagnostics only</option></select><p>Choose the CLI operation.</p></div>
         <div id="genAlignOptions" class="setting"><label for="genAligner">Alignment backend</label><select id="genAligner"><option value="whisperx">WhisperX · general alignment</option><option value="tifa">TIFA · singing-trained alignment (English)</option></select><p>TIFA requires its separate optional install and model.</p></div>
         <div id="genLanguageWrap" class="setting"><label for="genLanguage">Language code</label><input id="genLanguage" value="en" maxlength="20" spellcheck="false"><p>Language used in the recording.</p></div>
         <div id="genDeviceWrap" class="setting"><label for="genDevice">Compute device</label><select id="genDevice"><option value="auto">Auto detect</option><option value="cuda">CUDA GPU</option><option value="cpu">CPU</option></select><p>Auto is recommended for most systems.</p></div>
@@ -264,11 +264,11 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         <label class="generate-check"><input id="genRefine" type="checkbox"><span><strong>Refine line timings</strong><small>WhisperX second pass; ignored by TIFA.</small></span></label>
         <label class="generate-check"><input id="genInstrumentalCues" type="checkbox"><span><strong>Add instrumental cues</strong><small>Add ♪ markers for long gaps and intros/outros.</small></span></label>
       </div>
-      <p class="generate-note">The first run can download model weights and take a while. Choose Dry run under Advanced options to validate inputs and output paths without loading a model.</p>
+      <p class="generate-note">The first run can download model weights and take a while. Choose Dry run under Advanced Options to validate inputs and output paths without loading a model.</p>
     </section>
     <section id="generateAdvancedPane" class="generate-pane hidden" role="tabpanel" aria-labelledby="generateAdvancedTab">
       <div class="generate-advanced-grid">
-        <div class="generate-advanced-card"><h3>Output files</h3>
+        <div class="generate-advanced-card"><h3>Output Files</h3>
           <div class="setting"><label for="genOutputPath">LRC output path</label><input id="genOutputPath" type="text" placeholder="Automatic: under your home folder, in a Savant run folder"><p>Optional full local path. Leaving this blank keeps output inside the run folder.</p></div>
           <div class="setting"><label for="genTtmlOutputPath">TTML output path</label><input id="genTtmlOutputPath" type="text" placeholder="Automatic when word timing is enabled"></div>
           <div class="setting"><label for="genReviewReportPath">Review report path</label><input id="genReviewReportPath" type="text" placeholder="Automatic: alignment-review.txt"></div>
@@ -306,11 +306,11 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
           </div>
         </div>
       </div>
-      <div class="generate-tools-row"><div><h3>Run diagnostics</h3><p>Check Python, FFmpeg, WhisperX, PyTorch, CUDA, and optional installs.</p></div><button id="genDoctorButton" class="small">Run system diagnostics</button></div>
+      <div class="generate-tools-row"><div><h3>Run diagnostics</h3><p>Check Python, FFmpeg, WhisperX, PyTorch, CUDA, and optional installs.</p></div><button id="genDoctorButton" class="small">Run System Diagnostics</button></div>
       <section class="generate-results">
         <div class="generate-results-head"><div><h3>Run activity and diagnostics</h3><p>Inspect logs, clean TIFA summaries, raw JSON, and generated files.</p></div><span id="genRunStatusBadge" class="badge">No run yet</span></div>
         <div class="generate-result-tabs" role="tablist" aria-label="Run results">
-          <button data-gen-result="logs" class="active" role="tab" aria-selected="true">Logs</button><button data-gen-result="clean" role="tab" aria-selected="false">Clean diagnosis</button><button data-gen-result="raw" role="tab" aria-selected="false">Raw JSON</button><button data-gen-result="files" role="tab" aria-selected="false">Output files</button>
+          <button data-gen-result="logs" class="active" role="tab" aria-selected="true">Logs</button><button data-gen-result="clean" role="tab" aria-selected="false">Clean Diagnosis</button><button data-gen-result="raw" role="tab" aria-selected="false">Raw JSON</button><button data-gen-result="files" role="tab" aria-selected="false">Output Files</button>
         </div>
         <div id="genResultLogs" class="generate-result-pane"><pre id="genLogs" class="generate-log-view" tabindex="0">Run the generator or system diagnostics to see live output here.</pre></div>
         <div id="genResultClean" class="generate-result-pane hidden"><div id="genCleanDiagnosis" class="generate-clean-diagnosis"><p class="generate-muted">A TIFA diagnosis summary will appear here when available.</p></div></div>
@@ -324,7 +324,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       <div class="generate-progress-heading"><span>Current step progress</span><span id="genStepText">Starting…</span></div>
       <div class="generate-progress-track" role="progressbar" aria-label="Current step progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="genStepBar" class="generate-progress-fill indeterminate" style="width:35%"></div></div>
     </section>
-    <div class="generate-run-footer"><span id="genFooterStatus" class="generate-muted">Choose an audio file and lyrics to begin.</span><button id="genRunButton" class="primary generate-run-button"><span aria-hidden="true">▶</span> Run generator</button></div>
+    <div class="generate-run-footer"><span id="genFooterStatus" class="generate-muted">Choose an audio file and lyrics to begin.</span><button id="genRunButton" class="primary generate-run-button"><span aria-hidden="true">▶</span> Run Generator</button></div>
   </section>
   <section id="settingsScreen" class="panel hidden">
     <div class="panel-head"><div><h2>Editor settings</h2><p>Adjust timing behavior and playback. Settings are saved in this browser on this computer.</p></div><button id="resetSettings" class="small">Reset defaults</button></div>
@@ -743,7 +743,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if(mode==='align'&&genFiles.singerConfig)form.append('singerConfig',genFiles.singerConfig,genFiles.singerConfig.name);
     if((mode==='align'||mode==='adjust')&&genFiles.lineOffsets)form.append('lineOffsets',genFiles.lineOffsets,genFiles.lineOffsets.name);
     if((mode==='align'||mode==='adjust')&&genFiles.phraseOffsets)form.append('phraseOffsets',genFiles.phraseOffsets,genFiles.phraseOffsets.name);
-    await startGeneratorRequest('/api/generate',form,'Run generator',false);
+    await startGeneratorRequest('/api/generate',form,'Run Generator',false);
   }
   async function startGeneratorInstall(kind,label){
     if(genRunBusy)return;const option=genCapabilities?.installers?.[kind];if(!option?.available){showInstallGuidance(kind,option?.description||'No installer is available.');return;}
@@ -757,14 +757,14 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     selectGenerateResult('logs');$('genLogs').textContent=isInstall?'Starting '+label+'…\n':'Uploading files to the local Savant server and starting the CLI…\n';
     try{const response=await fetch(url,{method:'POST',headers:{'X-Savant-UI':'1',...(isInstall?{'Content-Type':'application/json'}:{})},body}),result=await response.json();if(!response.ok)throw new Error(result.error||'The local task could not be started.');
       genActiveRunId=result.runId;genDiagnosisLoadedFor=null;genLastSnapshot={id:result.runId,status:'queued',logs:$('genLogs').textContent,artifacts:[]};await pollGeneratorRun(result.runId);
-    }catch(error){genRunBusy=false;$('genRunButton').disabled=false;$('genRunButton').textContent='▶ Run generator';$('genFooterStatus').textContent=error.message;toast(error.message,true);}
+    }catch(error){genRunBusy=false;$('genRunButton').disabled=false;$('genRunButton').textContent='▶ Run Generator';$('genFooterStatus').textContent=error.message;toast(error.message,true);}
   }
   async function pollGeneratorRun(runId){
     if(genPollTimer)clearTimeout(genPollTimer);if(!genRunBusy||genActiveRunId!==runId)return;
     try{const snapshot=await genFetchJson('/api/runs/'+encodeURIComponent(runId));genLastSnapshot=snapshot;genSetProgress(snapshot);$('genLogs').textContent=snapshot.logs||'(No output yet.)';if(genResultTab==='logs')$('genLogs').scrollTop=$('genLogs').scrollHeight;
       genRenderArtifacts(snapshot);renderGenerateInstallPrompts();if((snapshot.artifacts||[]).some(a=>a.key==='tifa-diagnosis'&&a.available))await loadGenerateDiagnosis(runId);
       if(['success','warning','failed'].includes(snapshot.status)){
-        genRunBusy=false;$('genRunButton').disabled=false;$('genRunButton').textContent='▶ Run generator';await refreshGenerateCapabilities();renderGenerateInstallPrompts();
+        genRunBusy=false;$('genRunButton').disabled=false;$('genRunButton').textContent='▶ Run Generator';await refreshGenerateCapabilities();renderGenerateInstallPrompts();
         if(genIsInstallRun&&snapshot.status==='success')toast('Install task finished. Run diagnostics to verify it.');
         if(!genIsInstallRun&&snapshot.status!=='failed'&&settings.returnToEditAfterGenerate){setScreen('edit');toast('Generation finished. Review output files or continue editing.');}
         genIsInstallRun=false;return;
@@ -1025,7 +1025,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     $('addWord').classList.toggle('hidden',!wordMode);
     $('addLine').disabled=wordMode;
     $('addWord').disabled=!wordMode||!hasWordTiming;
-    $('deleteLine').textContent=wordMode?'Delete word(s)':'Delete line';
+    $('deleteLine').textContent=wordMode?'Delete Word(s)':'Delete Line';
     $('deleteLine').setAttribute('aria-label',wordMode?'Delete selected word cues':'Delete selected line');
     $('deleteLine').disabled=wordMode
       ? !(selectedWordKeys.size||selectedWordRef)
@@ -2058,7 +2058,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       addMenuSeparator(menu);
       addContextAction(menu,'Insert line above this line',()=>insertLineAt(target.lineIndex));
       addContextAction(menu,'Insert line below this line',()=>insertLineAt(target.lineIndex+1));
-      const deleteLineAction=addContextAction(menu,'Delete line',()=>removeLineAt(target.lineIndex),{footer:true});
+      const deleteLineAction=addContextAction(menu,'Delete Line',()=>removeLineAt(target.lineIndex),{footer:true});
       deleteLineAction.classList.add('danger');
     }
     if(gridMode==='words'&&target?.type==='word'){

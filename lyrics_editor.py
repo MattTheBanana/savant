@@ -338,7 +338,7 @@ def _run_worker(run_id: str, command: list[str], env: dict[str, str]) -> None:
         run = RUNS[run_id]
         run["status"] = "running"
         run["started"] = time.time()
-    _set_progress(run, 2, "Starting local CLI")
+    _set_progress(run, 2, "Installing dependencies" if str(run.get("operation", "")).startswith("install-") else "Starting local CLI")
     _append_log(run, "$ " + subprocess.list2cmdline(command))
     try:
         process = subprocess.Popen(

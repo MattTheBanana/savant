@@ -156,7 +156,6 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
     run["operation"] = operation
 
     if operation == "doctor":
-        run["artifacts"]["doctor-log"] = {"label": "Diagnostic log", "path": str(run["log_path"]), "kind": "log"}
         return [sys.executable, str(ALIGN_SCRIPT), "--doctor"]
 
     command = [sys.executable, str(ALIGN_SCRIPT)]
@@ -258,10 +257,10 @@ def _capability_snapshot() -> dict:
     tifa_model = ROOT / "models" / "TIFA-1.0-ST"
     tifa_ready = (tifa_root / "infer.py").is_file() and tifa_python.is_file() and tifa_model.is_dir()
     installers = {
-        "base": {"label": "Install base dependencies", "available": (ROOT / "install.bat").is_file() if windows else True,
+        "base": {"label": "Install base dependencies", "available": True,
                  "method": "script" if (ROOT / "install.bat").is_file() else "pip",
                  "description": "Install WhisperX in this editor's Python environment."},
-        "vocal": {"label": "Install vocal separation", "available": (ROOT / "install-vocal-separation.bat").is_file() if windows else True,
+        "vocal": {"label": "Install vocal separation", "available": True,
                   "method": "script" if (ROOT / "install-vocal-separation.bat").is_file() else "pip",
                   "description": "Install demucs-infer for optional local vocal isolation."},
         "tifa": {"label": "Install TIFA", "available": (ROOT / "install-tifa.bat").is_file() if windows else False,

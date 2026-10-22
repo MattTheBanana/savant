@@ -939,7 +939,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         cueCount++;const clip=document.createElement('div');clip.className='word-clip';clip.dataset.lineIndex=String(lineIndex);clip.dataset.cueIndex=String(cueIndex);clip.tabIndex=0;clip.setAttribute('role','button');clip.setAttribute('aria-label',`Line ${lineIndex+1}, word ${cueIndex+1}, ${String(cue.text||'').trim()}, ${fmtTime(cue.start)} to ${fmtTime(cue.end)}`);
         clip.style.left=`${(cue.start-win.start)*pps}px`;clip.style.width=`${Math.max(12,(cue.end-cue.start)*pps)}px`;clip.title=`${String(cue.text||'').trim()} · ${fmtTime(cue.start)}–${fmtTime(cue.end)}${cue.agent?' · '+cue.agent:''}`;
         const color=safeCssColor(cue.color);if(color)clip.style.color=color;
-        if(String(cue.ttsStyle||'').toLowerCase()==='italic')clip.classList.add('singer-italic');
+        if(['italic','oblique'].includes(String(cue.ttsStyle||'').toLowerCase()))clip.classList.add('singer-italic');
         if(['bold','bolder','700','800','900'].includes(String(cue.ttsWeight||'').toLowerCase()))clip.classList.add('singer-bold');
         const leftHandle=document.createElement('span');leftHandle.className='word-edge left';leftHandle.dataset.resize='start';leftHandle.setAttribute('aria-hidden','true');
         const labelText=document.createElement('span');labelText.className='word-label';labelText.textContent=String(cue.text||'').trim()||'(empty)';
@@ -1492,7 +1492,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function hideEditorContextMenu(){$('editorContextMenu').classList.add('hidden');contextMenuTarget=null;}
   function showEditorContextMenu(event,target){
     const menu=$('editorContextMenu');contextMenuTarget=target;menu.textContent='';
-    addContextAction(menu,'Copy',copyContextTarget,{disabled:!target});addContextAction(menu,'Cut',cutContextTarget,{disabled:!target});addContextAction(menu,'Paste',pasteContextTarget,{disabled:!editorClipboard});
+    addContextAction(menu,'Copy',copyContextTarget,{disabled:!target});addContextAction(menu,'Cut',cutContextTarget,{disabled:!target});addContextAction(menu,'Paste',pasteContextTarget);
     addMenuSeparator(menu);addContextAction(menu,'Undo',undoEditorChange,{disabled:!undoHistory.length});addContextAction(menu,'Redo',redoEditorChange,{disabled:!redoHistory.length});
     if(gridMode==='words'){addMenuSeparator(menu);addContextAction(menu,'Make new word  ·  F',addWordCue,{disabled:!hasWordTiming});}
     if(target?.lineIndex!==undefined){addMenuSeparator(menu);addContextAction(menu,'Insert line above this line',()=>insertLineAt(target.lineIndex));addContextAction(menu,'Insert line below this line',()=>insertLineAt(target.lineIndex+1));}
@@ -1514,24 +1514,31 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     editor.textContent=next;editor.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText',data:insertText}));
     renderWordAwareEditor(editor,rows[lineIndex]);editor.focus();setEditorCaretAtTextOffset(editor,a+insertText.length);
   }
+  function writeNativeClipboard(value){try{const result=navigator.clipboard?.writeText(String(value??''));result?.catch(()=>{});}catch(_){}}
   function copyContextTarget(){
     const target=contextMenuTarget;if(!target)return;
-    if(target.type==='text'&&target.selectionEnd>target.selectionStart){editorClipboard={kind:'text',text:target.selectionText||'',sourceLineIndex:target.lineIndex};toast('Copied selected lyric text.');return;}
+    if(target.type==='text'&&target.selectionEnd>target.selectionStart){editorClipboard={kind:'text',text:target.selectionText||'',sourceLineIndex:target.lineIndex};writeNativeClipboard(editorClipboard.text);toast('Copied selected lyric text.');return;}
     if(target.type==='word'&&gridMode==='words'){
       const refs=selectedWordKeys.has(wordKey(target.lineIndex,target.cueIndex))?[...selectedWordKeys].map(parseWordKey):[{lineIndex:target.lineIndex,cueIndex:target.cueIndex}];
       const cues=refs.map(ref=>{const cue=rows[ref.lineIndex]?.wordCues?.[ref.cueIndex];return cue?{...JSON.parse(JSON.stringify(cue)),sourceLineIndex:ref.lineIndex}:null;}).filter(Boolean).sort((a,b)=>a.start-b.start);
       if(cues.length)editorClipboard={kind:'words',cues};else toast('No word cues to copy.',true);
     }else{const row=rows[target.lineIndex];if(row)editorClipboard={kind:'lines',rows:[JSON.parse(JSON.stringify(row))]};}
-    if(editorClipboard)toast('Copied to Savant clipboard.');
+    if(editorClipboard){const text=editorClipboard.kind==='words'?editorClipboard.cues.map(c=>c.text||'').join(''):editorClipboard.kind==='lines'?editorClipboard.rows.map(r=>r.text||'').join('\n'):editorClipboard.text;writeNativeClipboard(text);toast('Copied to Savant clipboard.');}
   }
   function cutContextTarget(){
     const target=contextMenuTarget;if(!target)return;copyContextTarget();if(!editorClipboard)return;
     if(target.type==='text'&&target.selectionEnd>target.selectionStart){replaceEditorTextRange(target.lineIndex,target.selectionStart,target.selectionEnd,'');return;}
     if(editorClipboard.kind==='words'){const refs=selectedWordKeys.has(wordKey(target.lineIndex,target.cueIndex))?[...selectedWordKeys].map(parseWordKey):[{lineIndex:target.lineIndex,cueIndex:target.cueIndex}];deleteWordCues(refs);}else removeLineAt(target.lineIndex);
   }
-  function pasteContextTarget(){
-    if(!editorClipboard)return;
+  async function pasteContextTarget(){
+    if(!editorClipboard){
+      try{const text=await navigator.clipboard.readText();if(!text){toast('The system clipboard is empty.',true);return;}
+        if(contextMenuTarget?.type==='word'&&gridMode==='words'){editSelectedWordText(text);toast('Pasted text into the selected word.');return;}
+        if(gridMode==='words'){toast('Right-click a word to paste text into it.',true);return;}editorClipboard={kind:'text',text,sourceLineIndex:null};
+      }catch(_){toast('Browser clipboard access is unavailable. Copy something in the editor first.',true);return;}
+    }
     if(editorClipboard.kind==='text'){
+      if(contextMenuTarget?.type==='word'&&gridMode==='words'){editSelectedWordText(editorClipboard.text);toast('Pasted text into the selected word.');return;}
       const lineIndex=Number.isInteger(contextMenuTarget?.lineIndex)?contextMenuTarget.lineIndex:selectedIndex,editor=$('gridBody').querySelector(`tr[data-index="${lineIndex}"] .lyric-editor`);
       if(!editor){toast('Select a lyric line to paste text into.',true);return;}
       const isTextTarget=contextMenuTarget?.type==='text',a=isTextTarget?contextMenuTarget.selectionStart:editor.textContent.length,b=isTextTarget?contextMenuTarget.selectionEnd:a;

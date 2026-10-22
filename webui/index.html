@@ -1492,8 +1492,17 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   }
   function renderColorPicker(){$('colorPickerPopover').querySelectorAll('[data-color-tab]').forEach(button=>{const active=button.dataset.colorTab===colorPickerTab;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));});renderColorSwatches();renderColorPickerContent();}
   function openColorPicker(){
-    const input=$('wordColor'),pop=$('colorPickerPopover');if(!cueForRef())return;colorPickerHue=rgbToHsv(hexToRgb(input.value||cueForRef()?.cue.color||'#ffffff')).h;const rect=input.getBoundingClientRect();
-    pop.style.left=`${Math.max(10,Math.min(window.innerWidth-330,rect.left))}px`;pop.style.top=`${Math.max(10,Math.min(window.innerHeight-355,rect.bottom+6))}px`;pop.classList.remove('hidden');colorPickerHistoryBefore=null;colorPickerTab='palette';renderColorPicker();
+    const input=$('wordColor'),pop=$('colorPickerPopover'),record=cueForRef();if(!record)return;
+    colorPickerHue=rgbToHsv(hexToRgb(input.value||record.cue.color||'#ffffff')).h;
+    colorPickerHistoryBefore=null;colorPickerTab='palette';pop.classList.remove('hidden');renderColorPicker();
+    const rect=input.getBoundingClientRect(),padding=10,gap=12,width=pop.offsetWidth||Math.min(320,window.innerWidth-padding*2),height=pop.offsetHeight||355;
+    const maxLeft=Math.max(padding,window.innerWidth-width-padding),leftOfInput=rect.left-width-gap,rightOfInput=rect.right+gap;
+    // Prefer the space to the left of the hex field so the picker doesn't cover the inspector.
+    // If the viewport is too narrow, try the right before clamping the panel fully onscreen.
+    let left=leftOfInput>=padding?leftOfInput:rightOfInput+width<=window.innerWidth-padding?rightOfInput:Math.max(padding,Math.min(maxLeft,leftOfInput));
+    const maxTop=Math.max(padding,window.innerHeight-height-padding),desiredTop=rect.bottom+16;
+    const top=Math.max(padding,Math.min(maxTop,desiredTop));
+    pop.style.left=`${Math.round(left)}px`;pop.style.top=`${Math.round(top)}px`;
   }
   function closeColorPicker(){if($('colorPickerPopover').classList.contains('hidden'))return;$('colorPickerPopover').classList.add('hidden');finishColorPickerHistory();}
   function addMenuSeparator(menu){const el=document.createElement('div');el.className='context-menu-separator';menu.append(el);}

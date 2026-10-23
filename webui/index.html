@@ -1970,7 +1970,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       const pointIndex=lineSelectionIndexAtPoint(drag.source,e.clientX,e.clientY);
       if(pointIndex>=0)drag.currentIndex=pointIndex;
       lineSelectionAnchor=drag.anchorIndex;
-      selectLineSelection(drag.currentIndex,{shiftKey:true,skipScroll:true},drag.source==='lrc');
+      selectLineSelection(drag.currentIndex,{shiftKey:true,skipScroll:true},true);
     }else{
       selectLineSelection(drag.startIndex,{ctrlKey:drag.ctrlKey,metaKey:drag.metaKey,skipScroll:true},drag.source==='lrc');
     }

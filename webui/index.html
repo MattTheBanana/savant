@@ -1364,7 +1364,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     $('genRunStatusBadge').textContent=({queued:'Queued',running:'Running',success:'Completed',warning:'Completed With Warnings',failed:'Failed'})[snapshot.status]||snapshot.status;
     host.classList.toggle('finished',['success','warning'].includes(snapshot.status));host.classList.toggle('failed',snapshot.status==='failed');
     const footer=$('genFooterStatus');
-    footer.classList.toggle('error',snapshot.status==='failed'&&Boolean(snapshot.error));
+    footer.classList.toggle('error',snapshot.status==='failed');
     footer.textContent=snapshot.error||(snapshot.status==='success'?'Generation complete. Review the output files or import them into Edit.':snapshot.status==='warning'?'Generation finished with warnings. Review the logs and output files.':snapshot.status==='failed'?'Generation failed. Open Logs for details.':'Working locally…');
   }
   function genRenderArtifacts(snapshot){

@@ -1948,7 +1948,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   function currentEditorLineIndex(){
     const active=document.activeElement;
     const activeRow=active instanceof HTMLElement?active.closest('tr[data-index]'):null;
-    if(activeRow&&activeRow.closest('#lineTableWrap'))return Number(activeRow.dataset.index);
+    if(gridMode==='lines'&&activeRow&&activeRow.closest('#lineTableWrap'))return Number(activeRow.dataset.index);
     const wordLine=gridMode==='words'?selectedWordRef?.lineIndex:null;
     if(Number.isInteger(wordLine)&&wordLine>=0&&wordLine<rows.length)return wordLine;
     if(Number.isInteger(selectedIndex)&&selectedIndex>=0&&selectedIndex<rows.length)return selectedIndex;

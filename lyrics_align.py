@@ -1616,20 +1616,35 @@ def run_tifa_alignment(
         if device == "cpu":
             env["CUDA_VISIBLE_DEVICES"] = ""
         print(f"Running singing-trained TIFA alignment on {len(chunk_plan)} pause-aware chunk(s) (model context limit ~60s)...")
-        process = subprocess.run(command, cwd=tifa_root, env=env, text=True, capture_output=True)
-        if process.stdout:
-            print(process.stdout.rstrip())
-        if process.returncode != 0:
-            detail = process.stderr.strip() or process.stdout.strip() or "No diagnostic output was returned."
+        process = subprocess.Popen(
+            command,
+            cwd=tifa_root,
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            bufsize=1,
+        )
+        output_tail: list[str] = []
+        assert process.stdout is not None
+        # Stream TIFA stdout and stderr together so the local GUI can consume tqdm
+        # updates and animate the active stage instead of waiting for inference to end.
+        for raw_line in process.stdout:
+            line = raw_line.rstrip("\\r\\n")
+            if not line:
+                continue
+            output_tail.append(line)
+            if len(output_tail) > 80:
+                del output_tail[:-80]
+            print(line, flush=True)
+        return_code = process.wait()
+        if return_code != 0:
+            detail = "\\n".join(output_tail).strip() or "No diagnostic output was returned."
             raise RuntimeError(
-                f"TIFA inference failed with exit code {process.returncode}. Check the TIFA install/model paths.\n{detail[-5000:]}"
+                f"TIFA inference failed with exit code {return_code}. Check the TIFA install/model paths.\\n{detail[-5000:]}"
             )
-        if process.stderr:
-            # Lightning/progress output often goes to stderr even on success. Only surface
-            # the tail so warnings are visible without flooding the console.
-            tail = process.stderr.strip().splitlines()[-12:]
-            if tail:
-                print("TIFA runtime notes:\n" + "\n".join(tail))
 
         tifa_mapped: list[list[dict[str, Any] | None]] = [list() for _ in lines]
         chunk_diagnostics: list[dict[str, Any]] = []

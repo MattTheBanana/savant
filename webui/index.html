@@ -326,6 +326,23 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   #editorActionBar #editorImportGroup{gap:5px}
   .editor-hotkey-bar{gap:7px 10px;padding:7px 9px}
 }
+
+/* Savant-owned playback controls: deliberately avoid native media time displays. */
+.player-audio-element{display:none!important}
+.player-transport-controls{display:flex;align-items:center;gap:9px;width:100%;min-width:0;height:38px}
+.player-control-button{display:grid;place-items:center;flex:0 0 38px;width:38px;height:36px;padding:0;border:1px solid #3b4e65;border-radius:7px;background:#101927;color:#e6f0fb;font-size:14px;line-height:1}
+.player-control-button:hover{background:#22354a;border-color:var(--accent2)}
+.player-play-button{background:#1b3d3d;border-color:#3c706b;color:#f1fffc;font-size:16px}
+.player-seek,.player-volume{appearance:none;-webkit-appearance:none;display:block;height:5px;min-width:20px;margin:0;border:0;border-radius:99px;outline:none;cursor:pointer;accent-color:var(--accent)}
+.player-seek{flex:1 1 auto;width:100%;background:linear-gradient(90deg,#76e4c1 0%,#76e4c1 var(--seek-progress,0%),#354358 var(--seek-progress,0%),#354358 100%)}
+.player-volume{flex:0 1 76px;width:76px;background:#354358}
+.player-seek:disabled{opacity:.45;cursor:default}
+.player-seek::-webkit-slider-thumb,.player-volume::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;background:#e7fbf5;border:2px solid #3b8678;box-shadow:0 1px 4px #0006}
+.player-seek::-moz-range-thumb,.player-volume::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:#e7fbf5;border:2px solid #3b8678;box-shadow:0 1px 4px #0006}
+#editScreen button,#editorContextMenu button,#agentPresetMenu button,#colorPickerPopover button,#playerDock button{text-transform:capitalize}
+@media(max-width:1000px){.player-transport-controls{gap:7px}.player-volume{flex-basis:58px;width:58px}}
+@media(max-width:620px){.player-transport-controls{gap:5px;height:32px}.player-control-button{flex-basis:30px;width:30px;height:32px;font-size:12px}.player-play-button{font-size:14px}.player-volume{display:none}}
+
 </style>
 </head>
 <body>
@@ -538,7 +555,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       <section id="prefPageUtility" class="preferences-page" role="tabpanel" aria-labelledby="prefTabUtility" data-preferences-page="utility" hidden>
         <div class="settings-grid">
 <div class="settings-section-heading"><h3>Utility</h3><p>Timing adjustments, plain-text defaults, language, and export naming.</p></div>
-      <div class="setting"><label for="nudgeStep">Fine nudge step (seconds)</label><input id="nudgeStep" type="number" min="0.001" max="1" step="0.001" value="0.020"><p>Left/right arrow nudges the selected line. Default: 20 ms.</p></div><div class="setting"><label for="shiftMultiplier">Shift + arrow multiplier</label><input id="shiftMultiplier" type="number" min="2" max="50" step="1" value="5"><p>Shift + left/right makes a larger correction.</p></div><div class="setting"><label for="replayLead">Replay lead-in (seconds)</label><input id="replayLead" type="number" min="0" max="15" step="0.1" value="2.0"><p>When starting playback after an edit, begin this long before the edited line.</p></div><div class="setting"><label for="txtSpacing">Initial spacing for plain TXT (seconds)</label><input id="txtSpacing" type="number" min="0.2" max="30" step="0.1" value="3.0"><p>TXT has no timestamps, so this is only an initial placeholder layout.</p></div><div class="setting"><label for="language">TTML language</label><input id="language" type="text" value="en" maxlength="20"><p>BCP-47 language code used in exported TTML.</p></div><div class="setting"><label for="downloadBase">Export filename suffix</label><select id="downloadBase"><option value="same">Use imported lyrics base name</option><option value="audio">Use audio base name</option></select><p>Controls the default downloaded filename.</p></div>
+      <div class="setting"><label for="nudgeStep">Fine nudge step (seconds)</label><input id="nudgeStep" type="number" min="0.001" max="1" step="0.001" value="0.020"><p>Left/right arrow nudges the selected line. Default: 20 ms.</p></div><div class="setting"><label for="shiftMultiplier">Shift + arrow multiplier</label><input id="shiftMultiplier" type="number" min="2" max="50" step="1" value="5"><p>Shift + left/right makes a larger correction.</p></div><div class="setting"><label for="doubleShiftIntervalMs">Double-Shift interval (milliseconds)</label><input id="doubleShiftIntervalMs" type="number" min="150" max="1000" step="25" value="450"><p>Maximum time between Shift presses to jump to the current line. Default: 450 ms.</p></div><div class="setting"><label for="replayLead">Replay lead-in (seconds)</label><input id="replayLead" type="number" min="0" max="15" step="0.1" value="2.0"><p>When starting playback after an edit, begin this long before the edited line.</p></div><div class="setting"><label for="txtSpacing">Initial spacing for plain TXT (seconds)</label><input id="txtSpacing" type="number" min="0.2" max="30" step="0.1" value="3.0"><p>TXT has no timestamps, so this is only an initial placeholder layout.</p></div><div class="setting"><label for="language">TTML language</label><input id="language" type="text" value="en" maxlength="20"><p>BCP-47 language code used in exported TTML.</p></div><div class="setting"><label for="downloadBase">Export filename suffix</label><select id="downloadBase"><option value="same">Use imported lyrics base name</option><option value="audio">Use audio base name</option></select><p>Controls the default downloaded filename.</p></div>
         </div>
       </section>
       <section id="prefPageGenerator" class="preferences-page" role="tabpanel" aria-labelledby="prefTabGenerator" data-preferences-page="generator" hidden>
@@ -610,7 +627,13 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
 <div id="agentPresetMenu" class="agent-preset-menu hidden" role="menu" aria-label="Saved agent presets"></div>
 <div id="playerDock" class="audio-panel player-dock">
   <div class="player-dock-title"><div id="audioTitle" class="audio-title">No audio loaded</div><div id="audioSub" class="audio-sub">Choose a local audio file to play and review timings.</div></div>
-  <audio id="player" controls preload="metadata"></audio>
+  <div class="player-transport-controls" role="group" aria-label="Audio playback controls">
+    <button id="playerPlayPause" class="player-control-button player-play-button" type="button" aria-label="Play Audio" title="Play Audio" disabled>▶</button>
+    <input id="playerSeek" class="player-seek" type="range" min="0" max="1000" step="1" value="0" aria-label="Seek Audio" disabled>
+    <button id="playerMute" class="player-control-button" type="button" aria-label="Mute Audio" title="Mute Audio" disabled>🔊</button>
+    <input id="playerVolume" class="player-volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume">
+  </div>
+  <audio id="player" class="player-audio-element" preload="metadata" aria-hidden="true" tabindex="-1"></audio>
   <div id="timeReadout" class="audio-time">00:00.000 / 00:00.000</div>
 </div>
 <div id="dropOverlay" class="drop-overlay hidden" aria-hidden="true">
@@ -673,7 +696,6 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   let zoomRenderFrame = null;
   let pendingZoomRender = null;
   let lastShiftTapAt = 0;
-  const DOUBLE_SHIFT_INTERVAL_MS = 450;
   const DEFAULT_GENERATOR_DEFAULTS = {
     mode:'align',aligner:'whisperx',language:'en',device:'auto',offset:'0',
     outputName:'',outputDirectory:'',outputPath:'',ttmlOutputPath:'',
@@ -685,7 +707,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   };
   const DEFAULT_UI_SETTINGS = {
     nudgeStep: 0.02, shiftMultiplier: 5, replayLead: 2.0, txtSpacing: 3.0,
-    language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, returnToEditAfterGenerate: false, autoImportGeneratedOutput: false, wordInspectorLayout: 'right', showEditorShortcutHints: false,
+    language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, doubleShiftIntervalMs: 450, returnToEditAfterGenerate: false, autoImportGeneratedOutput: false, wordInspectorLayout: 'right', showEditorShortcutHints: false,
     generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}
   };
   let settings = {...DEFAULT_UI_SETTINGS,generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}};
@@ -983,7 +1005,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     void pollInstallationSettings(true);
   }
   function saveSettings() {
-    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorShortcutHints']) {
+    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','doubleShiftIntervalMs','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorShortcutHints']) {
       const el=$(key); if (!el) continue;
       settings[key] = ['language','defaultTab','downloadBase','wordInspectorLayout'].includes(key) ? el.value :
         (key==='autoFollow'||key==='returnToEditAfterGenerate'||key==='autoImportGeneratedOutput'||key==='showEditorShortcutHints') ? el.value==='true' : Number(el.value);
@@ -995,6 +1017,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     settings.timelineOverlap=Math.min(5,Math.max(0,Number(settings.timelineOverlap)||0));
     settings.playheadLabelSize=Math.min(16,Math.max(7,Number(settings.playheadLabelSize)||9));
     settings.dragAutoScrollSpeed=Math.min(1600,Math.max(40,Number(settings.dragAutoScrollSpeed)||320));
+    settings.doubleShiftIntervalMs=Math.min(1000,Math.max(150,Math.round(Number(settings.doubleShiftIntervalMs)||450)));
     document.documentElement.style.setProperty('--playhead-label-size',`${settings.playheadLabelSize}px`);
     settings.generatorDefaults=readGeneratorDefaultsForm();
     applyEditorPreferences();
@@ -1002,7 +1025,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     scheduleInstallationSettingsSave();
   }
   function syncSettingsForm() {
-    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed']) $(key).value=settings[key];
+    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','doubleShiftIntervalMs']) $(key).value=settings[key];
     document.documentElement.style.setProperty('--playhead-label-size',`${settings.playheadLabelSize}px`);
     $('autoFollow').value=String(settings.autoFollow);
     $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));$('autoImportGeneratedOutput').value=String(Boolean(settings.autoImportGeneratedOutput));$('wordInspectorLayout').value=settings.wordInspectorLayout||'right';$('showEditorShortcutHints').value=String(Boolean(settings.showEditorShortcutHints));syncGeneratorDefaultsForm();applyEditorPreferences();
@@ -1721,15 +1744,48 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       out.push(makeRow(lineStart,rawText,{wordCues:cues.length?cues:null,rawEnd:end,lineAgent,lineStyle,lineFontStyle,lineFontWeight,lineColor}));
     }
     out.sort((a,b)=>a.start-b.start);
-    return {rows:out,metadata:[],head:headInner,format:'ttml',wordTiming:out.some(r=>r.wordCues&&r.wordCues.length)};
+    const agents=[...new Set(byLocal(doc,'agent').map(node=>node.getAttributeNS('http://www.w3.org/XML/1998/namespace','id')||node.getAttribute('xml:id')||node.getAttribute('id')||'').map(value=>String(value).trim()).filter(Boolean))];
+    return {rows:out,metadata:[],head:headInner,format:'ttml',agents,wordTiming:out.some(r=>r.wordCues&&r.wordCues.length)};
   }
   function parseTxt(text) {
     const lines=text.replace(/^\uFEFF/,'').split(/\r?\n/).map(cleanPlainLine).filter(Boolean);
     return {rows:lines.map((line,i)=>makeRow(i*settings.txtSpacing,line)),metadata:[],head:'',format:'txt',wordTiming:false};
   }
+  function refreshAgentPresetsFromParsed(parsed){
+    const savedPresets=agentPresets.filter(preset=>preset?.source!=='file');
+    const byAgent=new Map();
+    const addAgent=(value,values={})=>{
+      const agent=String(value||'').trim();if(!agent)return;
+      if(!byAgent.has(agent))byAgent.set(agent,{agent,style:'',ttsStyle:'',ttsWeight:'',color:''});
+      const preset=byAgent.get(agent);
+      for(const field of ['style','ttsStyle','ttsWeight','color']){
+        const candidate=String(values[field]||'').trim();
+        if(!preset[field]&&candidate)preset[field]=candidate;
+      }
+    };
+    if(parsed?.format==='ttml'){
+      for(const agent of parsed.agents||[])addAgent(agent);
+      for(const row of parsed.rows||[]){
+        addAgent(row.lineAgent,{style:row.lineStyle,ttsStyle:row.lineFontStyle,ttsWeight:row.lineFontWeight,color:row.lineColor});
+        for(const cue of row.wordCues||[]){
+          addAgent(cue.agent||row.lineAgent,{style:cue.style,ttsStyle:cue.ttsStyle,ttsWeight:cue.ttsWeight,color:cue.color});
+        }
+      }
+    }
+    const sameAgent=(preset,agent)=>{
+      const value=String(agent||'').trim().toLowerCase();
+      return Boolean(value)&&(String(preset.agent||'').trim().toLowerCase()===value||String(preset.name||'').trim().toLowerCase()===value);
+    };
+    const filePresets=parsed?.format==='ttml'?[...byAgent.values()]
+      .filter(preset=>!savedPresets.some(saved=>sameAgent(saved,preset.agent)))
+      .map(preset=>({...preset,id:'file-agent:'+encodeURIComponent(preset.agent),name:preset.agent,source:'file'})):[];
+    agentPresets=[...savedPresets,...filePresets];
+    persistAgentPresets();
+    refreshAgentPresetSelect();
+  }
   function importParsed(parsed,name) {
     const historyBefore=captureHistoryState();
-    rows=parsed.rows; metadata=parsed.metadata||[]; ttmlHeadInner=parsed.head||''; sourceFormat=parsed.format; hasWordTiming=Boolean(parsed.wordTiming); gridMode='lines'; selectedWordRef=null; selectedWordKeys.clear();
+    rows=parsed.rows; metadata=parsed.metadata||[]; ttmlHeadInner=parsed.head||''; sourceFormat=parsed.format; hasWordTiming=Boolean(parsed.wordTiming); gridMode='lines'; selectedWordRef=null; selectedWordKeys.clear(); refreshAgentPresetsFromParsed(parsed);
     importedLyricsName=(name||'lyrics').replace(/\.(lrc|ttml|xml|txt)$/i,'')||'lyrics';
     selectedIndex=rows.length?0:-1; lastEditedIndex=-1; replayFromAnchor=true;
     if(rows.length) { renderGrid(); setSelected(0,true); }
@@ -1921,8 +1977,8 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     $('zoomFit').title=!timelineAvailable?'Fit Lines is available when TTML word cues are loaded':atFit?'Lines are already fitted':'Fit the longest available line context to the lane';
     $('deleteTtmlLine').classList.toggle('hidden',!wordMode);
     $('deleteTtmlLine').disabled=!wordMode||selectedIndex<0||selectedIndex>=rows.length;
-    $('deleteLine').textContent=wordMode?'Delete Word(s)':'Delete Line';
-    $('deleteLine').setAttribute('aria-label',wordMode?'Delete selected word cues':'Delete selected line');
+    $('deleteLine').textContent=wordMode?(selectedWordKeys.size>1?'Delete Words':'Delete Word'):'Delete Line';
+    $('deleteLine').setAttribute('aria-label',wordMode?(selectedWordKeys.size>1?'Delete selected word cues':'Delete selected word cue'):'Delete selected line');
     $('deleteLine').disabled=wordMode
       ? !(selectedWordKeys.size||selectedWordRef)
       : selectedIndex<0||selectedIndex>=rows.length;
@@ -2757,7 +2813,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   function loadAudio(file) {
     if(!file)return;
     if(audioUrl)URL.revokeObjectURL(audioUrl);
-    audioUrl=URL.createObjectURL(file);audioName=file.name.replace(/\.[^.]+$/,'');player.src=audioUrl;player.load();
+    audioUrl=URL.createObjectURL(file);audioName=file.name.replace(/\.[^.]+$/,'');player.src=audioUrl;player.load();updateCustomPlayerControls();
     $('audioTitle').textContent=file.name;$('audioSub').textContent=`${(file.size/1048576).toFixed(1)} MB · local browser playback`;
     if(gridMode==='words')renderWordGrid();
     buildWaveform(file);
@@ -2765,17 +2821,71 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   }
   $('audioFile').addEventListener('change',e=>{loadAudio(e.target.files?.[0]);e.target.value='';});
   $('lyricsFile').addEventListener('change',e=>{loadLyrics(e.target.files?.[0]);e.target.value='';});
-  function updateTimeReadout() {$('timeReadout').textContent=`${fmtTime(player.currentTime)} / ${fmtTime(Number.isFinite(player.duration)?player.duration:0)}`;}
+  function updateCustomPlayerControls(){
+    const seek=$('playerSeek'),playButton=$('playerPlayPause'),muteButton=$('playerMute'),volume=$('playerVolume');
+    const duration=Number.isFinite(player.duration)&&player.duration>0?player.duration:0;
+    const progress=duration?Math.min(1,Math.max(0,(Number(player.currentTime)||0)/duration)):0;
+    const hasAudio=Boolean(player.currentSrc||player.src);
+    const playing=!player.paused&&!player.ended;
+    if(seek){
+      seek.value=String(Math.round(progress*1000));
+      seek.style.setProperty('--seek-progress',String(progress*100)+'%');
+      seek.disabled=!hasAudio||duration<=0;
+    }
+    if(playButton){
+      playButton.disabled=!hasAudio;
+      playButton.textContent=playing?'Ⅱ':'▶';
+      playButton.setAttribute('aria-label',playing?'Pause Audio':'Play Audio');
+      playButton.title=playing?'Pause Audio':'Play Audio';
+    }
+    if(muteButton){
+      muteButton.disabled=!hasAudio;
+      const muted=player.muted||player.volume===0;
+      muteButton.textContent=muted?'🔇':'🔊';
+      muteButton.setAttribute('aria-label',muted?'Unmute Audio':'Mute Audio');
+      muteButton.title=muted?'Unmute Audio':'Mute Audio';
+    }
+    if(volume)volume.value=String(Number(player.volume)||0);
+  }
+  $('playerPlayPause').addEventListener('click',()=>{
+    if(player.paused){
+      const attempt=player.play();
+      if(attempt&&typeof attempt.catch==='function')attempt.catch(error=>toast('Could not play audio: '+(error.message||error),true));
+    }else player.pause();
+  });
+  $('playerSeek').addEventListener('input',()=>{
+    const duration=Number(player.duration);
+    if(duration>0){
+      player.currentTime=duration*(Number($('playerSeek').value)/1000);
+      updateTimeReadout();updateCustomPlayerControls();updateLiveHighlight();
+    }
+  });
+  $('playerMute').addEventListener('click',()=>{
+    if(player.muted||player.volume===0){if(player.volume===0)player.volume=0.8;player.muted=false;}
+    else player.muted=true;
+    updateCustomPlayerControls();
+  });
+  $('playerVolume').addEventListener('input',()=>{
+    player.volume=Math.min(1,Math.max(0,Number($('playerVolume').value)||0));
+    player.muted=player.volume===0;
+    updateCustomPlayerControls();
+  });
+  function updateTimeReadout() {$('timeReadout').textContent=fmtTime(player.currentTime)+' / '+fmtTime(Number.isFinite(player.duration)?player.duration:0);}
   function animateLivePlayback() {
-    livePlaybackFrame=null; updateTimeReadout(); updateLiveHighlight();
+    livePlaybackFrame=null;updateTimeReadout();updateCustomPlayerControls();updateLiveHighlight();
     if(!player.paused&&!player.ended)livePlaybackFrame=requestAnimationFrame(animateLivePlayback);
   }
-  function startLivePlayback(forceFollowCurrentLine=false) { updateLiveHighlight(false,forceFollowCurrentLine); if(livePlaybackFrame===null&&!player.paused&&!player.ended)livePlaybackFrame=requestAnimationFrame(animateLivePlayback); }
-  function stopLivePlayback() { if(livePlaybackFrame!==null)cancelAnimationFrame(livePlaybackFrame);livePlaybackFrame=null;updateTimeReadout();updateLiveHighlight(); }
-  player.addEventListener('timeupdate',()=>{updateTimeReadout();updateLiveHighlight();});
-  player.addEventListener('seeking',updateLiveHighlight); player.addEventListener('seeked',updateLiveHighlight);
-  player.addEventListener('play',()=>{if(!playbackStartPositionPending)playbackStartPosition=Number(player.currentTime)||0;playbackStartPositionPending=false;startLivePlayback(true);}); player.addEventListener('pause',stopLivePlayback); player.addEventListener('ended',stopLivePlayback);
-  player.addEventListener('loadedmetadata',()=>{updateTimeReadout();updatePreview();if(gridMode==='words')renderWordGrid();updateLiveHighlight();});
+  function startLivePlayback(forceFollowCurrentLine=false) {updateLiveHighlight(false,forceFollowCurrentLine);updateCustomPlayerControls();if(livePlaybackFrame===null&&!player.paused&&!player.ended)livePlaybackFrame=requestAnimationFrame(animateLivePlayback);}
+  function stopLivePlayback() {if(livePlaybackFrame!==null)cancelAnimationFrame(livePlaybackFrame);livePlaybackFrame=null;updateTimeReadout();updateCustomPlayerControls();updateLiveHighlight();}
+  player.addEventListener('timeupdate',()=>{updateTimeReadout();updateCustomPlayerControls();updateLiveHighlight();});
+  player.addEventListener('seeking',()=>{updateCustomPlayerControls();updateLiveHighlight();});
+  player.addEventListener('seeked',()=>{updateCustomPlayerControls();updateLiveHighlight();});
+  player.addEventListener('play',()=>{if(!playbackStartPositionPending)playbackStartPosition=Number(player.currentTime)||0;playbackStartPositionPending=false;startLivePlayback(true);});
+  player.addEventListener('pause',stopLivePlayback);
+  player.addEventListener('ended',stopLivePlayback);
+  player.addEventListener('loadedmetadata',()=>{updateTimeReadout();updateCustomPlayerControls();updatePreview();if(gridMode==='words')renderWordGrid();updateLiveHighlight();});
+  player.addEventListener('volumechange',updateCustomPlayerControls);
+  updateCustomPlayerControls();
 
   function isAudioFile(file) {
     const ext=file.name.toLowerCase().split('.').pop();
@@ -3114,8 +3224,8 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       if(agentPresets.length)agentPresets.forEach(p=>addContextAction(menu,p.name,()=>applyAgentPreset(p.id)));
       else{const empty=document.createElement('button');empty.type='button';empty.textContent='No saved presets yet';empty.disabled=true;menu.append(empty);}
       addMenuSeparator(menu);addContextAction(menu,'+ Save new agent preset…',saveAgentPreset,{footer:true,disabled:!cueForRef()});
-      addMenuSeparator(menu);const key=wordKey(target.lineIndex,target.cueIndex),refs=selectedWordKeys.has(key)?[...selectedWordKeys].map(parseWordKey):[{lineIndex:target.lineIndex,cueIndex:target.cueIndex}];
-      const deleteAction=addContextAction(menu,'Delete word',()=>deleteWordCues(refs.filter(ref=>rows[ref.lineIndex]?.wordCues?.[ref.cueIndex])),{footer:true});deleteAction.classList.add('danger');
+      addMenuSeparator(menu);const key=wordKey(target.lineIndex,target.cueIndex),refs=(selectedWordKeys.has(key)?[...selectedWordKeys].map(parseWordKey):[{lineIndex:target.lineIndex,cueIndex:target.cueIndex}]).filter(ref=>rows[ref.lineIndex]?.wordCues?.[ref.cueIndex]);
+      const deleteAction=addContextAction(menu,refs.length>1?'Delete words':'Delete word',()=>deleteWordCues(refs),{footer:true});deleteAction.classList.add('danger');
     }
     if(gridMode==='words'&&Number.isInteger(target?.lineIndex)){
       addMenuSeparator(menu);
@@ -3355,12 +3465,13 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     }
   },true);
   $('settingsScreen').addEventListener('focusout',()=>{if(pendingInstallationSettingsSnapshot&&!settingsFormHasFocus()){const pending=pendingInstallationSettingsSnapshot;applyInstallationSettingsSnapshot(pending,true);}});
-  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorShortcutHints'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);if(id==='wordInspectorLayout'&&gridMode==='words')rerenderWordTimelinePreservingView();toast('Settings saved.');});
-  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false,wordInspectorLayout:'right',showEditorShortcutHints:false,generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}};syncSettingsForm();saveSettings();applyGeneratorDefaults();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
+  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','doubleShiftIntervalMs','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorShortcutHints'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);if(id==='wordInspectorLayout'&&gridMode==='words')rerenderWordTimelinePreservingView();toast('Settings saved.');});
+  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,doubleShiftIntervalMs:450,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false,wordInspectorLayout:'right',showEditorShortcutHints:false,generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}};syncSettingsForm();saveSettings();applyGeneratorDefaults();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
   document.addEventListener('keydown',e=>{
     if((e.key==='Shift'||e.code==='ShiftLeft'||e.code==='ShiftRight')&&!e.repeat&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&activeScreen()==='edit'){
       const now=performance.now();
-      if(now-lastShiftTapAt<=DOUBLE_SHIFT_INTERVAL_MS){
+      const doubleShiftIntervalMs=Math.min(1000,Math.max(150,Number(settings.doubleShiftIntervalMs)||450));
+      if(now-lastShiftTapAt<=doubleShiftIntervalMs){
         lastShiftTapAt=0;e.preventDefault();jumpToCurrentLine();return;
       }
       lastShiftTapAt=now;return;

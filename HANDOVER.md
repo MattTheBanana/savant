@@ -3,83 +3,92 @@
 **Updated:** 2026-10-23  
 **Repository:** [MattTheBanana/savant](https://github.com/MattTheBanana/savant)  
 **Branch:** `main`  
-**Latest UI implementation commit:** [`92672bf4a0a02b11a2f48b09aafd5bcff8ffa8a6`](https://github.com/MattTheBanana/savant/commit/92672bf4a0a02b11a2f48b09aafd5bcff8ffa8a6)
+**Latest implementation commit:** [`b7a7fae3d405390c3c6d738530fcc961a4d3cac6`](https://github.com/MattTheBanana/savant/commit/b7a7fae3d405390c3c6d738530fcc961a4d3cac6)
 
 Primary UI file: `webui/index.html`  
 Backend and local filesystem APIs: `lyrics_editor.py`
 
-The latest changes are committed to `main`. The editor toolbar, shortcut-hints preference, TTML zoom behavior, and generator drop-path feedback have been updated. JavaScript parse/static checks passed, but no interactive browser/native-picker smoke test has been run. Do not claim interaction behavior has been verified without testing it.
+The recent changes are committed to `main`. JavaScript parse and static checks have passed, but no interactive GUI smoke test has been run. Distinguish static checks from actual user-facing verification.
 
 ## Current editor implementation
 
 ### Toolbar and keyboard shortcut hints
 
-- The LRC/TTML switcher is in `#editorModeSwitchRow` and must remain visible.
-- The functional editor toolbar is `#editorActionBar`; its import, editing, Controls dropdown, and relevant mode-switching behavior must never be controlled by the optional hints preference.
-- The preference is `showEditorShortcutHints`, stored in `lyrics-aligner-ui-settings`, and is applied by `applyEditorPreferences()`.
-- `#editorHotkeyBar` is the distinct bottom keyboard-hints bar. Its contents use LRC/TTML-specific classes and `updateTimelineControlsContext()` toggles the active mode's hints.
-- The top bar now uses flex rather than the previous inconsistent grid track/column assignments. It stays on one row at typical desktop widths and wraps below 1180px; narrow layouts also wrap editing actions.
-- The zoom group (`#editorZoomControls`) and its adjacent separators are hidden in LRC mode using the `word-mode` class on `#editorActionBar`. They are TTML timeline controls, not LRC controls.
+- The LRC/TTML switcher is `#editorModeSwitchRow` and must remain visible.
+- The functional toolbar is `#editorActionBar`. Import, editing, and Controls dropdown visibility must never depend on the optional keyboard-hints preference.
+- The preference `showEditorShortcutHints` is stored in `lyrics-aligner-ui-settings`; `applyEditorPreferences()` only toggles the dedicated `#editorHotkeyBar`.
+- The top toolbar uses flex layout. It stays on one row at typical desktop widths and wraps below 1180px / on narrow viewports.
+- The TTML timeline zoom controls (`#editorZoomControls`) and their separators are hidden in LRC mode via the `word-mode` class on `#editorActionBar`.
 
-### TTML zoom model and expected behavior
+### TTML zoom model
 
 Relevant functions include `computeFitZoom()`, `laneContextBounds()`, `laneVisibleSpan()`, `setTimelineGeometry()`, `minimumTimelineZoom()`, `applyTimelineZoom()`, and `syncEditorActionBar()`.
 
-- Fit scale is based on the largest *effective* per-line context after clamping to the media/lyrics duration. Calculating fit from an unclamped phrase-plus-context span made the requested scale disagree with what a lane could actually display, especially at the start/end of audio.
-- The Fit Lines scale is the lower zoom bound. The minus button and Fit Lines are disabled when already at that scale; plus is disabled at the upper scale limit. The button state is refreshed after a zoom.
-- Keep this consistent: a minus click must never reduce zoom below Fit Lines; Fit Lines should be disabled when it would not change the view; and the first plus click above Fit Lines should visibly increase timeline detail.
-- TTML zoom buttons are intentionally unavailable when there are no word-timed cues. Do not remove the mode/cue restrictions without confirming intent.
-- Verify zoom behavior with actual audio and TTML word cues. Current evidence is a JavaScript parse/static check only, not a real GUI test.
+- Fit scale is based on the largest effective per-line context after accounting for media/lyrics boundaries.
+- Fit Lines is the lower zoom bound. Minus and Fit Lines are disabled at the fit scale; plus is disabled at the upper limit. The buttons update state after zooming.
+- TTML zoom is unavailable without word-timed cues. Do not remove the mode/cue restrictions without clarifying intent.
+- Validate with actual TTML word cues and audio. Static checks are not proof that visible scale behavior is correct.
 
-### Add Line
+### Add Line and timestamp rules
 
-Current markup uses `#addLine` in both modes. Its click handler dispatches to `addLine()` in LRC mode and `addTtmlLine()` in TTML mode; the latter calls `insertTtmlLineAt()`. The current code does not have a separate `#addLineTtml` element.
+The top `#addLine` control dispatches to `addLine()` in LRC mode and `addTtmlLine()` in TTML mode. TTML insertion calls `insertTtmlLineAt()`. The context-menu Insert above/below actions use `insertLineAt()`.
 
-Expected behavior to verify interactively:
+These insertion paths now share `lineStartAtInsertion(index)`:
 
-- LRC inserts a new empty lyric line immediately after the selected line, or at the end if nothing is selected, and updates selection, grid, preview, status, and undo history.
-- TTML inserts a new TTML lyric line, stays in word-timing mode, selects/scrolls to it, and updates preview, status, and undo history.
-- Check insertion at the first position and at the end, as well as with an empty editor where applicable.
+- Before the first line: use a nonnegative time before its timestamp, subject to the zero-second boundary.
+- After the last line: use the last timestamp plus configured `txtSpacing`.
+- Between two lines with distinct timestamps: use their midpoint, so the new timestamp is numerically between the surrounding timestamps even if imported data is out of chronological order.
+- If the two neighboring timestamps are equal, no strictly intermediate time exists; fall back to the configured spacing after the upper line.
+- LRC Add Line inserts after the selected line, or at the end when there is no valid selection. TTML Add Line also inserts after the selected line, or at the end with no valid selection.
+
+Still verify interactively that the selected line, timeline/grid, preview, status, and undo history all update. Include insertions before the first line, between lines, and after the last line. The shared timestamp helper passed focused JavaScript tests for empty input, first/middle/last insertion, descending neighboring values, and equal-time fallback.
+
+### Right-click context menu
+
+- `showEditorContextMenu()` disables Copy/Cut when the target does not contain a selected text range, valid selected word, or valid row target.
+- Paste is disabled while Savant's internal `editorClipboard` is empty. After an in-app copy/cut, it is enabled.
+- The TTML action label is **Add word** (not “Make new word”).
+- Keep the distinctions among text selection, whole-line targets, word targets, and style presets in future changes.
+
+Note: system clipboard text may be readable through `pasteContextTarget()` where browser permissions allow it. The context menu's Paste disabled state currently tracks Savant's internal clipboard; verify external/system clipboard expectations before changing this policy.
 
 ### Generator: dropped lyrics and output folder
 
-The user confirmed that **Choose lyrics** (native picker) correctly fills `#genOutputDirectory`, but drag-and-drop does not. The user does **not** want an automatic native file-picker prompt after dropping a file.
+The user confirmed that **Choose lyrics** (native picker) correctly fills `#genOutputDirectory`, but drag-and-drop does not. The user does **not** want Savant to automatically open a native picker after dropping a file.
 
-The drop handler now:
+The drop handler tries to recover an absolute path from `File.path`, a `file://` URI, or an absolute path in drag data, validating that the basename matches the dropped filename. If the OS/browser exposes it, Savant uses the source directory. Otherwise, it keeps the dropped file selected and displays feedback. Do not infer a folder from the filename or working directory and do not automatically open a picker as fallback. Preserve explicitly selected/configured custom folders.
 
-- Tries to recover an absolute path from `File.path`, a `file://` URI, or an absolute path in the drag data, validating that the basename matches the dropped file.
-- Uses that path to set the directory when the OS/browser actually exposes it.
-- Otherwise keeps the dropped `File` selected and shows feedback that this browser did not expose the source folder. Do not automatically open a picker as a fallback.
-- Preserves an explicitly selected/configured custom output folder; automatic lyrics-directory behavior should not overwrite a user's explicit folder choice.
-
-The underlying browser limitation remains: many browsers do not expose an absolute parent directory for a dropped local file. Do not infer a path from the filename or the working directory. If the user requests another approach, explain the trade-off before making a behavior-changing choice.
+Many browsers deliberately omit the parent directory from local dropped files, so recovering it is not always technically possible from browser data alone.
 
 ## Other current UI state
 
-The following are present in `webui/index.html`; real GUI verification is still outstanding:
+The following are present in `webui/index.html`; GUI verification remains outstanding:
 
-- Browser tab title follows the active section (for example, `savant • Edit`, `savant • Generate`, `savant • Preferences`).
-- Preferences uses vertical tabs in this order: Visuals, UI, Utility, Generator Defaults.
-- Generator's “Use Audio Directory” and “Use Lyrics Directory” actions sit beside Browse and have no trailing ellipses.
-- Path suggestion rows omit the right-side Folder/File label; paths for new directories use orange/missing-path styling.
-- Context-menu keyboard shortcut hints use the same font size as action labels.
-- The bottom persistent audio player dock must remain usable and unobscured.
+- Browser tab title follows the active section.
+- Preferences uses vertical tabs: Visuals, UI, Utility, Generator Defaults.
+- Generator's “Use Audio Directory” / “Use Lyrics Directory” controls sit beside Browse.
+- Path suggestion rows omit the right-side Folder/File label; new-directory paths use orange/missing-path styling.
+- Context-menu shortcut hints use the same font size as action labels.
+- Persistent audio player dock remains a key regression target.
 
 ## Validation status
 
-Static checks run against the latest `webui/index.html`:
+Static checks against the latest UI source:
 
-- Inline JavaScript parsed successfully using a JavaScript function-constructor syntax check.
-- No duplicate HTML IDs were found.
-- Confirmed the old toolbar-hiding rule is absent.
-- Confirmed LRC mode hides the TTML zoom group, zoom lower bound equals the Fit Lines scale, zoom boundary state is updated after applying zoom, and the drag-path feedback remains without automatic picker invocation.
+- Inline JavaScript parses.
+- No duplicate HTML IDs.
+- Legacy toolbar-hiding selector is absent.
+- Zoom controls are scoped to TTML; zoom lower bound equals Fit Lines; button-state refresh runs after zoom application.
+- Generator drop-path resolver passed focused Windows/POSIX path and filename-match checks.
+- Shared line timestamp helper passed focused tests for first, middle, last, empty, descending-neighbor, and equal-neighbor cases.
+- Context-menu markup now has disabled-state logic for Copy/Cut/Paste and uses the new Add word label.
 
 Not yet run:
 
 - Python project tests.
-- Browser smoke tests of hints persistence/toggling, toolbar layout, zoom, and Add Line.
-- Drag/drop tests across the browser/OS combinations the user uses.
+- Interactive browser checks of toolbar responsiveness, preference persistence, zoom appearance, line insertion, context menu behavior, and external clipboard interactions.
+- Real drag/drop tests across the user's browser/OS configuration.
 
 ## Working expectations
 
-Read the current implementation before editing it. Make targeted changes and preserve unrelated functionality. Ask a concise clarifying question when user intent or an implementation choice is genuinely ambiguous. Implement all clear requirements, and distinguish static checks from actual behavioral verification. Commit changes on `main` and link commits when reporting the result.
+Read current implementation before editing it. Make targeted changes and preserve unrelated functionality. Ask a concise clarifying question when intent or implementation choice is genuinely ambiguous. Implement clear requirements completely; distinguish static checks from interactive validation. Commit changes on `main` and link commits in implementation reports.

@@ -290,3 +290,9 @@ User-specific collaboration guidance:
 - Replaced the unclear circular-arrow/pause-bars glyph with a simple filled square stop icon. Renamed its visible and accessible label to `Stop`; its tooltip and the Ctrl+Space help description now say “Stop playback and return to the start of the current playback segment.”
 - Nudged the square down by 1px for optical alignment in both desktop and compact layouts.
 - Static validation passed: inline JavaScript compiles, no duplicate static HTML IDs, and the old SVG is replaced by a centered square path. Browser visual testing remains outstanding.
+
+## Match Generate and Preferences views to the editor width
+
+- Applied the same resize-aware horizontal offset and width reduction to the Generate and Preferences screen containers as the Edit screen, so their left edges align with the top-bar Edit button and their right edges remain aligned with the existing shell content edge.
+- The alignment helper now propagates its computed offset to all three main screens and continues to recalculate on window resize.
+- Static validation passed: inline JavaScript compiles, no duplicate static HTML IDs, and all three screens share the same alignment rule. Browser layout verification remains outstanding.

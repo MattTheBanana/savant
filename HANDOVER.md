@@ -3,7 +3,7 @@
 **Updated:** 2026-10-23  
 **Repository:** [MattTheBanana/savant](https://github.com/MattTheBanana/savant)  
 **Branch:** `main`  
-**Latest implementation commit:** [`22194daad7b54240fd7746c9b3f1c7ad5cce391b`](https://github.com/MattTheBanana/savant/commit/22194daad7b54240fd7746c9b3f1c7ad5cce391b)
+**Latest implementation commit:** [`df86b2a239d44bf3a29af0719f4df018966a3b53`](https://github.com/MattTheBanana/savant/commit/df86b2a239d44bf3a29af0719f4df018966a3b53)
 
 Primary UI file: `webui/index.html`  
 Backend and local filesystem APIs: `lyrics_editor.py`
@@ -160,6 +160,13 @@ Not yet run:
 - The UI preference `centerModifierSelection` now covers clicking/keyboard-selecting lines and selecting TTML words. When off, the editor avoids centering and only scrolls lines into view as needed; when on, it uses eased centering for selected lines and clicked words.
 - TTML style-reference information is shown in a viewport-clamped popover anchored to the info button, rather than a toast pinned to the bottom edge. The LRC Jump to Current Line button uses standard small-button styling.
 - Actual browser/GUI verification has not been run. Static verification on the latest UI source passed: inline JavaScript parses; no duplicate HTML IDs; the info popover, select-all context actions, Shift + F handler, updated Controls rows, and shared centering preference are present.
+
+### Custom audio player dock
+
+- The fixed player dock keeps the seek/progress bar on its upper row, with a compact controls row beneath it containing circular play/pause, block pause, mute/unmute SVG icons, volume slider, and a time display to hundredths.
+- Block Pause reuses `blockPause()`: when audio is playing, it pauses and seeks back to `playbackStartPosition`, the start of the current playback segment. Pressing the action while paused follows the existing keyboard behavior and starts playback.
+- The mute and playback controls use inline SVG artwork, not emoji glyphs. The volume control remains visible on narrow screens with a reduced width.
+- Static verification: inline JavaScript parses; no duplicate HTML IDs; control IDs and event handlers for seek, play/pause, block pause, mute, and volume are present. Actual responsive browser testing has not yet been run.
 
 ## Working expectations
 

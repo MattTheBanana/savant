@@ -174,9 +174,9 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 @keyframes genConfettiPop{0%{transform:translate(0,0) rotate(0deg) scale(.7);opacity:0}12%{opacity:1}100%{transform:translate(var(--confetti-x),var(--confetti-y)) rotate(var(--confetti-rotate)) scale(.65);opacity:0}}
 @media(prefers-reduced-motion:reduce){.generate-confetti-particle{display:none!important;animation:none!important}}
 @keyframes genProgressShimmer{from{background-position:100% 0}to{background-position:-100% 0}}@keyframes genSegmentSweep{0%{transform:translateX(-110%);opacity:.55}45%{opacity:1}100%{transform:translateX(300%);opacity:.65}}
-.generate-run-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-top:1px solid var(--border);background:#111a27}.generate-run-footer .generate-muted{flex:1;min-width:0;text-align:center}.generate-run-button{min-width:170px;font-weight:700}.generate-run-button:disabled{opacity:.55;cursor:not-allowed}.generate-output-row{display:grid;grid-template-columns:minmax(210px,.8fr) minmax(300px,1.2fr);gap:13px;margin:0 0 13px;align-items:start}.generate-output-destination{min-width:0}.generate-output-location-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}.generate-output-location-actions button{white-space:nowrap}.path-input-control{display:flex;flex-direction:column;align-items:flex-start;gap:6px;position:relative;min-width:0}.path-input-control input{width:100%;min-width:0}.path-input-control .path-action-button{order:2;align-self:flex-start;white-space:nowrap}.path-suggestion-menu{position:absolute;left:0;right:0;top:36px;z-index:120;max-height:260px;overflow:auto;padding:4px;border:1px solid #455972;border-radius:8px;background:#101927;box-shadow:0 14px 35px #000b}.path-suggestion-menu.hidden{display:none!important}.path-suggestion-option{display:flex;align-items:center;gap:8px;width:100%;padding:7px 9px;text-align:left;border:1px solid transparent;border-radius:5px;background:transparent;font-size:12px}.path-suggestion-option:hover,.path-suggestion-option.active{background:#26384d;border-color:#405773}.path-suggestion-option .path-suggestion-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.path-suggestion-option .path-suggestion-kind{flex:0 0 auto;color:#91a5bd;font-size:10px}.path-suggestion-option .path-suggestion-missing{color:#f5ce81}.path-suggestion-status{padding:8px 9px;color:var(--muted);font-size:11px}.path-suggestion-status.error{color:#ffb5b5}
+.generate-run-footer{display:grid;grid-template-columns:minmax(140px,auto) minmax(0,1fr) minmax(170px,auto);grid-template-areas:"run outputs import" "status status status";align-items:center;gap:8px 12px;padding:14px 16px;border-top:1px solid var(--border);background:#111a27}.generate-run-footer #genRunButton{grid-area:run;width:auto}.generate-run-footer #genOutputActions{grid-area:outputs}.generate-run-footer #genImportButton{grid-area:import;width:auto}.generate-run-footer #genFooterStatus{grid-area:status;min-width:0;width:100%;margin:0;text-align:center;font-size:11px}.generate-output-actions{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;min-width:0}.generate-output-actions button{min-width:0;padding:6px 9px;font-size:11px;white-space:nowrap}.generate-run-footer .generate-muted{flex:1;min-width:0;text-align:center}.generate-run-button{min-width:170px;font-weight:700}.generate-run-button:disabled{opacity:.55;cursor:not-allowed}.generate-output-row{display:grid;grid-template-columns:minmax(210px,.8fr) minmax(300px,1.2fr);gap:13px;margin:0 0 13px;align-items:start}.generate-output-destination{min-width:0}.generate-output-location-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}.generate-output-location-actions button{white-space:nowrap}.path-input-control{display:flex;flex-direction:column;align-items:flex-start;gap:6px;position:relative;min-width:0}.path-input-control input{width:100%;min-width:0}.path-input-control .path-action-button{order:2;align-self:flex-start;white-space:nowrap}.path-suggestion-menu{position:absolute;left:0;right:0;top:36px;z-index:120;max-height:260px;overflow:auto;padding:4px;border:1px solid #455972;border-radius:8px;background:#101927;box-shadow:0 14px 35px #000b}.path-suggestion-menu.hidden{display:none!important}.path-suggestion-option{display:flex;align-items:center;gap:8px;width:100%;padding:7px 9px;text-align:left;border:1px solid transparent;border-radius:5px;background:transparent;font-size:12px}.path-suggestion-option:hover,.path-suggestion-option.active{background:#26384d;border-color:#405773}.path-suggestion-option .path-suggestion-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.path-suggestion-option .path-suggestion-kind{flex:0 0 auto;color:#91a5bd;font-size:10px}.path-suggestion-option .path-suggestion-missing{color:#f5ce81}.path-suggestion-status{padding:8px 9px;color:var(--muted);font-size:11px}.path-suggestion-status.error{color:#ffb5b5}
 @media(max-width:950px){.generate-basic-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.generate-advanced-grid{grid-template-columns:1fr}.generate-diagnosis-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:620px){.generate-pane{padding:10px}.generate-drop-grid,.generate-basic-grid,.generate-check-grid,.generate-output-row{grid-template-columns:1fr}.generate-json-uploads{grid-template-columns:1fr}.generate-tools-row{align-items:stretch;flex-direction:column}.generate-run-footer{align-items:stretch;flex-direction:column}.generate-run-footer .generate-muted{text-align:left;order:0}.generate-run-footer #genRunButton{order:-1}.generate-run-footer #genImportButton{order:1}.generate-run-button{width:100%}.generate-output-location-actions{flex-direction:column;align-items:stretch}.generate-install-item,.generate-artifact-row{align-items:flex-start;flex-direction:column}.generate-artifact-actions{justify-content:flex-start}.generate-results{margin:10px}.generate-subnav{padding:9px}.generate-subnav button{flex:1;padding:8px 5px;font-size:12px}}
+@media(max-width:620px){.generate-pane{padding:10px}.generate-drop-grid,.generate-basic-grid,.generate-check-grid,.generate-output-row{grid-template-columns:1fr}.generate-json-uploads{grid-template-columns:1fr}.generate-tools-row{align-items:stretch;flex-direction:column}.generate-run-footer{grid-template-columns:minmax(0,1fr);grid-template-areas:"run" "outputs" "import" "status";align-items:stretch}.generate-run-footer .generate-muted{text-align:left;order:0}.generate-run-footer #genRunButton,.generate-run-footer #genImportButton{width:100%}.generate-output-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.generate-output-actions button{width:100%;white-space:normal}.generate-run-button{width:100%}.generate-output-location-actions{flex-direction:column;align-items:stretch}.generate-install-item,.generate-artifact-row{align-items:flex-start;flex-direction:column}.generate-artifact-actions{justify-content:flex-start}.generate-results{margin:10px}.generate-subnav{padding:9px}.generate-subnav button{flex:1;padding:8px 5px;font-size:12px}}
 
 /* Full-height editor workspace: the lyric grids own their scrolling. */
 .shell{height:calc(100vh - var(--app-header-height) - var(--player-dock-height));max-height:calc(100vh - var(--app-header-height) - var(--player-dock-height));display:flex;flex-direction:column;overflow:hidden;padding:12px 22px}
@@ -340,7 +340,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
 .player-transport-controls{grid-column:1;grid-row:1;display:flex;align-items:center;gap:9px;width:100%;min-width:0;height:8px}
 .player-control-button{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;padding:0;border:1px solid transparent;border-radius:50%;background:transparent;color:#dbe8f6;font-size:14px;line-height:1}
 .player-control-button:hover{background:#22354a;border-color:#405673}
-.player-play-button{background:transparent;border-color:transparent;border-radius:50%;color:#f1fffc;font-size:16px}.player-play-button:disabled,.player-control-button:disabled{opacity:.4;cursor:default}.player-icon{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.player-play-button .player-icon{width:19px;height:19px;fill:currentColor;stroke:none;transform:translateX(-1px)}#playerPlayPause[aria-label="Pause Audio"] .player-icon{transform:translate(0px,1px)}.player-secondary-controls{grid-column:1;grid-row:2;display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;height:30px}.player-secondary-actions{display:flex;align-items:center;gap:8px;min-width:0}.player-volume-control{display:flex;align-items:center;gap:7px;min-width:0}.player-block-pause .player-icon{width:22px;height:22px;transform:translateY(1px)}.player-mute-button .player-icon{width:20px;height:20px}
+.player-play-button{background:transparent;border-color:transparent;border-radius:50%;color:#f1fffc;font-size:16px}.player-play-button:disabled,.player-control-button:disabled{opacity:.4;cursor:default}.player-icon{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.player-play-button .player-icon{width:19px;height:19px;fill:currentColor;stroke:none;transform:translateX(-1px)}#playerPlayPause[aria-label="Pause Audio"] .player-icon{transform:translate(1px,-1px)}.player-secondary-controls{grid-column:1;grid-row:2;display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;height:30px}.player-secondary-actions{display:flex;align-items:center;gap:8px;min-width:0}.player-volume-control{display:flex;align-items:center;gap:7px;min-width:0}.player-block-pause .player-icon{width:22px;height:22px;transform:translate(1px,-1px)}.player-mute-button .player-icon{width:20px;height:20px}
 .player-seek,.player-volume{appearance:none;-webkit-appearance:none;display:block;height:5px;min-width:20px;margin:0;border:0;border-radius:99px;outline:none;cursor:pointer;accent-color:var(--accent)}
 .player-seek{flex:1 1 auto;width:100%;background:linear-gradient(90deg,#76e4c1 0%,#76e4c1 var(--seek-progress,0%),#354358 var(--seek-progress,0%),#354358 100%)}
 .player-volume{flex:0 1 86px;width:86px;background:linear-gradient(90deg,#76e4c1 0%,#76e4c1 var(--volume-progress,100%),#354358 var(--volume-progress,100%),#354358 100%)}
@@ -349,7 +349,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
 .player-seek::-moz-range-thumb,.player-volume::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:#e7fbf5;border:2px solid #3b8678;box-shadow:0 1px 4px #0006}
 #editScreen button,#editorContextMenu button,#colorPickerPopover button,#playerDock button{text-transform:capitalize}.player-secondary-controls button{flex:0 0 32px}
 @media(max-width:1000px){.player-dock{grid-template-columns:minmax(0,1fr);grid-template-rows:8px 30px;gap:10px 8px;padding:7px 10px}.player-transport-controls{gap:7px}.player-secondary-controls{gap:8px}.player-volume{flex-basis:68px;width:68px}}
-@media(max-width:620px){.player-dock{grid-template-columns:minmax(0,1fr);grid-template-rows:7px 28px;gap:8px 6px;padding:5px 8px}.player-transport-controls{gap:5px;height:7px}.player-control-button,.player-secondary-controls button{flex-basis:28px;width:28px;height:28px}.player-icon{width:16px;height:16px}.player-play-button{font-size:13px}.player-secondary-controls{gap:6px;height:28px}.player-secondary-actions{gap:4px}.player-volume-control{gap:4px}.player-volume{display:block;flex:0 1 56px;width:56px}.player-block-pause .player-icon{width:19px;height:19px;transform:translateY(1px)}.player-mute-button .player-icon{width:18px;height:18px}.player-dock .audio-time{font-size:10px}.player-dock-meta{height:28px;gap:4px}.player-dock .audio-title{max-width:calc(100% - 72px);font-size:11px}.player-dock .audio-sub{max-width:66px;font-size:10px}}
+@media(max-width:620px){.player-dock{grid-template-columns:minmax(0,1fr);grid-template-rows:7px 28px;gap:8px 6px;padding:5px 8px}.player-transport-controls{gap:5px;height:7px}.player-control-button,.player-secondary-controls button{flex-basis:28px;width:28px;height:28px}.player-icon{width:16px;height:16px}.player-play-button{font-size:13px}.player-secondary-controls{gap:6px;height:28px}.player-secondary-actions{gap:4px}.player-volume-control{gap:4px}.player-volume{display:block;flex:0 1 56px;width:56px}.player-block-pause .player-icon{width:19px;height:19px;transform:translate(1px,-1px)}.player-mute-button .player-icon{width:18px;height:18px}.player-dock .audio-time{font-size:10px}.player-dock-meta{height:28px;gap:4px}.player-dock .audio-title{max-width:calc(100% - 72px);font-size:11px}.player-dock .audio-sub{max-width:66px;font-size:10px}}
 
 
 /* Keep the edit workspace anchored to its navigation button and center the filename on the full player dock */
@@ -532,12 +532,12 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       <section class="generate-results">
         <div class="generate-results-head"><div><h3>Run activity and diagnostics</h3><p>Inspect logs, clean TIFA summaries, raw JSON, and generated files.</p></div><span id="genRunStatusBadge" class="badge">No run yet</span></div>
         <div class="generate-result-tabs" role="tablist" aria-label="Run results">
-          <button data-gen-result="logs" class="active" role="tab" aria-selected="true">Logs</button><button data-gen-result="clean" role="tab" aria-selected="false">Clean Diagnosis</button><button data-gen-result="raw" role="tab" aria-selected="false">Raw JSON</button><button data-gen-result="files" role="tab" aria-selected="false">Output Files</button>
+          <button data-gen-result="logs" class="active" role="tab" aria-selected="true">Logs</button><button data-gen-result="clean" role="tab" aria-selected="false">Clean Diagnosis</button><button data-gen-result="raw" role="tab" aria-selected="false">Raw JSON</button>
         </div>
         <div id="genResultLogs" class="generate-result-pane"><pre id="genLogs" class="generate-log-view" tabindex="0">Run the generator or system diagnostics to see live output here.</pre></div>
         <div id="genResultClean" class="generate-result-pane hidden"><div id="genCleanDiagnosis" class="generate-clean-diagnosis"><p class="generate-muted">A TIFA diagnosis summary will appear here when available.</p></div></div>
         <div id="genResultRaw" class="generate-result-pane hidden"><pre id="genRawDiagnosis" class="generate-log-view">The raw TIFA JSON will appear here when available.</pre></div>
-        <div id="genResultFiles" class="generate-result-pane hidden"><div id="genArtifacts" class="generate-artifacts"><p class="generate-muted">Generated files will be listed here.</p></div></div>
+        
       </section>
     </section>
     <section id="generateRunStatus" class="generate-run-status hidden" aria-live="polite">
@@ -547,7 +547,17 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
         <div id="genSegmentTrack" class="generate-segment-track" role="progressbar" aria-label="Generation progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
       </div>
     </section>
-    <div class="generate-run-footer"><button id="genRunButton" class="primary generate-run-button"><span aria-hidden="true">▶</span> Run Generator</button><span id="genFooterStatus" class="generate-muted">Choose an audio file and lyrics to begin.</span><button id="genImportButton" class="generate-run-button" type="button" disabled>Import Output to Edit</button></div>
+    <div class="generate-run-footer">
+      <button id="genRunButton" class="primary generate-run-button"><span aria-hidden="true">▶</span> Run Generator</button>
+      <div id="genOutputActions" class="generate-output-actions" role="group" aria-label="Open generated output files">
+        <button id="genOpenLrcButton" class="small" type="button" disabled>Open LRC</button>
+        <button id="genOpenTtmlButton" class="small" type="button" disabled>Open TTML</button>
+        <button id="genOpenLrcDirectoryButton" class="small" type="button" disabled>Open LRC Directory</button>
+        <button id="genOpenTtmlDirectoryButton" class="small" type="button" disabled>Open TTML Directory</button>
+      </div>
+      <button id="genImportButton" class="generate-run-button" type="button" disabled>Import Output to Editor</button>
+      <span id="genFooterStatus" class="generate-muted">Choose an audio file and lyrics to begin.</span>
+    </div>
   </section>
   <section id="settingsScreen" class="panel hidden">
     <div class="panel-head"><div><h2>Editor settings</h2><p>Adjust timing behavior and playback. Preferences are saved to savant-settings.txt beside the app and stay synchronized with this page while Savant is running.</p></div><button id="resetSettings" class="small">Reset defaults</button></div>
@@ -1207,7 +1217,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   function genMarkConfigChanged(){
     if(genRunBusy)return;
     if(genCompletedNeedsConfigChange){
-      genCompletedNeedsConfigChange=false;genOutputReady=false;$('genImportButton').disabled=true;
+      genCompletedNeedsConfigChange=false;genOutputReady=false;$('genImportButton').disabled=true;genSetOutputButtons(null);
       $('genRunButton').disabled=false;$('genRunButton').innerHTML='<span aria-hidden="true">▶</span> Run Generator';
       $('genFooterStatus').textContent='Settings changed. Ready for another run.';
     }
@@ -1270,10 +1280,19 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     if(!directory){toast('The selected source file has no usable local path.',true);return;}
     $('genOutputDirectory').value=directory;$('genOutputDirectory').dataset.outputDirectoryMode='custom';genMarkConfigChanged();
   }
+  function genSetOutputButtons(snapshot){
+    const artifacts=snapshot?.artifacts||[];
+    const ready=!genIsInstallRun&&!genRunBusy&&['success','warning'].includes(snapshot?.status);
+    for(const [buttonId,key,mode] of [['genOpenLrcButton','output-lrc','file'],['genOpenLrcDirectoryButton','output-lrc','directory'],['genOpenTtmlButton','output-ttml','file'],['genOpenTtmlDirectoryButton','output-ttml','directory']]){
+      const artifact=artifacts.find(item=>item.key===key),button=$(buttonId);
+      if(button)button.disabled=!ready||!artifact?.available;
+    }
+  }
   function genSetImportButton(snapshot){
     const artifacts=snapshot?.artifacts||[];
     genOutputReady=!genIsInstallRun&&['success','warning'].includes(snapshot?.status)&&artifacts.some(a=>a.key==='output-lrc'&&a.available);
     $('genImportButton').disabled=!genOutputReady||genImportedRunId===snapshot?.id;
+    genSetOutputButtons(snapshot);
   }
   async function genImportOutput(runId=genLastSnapshot?.id,automatic=false){
     if(!runId||!genLastSnapshot||genLastSnapshot.id!==runId||!['success','warning'].includes(genLastSnapshot.status)){
@@ -1615,19 +1634,6 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     host.dataset.progressStatus=String(snapshot.status||'');
     if(snapshot.status==='success'&&previousStatus!=='success')requestAnimationFrame(genLaunchCompletionConfetti);
   }
-  function genRenderArtifacts(snapshot){
-    const container=$('genArtifacts');container.textContent='';const artifacts=snapshot.artifacts||[];
-    if(!artifacts.length){const p=document.createElement('p');p.className='generate-muted';p.textContent='No output files registered for this run.';container.append(p);return;}
-    for(const artifact of artifacts){
-      const row=document.createElement('div');row.className='generate-artifact-row';const info=document.createElement('div');info.className='generate-artifact-info';
-      const title=document.createElement('strong');title.textContent=artifact.label||artifact.name;const sub=document.createElement('span');sub.textContent=(artifact.available?'Ready':'Waiting for file')+' · '+artifact.path;info.append(title,sub);
-      const actions=document.createElement('div');actions.className='generate-artifact-actions';
-      if(artifact.key==='tifa-diagnosis'&&artifact.available){const view=document.createElement('button');view.type='button';view.className='small';view.textContent='View raw JSON';view.addEventListener('click',()=>{selectGenerateResult('raw');loadGenerateDiagnosis(snapshot.id);});actions.append(view);}
-      const open=document.createElement('button');open.type='button';open.className='small';open.textContent='Open file';open.disabled=!artifact.available;open.addEventListener('click',()=>openGenerateArtifact(snapshot.id,artifact.key,'file'));
-      const folder=document.createElement('button');folder.type='button';folder.className='small';folder.textContent='Open in Explorer';folder.disabled=!artifact.available;folder.addEventListener('click',()=>openGenerateArtifact(snapshot.id,artifact.key,'folder'));
-      actions.append(open,folder);row.append(info,actions);container.append(row);
-    }
-  }
   async function openGenerateArtifact(runId,key,mode){try{await genFetchJson('/api/open-artifact',{method:'POST',headers:{'Content-Type':'application/json','X-Savant-UI':'1'},body:JSON.stringify({runId,artifactKey:key,mode})});}catch(error){toast(error.message,true);}}
   async function loadGenerateDiagnosis(runId){
     if(genDiagnosisLoadedFor===runId&&$('genRawDiagnosis').textContent.trim().startsWith('{'))return;
@@ -1673,7 +1679,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   }
   async function startGeneratorRequest(url,body,label,isInstall=false){
     genRunBusy=true;genIsInstallRun=isInstall;if(!isInstall)genImportedRunId=null;$('genRunButton').disabled=true;$('genRunButton').textContent=isInstall?'Installing…':'Checking Outputs…';$('genFooterStatus').textContent=isInstall?label+'…':'Checking output paths before generation…';
-    $('genImportButton').disabled=true;genOutputReady=false;genCompletedNeedsConfigChange=false;$('genFooterStatus').classList.remove('error');
+    $('genImportButton').disabled=true;genSetOutputButtons(null);genOutputReady=false;genCompletedNeedsConfigChange=false;$('genFooterStatus').classList.remove('error');
     $('generateRunStatus').classList.remove('hidden','finished','failed');$('genCurrentStep').textContent=isInstall?label+'…':'Checking output paths…';$('genOverallText').textContent='0%';$('genSegmentTrack').setAttribute('aria-valuenow','0');
     $('genSegmentTrack').querySelectorAll('.generate-segment').forEach((segment,index)=>{segment.classList.toggle('active',index===0);segment.classList.remove('complete');segment.querySelector('.generate-segment-fill').style.width=index===0?'35%':'0%';});
     selectGenerateResult('logs');$('genLogs').textContent=isInstall?'Starting '+label+'…\n':'Checking output paths before launching the CLI…\n';
@@ -1720,7 +1726,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   async function pollGeneratorRun(runId){
     if(genPollTimer)clearTimeout(genPollTimer);if(!genRunBusy||genActiveRunId!==runId)return;
     try{const snapshot=await genFetchJson('/api/runs/'+encodeURIComponent(runId));genLastSnapshot=snapshot;genSetProgress(snapshot);$('genLogs').textContent=snapshot.logs||'(No output yet.)';if(genResultTab==='logs')$('genLogs').scrollTop=$('genLogs').scrollHeight;
-      genRenderArtifacts(snapshot);renderGenerateInstallPrompts();if((snapshot.artifacts||[]).some(a=>a.key==='tifa-diagnosis'&&a.available))await loadGenerateDiagnosis(runId);
+      renderGenerateInstallPrompts();if((snapshot.artifacts||[]).some(a=>a.key==='tifa-diagnosis'&&a.available))await loadGenerateDiagnosis(runId);
       if(['success','warning','failed'].includes(snapshot.status)){
         const wasInstall=genIsInstallRun;genRunBusy=false;
         if(!wasInstall&&['success','warning'].includes(snapshot.status)){
@@ -1755,7 +1761,11 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     $('genOutputDirectory').addEventListener('input',()=>{$('genOutputDirectory').dataset.outputDirectoryMode='custom';genMarkConfigChanged();});
     document.querySelectorAll('[data-path-target]').forEach(button=>button.addEventListener('click',()=>genBrowsePath(button.dataset.pathTarget,button.dataset.pathKind,button.dataset.pathTitle)));
     for(const id of ['genOutputPath','genTtmlOutputPath','genReviewReportPath','genTifaRoot','genTifaPython','genTifaModel','genTifaDiagnosticsPath','genVocalOutput'])$(id).addEventListener('input',genMarkConfigChanged);
-    $('genRunButton').addEventListener('click',()=>startGenerator());$('genImportButton').addEventListener('click',()=>genImportOutput());$('genDoctorButton').addEventListener('click',()=>{$('genMode').value='doctor';updateGenerateConfigVisibility();startGenerator('doctor');});
+    $('genRunButton').addEventListener('click',()=>startGenerator());$('genImportButton').addEventListener('click',()=>genImportOutput());
+    for(const [buttonId,key,mode] of [['genOpenLrcButton','output-lrc','file'],['genOpenTtmlButton','output-ttml','file'],['genOpenLrcDirectoryButton','output-lrc','directory'],['genOpenTtmlDirectoryButton','output-ttml','directory']]){
+      $(buttonId).addEventListener('click',()=>{const runId=genLastSnapshot?.id;if(runId)openGenerateArtifact(runId,key,mode);});
+    }
+    $('genDoctorButton').addEventListener('click',()=>{$('genMode').value='doctor';updateGenerateConfigVisibility();startGenerator('doctor');});
     for(const element of document.querySelectorAll('#generateScreen input, #generateScreen select')){element.addEventListener('input',()=>{if(element.id!=='genOutputName')genMarkConfigChanged();});element.addEventListener('change',genMarkConfigChanged);}
     for(const button of document.querySelectorAll('[data-gen-result]'))button.addEventListener('click',()=>selectGenerateResult(button.dataset.genResult));updateGenerateConfigVisibility();
   }

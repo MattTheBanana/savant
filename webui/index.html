@@ -336,7 +336,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
 .player-transport-controls{grid-column:1;grid-row:1;display:flex;align-items:center;gap:9px;width:100%;min-width:0;height:8px}
 .player-control-button{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;padding:0;border:1px solid transparent;border-radius:50%;background:transparent;color:#dbe8f6;font-size:14px;line-height:1}
 .player-control-button:hover{background:#22354a;border-color:#405673}
-.player-play-button{background:transparent;border-color:transparent;border-radius:50%;color:#f1fffc;font-size:16px}.player-play-button:disabled,.player-control-button:disabled{opacity:.4;cursor:default}.player-icon{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.player-play-button .player-icon{width:19px;height:19px;fill:currentColor;stroke:none;transform:translateX(-1px)}#playerPlayPause[aria-label="Pause Audio"] .player-icon{transform:none}.player-secondary-controls{grid-column:1;grid-row:2;display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;height:30px}.player-secondary-actions{display:flex;align-items:center;gap:8px;min-width:0}.player-volume-control{display:flex;align-items:center;gap:7px;min-width:0}.player-block-pause .player-icon,.player-mute-button .player-icon{width:20px;height:20px}
+.player-play-button{background:transparent;border-color:transparent;border-radius:50%;color:#f1fffc;font-size:16px}.player-play-button:disabled,.player-control-button:disabled{opacity:.4;cursor:default}.player-icon{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.player-play-button .player-icon{width:19px;height:19px;fill:currentColor;stroke:none;transform:translateX(-1px)}#playerPlayPause[aria-label="Pause Audio"] .player-icon{transform:translateX(-1px)}.player-secondary-controls{grid-column:1;grid-row:2;display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;height:30px}.player-secondary-actions{display:flex;align-items:center;gap:8px;min-width:0}.player-volume-control{display:flex;align-items:center;gap:7px;min-width:0}.player-block-pause .player-icon,.player-mute-button .player-icon{width:20px;height:20px}
 .player-seek,.player-volume{appearance:none;-webkit-appearance:none;display:block;height:5px;min-width:20px;margin:0;border:0;border-radius:99px;outline:none;cursor:pointer;accent-color:var(--accent)}
 .player-seek{flex:1 1 auto;width:100%;background:linear-gradient(90deg,#76e4c1 0%,#76e4c1 var(--seek-progress,0%),#354358 var(--seek-progress,0%),#354358 100%)}
 .player-volume{flex:0 1 86px;width:86px;background:#354358}
@@ -650,7 +650,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       <button id="playerPlayPause" class="player-control-button player-play-button" type="button" aria-label="Play Audio" title="Play Audio" disabled><svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 4.5 20 12 7 19.5z"/></svg></button>
       <button id="playerBlockPause" class="player-control-button player-block-pause" type="button" aria-label="Block Pause" title="Block Pause: pause and return to the start of the current playback segment" disabled><svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 11a8 8 0 0 0-14.7-4L3 9"/><path d="M3 4v5h5"/><path d="M11 9v6M15 9v6"/></svg></button>
       <div class="player-volume-control">
-        <button id="playerMute" class="player-control-button player-mute-button" type="button" aria-label="Mute Audio" title="Mute Audio" disabled><svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 10v4h4l5 4V6l-5 4z"/><path d="M16 9a5 5 0 0 1 0 6M18.5 6.5a9 9 0 0 1 0 11"/></svg></button>
+        <button id="playerMute" class="player-control-button player-mute-button" type="button" aria-label="Mute Audio" title="Mute Audio" disabled><svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 9v6h4l5 5V4L7 9H3zM13.5 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02s-1.02-3.29-2.5-4.03zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" fill="currentColor" stroke="none"/></svg></button>
         <input id="playerVolume" class="player-volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume">
       </div>
       <div id="timeReadout" class="audio-time">00:00.00 / 00:00.00</div>
@@ -3073,9 +3073,9 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   $('lyricsFile').addEventListener('change',e=>{loadLyrics(e.target.files?.[0]);e.target.value='';});
   const PLAYER_CONTROL_ICONS={
     play:'<svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 4.5 20 12 7 19.5z"/></svg>',
-    pause:'<svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 5h3.8v14H6zM14.2 5H18v14h-3.8z" fill="currentColor" stroke="none"/></svg>',
-    volume:'<svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 10v4h4l5 4V6l-5 4z"/><path d="M16 9a5 5 0 0 1 0 6M18.5 6.5a9 9 0 0 1 0 11"/></svg>',
-    muted:'<svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 10v4h4l5 4V6l-5 4z"/><path d="m17 9 5 6m0-6-5 6"/></svg>'
+    pause:'<svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 4.8h3.8v14.4H6zM14.2 4.8H18v14.4h-3.8z" fill="currentColor" stroke="none"/></svg>',
+    volume:'<svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 9v6h4l5 5V4L7 9H3zM13.5 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02s-1.02-3.29-2.5-4.03zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" fill="currentColor" stroke="none"/></svg>',
+    muted:'<svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 9v6h4l5 5V4L7 9H3z" fill="currentColor" stroke="none"/><path d="m16 9 5 6m0-6-5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
   function updateCustomPlayerControls(){
     const seek=$('playerSeek'),playButton=$('playerPlayPause'),blockButton=$('playerBlockPause'),muteButton=$('playerMute'),volume=$('playerVolume');
@@ -3791,7 +3791,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     if(e.key==='Escape'&&$('previewDrawer').classList.contains('open')){setPreviewDrawer(false);e.preventDefault();return;}
     if(e.key==='Escape'&&!$('colorPickerPopover').classList.contains('hidden')){closeColorPicker();e.preventDefault();return;}
     if(e.key==='Escape'&&!$('wordStyleHelpPopover').classList.contains('hidden')){$('wordStyleHelpPopover').classList.add('hidden');$('wordStyleHelp').setAttribute('aria-expanded','false');e.preventDefault();return;}
-    if(e.key==='Escape'&&activeScreen()==='edit'&&gridMode==='words'&&selectedLineIndices.size){
+    if(e.key==='Escape'&&activeScreen()==='edit'&&gridMode==='words'&&(selectedLineIndices.size||selectedWordKeys.size||selectedWordRef)){
       e.preventDefault();
       selectedLineIndices.clear();lineSelectionAnchor=-1;
       selectedWordKeys.clear();wordSelectionAnchorKey=null;selectedWordRef=null;

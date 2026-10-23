@@ -3,171 +3,83 @@
 **Updated:** 2026-10-23  
 **Repository:** [MattTheBanana/savant](https://github.com/MattTheBanana/savant)  
 **Branch:** `main`  
-**Latest code commit before this handover update:** [`10d13225bf8b9b2d27b1777bf6962df62a479777`](https://github.com/MattTheBanana/savant/commit/10d13225bf8b9b2d27b1777bf6962df62a479777)
+**Latest UI implementation commit:** [`92672bf4a0a02b11a2f48b09aafd5bcff8ffa8a6`](https://github.com/MattTheBanana/savant/commit/92672bf4a0a02b11a2f48b09aafd5bcff8ffa8a6)
 
 Primary UI file: `webui/index.html`  
 Backend and local filesystem APIs: `lyrics_editor.py`
 
-This document supersedes the older handover notes that describe a separate feature branch and PR status. The current work is on `main`. The latest Preferences/generator UI changes have static checks, but the current editor-controls regression has **not** been fixed yet.
+The latest changes are committed to `main`. The editor toolbar, shortcut-hints preference, TTML zoom behavior, and generator drop-path feedback have been updated. JavaScript parse/static checks passed, but no interactive browser/native-picker smoke test has been run. Do not claim interaction behavior has been verified without testing it.
 
-## Immediate priority — Repair the editor controls
+## Current editor implementation
 
-An earlier interpretation mixed up the user's request. The desired optional bar is the **bottom keyboard-shortcut / hotkey indicators bar**, not the functional toolbar at the top of the editor.
+### Toolbar and keyboard shortcut hints
 
-### 1. Keep the top editor toolbar visible
+- The LRC/TTML switcher is in `#editorModeSwitchRow` and must remain visible.
+- The functional editor toolbar is `#editorActionBar`; its import, editing, Controls dropdown, and relevant mode-switching behavior must never be controlled by the optional hints preference.
+- The preference is `showEditorShortcutHints`, stored in `lyrics-aligner-ui-settings`, and is applied by `applyEditorPreferences()`.
+- `#editorHotkeyBar` is the distinct bottom keyboard-hints bar. Its contents use LRC/TTML-specific classes and `updateTimelineControlsContext()` toggles the active mode's hints.
+- The top bar now uses flex rather than the previous inconsistent grid track/column assignments. It stays on one row at typical desktop widths and wraps below 1180px; narrow layouts also wrap editing actions.
+- The zoom group (`#editorZoomControls`) and its adjacent separators are hidden in LRC mode using the `word-mode` class on `#editorActionBar`. They are TTML timeline controls, not LRC controls.
 
-The top toolbar must remain visible regardless of the bottom hints preference. It contains:
+### TTML zoom model and expected behavior
 
-- Import Audio and Import Lyrics.
-- Zoom out (`−`), Zoom in (`+`), and Fit Lines.
-- Add Line; Add Word when the editor is in TTML word mode; Delete Line / Delete Word(s) as appropriate.
-- The LRC/TTML-specific Controls dropdown.
+Relevant functions include `computeFitZoom()`, `laneContextBounds()`, `laneVisibleSpan()`, `setTimelineGeometry()`, `minimumTimelineZoom()`, `applyTimelineZoom()`, and `syncEditorActionBar()`.
 
-The LRC/TTML mode switcher is its own row and must remain visible.
+- Fit scale is based on the largest *effective* per-line context after clamping to the media/lyrics duration. Calculating fit from an unclamped phrase-plus-context span made the requested scale disagree with what a lane could actually display, especially at the start/end of audio.
+- The Fit Lines scale is the lower zoom bound. The minus button and Fit Lines are disabled when already at that scale; plus is disabled at the upper scale limit. The button state is refreshed after a zoom.
+- Keep this consistent: a minus click must never reduce zoom below Fit Lines; Fit Lines should be disabled when it would not change the view; and the first plus click above Fit Lines should visibly increase timeline detail.
+- TTML zoom buttons are intentionally unavailable when there are no word-timed cues. Do not remove the mode/cue restrictions without confirming intent.
+- Verify zoom behavior with actual audio and TTML word cues. Current evidence is a JavaScript parse/static check only, not a real GUI test.
 
-Relevant markup and functions in `webui/index.html`:
+### Add Line
 
-- `#editorModeSwitchRow`
-- `#editorActionBar`
-- `#editorImportGroup`
-- `#editorZoomControls`
-- `#editorActionButtons`
-- `#timelineControlsTrigger`
-- `syncEditorActionBar()`
-- `setGridMode()`
+Current markup uses `#addLine` in both modes. Its click handler dispatches to `addLine()` in LRC mode and `addTtmlLine()` in TTML mode; the latter calls `insertTtmlLineAt()`. The current code does not have a separate `#addLineTtml` element.
 
-### 2. Make the preference control only the bottom hints bar
+Expected behavior to verify interactively:
 
-The existing preference is named `showEditorControlsBar`, is saved in `lyrics-aligner-ui-settings`, and is applied by `applyEditorPreferences()`.
+- LRC inserts a new empty lyric line immediately after the selected line, or at the end if nothing is selected, and updates selection, grid, preview, status, and undo history.
+- TTML inserts a new TTML lyric line, stays in word-timing mode, selects/scrolls to it, and updates preview, status, and undo history.
+- Check insertion at the first position and at the end, as well as with an empty editor where applicable.
 
-The current problematic code is:
+### Generator: dropped lyrics and output folder
 
-```javascript
-document.body.classList.toggle(
-  'show-editor-controls-bar',
-  Boolean(settings.showEditorControlsBar)
-);
-```
+The user confirmed that **Choose lyrics** (native picker) correctly fills `#genOutputDirectory`, but drag-and-drop does not. The user does **not** want an automatic native file-picker prompt after dropping a file.
 
-paired with CSS that hides the actual functional toolbar and TTML timeline toolbar:
+The drop handler now:
 
-```css
-body:not(.show-editor-controls-bar) #editorActionBar,
-body:not(.show-editor-controls-bar) .timeline-toolbar {
-  display: none !important;
-}
-```
+- Tries to recover an absolute path from `File.path`, a `file://` URI, or an absolute path in the drag data, validating that the basename matches the dropped file.
+- Uses that path to set the directory when the OS/browser actually exposes it.
+- Otherwise keeps the dropped `File` selected and shows feedback that this browser did not expose the source folder. Do not automatically open a picker as a fallback.
+- Preserves an explicitly selected/configured custom output folder; automatic lyrics-directory behavior should not overwrite a user's explicit folder choice.
 
-This behavior is incorrect.
-
-Rename the preference to something unambiguous, such as **Keyboard shortcut hints bar**, with Hide / Show choices, and wire it exclusively to a dedicated bottom bar. Ensure existing saved settings migrate gracefully (for example, map the old `showEditorControlsBar` key to the new preference or safely default the new preference to false). Do not tie this setting to `#editorActionBar` or any functional toolbar.
-
-### 3. Add a dedicated bottom keyboard-hints bar
-
-The current `#timelineControlsMenu` contains LRC/TTML keyboard and interaction hints, but it is a popup triggered by `#timelineControlsTrigger`. The current `#gridStatus` footer only shows editor status and the lyrics filename; it is not the requested keyboard-hints bar.
-
-Inspect the shortcut text already in `#timelineControlsMenu` and reuse appropriate hints to create a distinct, compact bar at the bottom of the editor. It must:
-
-- Be independently showable/hideable via Preferences.
-- Reflect the active mode where that matters (LRC vs TTML).
-- Avoid unnecessarily duplicating identical shortcut text.
-- Remain separate from the Controls dropdown, which should continue to work.
-- Not obscure the persistent audio player dock or make the lyric editor unusably short.
-
-### 4. Repair the top toolbar layout
-
-The toolbar is not reliably appearing on one line. Current CSS gives `.editor-action-bar` a grid layout with six defined tracks, but some children are assigned up to grid column eight. At widths below roughly 1180px, other CSS switches the toolbar to flex with wrapping.
-
-Fix the layout intentionally:
-
-- Keep the top controls on one line at typical desktop widths.
-- Group imports, zoom actions, editing actions and the Controls dropdown logically.
-- Do not assign children to nonexistent grid tracks.
-- Do not hide controls to force one-line layout.
-- On narrow screens, permit a deliberate compact/responsive layout instead of overlap or clipping.
-
-### 5. Verify zoom buttons
-
-The zoom event handlers are present:
-
-```javascript
-$('zoomIn').addEventListener(
-  'click',
-  () => applyTimelineZoom(timelineZoom * 1.25)
-);
-$('zoomOut').addEventListener(
-  'click',
-  () => applyTimelineZoom(timelineZoom / 1.25)
-);
-$('zoomFit').addEventListener(
-  'click',
-  () => applyTimelineZoom(computeFitZoom(), true)
-);
-```
-
-The controls are disabled when `gridMode !== 'words'` by `syncEditorActionBar()`. This may be intentional because the timeline zoom applies to TTML word timing, but the buttons must work in TTML mode.
-
-Trace initialization of `timelineZoom`, timeline geometry, and `applyTimelineZoom()` rendering. Check for a zero or invalid initial zoom, uninitialized geometry, missing redraw, or stale UI state. Don't remove the LRC/TTML restriction without confirming the intended behavior.
-
-Expected:
-- `+` increases visible timeline detail.
-- `−` decreases visible timeline detail.
-- Fit Lines restores the fitted view.
-- Buttons have a clear and intentional disabled state when unavailable.
-
-### 6. Verify Add Line in both modes
-
-Existing controls and handlers include:
-
-- `#addLine`, wired to `addLine()` in LRC mode.
-- `#addLineTtml`, wired to `addTtmlLine()` in TTML mode.
-- `insertTtmlLineAt()` handles TTML line insertion.
-
-`syncEditorActionBar()` hides the top Add Line button in word mode, where the TTML-specific button is used. Verify the complete mode-transition flow.
-
-Expected:
-- **LRC:** the top Add Line button inserts an empty lyric line below the selected line, or at the end if none is selected.
-- **TTML:** the TTML Add Line button inserts a new TTML line and preserves word-timing mode.
-- Selection, rendered grid/timeline, preview, status, and undo history all update correctly.
-
-Do not treat the existence of a button or event-handler registration as proof it works.
-
-## Secondary outstanding issue — Generator lyrics path
-
-The generator output folder has reportedly still failed to populate automatically when lyrics are imported.
-
-In `genSetFile(key, file)`, selecting lyrics uses `genSourceDirectory(file)` and `outputDirectory.dataset.outputDirectoryMode` to decide whether to set `#genOutputDirectory`. The last code change attempts to refresh automatic locations while preserving an explicitly browsed/configured custom folder.
-
-The user has not yet said whether the failure occurs when using **Choose lyrics** or when dragging/dropping a file. The native picker returns an absolute local path, whereas browser drag-and-drop may hide the original absolute path. Ask which workflow fails before selecting a fix. Preserve custom output-folder choices.
-
-Do not let this separate generator issue block repair of the editor controls.
+The underlying browser limitation remains: many browsers do not expose an absolute parent directory for a dropped local file. Do not infer a path from the filename or the working directory. If the user requests another approach, explain the trade-off before making a behavior-changing choice.
 
 ## Other current UI state
 
-The following are present in the latest code and passed static checks in the last review, but still need real GUI verification:
+The following are present in `webui/index.html`; real GUI verification is still outstanding:
 
 - Browser tab title follows the active section (for example, `savant • Edit`, `savant • Generate`, `savant • Preferences`).
 - Preferences uses vertical tabs in this order: Visuals, UI, Utility, Generator Defaults.
 - Generator's “Use Audio Directory” and “Use Lyrics Directory” actions sit beside Browse and have no trailing ellipses.
-- Path suggestion rows no longer show the right-side Folder/File label; paths for new directories use orange/missing-path styling.
+- Path suggestion rows omit the right-side Folder/File label; paths for new directories use orange/missing-path styling.
 - Context-menu keyboard shortcut hints use the same font size as action labels.
+- The bottom persistent audio player dock must remain usable and unobscured.
 
-The latest code commit above changed `webui/index.html`. No interactive browser/native picker smoke test was completed in that environment.
+## Validation status
 
-## Validation checklist before marking controls fixed
+Static checks run against the latest `webui/index.html`:
 
-1. Confirm the top toolbar remains visible when the keyboard-hints preference is Off.
-2. Turn the hints preference On and Off; verify only the bottom hints bar changes.
-3. Verify hints update sensibly when switching LRC/TTML modes.
-4. Test zoom in, zoom out and Fit Lines in TTML mode with an audio file and word cues loaded.
-5. Test Add Line in LRC mode and TTML mode, including first-line/end-of-list insertion.
-6. Confirm the LRC/TTML mode switcher, Controls dropdown and persistent audio player still work.
-7. Test at desktop and narrow window widths for clipping, overflow and overlapping buttons.
-8. Reload and confirm the hints preference persists.
-9. Parse all inline JavaScript; check duplicate IDs, stale DOM selectors, and HTML structure.
-10. Run Python syntax checks and available project tests. Perform an interactive GUI smoke test if the environment allows it.
-11. Commit the repair on `main`, then link the commit and clearly distinguish static checks from interactive tests.
+- Inline JavaScript parsed successfully using a JavaScript function-constructor syntax check.
+- No duplicate HTML IDs were found.
+- Confirmed the old toolbar-hiding rule is absent.
+- Confirmed LRC mode hides the TTML zoom group, zoom lower bound equals the Fit Lines scale, zoom boundary state is updated after applying zoom, and the drag-path feedback remains without automatic picker invocation.
+
+Not yet run:
+
+- Python project tests.
+- Browser smoke tests of hints persistence/toggling, toolbar layout, zoom, and Add Line.
+- Drag/drop tests across the browser/OS combinations the user uses.
 
 ## Working expectations
 
-Read the current implementation before editing it. Make targeted changes and preserve unrelated functionality. Ask a concise clarifying question when user intent or an implementation choice is genuinely ambiguous. Do not claim behavior is fixed based on static checks alone.
+Read the current implementation before editing it. Make targeted changes and preserve unrelated functionality. Ask a concise clarifying question when user intent or an implementation choice is genuinely ambiguous. Implement all clear requirements, and distinguish static checks from actual behavioral verification. Commit changes on `main` and link commits when reporting the result.

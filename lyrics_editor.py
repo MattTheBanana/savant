@@ -570,6 +570,15 @@ def _open_path(path: Path, mode: str) -> None:
         else:
             subprocess.Popen(["xdg-open", str(path)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return
+    if mode == "directory":
+        folder = path if path.is_dir() else path.parent
+        if system == "Windows":
+            os.startfile(str(folder))  # type: ignore[attr-defined]
+        elif system == "Darwin":
+            subprocess.Popen(["open", str(folder)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        else:
+            subprocess.Popen(["xdg-open", str(folder)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return
     folder = path if path.is_dir() else path.parent
     if system == "Windows":
         if not path.is_dir():
@@ -1249,7 +1258,7 @@ class Handler(BaseHTTPRequestHandler):
                 run_id = str(payload.get("runId", ""))
                 key = str(payload.get("artifactKey", ""))
                 mode = str(payload.get("mode", "file"))
-                if mode not in {"file", "folder"}:
+                if mode not in {"file", "folder", "directory"}:
                     raise ValueError("Unknown open mode.")
                 with RUNS_LOCK:
                     run = RUNS.get(run_id)

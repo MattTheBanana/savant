@@ -217,3 +217,8 @@ User-specific collaboration guidance:
 
 - Split the LRC Controls menu's left/right-arrow row into two controls: `← / →` nudges the selected line or seeks during playback; `Shift + ← / →` applies the configured multiplier to the nudge/seek step. Use the actual arrow symbols in the shortcut label.
 - Static checks passed: inline JavaScript compiles, there are no duplicate static HTML IDs, and the old combined description is removed.
+
+## Consolidated TTML seek gesture help
+
+- Combined the separate `Left Click + Drag Playhead` and `Left Click + Drag Waveform` help rows into one `Left Click + Drag` row: “Seek the audio by dragging the playhead or waveform.”
+- Static validation passed: inline JavaScript compiles, there are no duplicate static HTML IDs, and the two old rows are replaced by the combined description.

@@ -519,7 +519,6 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   };
   try { settings = {...settings, ...JSON.parse(localStorage.getItem('lyrics-aligner-ui-settings') || '{}')}; } catch (_) {}
   delete settings.editorActionAlignment;
-  delete settings.editorActionAlignment;
   let toastTimer = null;
 
   function toast(message, error=false) {
@@ -712,7 +711,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   async function genChooseSourceFile(kind){const file=await genPickLocalSource(kind);if(file)genSetFile(kind,file);}
   function genSourceDirectory(file){
     const raw=String(file?.path||'').trim();if(!raw)return '';
-    const normalized=raw.replace(/\\/g,'/'),index=normalized.lastIndexOf('/');
+    const normalized=raw.split(String.fromCharCode(92)).join('/'),index=normalized.lastIndexOf('/');
     return index>0?normalized.slice(0,index):index===0?'/':'';
   }
   async function genChooseOutputDirectory(kind){
@@ -2508,7 +2507,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const presets=$('agentPresetMenu');if(!presets.classList.contains('hidden')&&!presets.contains(e.target)&&e.target!==$('agentPresetTrigger')){presets.classList.add('hidden');$('agentPresetTrigger').setAttribute('aria-expanded','false');}
     const controls=$('timelineControlsMenu');if(!controls.classList.contains('hidden')&&!controls.contains(e.target)&&e.target!==$('timelineControlsTrigger')){controls.classList.add('hidden');$('timelineControlsTrigger').setAttribute('aria-expanded','false');}
   },true);
-  $('colorPickerPopover').addEventListener('click',e=>{const tab=e.target.closest?.('[data-color-tab]');if(tab){colorPickerTab=tab.dataset.colorTab;renderColorPicker();}});
+  $('colorPickerPopover').addEventListener('click',e=>{const tab=e.target.closest?.('[data-color-tab]');if(tab){colorPickerTab=tab.dataset.colorTab;renderColorPicker();positionColorPicker();}});
   $('wordColor').addEventListener('click',openColorPicker);
   $('jumpToLineButton').addEventListener('click',jumpToSelectedLine);$('timelineViewport').addEventListener('scroll',()=>updateJumpToLineVisibility(),{passive:true});window.addEventListener('resize',()=>{if(!$('colorPickerPopover').classList.contains('hidden'))positionColorPicker();});
   $('wordColor').addEventListener('input',()=>{const value=$('wordColor').value.trim();$('wordColor').style.color=safeCssColor(value)||'var(--text)';if(/^#[0-9a-f]{3,8}$/i.test(value)){$('colorPreviewSwatch').style.background=value;$('colorPreviewHex').textContent=value;const hsv=rgbToHsv(hexToRgb(value));if(hsv.s>0.001)colorPickerHue=hsv.h;}});

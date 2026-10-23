@@ -164,7 +164,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .generate-result-pane{padding:11px;min-width:0}.generate-result-pane.hidden{display:none!important}.generate-log-view{margin:0;max-height:340px;min-height:180px;overflow:auto;padding:12px;border:1px solid #27364a;border-radius:8px;background:#090f18;color:#c8d7e8;font:11px/1.55 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere}
 .generate-clean-diagnosis{display:grid;gap:10px}.generate-diagnosis-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.generate-diagnosis-stat{padding:10px;border:1px solid var(--border);border-radius:8px;background:#111a27}.generate-diagnosis-stat span{font-size:10px;color:var(--muted)}.generate-diagnosis-stat strong{display:block;font-size:17px;margin-top:4px;overflow-wrap:anywhere}
 .generate-diagnosis-chunks{width:100%;border-collapse:collapse;font-size:11px}.generate-diagnosis-chunks th,.generate-diagnosis-chunks td{padding:7px 8px;border:1px solid var(--border);text-align:left}.generate-diagnosis-chunks th{position:static;background:#172232}.generate-diagnosis-notes{margin:0;padding-left:19px;font-size:11px;color:#c9d5e3}.generate-artifacts{display:grid;gap:8px}.generate-artifact-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:#111a27}.generate-artifact-info{min-width:0;display:grid;gap:3px}.generate-artifact-info strong{font-size:12px}.generate-artifact-info span{color:var(--muted);font-size:10px;overflow-wrap:anywhere}.generate-artifact-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.generate-run-status{padding:13px 16px 0}.generate-run-status.hidden{display:none!important}.generate-progress-stage-wrap{position:relative;padding-top:40px;margin-bottom:13px}.generate-overall-percent{position:absolute;top:20px;left:0;font-size:13px;line-height:16px;color:var(--text);font-weight:750;white-space:nowrap;transition:top .12s;pointer-events:none}.generate-overall-percent.above-step{top:0}.generate-current-step{position:absolute;top:20px;left:0;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;line-height:16px;font-weight:700;color:var(--accent);transition:left .2s;pointer-events:none}.generate-segment-track{display:flex;gap:4px;height:12px;width:100%;border-radius:7px;overflow:visible}.generate-segment{position:relative;flex:1;min-width:0;height:100%;overflow:hidden;border:1px solid #2a394d;background:#070c13;border-radius:3px}.generate-segment-fill{position:absolute;left:0;top:0;display:block;height:100%;width:0;background:#59c6a3;border-radius:inherit;transition:width .12s linear;will-change:width,transform}.generate-segment.active{border-color:#76e4c1;box-shadow:0 0 0 1px #76e4c133}.generate-segment.complete .generate-segment-fill{width:100%}.generate-segment.indeterminate .generate-segment-fill{width:35%!important;animation:genSegmentSweep 1.15s ease-in-out infinite}.generate-segment.indeterminate.complete .generate-segment-fill{animation:none}.generate-current-step.complete-label{text-align:right;left:100%!important;transform:translateX(-100%)!important;max-width:60%}.generate-run-footer #genFooterStatus{text-align:right;margin-left:auto}.generate-run-status.finished{border-top:1px solid #367b66}.generate-run-status.failed{border-top:1px solid #874756}.generate-run-status.failed .generate-segment{border-color:#b93c50;background:#32131b;box-shadow:none}.generate-run-status.failed .generate-segment-fill{width:100%!important;background:#e05265!important;animation:none!important}.generate-run-status.failed .generate-overall-percent,.generate-run-status.failed .generate-current-step{color:#ff8795}
+.generate-run-status{padding:13px 16px 0}.generate-run-status.hidden{display:none!important}.generate-progress-stage-wrap{position:relative;padding-top:40px;margin-bottom:13px}.generate-overall-percent{position:absolute;top:20px;left:0;font-size:13px;line-height:16px;color:var(--text);font-weight:750;white-space:nowrap;transition:top .12s;pointer-events:none}.generate-overall-percent.above-step{top:0}.generate-current-step{position:absolute;top:20px;left:0;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;line-height:16px;font-weight:700;color:var(--accent);transition:left .2s;pointer-events:none}.generate-segment-track{display:flex;gap:4px;height:12px;width:100%;border-radius:7px;overflow:visible}.generate-segment{position:relative;flex:1;min-width:0;height:100%;overflow:hidden;border:1px solid #2a394d;background:#070c13;border-radius:3px}.generate-segment-fill{position:absolute;left:0;top:0;display:block;height:100%;width:0;background:#59c6a3;border-radius:inherit;transition:width .12s linear;will-change:width,transform}.generate-segment.active{border-color:#76e4c1;box-shadow:0 0 0 1px #76e4c133}.generate-segment.complete .generate-segment-fill{width:100%}.generate-segment.indeterminate .generate-segment-fill{width:35%!important;animation:genSegmentSweep 1.15s ease-in-out infinite}.generate-segment.indeterminate.complete .generate-segment-fill{animation:none}.generate-current-step.complete-label{text-align:right;left:100%!important;transform:translateX(-100%)!important;max-width:60%}.generate-run-footer #genFooterStatus{text-align:right;margin-left:auto}.generate-run-footer #genFooterStatus.error{text-align:center;margin-left:0;color:#ff8795;font-weight:750;overflow-wrap:anywhere;white-space:normal}.generate-run-status.finished{border-top:1px solid #367b66}.generate-run-status.failed{border-top:1px solid #874756}.generate-run-status.failed .generate-segment{border-color:#b93c50;background:#32131b;box-shadow:none}.generate-run-status.failed .generate-segment-fill{width:100%!important;background:#e05265!important;animation:none!important}.generate-run-status.failed .generate-overall-percent,.generate-run-status.failed .generate-current-step{color:#ff8795}
 @keyframes genProgressShimmer{from{background-position:100% 0}to{background-position:-100% 0}}@keyframes genSegmentSweep{0%{transform:translateX(-110%);opacity:.55}45%{opacity:1}100%{transform:translateX(300%);opacity:.65}}
 .generate-run-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-top:1px solid var(--border);background:#111a27}.generate-run-footer .generate-muted{flex:1;min-width:0;text-align:center}.generate-run-button{min-width:170px;font-weight:700}.generate-run-button:disabled{opacity:.55;cursor:not-allowed}.generate-output-row{display:grid;grid-template-columns:minmax(210px,.8fr) minmax(300px,1.2fr);gap:13px;margin:0 0 13px;align-items:start}.generate-output-destination{min-width:0}.generate-output-location-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}.generate-output-location-actions button{white-space:nowrap}.path-input-control{display:flex;flex-direction:column;align-items:flex-start;gap:6px;position:relative;min-width:0}.path-input-control input{width:100%;min-width:0}.path-input-control .path-action-button{order:2;align-self:flex-start;white-space:nowrap}.path-suggestion-menu{position:absolute;left:0;right:0;top:36px;z-index:120;max-height:260px;overflow:auto;padding:4px;border:1px solid #455972;border-radius:8px;background:#101927;box-shadow:0 14px 35px #000b}.path-suggestion-menu.hidden{display:none!important}.path-suggestion-option{display:flex;align-items:center;gap:8px;width:100%;padding:7px 9px;text-align:left;border:1px solid transparent;border-radius:5px;background:transparent;font-size:12px}.path-suggestion-option:hover,.path-suggestion-option.active{background:#26384d;border-color:#405773}.path-suggestion-option .path-suggestion-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.path-suggestion-option .path-suggestion-kind{flex:0 0 auto;color:#91a5bd;font-size:10px}.path-suggestion-option .path-suggestion-missing{color:#f5ce81}.path-suggestion-status{padding:8px 9px;color:var(--muted);font-size:11px}.path-suggestion-status.error{color:#ffb5b5}
 @media(max-width:950px){.generate-basic-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.generate-advanced-grid{grid-template-columns:1fr}.generate-diagnosis-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -177,8 +177,16 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 #generateScreen,#settingsScreen{flex:1;min-height:0;overflow:auto;width:100%;align-self:stretch}
 .editor-layout{display:grid;grid-template-columns:minmax(0,1fr);align-items:stretch;gap:0;flex:1;min-height:0;overflow:hidden}
 .editor-layout>.panel{display:flex;flex-direction:column;height:100%;min-height:0;overflow:hidden}
-.editor-mode-switch-row{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);background:#0f1622}
-.editor-mode-switch-row .editor-bar-group{display:flex;align-items:center;gap:6px}
+.editor-mode-switch-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:8px 12px;border-bottom:1px solid var(--border);background:#0f1622}
+ .editor-mode-switch-row .editor-bar-group{display:flex;align-items:center;gap:6px}
+ #editorModeSwitch{gap:3px;padding:3px;border:1px solid #3a4b61;border-radius:999px;background:#0a111b}
+ #editorModeSwitch button{min-width:56px;padding:5px 14px;border-radius:999px;background:transparent;border-color:transparent;color:var(--muted);font-weight:700}
+ #editorModeSwitch button.primary{background:#246451;border-color:#328b70;color:#effff9;box-shadow:inset 0 0 0 1px #ffffff0d}
+ #editorModeSwitch button:not(.primary):not(:disabled):hover{background:#1b2a3c;border-color:#33465d;color:var(--text)}
+ #editorModeSwitch button:disabled{opacity:.42;cursor:not-allowed}
+ #editorModeSwitchRow #editorImportGroup{gap:7px;margin-left:0}
+ #editorModeSwitchRow .action-import-button{padding:5px 9px;border-radius:8px}
+ #editorZoomControls button:disabled{opacity:.34;cursor:not-allowed;filter:grayscale(.7);background:#101722;border-color:#29364a;color:#708095;box-shadow:none;pointer-events:none}
 .editor-action-bar{display:flex;align-items:center;gap:8px;flex:0 0 auto;padding:9px 12px;min-width:0}
 body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
 .editor-bar-group{display:flex;align-items:center;gap:6px;min-width:0}
@@ -273,7 +281,6 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
 #editorActionBar .editor-bar-separator{flex:0 0 1px}
 #editorActionBar .file-label{flex:0 0 auto}
 #editorActionBar:not(.word-mode) #editorZoomControls,
-#editorActionBar:not(.word-mode) #editorSep2,
 #editorActionBar:not(.word-mode) #editorSep3{display:none!important}
 @media(max-width:1180px){
   #editorActionBar{flex-flow:row wrap;gap:6px;overflow:visible}
@@ -338,18 +345,17 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   <section id="editScreen">
     <div class="editor-layout">
       <section class="panel" aria-label="Lyrics editing grid">
-        <div id="editorModeSwitchRow" class="editor-mode-switch-row" aria-label="Editor mode">          <div class="editor-bar-group" id="editorModeSwitch">
-            <button id="viewLines" class="small primary" type="button" title="Sync line by line" aria-label="LRC — Sync line by line">LRC</button>
-            <button id="viewWords" class="small" type="button" disabled title="Sync word by word" aria-label="TTML — Sync word by word">TTML</button>
-          </div></div>
-        <div class="editor-action-bar" id="editorActionBar" aria-label="Editor controls">
-
-          <span class="editor-bar-separator" id="editorSep1" aria-hidden="true"></span>
-          <div class="editor-bar-group" id="editorImportGroup">
+        <div id="editorModeSwitchRow" class="editor-mode-switch-row" aria-label="Editor mode">
+          <div class="editor-bar-group" id="editorModeSwitch" role="group" aria-label="Timing mode">
+            <button id="viewLines" class="small primary" type="button" title="Sync line by line" aria-label="LRC — Sync line by line" aria-pressed="true">LRC</button>
+            <button id="viewWords" class="small" type="button" disabled title="Sync word by word" aria-label="TTML — Sync word by word" aria-pressed="false">TTML</button>
+          </div>
+          <div class="editor-bar-group" id="editorImportGroup" aria-label="Import files">
             <div class="import-group action-import-group"><label class="file-label action-import-button" for="audioFile" title="Choose local audio">Import Audio</label><input id="audioFile" type="file" accept="audio/*"></div>
             <div class="import-group action-import-group"><label class="file-label action-import-button" for="lyricsFile" title="Choose local lyrics">Import Lyrics</label><input id="lyricsFile" type="file" accept=".lrc,.ttml,.xml,.txt,text/plain,application/xml"></div>
           </div>
-          <span class="editor-bar-separator" id="editorSep2" aria-hidden="true"></span>
+        </div>
+        <div class="editor-action-bar" id="editorActionBar" aria-label="Editor controls">
           <div class="editor-bar-group" id="editorZoomControls" aria-label="TTML timeline zoom">
             <button id="zoomOut" class="small" type="button" aria-label="Zoom out line detail" title="Zoom out">−</button>
             <button id="zoomIn" class="small" type="button" aria-label="Zoom in line detail" title="Zoom in">+</button>
@@ -1357,7 +1363,9 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     percentLabel.classList.toggle('above-step',horizontalOverlap);
     $('genRunStatusBadge').textContent=({queued:'Queued',running:'Running',success:'Completed',warning:'Completed With Warnings',failed:'Failed'})[snapshot.status]||snapshot.status;
     host.classList.toggle('finished',['success','warning'].includes(snapshot.status));host.classList.toggle('failed',snapshot.status==='failed');
-    $('genFooterStatus').textContent=snapshot.error||(snapshot.status==='success'?'Generation complete. Review the output files or import them into Edit.':snapshot.status==='warning'?'Generation finished with warnings. Review the logs and output files.':snapshot.status==='failed'?'Generation failed. Open Logs for details.':'Working locally…');
+    const footer=$('genFooterStatus');
+    footer.classList.toggle('error',snapshot.status==='failed'&&Boolean(snapshot.error));
+    footer.textContent=snapshot.error||(snapshot.status==='success'?'Generation complete. Review the output files or import them into Edit.':snapshot.status==='warning'?'Generation finished with warnings. Review the logs and output files.':snapshot.status==='failed'?'Generation failed. Open Logs for details.':'Working locally…');
   }
   function genRenderArtifacts(snapshot){
     const container=$('genArtifacts');container.textContent='';const artifacts=snapshot.artifacts||[];
@@ -1417,7 +1425,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   }
   async function startGeneratorRequest(url,body,label,isInstall=false){
     genRunBusy=true;genIsInstallRun=isInstall;if(!isInstall)genImportedRunId=null;$('genRunButton').disabled=true;$('genRunButton').textContent=isInstall?'Installing…':'Checking Outputs…';$('genFooterStatus').textContent=isInstall?label+'…':'Checking output paths before generation…';
-    $('genImportButton').disabled=true;genOutputReady=false;genCompletedNeedsConfigChange=false;
+    $('genImportButton').disabled=true;genOutputReady=false;genCompletedNeedsConfigChange=false;$('genFooterStatus').classList.remove('error');
     $('generateRunStatus').classList.remove('hidden','finished','failed');$('genCurrentStep').textContent=isInstall?label+'…':'Checking output paths…';$('genOverallText').textContent='0%';$('genSegmentTrack').setAttribute('aria-valuenow','0');
     $('genSegmentTrack').querySelectorAll('.generate-segment').forEach((segment,index)=>{segment.classList.toggle('active',index===0);segment.classList.remove('complete');segment.querySelector('.generate-segment-fill').style.width=index===0?'35%':'0%';});
     selectGenerateResult('logs');$('genLogs').textContent=isInstall?'Starting '+label+'…\n':'Checking output paths before launching the CLI…\n';
@@ -1451,11 +1459,11 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       const host=$('generateRunStatus');
       if(error.cancelled){
         host.classList.add('hidden');host.classList.remove('finished','failed');$('genRunStatusBadge').textContent='Cancelled';
-        $('genFooterStatus').textContent=error.message;$('genLogs').textContent=error.message+'\nNo generation was started.';
+        $('genFooterStatus').classList.remove('error');$('genFooterStatus').textContent=error.message;$('genLogs').textContent=error.message+'\nNo generation was started.';
       }else{
         host.classList.remove('hidden','finished');host.classList.add('failed');
         $('genCurrentStep').textContent=isInstall?'Install Failed':'Generation Failed';$('genCurrentStep').title=error.message;
-        $('genOverallText').textContent='Failed';$('genRunStatusBadge').textContent='Failed';$('genFooterStatus').textContent=error.message;
+        $('genOverallText').textContent='Failed';$('genRunStatusBadge').textContent='Failed';$('genFooterStatus').classList.add('error');$('genFooterStatus').textContent=error.message;
         $('genSegmentTrack').setAttribute('aria-valuenow','0');$('genLogs').textContent=($('genLogs').textContent||'')+'\nError: '+error.message;
         toast(error.message,true);
       }
@@ -1482,7 +1490,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
         }
         genIsInstallRun=false;return;
       }
-    }catch(error){$('genFooterStatus').textContent='Could not refresh local job status: '+error.message;}
+    }catch(error){$('genFooterStatus').classList.add('error');$('genFooterStatus').textContent='Could not refresh local job status: '+error.message;}
     genPollTimer=setTimeout(()=>pollGeneratorRun(runId),1000);
   }
   function setGeneratePane(pane){
@@ -1742,6 +1750,8 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     updateTimelineControlsContext();
     $('viewLines').classList.toggle('primary',gridMode==='lines');
     $('viewWords').classList.toggle('primary',gridMode==='words');
+    $('viewLines').setAttribute('aria-pressed',String(gridMode==='lines'));
+    $('viewWords').setAttribute('aria-pressed',String(gridMode==='words'));
     $('viewWords').disabled=!rows.some(row=>String(row.text||'').trim());
     syncEditorActionBar();
     renderGrid();
@@ -1768,10 +1778,13 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     $('addWord').classList.toggle('hidden',!wordMode);
     $('addWord').disabled=!wordMode||!hasWordTiming;
     const timelineAvailable=wordMode&&hasWordTiming;
-    const fitZoom=timelineAvailable?Math.min(2000,computeFitZoom()):0;
-    const currentZoom=timelineAvailable?Math.max(fitZoom,Number(timelineZoom)||fitZoom):(Number(timelineZoom)||0);
+    const fitZoom=timelineAvailable?minimumTimelineZoom():0;
+    const actualZoom=Number(timelineZoom)||0;
+    const currentZoom=timelineAvailable?Math.max(fitZoom,actualZoom):actualZoom;
     const zoomTolerance=Math.max(.01,fitZoom*.001);
-    const atFit=timelineAvailable&&Math.abs(currentZoom-fitZoom)<=zoomTolerance;
+    // Treat zoom at or below the effective minimum as fitted; stale pre-resize
+    // scale values must not leave Minus or Fit Lines looking actionable.
+    const atFit=timelineAvailable&&actualZoom<=fitZoom+zoomTolerance;
     $('zoomOut').disabled=!timelineAvailable||atFit;
     $('zoomFit').disabled=!timelineAvailable||atFit;
     $('zoomIn').disabled=!timelineAvailable||currentZoom>=2000;
@@ -2051,6 +2064,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       }
     }
     if(vp)vp.scrollTop=fit?0:Math.min(top,Math.max(0,vp.scrollHeight-vp.clientHeight));
+    syncEditorActionBar();
   }
   function setTimelineGeometry() {
     const vp=$('timelineViewport');
@@ -2637,6 +2651,10 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   $('navGenerate').addEventListener('click',()=>setScreen('generate'));wireGeneratePanel();
   $('viewLines').addEventListener('click',()=>setGridMode('lines'));$('viewWords').addEventListener('click',()=>setGridMode('words'));
   function minimumTimelineZoom(){return Math.min(2000,computeFitZoom());}
+   function timelineZoomAtMinimum(){
+     const minimum=minimumTimelineZoom(),tolerance=Math.max(.01,minimum*.001);
+     return Number(timelineZoom)<=minimum+tolerance;
+   }
   function applyTimelineZoom(next,fit=false,anchor=null){
     if(zoomRenderFrame!==null){cancelAnimationFrame(zoomRenderFrame);zoomRenderFrame=null;pendingZoomRender=null;}
     const fitZoom=minimumTimelineZoom();
@@ -2667,8 +2685,8 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   }
 
     $('zoomIn').addEventListener('click',()=>applyTimelineZoom(timelineZoom*1.25));
-  $('zoomOut').addEventListener('click',()=>applyTimelineZoom(timelineZoom/1.25));
-  $('zoomFit').addEventListener('click',()=>applyTimelineZoom(computeFitZoom(),true));
+  $('zoomOut').addEventListener('click',()=>{if(timelineZoomAtMinimum()){syncEditorActionBar();return;}applyTimelineZoom(timelineZoom/1.25);});
+  $('zoomFit').addEventListener('click',()=>{if(timelineZoomAtMinimum()){syncEditorActionBar();return;}applyTimelineZoom(computeFitZoom(),true);});
   $('timelineViewport').addEventListener('wheel',e=>{
     if(!e.ctrlKey||gridMode!=='words')return;e.preventDefault();
     const laneRow=e.target.closest?.('.timeline-lane-row'),content=laneRow?.querySelector('.timeline-lane-content');

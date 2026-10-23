@@ -35,5 +35,6 @@ By default, alignment writes an LRC beside the audio. Existing outputs are prote
 - [Output formats and singer styling](docs/output-formats.md) — LRC, word-timed TTML, and multi-singer metadata.
 - [TIFA singing-aware alignment](docs/tifa.md) — optional setup, settings, diagnostics, and limitations.
 - [Troubleshooting](docs/troubleshooting.md) — common setup and alignment problems.
+- [Development guide](DEVELOPMENT.md) — project architecture, validation workflow, user-data safety, and contributor/AI collaboration expectations.
 
 **New to Savant?** Start with [Installation and setup](docs/installation.md), then try the basic alignment command above. Optional TIFA and vocal-separation features can be added later.

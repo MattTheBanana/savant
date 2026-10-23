@@ -1996,7 +1996,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       const lyric=document.createElement('td'); lyric.className='lyric'; const textEditor=document.createElement('div'); textEditor.contentEditable='true'; textEditor.setAttribute('role','textbox'); textEditor.setAttribute('aria-multiline','false'); textEditor.setAttribute('aria-label',`Line ${i+1} lyrics`); textEditor.className='lyric-editor'; textEditor.spellcheck=false; textEditor.autocapitalize='off';
       renderWordAwareEditor(textEditor,row);
       lyric.append(textEditor); tr.append(num,time,lyric); frag.append(tr);
-      tr.addEventListener('click',e=>{if(suppressGridLineClick)return;selectLineSelection(i,e);});
+      tr.addEventListener('click',e=>{if(suppressGridLineClick)return;const focusRow=!(e.target instanceof Element&&e.target.closest('.lyric-editor,.time-input'));selectLineSelection(i,e,focusRow);});
       tr.addEventListener('focusin',e=>{if(e.target===tr&&!selectedLineIndices.has(i))selectLineSelection(i,null);});
       timeInput.addEventListener('change',()=>{
         const parsed=parseTime(timeInput.value);
@@ -2663,7 +2663,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       // Pointer capture may retarget the synthetic click to the lane container.
       // Handle selection here and suppress the follow-up synthetic click.
       suppressTimelineClick=true;setTimeout(()=>{suppressTimelineClick=false;},0);
-      selectLineSelection(m.lineIndex,{shiftKey:m.shiftKey,ctrlKey:m.ctrlKey,metaKey:m.metaKey});
+      selectLineSelection(m.lineIndex,{shiftKey:m.shiftKey,ctrlKey:m.ctrlKey,metaKey:m.metaKey},true);
     }
   }
   function renderGrid() {
@@ -3178,7 +3178,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     const lane=e.target.closest('.timeline-lane-row[data-line-index]');
     const lineIndex=Number(lane?.dataset.lineIndex);
     if(!lane||!Number.isInteger(lineIndex))return;
-    if(e.target.closest('.timeline-label')||e.target.closest('.lane-word-track')||e.target.closest('.timeline-lane-content'))selectLineSelection(lineIndex,e);
+    if(e.target.closest('.timeline-label')||e.target.closest('.lane-word-track')||e.target.closest('.timeline-lane-content'))selectLineSelection(lineIndex,e,true);
   });
   $('timelineLanes').addEventListener('auxclick',e=>{if(e.button===1)e.preventDefault();});
   $('timelineLanes').addEventListener('contextmenu',e=>{if(e.target.closest('.lane-waveform-canvas'))e.preventDefault();});

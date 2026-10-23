@@ -798,7 +798,8 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   function scrollElementToNearest(viewport,element){
     if(!viewport||!element||viewport.clientHeight<=0)return;
     const viewportRect=viewport.getBoundingClientRect(),itemRect=element.getBoundingClientRect();
-    const visibleTop=viewportRect.top+viewport.clientTop,visibleBottom=visibleTop+viewport.clientHeight;
+    const stickyHeaderHeight=viewport.id==='lineTableWrap'?($('gridHead')?.getBoundingClientRect().height||0):0;
+    const visibleTop=viewportRect.top+viewport.clientTop+stickyHeaderHeight,visibleBottom=viewportRect.top+viewport.clientTop+viewport.clientHeight;
     if(itemRect.top<visibleTop)viewport.scrollTop=Math.max(0,viewport.scrollTop-(visibleTop-itemRect.top));
     else if(itemRect.bottom>visibleBottom)viewport.scrollTop=Math.min(Math.max(0,viewport.scrollHeight-viewport.clientHeight),viewport.scrollTop+(itemRect.bottom-visibleBottom));
   }

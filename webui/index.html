@@ -23,7 +23,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 
 /* TTML word-level editor: each lyric line gets its own wrapped waveform lane; no song-wide horizontal scrolling. */
 .word-timeline-editor{padding:10px 12px 13px;min-width:0}
-.timeline-toolbar{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px;color:var(--muted)}
+.timeline-toolbar{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px;color:var(--muted)}.ttml-line-actions{display:flex;align-items:center;gap:8px;margin:0 0 8px}
 .timeline-toolbar-group{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.timeline-zoom-label{font-family:var(--mono);font-size:11px;color:#a8b8cc}.timeline-help{color:var(--muted);font-size:11px}
 .timeline-viewport{position:relative;overflow-x:hidden;overflow-y:auto;max-height:calc(100vh - 390px);min-height:330px;border:1px solid #2c394d;border-radius:9px;background:#0b111a;overscroll-behavior:contain}
 .timeline-inner{position:relative;width:100%;min-width:0;--label-width:150px;}
@@ -51,7 +51,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 @media(max-width:950px){.timeline-viewport{max-height:65vh}.word-inspector-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.word-inspector-text{grid-column:1/-1}.timeline-inner{--label-width:118px}}
 @media(max-width:540px){.timeline-toolbar{align-items:flex-start}.timeline-help{max-width:100%}.word-inspector-fields{grid-template-columns:1fr 1fr}.timeline-inner{--label-width:94px}.timeline-lane-row{min-height:116px}.timeline-lane-content{grid-template-rows:62px 48px}.lane-waveform-wrapper,.lane-waveform-canvas{height:62px}.lane-playhead-handle{height:62px}}
 @media(max-width:1000px){.editor-layout{grid-template-columns:1fr}.table-wrap,.preview{max-height:none}.audio-panel{grid-template-columns:1fr}.status{margin-left:0}}@media(max-width:620px){.app-header{padding:12px}.shell{padding:12px}.brand p{display:none}.file-name{max-width:180px}.settings-grid{grid-template-columns:1fr}.toolbar{align-items:flex-start}.toolbar>*{max-width:100%}th.time,td.time{width:128px}th.num,td.num{width:42px}.panel-actions{margin-left:auto}}
-.word-format-toggles{display:flex;gap:6px}.word-format-toggle{min-width:40px;padding:6px 12px;font-size:15px}.word-format-toggle[aria-pressed="true"]{background:#245346;border-color:#367b66;color:#fff}.word-style-help{font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}.agent-preset-row{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid #2a394c;padding-top:9px}.agent-preset-picker{position:relative;flex:1;min-width:150px}.agent-preset-picker>button{width:100%;text-align:left}.agent-preset-menu{position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:100;min-width:220px;max-height:260px;overflow:auto;padding:5px;border:1px solid #455972;border-radius:9px;background:#101927;box-shadow:0 14px 35px #000b}.agent-preset-option{display:flex;align-items:center;gap:5px;padding:2px}.agent-preset-option button{border-radius:6px;padding:6px 8px;font-size:12px}.agent-preset-option .agent-preset-apply{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;background:transparent;border-color:transparent}.agent-preset-option .agent-preset-delete{flex:0 0 30px;width:30px;padding:5px;color:#ffb5b5;background:#39232c;border-color:#613640;font-size:17px;line-height:1}.agent-preset-option .agent-preset-delete:hover{background:#642a38;border-color:#a04a5d}.agent-preset-empty{padding:9px;color:var(--muted);font-size:12px}.agent-preset-menu.hidden{display:none!important}.color-text-input{font-family:var(--mono);font-weight:700}.color-picker-popover{position:fixed;z-index:80;width:min(320px,calc(100vw - 20px));padding:11px;border:1px solid #496079;border-radius:12px;background:#111a28;box-shadow:0 18px 55px #000a}.color-picker-tabs{display:flex;gap:5px;margin-bottom:9px}.color-picker-tabs button{flex:1;min-width:0;padding:7px 4px;font-size:12px}.color-picker-tabs button.active{background:#245346;border-color:#367b66}.color-swatches{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin-bottom:10px}.color-swatch{height:22px;padding:0;border:1px solid #ffffff40;border-radius:5px;min-width:0}.color-picker-content{display:grid;gap:9px}.sv-pad{height:142px;border:1px solid #ffffff55;border-radius:6px;touch-action:none;cursor:crosshair}.color-range{display:grid;grid-template-columns:62px 1fr 38px;gap:8px;align-items:center;font-size:11px;color:#c0cede}.color-range input{width:100%;min-width:0;padding:0;accent-color:#76e4c1}.color-range output{text-align:right;font-family:var(--mono)}.color-picker-preview{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px}.color-picker-preview span{width:24px;height:18px;border:1px solid #ffffff55;border-radius:4px}.editor-context-menu{position:fixed;z-index:90;min-width:230px;max-width:min(320px,calc(100vw - 20px));max-height:min(75vh,620px);overflow:auto;padding:5px;border:1px solid #455972;border-radius:10px;background:#101927;box-shadow:0 18px 55px #000b}.editor-context-menu button{display:block;width:100%;text-align:left;padding:7px 10px;background:transparent;border-color:transparent;border-radius:6px;font-size:12px}.editor-context-menu button:hover{background:#26384d;border-color:#405773}.editor-context-menu .context-menu-heading{padding:8px 10px 3px;color:#91a5bd;font-size:12px;text-transform:none;letter-spacing:0}.editor-context-menu .context-menu-separator{height:1px;background:#2e3d51;margin:5px 3px}.editor-context-menu .context-menu-footer{border-top:1px solid #2e3d51;margin-top:5px;padding-top:5px}.editor-context-menu button:disabled{opacity:.4;cursor:not-allowed}.color-picker-popover.hidden,.editor-context-menu.hidden{display:none!important}
+.word-format-toggles{display:flex;gap:6px}.word-format-toggle{min-width:40px;padding:6px 12px;font-size:15px}.word-format-toggle[aria-pressed="true"]{background:#245346;border-color:#367b66;color:#fff}.word-style-help{font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}.agent-preset-row{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid #2a394c;padding-top:9px}.agent-preset-picker{position:relative;flex:1;min-width:150px}.agent-preset-picker>button{width:100%;text-align:left}.agent-preset-menu{position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:100;min-width:220px;max-height:260px;overflow:auto;padding:5px;border:1px solid #455972;border-radius:9px;background:#101927;box-shadow:0 14px 35px #000b}.agent-preset-option{display:flex;align-items:center;gap:5px;padding:2px}.agent-preset-option button{border-radius:6px;padding:6px 8px;font-size:12px}.agent-preset-option .agent-preset-apply{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;background:transparent;border-color:transparent}.agent-preset-option .agent-preset-delete{flex:0 0 30px;width:30px;padding:5px;color:#ffb5b5;background:#39232c;border-color:#613640;font-size:17px;line-height:1}.agent-preset-option .agent-preset-delete:hover{background:#642a38;border-color:#a04a5d}.agent-preset-empty{padding:9px;color:var(--muted);font-size:12px}.agent-preset-menu.hidden{display:none!important}.color-text-input{font-family:var(--mono);font-weight:700}.color-picker-popover{position:fixed;z-index:80;width:min(320px,calc(100vw - 20px));padding:11px;border:1px solid #496079;border-radius:12px;background:#111a28;box-shadow:0 18px 55px #000a}.color-picker-tabs{display:flex;gap:5px;margin-bottom:9px}.color-picker-tabs button{flex:1;min-width:0;padding:7px 4px;font-size:12px}.color-picker-tabs button.active{background:#245346;border-color:#367b66}.color-swatches{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin-bottom:10px}.color-swatch{height:22px;padding:0;border:1px solid #ffffff40;border-radius:5px;min-width:0}.color-picker-content{display:grid;gap:9px}.sv-pad{height:142px;border:1px solid #ffffff55;border-radius:6px;touch-action:none;cursor:crosshair}.color-range{display:grid;grid-template-columns:62px 1fr 38px;gap:8px;align-items:center;font-size:11px;color:#c0cede}.color-range input{width:100%;min-width:0;padding:0;accent-color:#76e4c1}.color-range output{text-align:right;font-family:var(--mono)}.color-picker-preview{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px}.color-picker-preview span{width:24px;height:18px;border:1px solid #ffffff55;border-radius:4px}.editor-context-menu{position:fixed;z-index:90;min-width:230px;max-width:min(320px,calc(100vw - 20px));max-height:min(75vh,620px);overflow:auto;padding:5px;border:1px solid #455972;border-radius:10px;background:#101927;box-shadow:0 18px 55px #000b}.editor-context-menu button{display:block;width:100%;text-align:left;padding:7px 10px;background:transparent;border-color:transparent;border-radius:6px;font-size:12px}.editor-context-menu button:hover{background:#26384d;border-color:#405773}.editor-context-menu .context-menu-heading{padding:8px 10px 3px;color:#91a5bd;font-size:12px;text-transform:none;letter-spacing:0}.editor-context-menu .context-menu-separator{height:1px;background:#2e3d51;margin:5px 3px}.editor-context-menu .context-menu-footer{margin-top:0;padding-top:7px}.editor-context-menu button:disabled{opacity:.4;cursor:not-allowed}.color-picker-popover.hidden,.editor-context-menu.hidden{display:none!important}
 
 :root{--app-header-height:68px;--player-dock-height:82px}
 .app-header{height:var(--app-header-height);min-height:var(--app-header-height);padding:9px 18px;z-index:80}
@@ -72,7 +72,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .player-dock .audio-title{font-size:13px}
 .player-dock .audio-sub{font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .player-dock audio{width:100%;min-width:0;height:38px}
-.player-dock audio::-webkit-media-controls-current-time-display,.player-dock audio::-webkit-media-controls-time-remaining-display{display:none}.player-dock .audio-time{font-size:11px}
+#player::-webkit-media-controls-current-time-display,#player::-webkit-media-controls-time-remaining-display,#player::-webkit-media-controls-time-display{display:none!important;visibility:hidden!important;opacity:0!important;width:0!important;min-width:0!important;max-width:0!important;padding:0!important;margin:0!important;font-size:0!important;overflow:hidden!important}.player-dock .audio-time{font-size:11px}
 .preview-backdrop{position:fixed;left:0;right:0;top:var(--app-header-height);bottom:var(--player-dock-height);z-index:50;background:#02060bb8;backdrop-filter:blur(1px);transition:opacity .18s ease}
 .preview-backdrop.hidden{display:none!important}
 .preview-drawer{position:fixed;left:0;top:var(--app-header-height);bottom:var(--player-dock-height);width:min(560px,calc(100vw - 28px));z-index:55;display:flex;flex-direction:column;border-radius:0 12px 12px 0;box-shadow:18px 0 45px #0008;transform:translateX(-103%);visibility:hidden;transition:transform .2s ease,visibility .2s ease;overflow:hidden}
@@ -283,7 +283,7 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
         </div>
         <div id="lineTableWrap" class="table-wrap"><table><thead id="gridHead"><tr><th class="num">#</th><th class="time">Time</th><th>Lyric</th></tr></thead><tbody id="gridBody"><tr><td colspan="3" style="padding:30px;text-align:center;color:#91a1b5">Import an LRC, TTML, or TXT lyrics file.</td></tr></tbody></table></div>
         <div id="wordTimelineEditor" class="word-timeline-editor hidden">
-          <div class="timeline-toolbar"><div class="timeline-toolbar-group"><button id="addLineTtml" class="small" type="button" title="Inserts line under current line">+ Add Line</button></div></div>
+          <div class="ttml-line-actions"><button id="addLineTtml" class="small" type="button" title="Adds a new TTML lyric line below the selected line">+ Add Line</button></div>
           <div class="ttml-editor-layout" id="ttmlEditorLayout">
           <div id="timelineViewport" class="timeline-viewport" aria-label="Wrapped word timing timeline">
             <div id="timelineInner" class="timeline-inner">
@@ -2009,15 +2009,34 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
   function baseName() { const chosen=settings.downloadBase==='audio'&&audioName?audioName:importedLyricsName; return (chosen||'lyrics').replace(/\.(lrc|ttml|xml|txt)$/i,''); }
   function exportLrc(){ if(!rows.length){toast('Load lyrics before exporting.',true);return;}download(baseName()+'.lrc',lrcOutput(),'text/plain;charset=utf-8'); }
   function exportTtml(){ if(!rows.length){toast('Load lyrics before exporting.',true);return;}download(baseName()+'.ttml',ttmlOutput(),'application/ttml+xml;charset=utf-8'); }
-  function addTtmlLine(){
+  function insertTtmlLineAt(index){
     const historyBefore=captureHistoryState();
-    const index=selectedIndex>=0?selectedIndex+1:rows.length;
-    const start=selectedIndex>=0&&rows[selectedIndex]?rows[selectedIndex].start+settings.txtSpacing:(rows.length?rows[rows.length-1].start+settings.txtSpacing:0);
+    index=Math.max(0,Math.min(rows.length,Math.trunc(Number(index)||0)));
+    let start=0;
+    if(rows.length){
+      if(index===0)start=Math.max(0,(Number(rows[0].start)||0)-settings.txtSpacing);
+      else{
+        const left=Number(rows[index-1].start)||0;
+        if(index<rows.length){
+          const right=Number(rows[index].start)||0;
+          start=right>left?Math.min(left+settings.txtSpacing,left+(right-left)/2):left+settings.txtSpacing;
+        }else start=left+settings.txtSpacing;
+      }
+    }
     rows.splice(index,0,makeRow(start,'',{wordCues:[]}));
     selectedIndex=index;lastEditedIndex=index;replayFromAnchor=true;selectedWordRef=null;selectedWordKeys.clear();
+    gridMode='words';activePlaybackIndex=-1;activeWordIndex=-1;
     hasWordTiming=rows.some(row=>row.wordCues?.length);
+    updateTimelineControlsContext();
+    $('viewLines').classList.toggle('primary',gridMode==='lines');$('viewWords').classList.toggle('primary',gridMode==='words');
+    $('viewWords').disabled=!rows.some(row=>String(row.text||'').trim());
     renderGrid();updateWordInspector();updatePreview();updateStatus();commitHistoryChange(historyBefore);
-    toast('New lyric line added. Add its word cues at the playhead.');
+    const lane=$('timelineLanes').querySelector('.timeline-lane-row[data-line-index="'+index+'"]');
+    if(lane)scrollTimelineElementIntoView(lane);
+    toast('New TTML line added. Add its word cues at the playhead.');
+  }
+  function addTtmlLine(){
+    insertTtmlLineAt(selectedIndex>=0?selectedIndex+1:rows.length);
   }
   function addLine() {
     const historyBefore=captureHistoryState();
@@ -2375,8 +2394,9 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
     if(gridMode==='words'){addMenuSeparator(menu);addContextAction(menu,'Make new word',addWordCue,{disabled:!hasWordTiming,shortcut:'F'});}
     if(gridMode==='lines'&&target?.lineIndex!==undefined){
       addMenuSeparator(menu);
-      addContextAction(menu,'Insert line above this line',()=>insertLineAt(target.lineIndex),{tooltip:'Inserts line under current line'});
-      addContextAction(menu,'Insert line below this line',()=>insertLineAt(target.lineIndex+1),{tooltip:'Inserts line under current line'});
+      addContextAction(menu,'Insert line above this line',()=>insertLineAt(target.lineIndex),{tooltip:'Insert a new line before this line'});
+      addContextAction(menu,'Insert line below this line',()=>insertLineAt(target.lineIndex+1),{tooltip:'Insert a new line after this line'});
+      addMenuSeparator(menu);
       const deleteLineAction=addContextAction(menu,'Delete Line',()=>removeLineAt(target.lineIndex),{footer:true});
       deleteLineAction.classList.add('danger');
     }
@@ -2385,12 +2405,17 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
       addMenuSeparator(menu);addMenuHeading(menu,'Apply saved agent preset');
       if(agentPresets.length)agentPresets.forEach(p=>addContextAction(menu,p.name,()=>applyAgentPreset(p.id)));
       else{const empty=document.createElement('button');empty.type='button';empty.textContent='No saved presets yet';empty.disabled=true;menu.append(empty);}
-      addContextAction(menu,'+ Save new agent preset…',saveAgentPreset,{footer:true,disabled:!cueForRef()});
+      addMenuSeparator(menu);addContextAction(menu,'+ Save new agent preset…',saveAgentPreset,{footer:true,disabled:!cueForRef()});
       addMenuSeparator(menu);const key=wordKey(target.lineIndex,target.cueIndex),refs=selectedWordKeys.has(key)?[...selectedWordKeys].map(parseWordKey):[{lineIndex:target.lineIndex,cueIndex:target.cueIndex}];
       const deleteAction=addContextAction(menu,'Delete word',()=>deleteWordCues(refs.filter(ref=>rows[ref.lineIndex]?.wordCues?.[ref.cueIndex])),{footer:true});deleteAction.classList.add('danger');
     }
     if(gridMode==='words'&&Number.isInteger(target?.lineIndex)){
-      addMenuSeparator(menu);const deleteTtmlLine=addContextAction(menu,'Delete Line',()=>removeLineAt(target.lineIndex),{footer:true});deleteTtmlLine.classList.add('danger');
+      addMenuSeparator(menu);
+      addContextAction(menu,'Insert line above this line',()=>insertTtmlLineAt(target.lineIndex),{tooltip:'Insert an empty TTML line before this line'});
+      addContextAction(menu,'Insert line below this line',()=>insertTtmlLineAt(target.lineIndex+1),{tooltip:'Insert an empty TTML line after this line'});
+      addMenuSeparator(menu);
+      const deleteTtmlLine=addContextAction(menu,'Delete Line',()=>removeLineAt(target.lineIndex),{footer:true});
+      deleteTtmlLine.classList.add('danger');
     }
     menu.classList.remove('hidden');
     const pad=6,header=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-header-height'))||68,dock=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--player-dock-height'))||82;

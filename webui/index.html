@@ -511,7 +511,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     <div class="generate-run-footer"><button id="genRunButton" class="primary generate-run-button"><span aria-hidden="true">▶</span> Run Generator</button><span id="genFooterStatus" class="generate-muted">Choose an audio file and lyrics to begin.</span><button id="genImportButton" class="generate-run-button" type="button" disabled>Import Output to Edit</button></div>
   </section>
   <section id="settingsScreen" class="panel hidden">
-    <div class="panel-head"><div><h2>Editor settings</h2><p>Adjust timing behavior and playback. Settings are saved in this browser on this computer.</p></div><button id="resetSettings" class="small">Reset defaults</button></div>
+    <div class="panel-head"><div><h2>Editor settings</h2><p>Adjust timing behavior and playback. Preferences are saved to savant-settings.txt beside the app and stay synchronized with this page while Savant is running.</p></div><button id="resetSettings" class="small">Reset defaults</button></div>
     <div class="preferences-layout">
     <div class="preferences-tabs" role="tablist" aria-label="Preferences sections" aria-orientation="vertical">
       <button id="prefTabVisuals" class="preferences-tab active" type="button" role="tab" aria-selected="true" aria-controls="prefPageVisuals" aria-orientation="vertical" tabindex="0" data-preferences-tab="visuals">Visuals</button>
@@ -540,7 +540,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       </section>
       <section id="prefPageGenerator" class="preferences-page" role="tabpanel" aria-labelledby="prefTabGenerator" data-preferences-page="generator" hidden>
         <div class="settings-grid">
-<div class="settings-section-heading"><h3>Generator Defaults</h3><p>Saved in this browser and applied whenever the generator opens. Leave paths blank to use automatic locations.</p></div>
+<div class="settings-section-heading"><h3>Generator Defaults</h3><p>Saved in savant-settings.txt and applied whenever the generator opens. Leave paths blank to use automatic locations.</p></div>
 <div class="setting"><label for="prefGenMode">Default task</label><select id="prefGenMode"><option value="align">Align audio to lyrics</option><option value="adjust">Adjust an existing LRC</option><option value="doctor">Run diagnostics</option></select></div>
        <div class="setting"><label for="prefGenAligner">Default alignment backend</label><select id="prefGenAligner"><option value="whisperx">WhisperX</option><option value="tifa">TIFA</option></select></div>
        <div class="setting"><label for="prefGenLanguage">Default language code</label><input type="text" maxlength="20" id="prefGenLanguage" spellcheck="false"></div>

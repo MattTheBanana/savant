@@ -903,6 +903,120 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
       tifaChunkSeconds:$('genTifaChunkSeconds').value||'42',tifaContext:$('genTifaContext').value||'1.8',tifaDiagnosticsPath:$('genAligner').value==='tifa' ? $('genTifaDiagnosticsPath').value.trim() : '',contextRepair:$('genContextRepair').checked,
       instrumentalThreshold:$('genInstrumentalThreshold').value||'6',demucsModel:$('genDemucsModel').value.trim()||'htdemucs',demucsSegment:$('genDemucsSegment').value||'6',vocalOutput:$('genVocalOutput').value.trim()};
   }
+  const pathSuggestionStates=new WeakMap(),pathSuggestionTimers=new WeakMap(),pathSuggestionTokens=new WeakMap(),validatedLocalPaths=new Set();
+  function pathValidationKey(input){return String(input.dataset.pathKind||'')+'\n'+String(input.value||'').trim();}
+  function closePathSuggestions(input){
+    const menu=input&&input.parentElement.querySelector('.path-suggestion-menu');if(!menu)return;
+    menu.classList.add('hidden');input.setAttribute('aria-expanded','false');
+    const state=pathSuggestionStates.get(input);if(state)state.active=-1;
+  }
+  function renderPathSuggestions(input,suggestions,message='',isError=false){
+    const menu=input.parentElement.querySelector('.path-suggestion-menu');if(!menu)return;
+    menu.textContent='';const state={suggestions:suggestions||[],active:-1};pathSuggestionStates.set(input,state);
+    (suggestions||[]).forEach((item,index)=>{
+      const button=document.createElement('button');button.type='button';button.className='path-suggestion-option';button.setAttribute('role','option');button.setAttribute('aria-selected','false');button.dataset.index=String(index);
+      const label=document.createElement('span');label.className='path-suggestion-name';label.textContent=item.path;
+      const kind=document.createElement('span');kind.className='path-suggestion-kind';kind.textContent=item.isDir?'Folder':item.exists?'File':'Use path';
+      if(!item.exists)kind.classList.add('path-suggestion-missing');
+      button.append(label,kind);
+      button.addEventListener('pointerdown',event=>event.preventDefault());
+      button.addEventListener('click',()=>choosePathSuggestion(input,index));
+      menu.append(button);
+    });
+    if(message){const note=document.createElement('div');note.className='path-suggestion-status'+(isError?' error':'');note.textContent=message;menu.append(note);}
+    const expanded=Boolean((suggestions&&suggestions.length)||message);
+    menu.classList.toggle('hidden',!expanded);input.setAttribute('aria-expanded',String(expanded));
+  }
+  async function genLoadPathSuggestions(input){
+    if(!input||!input.isConnected)return;
+    const token=(pathSuggestionTokens.get(input)||0)+1;pathSuggestionTokens.set(input,token);
+    try{
+      const result=await genFetchJson('/api/path-suggestions',{method:'POST',headers:{'Content-Type':'application/json','X-Savant-UI':'1'},body:JSON.stringify({path:input.value.trim(),kind:input.dataset.pathKind||'any',limit:18})});
+      if(pathSuggestionTokens.get(input)!==token)return;
+      renderPathSuggestions(input,result.suggestions||[],result.message||'',Boolean(result.error));
+    }catch(error){
+      if(pathSuggestionTokens.get(input)!==token)return;
+      renderPathSuggestions(input,[],error.message||'Path suggestions are unavailable.',true);
+    }
+  }
+  async function choosePathSuggestion(input,index){
+    const state=pathSuggestionStates.get(input),item=state&&state.suggestions[index];if(!item)return;
+    input.value=item.path;closePathSuggestions(input);
+    input.dispatchEvent(new Event('input',{bubbles:true}));
+    input.dispatchEvent(new Event('change',{bubbles:true}));
+    await genValidatePathField(input,true);
+  }
+  async function genValidatePathField(input,promptMissing=false){
+    const path=input&&input.value.trim();if(!path)return true;
+    const key=pathValidationKey(input);if(validatedLocalPaths.has(key))return true;
+    let result;
+    try{
+      result=await genFetchJson('/api/validate-path',{method:'POST',headers:{'Content-Type':'application/json','X-Savant-UI':'1'},body:JSON.stringify({path,kind:input.dataset.pathKind||'any',role:input.dataset.pathRole||''})});
+    }catch(error){toast(error.message||'Could not validate the selected path.',true);return false;}
+    if(result.status==='ok'){validatedLocalPaths.add(key);input.dataset.validatedPath=path;return true;}
+    if(result.status==='missing-file'){
+      if(promptMissing||input.dataset.validatedPath!==path){
+        const noun=(input.dataset.pathRole||'').includes('source')||(input.dataset.pathRole||'').includes('model')?'source file or model':'output file';
+        if(!window.confirm('The '+noun+' does not exist yet:\n'+path+'\n\nContinue with this path? Savant will create the file when it writes the output.'))return false;
+      }
+      validatedLocalPaths.add(key);input.dataset.validatedPath=path;return true;
+    }
+    if(result.status==='missing-folder'||result.status==='missing-parent'){
+      if(!result.createable){toast(result.message||'This path cannot be created because its parent is inaccessible: '+path,true);return false;}
+      const createPath=result.createPath||path;
+      const question=result.status==='missing-parent'?'The parent folder does not exist:\n'+createPath+'\n\nCreate this folder and continue?':'This folder does not exist:\n'+createPath+'\n\nCreate it now?';
+      if(!window.confirm(question))return false;
+      try{
+        await genFetchJson('/api/create-path',{method:'POST',headers:{'Content-Type':'application/json','X-Savant-UI':'1'},body:JSON.stringify({path:createPath})});
+        validatedLocalPaths.add(key);input.dataset.validatedPath=path;toast('Created folder: '+createPath);return true;
+      }catch(error){toast(error.message||'Could not create the requested folder.',true);return false;}
+    }
+    toast(result.message||'The selected path is invalid or inaccessible: '+path,true);return false;
+  }
+  async function genValidateConfiguredPaths(){
+    for(const input of $('generateScreen').querySelectorAll('input[data-path-input="true"]')){
+      if(!input.value.trim())continue;
+      if(!(await genValidatePathField(input,false)))return false;
+    }
+    return true;
+  }
+  function wireGeneratorPathFields(){
+    for(const input of document.querySelectorAll('input[data-path-input="true"]')){
+      const parent=input.parentElement;if(!parent.classList.contains('path-input-control'))continue;
+      const menu=document.createElement('div');menu.className='path-suggestion-menu hidden';menu.id=input.id+'Suggestions';menu.setAttribute('role','listbox');menu.setAttribute('aria-label','Path suggestions');parent.insertBefore(menu,input.nextSibling);
+      input.setAttribute('aria-autocomplete','list');input.setAttribute('aria-haspopup','listbox');input.setAttribute('aria-controls',menu.id);input.setAttribute('aria-expanded','false');input.autocomplete='off';
+      input.addEventListener('focus',()=>{
+        const previous=pathSuggestionTimers.get(input);if(previous)clearTimeout(previous);
+        pathSuggestionTimers.set(input,setTimeout(()=>genLoadPathSuggestions(input),80));
+      });
+      input.addEventListener('input',()=>{
+        const previous=pathSuggestionTimers.get(input);if(previous)clearTimeout(previous);
+        input.dataset.validatedPath='';
+        if(input.id==='genOutputDirectory')input.dataset.outputDirectoryMode=input.value.trim()?'custom':'auto';
+        if(input.id.startsWith('prefGen'))persistGeneratorDefaults(false);else genMarkConfigChanged();
+        pathSuggestionTimers.set(input,setTimeout(()=>genLoadPathSuggestions(input),140));
+      });
+      input.addEventListener('keydown',event=>{
+        const state=pathSuggestionStates.get(input),visible=!menu.classList.contains('hidden'),count=state&&state.suggestions?state.suggestions.length:0;
+        if(event.key==='Escape'){closePathSuggestions(input);return;}
+        if(event.key==='ArrowDown'||event.key==='ArrowUp'){
+          event.preventDefault();
+          if(!visible||!count){genLoadPathSuggestions(input);return;}
+          state.active=(state.active+(event.key==='ArrowDown'?1:-1)+count)%count;
+          Array.from(menu.querySelectorAll('.path-suggestion-option')).forEach((button,i)=>{
+            button.classList.toggle('active',i===state.active);button.setAttribute('aria-selected',String(i===state.active));
+          });
+          const active=menu.querySelector('.path-suggestion-option.active');if(active)active.scrollIntoView({block:'nearest'});
+        }else if((event.key==='Enter'||event.key==='Tab')&&visible&&count){
+          event.preventDefault();choosePathSuggestion(input,state.active>=0?state.active:0);
+        }
+      });
+      input.addEventListener('blur',()=>{
+        setTimeout(()=>closePathSuggestions(input),120);
+        if(input.value.trim())setTimeout(()=>genValidatePathField(input,false),150);
+      });
+    }
+  }
   async function genBrowsePath(targetId,kind,title){
     const target=$(targetId);if(!target)return;
     try{
@@ -911,7 +1025,9 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
       target.value=result.path;
       if(targetId==='genOutputDirectory')target.dataset.outputDirectoryMode='custom';
       target.dispatchEvent(new Event('input',{bubbles:true}));
+      target.dispatchEvent(new Event('change',{bubbles:true}));
       genMarkConfigChanged();
+      await genValidatePathField(target,true);
     }catch(error){toast(error.message||'Could not open the system path picker.',true);}
   }
   async function genFetchJson(url,options={}){
@@ -1064,6 +1180,7 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
     if(['align','adjust'].includes(mode)&&!config.outputPath&&!config.outputDirectory&&config.outputDirectoryMode!=='run'&&!config.lyricsSourcePath){
       toast('The original lyrics folder is unavailable from browser drag-and-drop. Use Choose Lyrics to select the local file, or Browse to choose an output folder.',true);return;
     }
+    if(!(await genValidateConfiguredPaths()))return;
     if(config.overwrite&&!config.dryRun&&['align','adjust'].includes(mode)&&!window.confirm('Overwrite is enabled. Existing output files at the selected paths may be replaced. Continue?'))return;
     const form=new FormData();form.append('config',JSON.stringify(config));
     if(mode==='align'&&genFiles.audio instanceof File)form.append('audio',genFiles.audio,genFiles.audio.name);
@@ -1118,7 +1235,7 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
     $('generateConfigTab').classList.toggle('active',!advanced);$('generateAdvancedTab').classList.toggle('active',advanced);$('generateConfigTab').setAttribute('aria-selected',String(!advanced));$('generateAdvancedTab').setAttribute('aria-selected',String(advanced));
   }
   function wireGeneratePanel(){
-    applyGeneratorDefaults();wireGeneratorDefaultsPreferences();genWireFileInputs();$('generateConfigTab').addEventListener('click',()=>setGeneratePane('configuration'));$('generateAdvancedTab').addEventListener('click',()=>setGeneratePane('advanced'));
+    applyGeneratorDefaults();wireGeneratorPathFields();wireGeneratorDefaultsPreferences();genWireFileInputs();$('generateConfigTab').addEventListener('click',()=>setGeneratePane('configuration'));$('generateAdvancedTab').addEventListener('click',()=>setGeneratePane('advanced'));
     $('genMode').addEventListener('change',updateGenerateConfigVisibility);$('genAligner').addEventListener('change',updateGenerateConfigVisibility);$('genSeparateVocals').addEventListener('change',renderGenerateInstallPrompts);
     $('genOutputName').addEventListener('input',()=>{genOutputNameCustom=Boolean($('genOutputName').value.trim())&&$('genOutputName').value.trim()!==genDefaultOutputName;genMarkConfigChanged();});
     $('genChooseAudioFile').addEventListener('click',()=>genChooseSourceFile('audio'));$('genChooseLyricsFile').addEventListener('click',()=>genChooseSourceFile('lyrics'));

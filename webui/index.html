@@ -336,7 +336,7 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
         <div id="genLanguageWrap" class="setting"><label for="genLanguage">Language code</label><input id="genLanguage" value="en" maxlength="20" spellcheck="false"><p>Language used in the recording.</p></div>
         <div id="genDeviceWrap" class="setting"><label for="genDevice">Compute device</label><select id="genDevice"><option value="auto">Auto detect</option><option value="cuda">CUDA GPU</option><option value="cpu">CPU</option></select><p>Auto is recommended for most systems.</p></div>
         <div id="genOffsetWrap" class="setting"><label for="genOffset">Global timing offset (seconds)</label><input id="genOffset" type="number" min="-30" max="30" step="0.01" value="0"><p>Negative values move timings earlier.</p></div>
-        <div id="genOutputDestination" class="setting generate-output-destination"><label for="genOutputDirectory">Output folder</label><div class="path-input-control"><input id="genOutputDirectory" type="text" placeholder="Defaults to the selected lyrics folder" autocomplete="off" spellcheck="false" data-auto-populated="true" readonly><button class="small path-action-button" type="button" data-path-target="genOutputDirectory" data-path-kind="folder" data-path-title="Choose output folder">Browse…</button></div><div class="generate-output-location-actions"><button id="genChooseAudioDirectory" class="small" type="button">Use Audio Directory…</button><button id="genChooseLyricsDirectory" class="small" type="button">Use Lyrics Directory…</button><button id="genUseDefaultDirectory" class="small" type="button">Use Run Folder</button></div><p>Defaults to the folder containing the selected lyrics file. Browse for another folder.</p></div>
+        <div id="genOutputDestination" class="setting generate-output-destination"><label for="genOutputDirectory">Output folder</label><div class="path-input-control"><input id="genOutputDirectory" type="text" placeholder="Defaults to the selected lyrics folder" autocomplete="off" spellcheck="false" data-output-directory-mode="auto" readonly><button class="small path-action-button" type="button" data-path-target="genOutputDirectory" data-path-kind="folder" data-path-title="Choose output folder">Browse…</button></div><div class="generate-output-location-actions"><button id="genChooseAudioDirectory" class="small" type="button">Use Audio Directory…</button><button id="genChooseLyricsDirectory" class="small" type="button">Use Lyrics Directory…</button><button id="genUseDefaultDirectory" class="small" type="button">Use Run Folder</button></div><p>Defaults to the folder containing the selected lyrics file. Browse for another folder.</p></div>
         <div id="genOutputNameWrap" class="setting"><label for="genOutputName">Output filename</label><input id="genOutputName" type="text" placeholder="Defaults to the lyrics filename" autocomplete="off" spellcheck="false"><p>The LRC and generated TTML use this name. The lyrics filename is the default.</p></div>
       </div>
       <div id="genQuickToggles" class="generate-check-grid">
@@ -707,10 +707,15 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
     const nameId={audio:'genAudioName',lyrics:'genLyricsName',singerConfig:'genSingerName',lineOffsets:'genLineOffsetsName',phraseOffsets:'genPhraseOffsetsName'}[key];
     if(nameId){$(nameId).textContent=file.name;$(nameId).classList.remove('empty');}
     if(key==='lyrics'){
+      const outputDirectory=$('genOutputDirectory'),directoryMode=outputDirectory.dataset.outputDirectoryMode||'auto';
       const sourceDirectory=genSourceDirectory(file);
-      if(sourceDirectory&&$('genOutputDirectory').dataset.autoPopulated!=='false'){
-        $('genOutputDirectory').value=sourceDirectory;
-        $('genOutputDirectory').dataset.autoPopulated='true';
+      if(sourceDirectory&&['auto','lyrics'].includes(directoryMode)){
+        outputDirectory.value=sourceDirectory;
+        outputDirectory.dataset.outputDirectoryMode='lyrics';
+      }else if(!sourceDirectory&&['auto','lyrics'].includes(directoryMode)){
+        // Browser drag/drop hides the source's absolute path; don't keep a stale folder from a previous lyric file.
+        outputDirectory.value='';
+        outputDirectory.dataset.outputDirectoryMode='auto';
       }
       const nextDefault=file.name.replace(/\.[^.]+$/,'').trim()||'lyrics';
       if(!genOutputNameCustom||$('genOutputName').value.trim()===genDefaultOutputName){$('genOutputName').value=nextDefault;genOutputNameCustom=false;}
@@ -736,15 +741,19 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
   async function genChooseSourceFile(kind){const file=await genPickLocalSource(kind);if(file)genSetFile(kind,file);}
   function genSourceDirectory(file){
     const raw=String(file?.path||'').trim();if(!raw)return '';
-    const normalized=raw.split(String.fromCharCode(92)).join('/'),index=normalized.lastIndexOf('/');
-    return index>0?normalized.slice(0,index):index===0?'/':'';
+    const normalized=raw.replace(/[\\/]+/g,'/'),index=normalized.lastIndexOf('/');
+    if(index<0)return '';
+    if(index===0)return '/';
+    // Preserve a Windows drive root such as C:/ rather than truncating it to C:.
+    if(index===2&&/^[A-Za-z]:\//.test(normalized))return normalized.slice(0,3);
+    return normalized.slice(0,index);
   }
   async function genChooseOutputDirectory(kind){
     let source=genFiles[kind];
     if(!genSourceDirectory(source)){source=await genPickLocalSource(kind);if(!source)return;genSetFile(kind,source);}
     const directory=genSourceDirectory(source);
     if(!directory){toast('The selected source file has no usable local path.',true);return;}
-    $('genOutputDirectory').value=directory;$('genOutputDirectory').dataset.autoPopulated='false';genMarkConfigChanged();
+    $('genOutputDirectory').value=directory;$('genOutputDirectory').dataset.outputDirectoryMode='custom';genMarkConfigChanged();
   }
   function genSetImportButton(snapshot){
     const artifacts=snapshot?.artifacts||[];
@@ -799,7 +808,7 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
     const outputName=$('genOutputName').value.trim();
     return {mode,aligner:$('genAligner').value,language:$('genLanguage').value.trim()||'en',device:$('genDevice').value,offset:$('genOffset').value||'0',audioSourcePath:genFiles.audio?.path||'',lyricsSourcePath:genFiles.lyrics?.path||'',
       wordLevel:$('genWordLevel').checked,separateVocals:$('genSeparateVocals').checked,instrumentalCues:$('genInstrumentalCues').checked,
-      outputDirectory:$('genOutputDirectory').value.trim(),outputName:mode==='adjust'&&!genOutputNameCustom?((outputName||genDefaultOutputName||'lyrics')+'.adjusted'):outputName,outputPath:$('genOutputPath').value.trim(),ttmlOutputPath:$('genTtmlOutputPath').value.trim(),reviewReport:$('genReviewReport').checked,reviewReportPath:$('genReviewReportPath').value.trim(),
+      outputDirectory:$('genOutputDirectory').value.trim(),outputDirectoryMode:$('genOutputDirectory').dataset.outputDirectoryMode||'auto',outputName:mode==='adjust'&&!genOutputNameCustom?((outputName||genDefaultOutputName||'lyrics')+'.adjusted'):outputName,outputPath:$('genOutputPath').value.trim(),ttmlOutputPath:$('genTtmlOutputPath').value.trim(),reviewReport:$('genReviewReport').checked,reviewReportPath:$('genReviewReportPath').value.trim(),
       overwrite:$('genOverwrite').checked,dryRun:$('genDryRun').checked,alignModel:$('genAlignModel').value.trim(),tifaRoot:$('genAligner').value==='tifa' ? $('genTifaRoot').value.trim() : '',tifaPython:$('genAligner').value==='tifa' ? $('genTifaPython').value.trim() : '',tifaModel:$('genAligner').value==='tifa' ? $('genTifaModel').value.trim() : '',
       tifaChunkSeconds:$('genTifaChunkSeconds').value||'42',tifaContext:$('genTifaContext').value||'1.8',tifaDiagnosticsPath:$('genAligner').value==='tifa' ? $('genTifaDiagnosticsPath').value.trim() : '',contextRepair:$('genContextRepair').checked,
       instrumentalThreshold:$('genInstrumentalThreshold').value||'6',demucsModel:$('genDemucsModel').value.trim()||'htdemucs',demucsSegment:$('genDemucsSegment').value||'6',vocalOutput:$('genVocalOutput').value.trim()};
@@ -810,7 +819,7 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
       const result=await genFetchJson('/api/browse-path',{method:'POST',headers:{'Content-Type':'application/json','X-Savant-UI':'1'},body:JSON.stringify({kind,title,currentPath:target.value.trim()})});
       if(result.cancelled||!result.path)return;
       target.value=result.path;
-      if(targetId==='genOutputDirectory')target.dataset.autoPopulated='false';
+      if(targetId==='genOutputDirectory')target.dataset.outputDirectoryMode='custom';
       target.dispatchEvent(new Event('input',{bubbles:true}));
       genMarkConfigChanged();
     }catch(error){toast(error.message||'Could not open the system path picker.',true);}
@@ -962,6 +971,9 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
     if(mode==='adjust'&&!genFiles.lyrics){toast('Choose an existing LRC to adjust.',true);return;}
     if(mode==='adjust'&&!/\.lrc$/i.test(genFiles.lyrics.name)){toast('Adjust mode requires an .lrc file.',true);return;}
     if(mode==='align'&&/\.ttml?$/i.test(genFiles.lyrics.name)){toast('Use TXT or LRC source lyrics for alignment; TTML can be opened in the editor.',true);return;}
+    if(['align','adjust'].includes(mode)&&!config.outputPath&&!config.outputDirectory&&config.outputDirectoryMode!=='run'&&!config.lyricsSourcePath){
+      toast('The original lyrics folder is unavailable from browser drag-and-drop. Use Choose Lyrics to select the local file, or Browse to choose an output folder.',true);return;
+    }
     if(config.overwrite&&!config.dryRun&&['align','adjust'].includes(mode)&&!window.confirm('Overwrite is enabled. Existing output files at the selected paths may be replaced. Continue?'))return;
     const form=new FormData();form.append('config',JSON.stringify(config));
     if(mode==='align'&&genFiles.audio instanceof File)form.append('audio',genFiles.audio,genFiles.audio.name);
@@ -1021,8 +1033,8 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
     $('genOutputName').addEventListener('input',()=>{genOutputNameCustom=Boolean($('genOutputName').value.trim())&&$('genOutputName').value.trim()!==genDefaultOutputName;genMarkConfigChanged();});
     $('genChooseAudioFile').addEventListener('click',()=>genChooseSourceFile('audio'));$('genChooseLyricsFile').addEventListener('click',()=>genChooseSourceFile('lyrics'));
     $('genChooseLyricsDirectory').addEventListener('click',()=>genChooseOutputDirectory('lyrics'));$('genChooseAudioDirectory').addEventListener('click',()=>genChooseOutputDirectory('audio'));
-    $('genUseDefaultDirectory').addEventListener('click',()=>{$('genOutputDirectory').value='';$('genOutputDirectory').dataset.autoPopulated='false';genMarkConfigChanged();});
-    $('genOutputDirectory').addEventListener('input',()=>{$('genOutputDirectory').dataset.autoPopulated='false';genMarkConfigChanged();});
+    $('genUseDefaultDirectory').addEventListener('click',()=>{$('genOutputDirectory').value='';$('genOutputDirectory').dataset.outputDirectoryMode='run';genMarkConfigChanged();});
+    $('genOutputDirectory').addEventListener('input',()=>{$('genOutputDirectory').dataset.outputDirectoryMode='custom';genMarkConfigChanged();});
     document.querySelectorAll('[data-path-target]').forEach(button=>button.addEventListener('click',()=>genBrowsePath(button.dataset.pathTarget,button.dataset.pathKind,button.dataset.pathTitle)));
     for(const id of ['genOutputPath','genTtmlOutputPath','genReviewReportPath','genTifaRoot','genTifaPython','genTifaModel','genTifaDiagnosticsPath','genVocalOutput'])$(id).addEventListener('input',genMarkConfigChanged);
     $('genRunButton').addEventListener('click',()=>startGenerator());$('genImportButton').addEventListener('click',()=>genImportOutput());$('genDoctorButton').addEventListener('click',()=>{$('genMode').value='doctor';updateGenerateConfigVisibility();startGenerator('doctor');});

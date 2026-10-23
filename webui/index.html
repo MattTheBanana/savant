@@ -347,6 +347,17 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
 @media(max-width:1000px){.player-dock{grid-template-columns:minmax(0,1fr);grid-template-rows:8px 30px;gap:10px 8px;padding:7px 10px}.player-transport-controls{gap:7px}.player-secondary-controls{gap:8px}.player-volume{flex-basis:68px;width:68px}}
 @media(max-width:620px){.player-dock{grid-template-columns:minmax(0,1fr);grid-template-rows:7px 28px;gap:8px 6px;padding:5px 8px}.player-transport-controls{gap:5px;height:7px}.player-control-button,.player-secondary-controls button{flex-basis:28px;width:28px;height:28px}.player-icon{width:16px;height:16px}.player-play-button{font-size:13px}.player-secondary-controls{gap:6px;height:28px}.player-secondary-actions{gap:4px}.player-volume-control{gap:4px}.player-volume{display:block;flex:0 1 56px;width:56px}.player-block-pause .player-icon{width:19px;height:19px;stroke-width:2}.player-mute-button .player-icon{width:18px;height:18px}.player-dock .audio-time{font-size:10px}.player-dock-meta{height:28px;gap:4px}.player-dock .audio-title{max-width:calc(100% - 72px);font-size:11px}.player-dock .audio-sub{max-width:66px;font-size:10px}}
 
+
+/* Keep the edit workspace anchored to its navigation button and center the filename on the full player dock */
+#editScreen{margin-left:var(--edit-screen-shift,0px);width:calc(100% - var(--edit-screen-shift,0px))}
+.player-dock-meta{position:absolute;left:0;right:0;top:calc(50% + 10px);transform:translateY(-50%);flex:none;min-width:0;width:auto;height:30px;pointer-events:none}
+.player-dock .audio-title{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);flex:none;width:var(--player-title-width,calc(100% - 760px));max-width:var(--player-title-width,calc(100% - 760px));pointer-events:none}
+.player-dock .audio-sub{right:12px;pointer-events:none}
+@media(max-width:620px){
+  .player-dock-meta{position:relative;left:auto;right:auto;top:auto;transform:none;display:flex;flex:1 1 auto;min-width:0;width:auto;height:28px;pointer-events:auto}
+  .player-dock .audio-title{position:static;left:auto;top:auto;transform:none;flex:1 1 auto;width:auto;max-width:calc(100% - 72px);pointer-events:auto}
+  .player-dock .audio-sub{right:0}
+}
 </style>
 </head>
 <body>
@@ -621,7 +632,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   <div class="floating-menu-title ttml-controls-section">TTML word controls</div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Left Click + Drag</span><span>Seek the audio by dragging the playhead or waveform</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Middle Click + Drag</span><span>Pan within the line’s edge context</span></div>
-  <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Left Click + Drag on Word</span><span>Move selected word(s)</span></div>
+  <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Left Click + Drag on Word</span><span>Move the selected word or words</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Ctrl + Left Click + Drag on Word</span><span>From a multi-selection, move only the word clicked</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Shift + Left Click + Drag on Selection</span><span>Snaps the selection to the time grid or playhead when close</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Left Click + Drag on Empty Space</span><span>Box-select words within one line</span></div>
@@ -630,7 +641,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Ctrl + A</span><span>Select all word cues in the current line</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Ctrl + Shift + A</span><span>Select all word cues across all lines</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Double-Tap Shift</span><span>Jump to the current line in the timeline</span></div>
-  <div class="floating-menu-row ttml-controls-section"><span class="shortcut">← / →</span><span>Nudge the selected word or word group</span></div>
+  <div class="floating-menu-row ttml-controls-section"><span class="shortcut">← / →</span><span>Nudge the selected word or words</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Shift + ← / →</span><span>Apply the configured multiplier to the nudge step</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">F</span><span>Add a timed word cue</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Shift + F</span><span>Add a new line below the selected line</span></div>
@@ -2740,7 +2751,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
 
     function finishMarquee(e) {
     const m=marqueeState;if(!m||m.pointerId!==e.pointerId)return;marqueeState=null;$('timelineSelectionBox').classList.remove('visible');
-    if(m.moved){suppressTimelineClick=true;setTimeout(()=>{suppressTimelineClick=false;},0);const first=[...selectedWordKeys][0];if(first){selectedWordRef=parseWordKey(first);wordSelectionAnchorKey=first;selectedIndex=selectedWordRef.lineIndex;lastEditedIndex=selectedIndex;}else{selectedWordRef=null;wordSelectionAnchorKey=null;}updateWordInspector();updateStatus();toast(`${selectedWordKeys.size} word(s) selected. Drag a selected clip or use arrow keys to shift the group.`);}
+    if(m.moved){suppressTimelineClick=true;setTimeout(()=>{suppressTimelineClick=false;},0);const first=[...selectedWordKeys][0];if(first){selectedWordRef=parseWordKey(first);wordSelectionAnchorKey=first;selectedIndex=selectedWordRef.lineIndex;lastEditedIndex=selectedIndex;}else{selectedWordRef=null;wordSelectionAnchorKey=null;}updateWordInspector();updateStatus();toast(`${selectedWordKeys.size} ${selectedWordKeys.size===1?'word':'words'} selected. Drag ${selectedWordKeys.size===1?'the selected clip':'a selected clip'} or use arrow keys to shift ${selectedWordKeys.size===1?'it':'the selection'}.`);}
     else if(m.lineIndex!==null){
       // Pointer capture may retarget the synthetic click to the lane container.
       // Handle selection here and suppress the follow-up synthetic click.
@@ -3077,6 +3088,23 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     volume:'<svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 9v6h4l5 5V4L7 9H3zM13.5 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02s-1.02-3.29-2.5-4.03zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" fill="currentColor" stroke="none"/></svg>',
     muted:'<svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 9v6h4l5 5V4L7 9H3z" fill="currentColor" stroke="none"/><path d="m16 9 5 6m0-6-5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
+  function syncEditorPanelAlignment(){
+    const shell=document.querySelector('.shell'),editScreen=$('editScreen'),editButton=$('navEdit');
+    if(!shell||!editScreen||!editButton)return;
+    const shellRect=shell.getBoundingClientRect(),editRect=editButton.getBoundingClientRect();
+    const shellPadding=parseFloat(getComputedStyle(shell).paddingLeft)||0;
+    const shellContentLeft=shellRect.left+shellPadding;
+    const shift=Math.max(-shellPadding,editRect.left-shellContentLeft);
+    editScreen.style.setProperty('--edit-screen-shift',shift+'px');
+  }
+  function syncPlayerDockTitleLayout(){
+    const dock=$('playerDock'),actions=dock?.querySelector('.player-secondary-actions'),title=$('audioTitle');
+    if(!dock||!actions||!title)return;
+    const dockRect=dock.getBoundingClientRect(),actionsRect=actions.getBoundingClientRect();
+    const leftReserved=Math.max(0,actionsRect.right-dockRect.left)+12;
+    const titleWidth=Math.max(0,Math.floor(dockRect.width-2*leftReserved));
+    title.style.setProperty('--player-title-width',titleWidth+'px');
+  }
   function updateCustomPlayerControls(){
     const seek=$('playerSeek'),playButton=$('playerPlayPause'),blockButton=$('playerBlockPause'),muteButton=$('playerMute'),volume=$('playerVolume');
     const duration=Number.isFinite(player.duration)&&player.duration>0?player.duration:0;
@@ -3272,7 +3300,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   });
   $('timelineLanes').addEventListener('auxclick',e=>{if(e.button===1)e.preventDefault();});
   $('timelineLanes').addEventListener('contextmenu',e=>{if(e.target.closest('.lane-waveform-canvas'))e.preventDefault();});
-  window.addEventListener('resize',()=>{if(gridMode==='words')rerenderWordTimelinePreservingView();});
+  window.addEventListener('resize',()=>{syncEditorPanelAlignment();syncPlayerDockTitleLayout();if(gridMode==='words')rerenderWordTimelinePreservingView();});
   $('tabLrc').addEventListener('click',()=>{outputMode='lrc';updatePreview();});$('tabTtml').addEventListener('click',()=>{outputMode='ttml';updatePreview();});
   $('saveLrc').addEventListener('click',exportLrc);$('saveLrcTop').addEventListener('click',exportLrc);$('saveTtml').addEventListener('click',exportTtml);$('saveTtmlTop').addEventListener('click',exportTtml);
   $('copyPreview').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(outputMode==='lrc'?lrcOutput():ttmlOutput());toast('Preview copied to clipboard.');}catch(_){toast('Clipboard access was blocked by the browser. Select the preview and copy manually.',true);}});
@@ -3385,7 +3413,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       if(clip)clip.style.color=safeCssColor(cue.color)||'';
     }
     updateWordInspector();updatePreview();updateStatus();commitHistoryChange(historyBefore);
-    toast('Pasted preset onto '+refs.length+' word(s).');
+    toast('Pasted preset onto '+refs.length+' '+(refs.length===1?'word':'words')+'.');
   }
   function applyAgentPreset(presetId){
     const preset=agentPresets.find(p=>String(p.id)===String(presetId));if(!preset)return;const records=selectedCueRecords();if(!records.length){toast('Select a word to apply an agent preset.',true);return;}
@@ -3837,7 +3865,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   refreshAgentPresetSelect();
   document.addEventListener('click',e=>{const target=e.target;if(target instanceof HTMLElement&&!target.closest('.toast,.word-style-help'))$('toast').classList.add('hidden');});
   window.addEventListener('beforeunload',()=>{if(audioUrl)URL.revokeObjectURL(audioUrl);});
-  wirePreferencesTabs();syncSettingsForm();outputMode=settings.defaultTab;updatePreview();renderGrid();updateStatus();refreshGenerateCapabilities();startInstallationSettingsSync();
+  wirePreferencesTabs();syncSettingsForm();outputMode=settings.defaultTab;updatePreview();renderGrid();updateStatus();syncEditorPanelAlignment();syncPlayerDockTitleLayout();refreshGenerateCapabilities();startInstallationSettingsSync();
 })();
 </script>
 </body>

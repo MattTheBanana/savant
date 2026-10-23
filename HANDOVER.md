@@ -247,3 +247,8 @@ User-specific collaboration guidance:
 - When no word cue is selected, the arrow keys remain playback controls: Left/Right seeks by the configured step and Shift+Left/Right seeks to the nearest word boundary.
 - Split the former combined arrow-help description into separate word-editing and playback-control rows under the TTML Controls menu. Playback seeking rows are now listed under the `Playback controls` heading.
 - Static validation passed: inline JavaScript compiles, no duplicate static HTML IDs, and the old combined help row is removed. Interactive browser testing remains outstanding.
+
+## Remove periods from editor control descriptions
+
+- Removed terminal periods from all 26 one-sentence control descriptions in the LRC and TTML Controls menu, including the separate word-editing and playback-control rows.
+- Static validation passed: inline JavaScript compiles, no duplicate static HTML IDs, and no control description in the menu ends with a period.

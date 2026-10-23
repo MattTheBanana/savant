@@ -3,7 +3,7 @@
 **Updated:** 2026-10-23  
 **Repository:** [MattTheBanana/savant](https://github.com/MattTheBanana/savant)  
 **Branch:** `main`  
-**Latest implementation commit:** [`5cab5e0880f1627b00214b9e97a1403d719b1a03`](https://github.com/MattTheBanana/savant/commit/5cab5e0880f1627b00214b9e97a1403d719b1a03)
+**Latest implementation commit:** [`f9c5ec1733ca22df0c7212a30ddd4c99337f3687`](https://github.com/MattTheBanana/savant/commit/f9c5ec1733ca22df0c7212a30ddd4c99337f3687)
 
 Primary UI file: `webui/index.html`  
 Backend and local filesystem APIs: `lyrics_editor.py`
@@ -66,6 +66,13 @@ Many browsers deliberately omit the parent directory from local dropped files, s
 - If outputs already exist, the server returns an overwrite-required response without starting a worker and removes that attempt's temporary run directory. The UI lists existing paths in a built-in confirmation. Declining cancels the attempt; confirming retries with overwrite enabled for that run.
 - The prior generic confirmation tied only to the checkbox has been removed; no prompt is shown when no relevant output file exists.
 - A failed generation paints the entire segmented progress track red. Errors returned before a run is created also show the failed/red state. Verify with both a deliberately invalid run and a successful run that targets an existing output file.
+
+### Mode toggle, timeline zoom feedback, and CLI errors
+
+- LRC / TTML are presented as a pill-style segmented toggle with an accessible `aria-pressed` state. Import Audio and Import Lyrics sit on the same row to the right.
+- At the minimum timeline zoom, Minus and Fit Lines use the same lower-bound test as zoom application, are disabled, and have high-contrast disabled styling. The state refreshes after timeline re-render/resize; the click handlers also guard against no-op zoom-out or fitting.
+- Failed generator runs show the footer error text centered and red. The local worker extracts the CLI's actual error output, names common causes (for example output exists, invalid lyrics, missing FFmpeg/model/dependency, invalid JSON/settings, or audio processing), and keeps the useful detail instead of displaying an opaque numeric exit code.
+- Static verification passed: inline JavaScript parses, there are no duplicate HTML IDs, disabled zoom guards are present, and sample error text was checked against the named error categories. A GUI smoke test with a real TTML track and deliberately failed CLI runs is still required.
 
 ## Other current UI state
 

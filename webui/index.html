@@ -1972,7 +1972,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       lineSelectionAnchor=drag.anchorIndex;
       selectLineSelection(drag.currentIndex,{shiftKey:true,skipScroll:true},true);
     }else{
-      selectLineSelection(drag.startIndex,{ctrlKey:drag.ctrlKey,metaKey:drag.metaKey,skipScroll:true},drag.source==='lrc');
+      selectLineSelection(drag.startIndex,{ctrlKey:drag.ctrlKey,metaKey:drag.metaKey,skipScroll:true},true);
     }
     if(drag.source==='lrc'){
       suppressGridLineClick=true;setTimeout(()=>{suppressGridLineClick=false;},0);

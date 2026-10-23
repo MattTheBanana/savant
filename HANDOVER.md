@@ -234,3 +234,9 @@ User-specific collaboration guidance:
 
 - Updated the TTML Controls wording to `Shift + Left Click + Drag on Selection` — “Snaps the selection to the time grid or playhead when close.”
 - Static validation passed: inline JavaScript parses, no duplicate static HTML IDs, and the previous label/description are removed.
+
+## Deselect TTML line selection with Escape
+
+- Pressing Escape in the TTML editor clears the selected line selection, resets the active selected-line index, and refreshes timeline selection styling, word inspector state, and action controls.
+- Existing Escape behavior for open context menus, preset menus, timeline controls, preview drawer, color picker, and word-style help retains priority. Word-cue selection is also cleared as part of clearing a TTML line selection.
+- Static validation passed: inline JavaScript compiles and there are no duplicate static HTML IDs. Interactive browser testing remains outstanding.

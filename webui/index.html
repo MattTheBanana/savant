@@ -1420,16 +1420,16 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     $('genImportButton').disabled=true;genOutputReady=false;genCompletedNeedsConfigChange=false;
     $('generateRunStatus').classList.remove('hidden','finished','failed');$('genCurrentStep').textContent=isInstall?label+'…':'Checking output paths…';$('genOverallText').textContent='0%';$('genSegmentTrack').setAttribute('aria-valuenow','0');
     $('genSegmentTrack').querySelectorAll('.generate-segment').forEach((segment,index)=>{segment.classList.toggle('active',index===0);segment.classList.remove('complete');segment.querySelector('.generate-segment-fill').style.width=index===0?'35%':'0%';});
-    selectGenerateResult('logs');$('genLogs').textContent=isInstall?'Starting '+label+'…\\n':'Checking output paths before launching the CLI…\\n';
+    selectGenerateResult('logs');$('genLogs').textContent=isInstall?'Starting '+label+'…\n':'Checking output paths before launching the CLI…\n';
     const request=async()=>{
       const response=await fetch(url,{method:'POST',headers:{'X-Savant-UI':'1',...(isInstall?{'Content-Type':'application/json'}:{})},body});
       let result={};try{result=await response.json();}catch(_){}
       if(response.status===409&&result.overwriteRequired&&!isInstall){
         const existing=Array.isArray(result.existingOutputs)?result.existingOutputs.map(path=>String(path)):[];
         const shown=existing.slice(0,8);
-        const extra=existing.length>shown.length?'\\n… and '+(existing.length-shown.length)+' more file(s)':'';
-        const details=shown.map(path=>'• '+path).join('\\n');
-        const prompt='These output files already exist and will be replaced if you continue:\\n\\n'+details+extra+'\\n\\nOverwrite '+(existing.length===1?'this file':'these files')+' and continue?';
+        const extra=existing.length>shown.length?'\n… and '+(existing.length-shown.length)+' more file(s)':'';
+        const details=shown.map(path=>'• '+path).join('\n');
+        const prompt='These output files already exist and will be replaced if you continue:\n\n'+details+extra+'\n\nOverwrite '+(existing.length===1?'this file':'these files')+' and continue?';
         if(!window.confirm(prompt)){
           const error=new Error('Run cancelled; existing output files were left untouched.');
           error.cancelled=true;throw error;
@@ -1451,12 +1451,12 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       const host=$('generateRunStatus');
       if(error.cancelled){
         host.classList.add('hidden');host.classList.remove('finished','failed');$('genRunStatusBadge').textContent='Cancelled';
-        $('genFooterStatus').textContent=error.message;$('genLogs').textContent=error.message+'\\nNo generation was started.';
+        $('genFooterStatus').textContent=error.message;$('genLogs').textContent=error.message+'\nNo generation was started.';
       }else{
         host.classList.remove('hidden','finished');host.classList.add('failed');
         $('genCurrentStep').textContent=isInstall?'Install Failed':'Generation Failed';$('genCurrentStep').title=error.message;
         $('genOverallText').textContent='Failed';$('genRunStatusBadge').textContent='Failed';$('genFooterStatus').textContent=error.message;
-        $('genSegmentTrack').setAttribute('aria-valuenow','0');$('genLogs').textContent=($('genLogs').textContent||'')+'\\nError: '+error.message;
+        $('genSegmentTrack').setAttribute('aria-valuenow','0');$('genLogs').textContent=($('genLogs').textContent||'')+'\nError: '+error.message;
         toast(error.message,true);
       }
     }

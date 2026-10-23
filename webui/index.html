@@ -2175,7 +2175,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   });
   $('timelineLanes').addEventListener('auxclick',e=>{if(e.button===1)e.preventDefault();});
   $('timelineLanes').addEventListener('contextmenu',e=>{if(e.target.closest('.lane-waveform-canvas'))e.preventDefault();});
-  window.addEventListener('resize',()=>{if(gridMode==='words')rerenderWordTimelinePreservingView();});
+  window.addEventListener('resize',()=>{applyEditorPreferences();if(gridMode==='words')rerenderWordTimelinePreservingView();});
   $('tabLrc').addEventListener('click',()=>{outputMode='lrc';updatePreview();});$('tabTtml').addEventListener('click',()=>{outputMode='ttml';updatePreview();});
   $('saveLrc').addEventListener('click',exportLrc);$('saveLrcTop').addEventListener('click',exportLrc);$('saveTtml').addEventListener('click',exportTtml);$('saveTtmlTop').addEventListener('click',exportTtml);
   $('copyPreview').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(outputMode==='lrc'?lrcOutput():ttmlOutput());toast('Preview copied to clipboard.');}catch(_){toast('Clipboard access was blocked by the browser. Select the preview and copy manually.',true);}});
@@ -2591,7 +2591,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       flushActiveWordInspectorField();
     }
   },true);
-  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);if(id==='wordInspectorLayout'&&gridMode==='words')rerenderWordTimelinePreservingView();toast('Settings saved.');});
+  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showBottomPlayerBar'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);if(id==='wordInspectorLayout'&&gridMode==='words')rerenderWordTimelinePreservingView();toast('Settings saved.');});
   $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false,wordInspectorLayout:'right'};syncSettingsForm();saveSettings();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
   document.addEventListener('keydown',e=>{
     if(e.ctrlKey&&e.key.toLowerCase()==='s'){e.preventDefault();if(gridMode==='words')exportTtml();else exportLrc();return;}

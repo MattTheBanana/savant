@@ -1002,6 +1002,40 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     if(index===2&&/^[A-Za-z]:\//.test(normalized))return normalized.slice(0,3);
     return normalized.slice(0,index);
   }
+  function genNormalizeDroppedPath(value){
+    const raw=String(value||'').trim();
+    if(!raw)return '';
+    if(/^file:\/\//i.test(raw)){
+      try{
+        const uri=new URL(raw);
+        if(uri.protocol!=='file:')return '';
+        let path=decodeURIComponent(uri.pathname||'');
+        if(uri.hostname&&uri.hostname.toLowerCase()!=='localhost')path='//'+uri.hostname+path;
+        else path=path.replace(/^\/([A-Za-z]:\/)/,'$1');
+        return /^(?:[A-Za-z]:[\\/]|\\\\|\/)/.test(path)?path:'';
+      }catch(_){return '';}
+    }
+    return /^(?:[A-Za-z]:[\\/]|\\\\|\/)/.test(raw)?raw:'';
+  }
+  function genDroppedSourcePath(event,file){
+    const direct=genNormalizeDroppedPath(file?.path);
+    if(direct)return direct;
+    const transfer=event?.dataTransfer;
+    if(!transfer)return '';
+    // Some desktop/browser combinations expose the dragged file as a file:// URI,
+    // even when the File object intentionally omits its absolute path.
+    for(const type of ['text/uri-list','text/plain']){
+      let payload='';
+      try{payload=transfer.getData(type)||'';}catch(_){continue;}
+      for(const entry of payload.split(/\r?\n/)){
+        const candidate=genNormalizeDroppedPath(entry.replace(/^\s*#.*$/,''));
+        if(!candidate)continue;
+        const basename=candidate.split(/[\\/]/).pop()||'';
+        if(basename.toLowerCase()===String(file?.name||'').toLowerCase())return candidate;
+      }
+    }
+    return '';
+  }
   async function genChooseOutputDirectory(kind){
     let source=genFiles[kind];
     if(!genSourceDirectory(source)){source=await genPickLocalSource(kind);if(!source)return;genSetFile(kind,source);}
@@ -1045,7 +1079,20 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       zone.addEventListener('dragenter',e=>{e.preventDefault();e.stopPropagation();zone.classList.add('dragover');});
       zone.addEventListener('dragover',e=>{e.preventDefault();e.stopPropagation();zone.classList.add('dragover');if(e.dataTransfer)e.dataTransfer.dropEffect='copy';});
       zone.addEventListener('dragleave',e=>{e.preventDefault();e.stopPropagation();zone.classList.remove('dragover');});
-      zone.addEventListener('drop',e=>{e.preventDefault();e.stopPropagation();zone.classList.remove('dragover');if(e.dataTransfer?.files?.[0])genSetFile(key,e.dataTransfer.files[0]);});
+      zone.addEventListener('drop',e=>{
+        e.preventDefault();e.stopPropagation();zone.classList.remove('dragover');
+        const file=e.dataTransfer?.files?.[0];if(!file)return;
+        const sourcePath=genDroppedSourcePath(e,file);
+        // Keep ordinary dropped File objects for multipart upload. When the OS/browser
+        // supplies an absolute dropped path, use the native-source shape like Choose lyrics.
+        const source=sourcePath
+          ? {name:file.name,path:sourcePath,size:Number(file.size)||0,type:file.type||'application/octet-stream',nativeSource:true}
+          : file;
+        genSetFile(key,source);
+        if(key==='lyrics'&&!sourcePath&&!(file?.path&&genSourceDirectory(file))){
+          toast('This browser did not expose the folder for the dropped lyrics file. Use Choose lyrics to populate it automatically, or Browse to set the output folder.',true);
+        }
+      });
     }
   }
   function updateGenerateConfigVisibility(){

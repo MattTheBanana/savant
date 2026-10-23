@@ -180,3 +180,13 @@ User-specific collaboration guidance:
 - The user primarily uses Windows CMD, so default shell instructions to CMD syntax unless they ask for PowerShell or another shell.
 - Preserve local model weights, outputs, and untracked custom files. Never recommend destructive cleanup or force-reset operations as a casual troubleshooting step; back up and compare conflicting files first.
 - Thoroughness and accuracy matter: inspect relevant code, implement the whole request, validate syntax and static invariants, and say explicitly when real GUI/browser testing was not performed.
+
+## Latest follow-up: player dock, jump visibility, and editor switching
+
+- The fixed player dock now places the filename in regular weight on the same controls row as Play/Pause, Block Pause, volume, and time. The seek bar remains above; row spacing was increased, including responsive rules for narrow windows.
+- The LRC and TTML “Jump to current line” buttons now treat the viewport edges as visible (with a one-pixel tolerance) rather than requiring an extra pixel of margin.
+- Added the UI preference **Follow selected LRC line when switching to TTML**, default On. A new explicit LRC line selection can be brought into view in TTML and clears the prior word selection. Turn it Off to keep the existing TTML word selection/view when changing modes.
+- The LRC and TTML editor scroll positions are captured and restored on mode switches, preventing playback-time switching from resetting the TTML viewport to the top.
+- LRC lyric text is inset less from the time column and its right-side blank strip is wider for line selection.
+- Static verification after the change: inline JavaScript compiles; no duplicate static HTML IDs; the preference is wired through defaults, form synchronization, reset defaults, and save listeners; both jump-button visibility checks, two-row player layout, lyric gutter, and mode scroll restoration are present.
+- Not yet verified interactively in a browser. In particular, test mode switching during playback, switching after selecting an LRC line, the preference On/Off across reload and installation settings sync, viewport-edge jump visibility, and player layout at desktop/mobile widths.

@@ -3,7 +3,7 @@
 **Updated:** 2026-10-23  
 **Repository:** [MattTheBanana/savant](https://github.com/MattTheBanana/savant)  
 **Branch:** `main`  
-**Latest implementation commit:** [`f9c5ec1733ca22df0c7212a30ddd4c99337f3687`](https://github.com/MattTheBanana/savant/commit/f9c5ec1733ca22df0c7212a30ddd4c99337f3687)
+**Latest implementation commit:** [`70d235e9936c628818a030a74b73b6ad5ca68140`](https://github.com/MattTheBanana/savant/commit/70d235e9936c628818a030a74b73b6ad5ca68140)
 
 Primary UI file: `webui/index.html`  
 Backend and local filesystem APIs: `lyrics_editor.py`
@@ -74,6 +74,19 @@ Many browsers deliberately omit the parent directory from local dropped files, s
 - Failed generator runs show the footer error text centered and red. The local worker extracts the CLI's actual error output, names common causes (for example output exists, invalid lyrics, missing FFmpeg/model/dependency, invalid JSON/settings, or audio processing), and keeps the useful detail instead of displaying an opaque numeric exit code.
 - Static verification passed: inline JavaScript parses, there are no duplicate HTML IDs, disabled zoom guards are present, and sample error text was checked against the named error categories. A GUI smoke test with a real TTML track and deliberately failed CLI runs is still required.
 
+### Installation-local Preferences and settings synchronization
+
+- Preferences, including Generator Defaults, are stored in `savant-settings.txt` in the installation directory. It contains pretty-printed UTF-8 JSON, intentionally using a plain-text extension for easy editing.
+- The file is generated on first launch from existing browser preferences when no installation file exists. When the file exists, its settings become authoritative and are applied to both Preferences and the generator form.
+- `/api/settings` reads the current file and returns a SHA-256 revision. The UI polls every 1.2 seconds so external file edits synchronize back into the running UI; Preferences edits are debounced and written atomically back to the file. Conflicting concurrent file changes are detected rather than silently overwritten.
+- `.gitignore` excludes the runtime `savant-settings.txt` and its temporary atomic-write file so normal Git updates preserve each installation's settings.
+- If the app reports invalid JSON in the settings file, fix the syntax in a text editor and save valid JSON; the UI continues checking for file changes.
+
+### Controls-menu and LRC Delete shortcut
+
+- `LRC Controls` / `TTML Controls` and the saved-agent-preset menu use the shared `toggleFloatingMenu()`. It had been missing, so clicks raised a runtime ReferenceError. The helper now opens/closes the menus, maintains `aria-expanded`, closes the other floating menu, and positions the fixed controls menu next to the toolbar button.
+- The LRC context menu's Delete Line item now advertises the `Delete` key and tooltip. The existing keyboard handler deletes the selected line in LRC mode when keyboard focus is not inside an editable text/input control.
+
 ## Other current UI state
 
 The following are present in `webui/index.html`; GUI verification remains outstanding:
@@ -86,6 +99,13 @@ The following are present in `webui/index.html`; GUI verification remains outsta
 - Persistent audio player dock remains a key regression target.
 
 ## Validation status
+
+Latest static checks for the settings/controls work:
+- JavaScript parses and no duplicate HTML IDs were found.
+- Confirmed `toggleFloatingMenu()` now has a definition, both menu triggers call it, and the Delete context action includes the `Delete` shortcut.
+- Confirmed GET/POST `/api/settings` routes, file revision checks, atomic text-file writes, and `.gitignore` protection are present.
+- Actual GUI testing, Python test-suite execution, and live external-edit synchronization testing are still outstanding.
+
 
 Static checks against the latest UI source:
 

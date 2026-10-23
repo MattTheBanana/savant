@@ -252,3 +252,15 @@ User-specific collaboration guidance:
 
 - Removed terminal periods from all 26 one-sentence control descriptions in the LRC and TTML Controls menu, including the separate word-editing and playback-control rows.
 - Static validation passed: inline JavaScript compiles, no duplicate static HTML IDs, and no control description in the menu ends with a period.
+
+## Player pause and volume icon refinement
+
+- Applied a small leftward optical correction to the playback pause icon and slightly increased the visible height of its bars.
+- Replaced the outlined volume glyph with a filled, fuller-proportioned speaker and sound-wave icon. The muted state uses the same filled speaker body with a stroked mute mark; both the initial markup and runtime icon strings are updated.
+- Static validation passed: inline JavaScript compiles and no duplicate static HTML IDs were found. Visual confirmation in a browser remains outstanding.
+
+## Escape deselects TTML word selections
+
+- Expanded Escape handling in TTML mode so it clears selection when a line, a single word cue, or a multi-word selection is active. Selection styling, active indices, and inspector state are refreshed.
+- Existing Escape priority for open menus and popovers remains unchanged.
+- Static validation passed: inline JavaScript compiles and no duplicate static HTML IDs were found. Interactive browser testing remains outstanding.

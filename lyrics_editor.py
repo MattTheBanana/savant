@@ -589,7 +589,7 @@ def _friendly_cli_failure(return_code: int, output: str) -> str:
             detail = line.split(":", 1)[1].strip()
             break
         # argparse usage failures print "script.py: error: ..." rather than "ERROR:".
-        match = re.search(r"\\berror:\\s*(.+)$", line, flags=re.IGNORECASE)
+        match = re.search(r"\berror:\s*(.+)$", line, flags=re.IGNORECASE)
         if match:
             detail = match.group(1).strip()
             break
@@ -597,11 +597,11 @@ def _friendly_cli_failure(return_code: int, output: str) -> str:
     exception_type = ""
     if detail.casefold().startswith("alignment failed:"):
         detail = detail[len("alignment failed:"):].strip()
-        match = re.match(r"([A-Za-z][A-Za-z0-9_]*Error):\\s*(.*)", detail)
+        match = re.match(r"([A-Za-z][A-Za-z0-9_]*Error):\s*(.*)", detail)
         if match:
             exception_type, detail = match.group(1), match.group(2).strip()
     else:
-        match = re.match(r"([A-Za-z][A-Za-z0-9_]*Error):\\s*(.*)", detail)
+        match = re.match(r"([A-Za-z][A-Za-z0-9_]*Error):\s*(.*)", detail)
         if match:
             exception_type, detail = match.group(1), match.group(2).strip()
 

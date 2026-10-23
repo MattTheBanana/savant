@@ -1908,12 +1908,13 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     // Fit against the context each lane can actually show after clamping to the
     // media/lyrics duration. Using an unclamped phrase+context span makes the
     // displayed lane scale differ from timelineZoom near the beginning/end.
-    let longestVisibleSpan=.5;
-    rows.forEach((_,i)=>{longestVisibleSpan=Math.max(longestVisibleSpan,laneContextBounds(i).span);});
+    const duration=timelineDuration();
+    let longestVisibleSpan=rows.length?0.08:.5;
+    rows.forEach((_,i)=>{longestVisibleSpan=Math.max(longestVisibleSpan,laneContextBounds(i,duration).span);});
     return Math.max(2,timelineTrackWidth/longestVisibleSpan);
   }
-  function laneContextBounds(lineIndex) {
-    const duration=timelineDuration(),phrase=phraseExtent(lineIndex),context=Math.max(0,Number(settings.timelineOverlap)||0);
+  function laneContextBounds(lineIndex,durationOverride=null) {
+    const duration=Number.isFinite(durationOverride)?durationOverride:timelineDuration(),phrase=phraseExtent(lineIndex),context=Math.max(0,Number(settings.timelineOverlap)||0);
     const start=Math.min(duration,Math.max(0,phrase.start-context));
     const end=Math.max(start,Math.min(duration,phrase.end+context));
     return {start,end,span:Math.max(.08,end-start)};

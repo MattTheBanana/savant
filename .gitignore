@@ -1,0 +1,3 @@
+# Installation-local preferences. The app creates this readable JSON-in-text file on first launch.
+savant-settings.txt
+savant-settings.txt.tmp

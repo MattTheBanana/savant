@@ -580,6 +580,92 @@ def _open_path(path: Path, mode: str) -> None:
         subprocess.Popen(["xdg-open", str(folder)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
+def _friendly_cli_failure(return_code: int, output: str) -> str:
+    """Turn the CLI's own error message into a concise, named status for the UI."""
+    detail = ""
+    for raw_line in reversed(str(output or "").splitlines()):
+        line = raw_line.strip()
+        if line.upper().startswith("ERROR:"):
+            detail = line.split(":", 1)[1].strip()
+            break
+        # argparse usage failures print "script.py: error: ..." rather than "ERROR:".
+        match = re.search(r"\\berror:\\s*(.+)$", line, flags=re.IGNORECASE)
+        if match:
+            detail = match.group(1).strip()
+            break
+
+    exception_type = ""
+    if detail.casefold().startswith("alignment failed:"):
+        detail = detail[len("alignment failed:"):].strip()
+        match = re.match(r"([A-Za-z][A-Za-z0-9_]*Error):\\s*(.*)", detail)
+        if match:
+            exception_type, detail = match.group(1), match.group(2).strip()
+    else:
+        match = re.match(r"([A-Za-z][A-Za-z0-9_]*Error):\\s*(.*)", detail)
+        if match:
+            exception_type, detail = match.group(1), match.group(2).strip()
+
+    if not detail:
+        detail = "The CLI stopped without reporting a specific cause."
+
+    message = detail.casefold()
+    missing = any(term in message for term in (
+        "not found", "does not exist", "was not found", "missing", "no such file",
+        "could not locate", "could not find",
+    ))
+    if "already exists" in message or "use --overwrite" in message:
+        name = "Output Already Exists"
+    elif "ffmpeg" in message and missing:
+        name = "FFmpeg Not Found"
+    elif "tifa" in message and missing:
+        name = "TIFA Setup Missing"
+    elif "whisperx" in message and missing:
+        name = "WhisperX Dependency Missing"
+    elif "model" in message and missing:
+        name = "Alignment Model Missing"
+    elif any(term in message for term in ("permission denied", "not writable", "access is denied", "permissionerror")):
+        name = "File Permission Error"
+    elif "cuda" in message or "pytorch" in message or "gpu" in message:
+        name = "GPU or Device Error"
+    elif "invalid json" in message or "json in " in message or "json file" in message:
+        name = "Invalid JSON Input"
+    elif ("line-offset" in message or "phrase-offset" in message or "singer config" in message) and any(
+        term in message for term in ("invalid", "must", "cannot", "does not", "unknown", "duplicate")
+    ):
+        name = "Invalid Configuration File"
+    elif any(term in message for term in (
+        "no lyric lines", "no timestamped lyric", "lyrics contain no alignable",
+        "no alignable text", "expects an existing .lrc", "timestamped lyric rows",
+    )):
+        name = "Invalid Lyrics Input"
+    elif "audio" in message and any(term in message for term in ("decode", "empty", "ffmpeg", "audio file")):
+        name = "Audio Processing Error"
+    elif any(term in message for term in ("tifa", "intervaltier", "textgrid")):
+        name = "TIFA Alignment Error"
+    elif any(term in message for term in ("whisperx", "alignment model", "model loading", "failed to load model")):
+        name = "Alignment Model Error"
+    elif any(term in message for term in ("must be", "must not", "cannot be combined", "cannot overwrite", "requires ", "expects ")):
+        name = "Invalid Input or Settings"
+    elif missing or exception_type == "FileNotFoundError":
+        name = "File or Dependency Not Found"
+    elif exception_type in {"ImportError", "ModuleNotFoundError"}:
+        name = "Python Dependency Missing"
+    elif exception_type == "PermissionError":
+        name = "File Permission Error"
+    elif exception_type == "FileExistsError":
+        name = "Output Already Exists"
+    elif exception_type in {"ValueError", "TypeError"}:
+        name = "Invalid Input or Settings"
+    elif exception_type:
+        name = f"Alignment Runtime Error ({exception_type})"
+    elif return_code == 2:
+        name = "CLI Validation Error"
+    else:
+        name = "Alignment Runtime Error"
+
+    return f"{name}: {detail}"
+
+
 def _run_worker(run_id: str, command: list[str], env: dict[str, str]) -> None:
     with RUNS_LOCK:
         run = RUNS[run_id]
@@ -618,7 +704,7 @@ def _run_worker(run_id: str, command: list[str], env: dict[str, str]) -> None:
             run["return_code"] = return_code
             run["finished"] = time.time()
             run["status"] = "success" if return_code == 0 else ("warning" if return_code == 1 else "failed")
-            run["error"] = None if return_code in (0, 1) else f"CLI exited with code {return_code}."
+            run["error"] = None if return_code in (0, 1) else _friendly_cli_failure(return_code, run.get("logs", ""))
         if return_code in (0, 1):
             _set_progress(run, 100, "Finished" if return_code == 0 else "Finished with warnings", 100)
         else:

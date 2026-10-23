@@ -15,7 +15,7 @@ tbody tr.selected td.num{color:var(--accent);font-weight:800;background:#203748}
 /* Live playback preview and drag/drop affordance. */
 tbody tr.playing{background:#25394d;box-shadow:inset 4px 0 var(--accent2)}
 tbody tr.selected.playing{background:#24434d;box-shadow:inset 4px 0 var(--accent),inset 0 0 0 1px #47776e}
-td.lyric .lyric-editor{display:block;width:100%;min-width:120px;min-height:34px;padding:8px 7px;border:1px solid transparent;border-radius:6px;color:var(--text);font-size:13px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;outline:none;cursor:text}
+td.lyric .lyric-editor{display:block;width:calc(100% - 18px);min-width:0;min-height:34px;padding:8px 7px;border:1px solid transparent;border-radius:6px;color:var(--text);font-size:13px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;outline:none;cursor:text}
 td.lyric .lyric-editor:focus{background:#0e1622;border-color:#527d83}
 td.lyric .lyric-editor:empty::before{content:'Enter lyric…';color:#61738a}
 td.lyric .lyric-editor.singer-italic,td.lyric .word-token.singer-italic{font-style:italic}
@@ -552,7 +552,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       <section id="prefPageUi" class="preferences-page" role="tabpanel" aria-labelledby="prefTabUi" data-preferences-page="ui" hidden>
         <div class="settings-grid">
 <div class="settings-section-heading"><h3>UI</h3><p>Editor navigation, playback visibility, and post-generation behavior.</p></div>
-      <div class="setting"><label for="defaultTab">Default preview</label><select id="defaultTab"><option value="lrc">LRC</option><option value="ttml">TTML</option></select><p>Which export preview to show when the editor opens.</p></div><div class="setting"><label for="autoFollow">Grid follow behavior</label><select id="autoFollow"><option value="true">Keep selected / playing line visible</option><option value="false">Do not auto-scroll</option></select><p>Follows keyboard selection and the active lyric during playback, unless you are typing.</p></div><div class="setting"><label for="showEditorShortcutHints">Keyboard shortcut hints bar</label><select id="showEditorShortcutHints"><option value="false">Hide</option><option value="true">Show</option></select><p>Show or hide the compact keyboard shortcut indicators at the bottom of the editor. This setting does not affect the editor toolbar.</p></div><div class="setting"><label for="returnToEditAfterGenerate">After generation finishes</label><select id="returnToEditAfterGenerate"><option value="false">Stay on Generate and review results</option><option value="true">Open Edit automatically</option></select><p>Choose whether a completed CLI run takes you straight to the editor.</p></div><div class="setting"><label for="autoImportGeneratedOutput">Automatically import generated files</label><select id="autoImportGeneratedOutput"><option value="false">Off — use Import Output to Edit</option><option value="true">On — load audio and lyrics into Edit</option></select><p>When enabled, load the generated TTML (or LRC if TTML was not requested) and source audio in Edit after a successful run.</p></div>
+      <div class="setting"><label for="defaultTab">Default preview</label><select id="defaultTab"><option value="lrc">LRC</option><option value="ttml">TTML</option></select><p>Which export preview to show when the editor opens.</p></div><div class="setting"><label for="autoFollow">Grid follow behavior</label><select id="autoFollow"><option value="true">Keep selected / playing line visible</option><option value="false">Do not auto-scroll</option></select><p>Follows keyboard selection and the active lyric during playback, unless you are typing.</p></div><div class="setting"><label for="centerModifierSelection">Center on Ctrl/Shift selection</label><select id="centerModifierSelection"><option value="false">Off — keep nearby position</option><option value="true">On — smoothly center selection</option></select><p>When enabled, Ctrl/Cmd-click and Shift-selecting line ranges smoothly center the selected line.</p></div><div class="setting"><label for="showEditorShortcutHints">Keyboard shortcut hints bar</label><select id="showEditorShortcutHints"><option value="false">Hide</option><option value="true">Show</option></select><p>Show or hide the compact keyboard shortcut indicators at the bottom of the editor. This setting does not affect the editor toolbar.</p></div><div class="setting"><label for="returnToEditAfterGenerate">After generation finishes</label><select id="returnToEditAfterGenerate"><option value="false">Stay on Generate and review results</option><option value="true">Open Edit automatically</option></select><p>Choose whether a completed CLI run takes you straight to the editor.</p></div><div class="setting"><label for="autoImportGeneratedOutput">Automatically import generated files</label><select id="autoImportGeneratedOutput"><option value="false">Off — use Import Output to Edit</option><option value="true">On — load audio and lyrics into Edit</option></select><p>When enabled, load the generated TTML (or LRC if TTML was not requested) and source audio in Edit after a successful run.</p></div>
         </div>
       </section>
       <section id="prefPageUtility" class="preferences-page" role="tabpanel" aria-labelledby="prefTabUtility" data-preferences-page="utility" hidden>
@@ -693,6 +693,8 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   let styleClipboard = null;
   let contextMenuTarget = null;
   let marqueeState = null;
+  let lineSelectionDragState = null;
+  let suppressGridLineClick = false;
   let suppressTimelineClick = false;
   let waveformBuildToken = 0;
   let wordDragState = null;
@@ -713,7 +715,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   };
   const DEFAULT_UI_SETTINGS = {
     nudgeStep: 0.02, shiftMultiplier: 5, replayLead: 2.0, txtSpacing: 3.0,
-    language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, doubleShiftIntervalMs: 450, returnToEditAfterGenerate: false, autoImportGeneratedOutput: false, wordInspectorLayout: 'right', showEditorShortcutHints: false,
+    language: 'en', defaultTab: 'lrc', autoFollow: true, centerModifierSelection: false, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, doubleShiftIntervalMs: 450, returnToEditAfterGenerate: false, autoImportGeneratedOutput: false, wordInspectorLayout: 'right', showEditorShortcutHints: false,
     generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}
   };
   let settings = {...DEFAULT_UI_SETTINGS,generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}};
@@ -792,6 +794,13 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       else{viewport.scrollTop=targetTop();smoothCenterScrollStates.delete(viewport);}
     };
     state.frame=requestAnimationFrame(animate);
+  }
+  function scrollElementToNearest(viewport,element){
+    if(!viewport||!element||viewport.clientHeight<=0)return;
+    const viewportRect=viewport.getBoundingClientRect(),itemRect=element.getBoundingClientRect();
+    const visibleTop=viewportRect.top+viewport.clientTop,visibleBottom=visibleTop+viewport.clientHeight;
+    if(itemRect.top<visibleTop)viewport.scrollTop=Math.max(0,viewport.scrollTop-(visibleTop-itemRect.top));
+    else if(itemRect.bottom>visibleBottom)viewport.scrollTop=Math.min(Math.max(0,viewport.scrollHeight-viewport.clientHeight),viewport.scrollTop+(itemRect.bottom-visibleBottom));
   }
   function scrollTimelineElementIntoView(element,smooth=false){scrollElementToCenter($('timelineViewport'),element,smooth);}
   function captureHistoryState() {
@@ -1013,10 +1022,10 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     void pollInstallationSettings(true);
   }
   function saveSettings() {
-    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','doubleShiftIntervalMs','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorShortcutHints']) {
+    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','centerModifierSelection','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','doubleShiftIntervalMs','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorShortcutHints']) {
       const el=$(key); if (!el) continue;
       settings[key] = ['language','defaultTab','downloadBase','wordInspectorLayout'].includes(key) ? el.value :
-        (key==='autoFollow'||key==='returnToEditAfterGenerate'||key==='autoImportGeneratedOutput'||key==='showEditorShortcutHints') ? el.value==='true' : Number(el.value);
+        (key==='autoFollow'||key==='centerModifierSelection'||key==='returnToEditAfterGenerate'||key==='autoImportGeneratedOutput'||key==='showEditorShortcutHints') ? el.value==='true' : Number(el.value);
     }
     settings.nudgeStep=Math.min(1,Math.max(.001,Number(settings.nudgeStep)||.02));
     settings.shiftMultiplier=Math.min(50,Math.max(2,Math.round(Number(settings.shiftMultiplier)||5)));
@@ -1036,7 +1045,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','doubleShiftIntervalMs']) $(key).value=settings[key];
     document.documentElement.style.setProperty('--playhead-label-size',`${settings.playheadLabelSize}px`);
     $('autoFollow').value=String(settings.autoFollow);
-    $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));$('autoImportGeneratedOutput').value=String(Boolean(settings.autoImportGeneratedOutput));$('wordInspectorLayout').value=settings.wordInspectorLayout||'right';$('showEditorShortcutHints').value=String(Boolean(settings.showEditorShortcutHints));syncGeneratorDefaultsForm();applyEditorPreferences();
+    $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));$('autoImportGeneratedOutput').value=String(Boolean(settings.autoImportGeneratedOutput));$('wordInspectorLayout').value=settings.wordInspectorLayout||'right';$('showEditorShortcutHints').value=String(Boolean(settings.showEditorShortcutHints));$('centerModifierSelection').value=String(Boolean(settings.centerModifierSelection));syncGeneratorDefaultsForm();applyEditorPreferences();
   }
   function fmtTime(sec, places=3) {
     sec=Math.max(0,Number(sec)||0); const mins=Math.floor(sec/60), secs=sec-mins*60;
@@ -1853,7 +1862,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   }
   function selectLineSelection(index,event=null,focusRow=false){
     if(!Number.isInteger(index)||index<0||index>=rows.length)return;
-    const shift=Boolean(event?.shiftKey),toggle=Boolean(event?.ctrlKey||event?.metaKey);
+    const shift=Boolean(event?.shiftKey),toggle=Boolean(event?.ctrlKey||event?.metaKey),modifierSelection=shift||toggle,skipScroll=Boolean(event?.skipScroll);
     if(gridMode==='words'){
       selectedWordKeys.clear();selectedWordRef=null;wordSelectionAnchorKey=null;
       refreshWordSelection();updateWordInspector();
@@ -1876,17 +1885,102 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     lastEditedIndex=selectedIndex;
     replayFromAnchor=true;
     refreshLineSelectionVisuals();
-    if(settings.autoFollow&&selectedIndex>=0){
+    if(settings.autoFollow&&selectedIndex>=0&&!skipScroll){
       const row=$('gridBody').querySelector('tr[data-index="'+selectedIndex+'"]');
       const lane=$('timelineLanes').querySelector('.timeline-lane-row[data-line-index="'+selectedIndex+'"]');
-      if(gridMode==='words'&&lane)scrollTimelineElementIntoView(lane);
-      else if(row)scrollElementToCenter($('lineTableWrap'),row);
+      const viewport=gridMode==='words'?$('timelineViewport'):$('lineTableWrap');
+      const element=gridMode==='words'?lane:row;
+      if(element){
+        if(modifierSelection){
+          if(settings.centerModifierSelection)scrollElementToCenter(viewport,element,true);
+          else scrollElementToNearest(viewport,element);
+        }else if(gridMode==='words')scrollTimelineElementIntoView(element);
+        else scrollElementToCenter(viewport,element);
+      }
     }
     if(focusRow&&selectedIndex>=0){
-      const row=$('gridBody').querySelector('tr[data-index="'+selectedIndex+'"]');
-      row?.focus();
+      const focusTarget=gridMode==='words'
+        ?$('timelineLanes').querySelector('.timeline-lane-row[data-line-index="'+selectedIndex+'"]')
+        :$('gridBody').querySelector('tr[data-index="'+selectedIndex+'"]');
+      focusTarget?.focus({preventScroll:true});
     }
     updateStatus();updateLrcJumpToLineVisibility();syncEditorActionBar();
+  }
+  function lineSelectionIndexAtPoint(source,clientX,clientY){
+    const target=document.elementFromPoint(clientX,clientY);
+    if(!(target instanceof Element))return -1;
+    const row=source==='ttml'
+      ?target.closest('#timelineLanes .timeline-lane-row[data-line-index]')
+      :target.closest('#gridBody tr[data-index]');
+    if(!row)return -1;
+    const value=Number(source==='ttml'?row.dataset.lineIndex:row.dataset.index);
+    return Number.isInteger(value)?value:-1;
+  }
+  function startLineSelectionDrag(e,source){
+    if(e.button!==0||(!e.shiftKey&&!e.ctrlKey&&!e.metaKey))return false;
+    const target=e.target instanceof Element?e.target:null;
+    if(!target)return false;
+    if(source==='ttml'&&!target.closest('.timeline-label'))return false;
+    const row=source==='ttml'
+      ?target.closest('#timelineLanes .timeline-lane-row[data-line-index]')
+      :target.closest('#gridBody tr[data-index]');
+    if(!row)return false;
+    const index=Number(source==='ttml'?row.dataset.lineIndex:row.dataset.index);
+    if(!Number.isInteger(index)||index<0||index>=rows.length)return false;
+    const shift=Boolean(e.shiftKey);
+    const anchor=shift
+      ?(lineSelectionAnchor>=0&&lineSelectionAnchor<rows.length?lineSelectionAnchor:
+        selectedIndex>=0&&selectedIndex<rows.length?selectedIndex:index)
+      :index;
+    if(shift&&(lineSelectionAnchor<0||lineSelectionAnchor>=rows.length))lineSelectionAnchor=anchor;
+    lineSelectionDragState={
+      source,pointerId:e.pointerId,startIndex:index,currentIndex:index,anchorIndex:anchor,
+      shiftKey:shift,ctrlKey:Boolean(e.ctrlKey),metaKey:Boolean(e.metaKey),
+      startX:e.clientX,startY:e.clientY,moved:false
+    };
+    e.preventDefault();e.stopPropagation();
+    return true;
+  }
+  function updateLineSelectionDrag(e){
+    const drag=lineSelectionDragState;
+    if(!drag||drag.pointerId!==e.pointerId||!drag.shiftKey)return;
+    if(Math.hypot(e.clientX-drag.startX,e.clientY-drag.startY)>=4)drag.moved=true;
+    if(!drag.moved)return;
+    const index=lineSelectionIndexAtPoint(drag.source,e.clientX,e.clientY);
+    if(index<0||index===drag.currentIndex)return;
+    drag.currentIndex=index;lineSelectionAnchor=drag.anchorIndex;
+    selectLineSelection(index,{shiftKey:true,skipScroll:true});
+  }
+  function scrollAfterLineSelectionDrag(source){
+    if(!settings.autoFollow||selectedIndex<0)return;
+    const viewport=source==='ttml'?$('timelineViewport'):$('lineTableWrap');
+    const element=source==='ttml'
+      ?$('timelineLanes').querySelector('.timeline-lane-row[data-line-index="'+selectedIndex+'"]')
+      :$('gridBody').querySelector('tr[data-index="'+selectedIndex+'"]');
+    if(!element)return;
+    if(settings.centerModifierSelection)scrollElementToCenter(viewport,element,true);
+    else scrollElementToNearest(viewport,element);
+  }
+  function finishLineSelectionDrag(e){
+    const drag=lineSelectionDragState;
+    if(!drag||drag.pointerId!==e.pointerId)return;
+    lineSelectionDragState=null;
+    if(e.type==='pointercancel')return;
+    if(drag.shiftKey){
+      const pointIndex=lineSelectionIndexAtPoint(drag.source,e.clientX,e.clientY);
+      if(pointIndex>=0)drag.currentIndex=pointIndex;
+      lineSelectionAnchor=drag.anchorIndex;
+      selectLineSelection(drag.currentIndex,{shiftKey:true,skipScroll:true},drag.source==='lrc');
+    }else{
+      selectLineSelection(drag.startIndex,{ctrlKey:drag.ctrlKey,metaKey:drag.metaKey,skipScroll:true},drag.source==='lrc');
+    }
+    if(drag.source==='lrc'){
+      suppressGridLineClick=true;setTimeout(()=>{suppressGridLineClick=false;},0);
+    }else{
+      suppressTimelineClick=true;setTimeout(()=>{suppressTimelineClick=false;},0);
+    }
+    scrollAfterLineSelectionDrag(drag.source);
+    e.preventDefault();
   }
   function renderLineGrid() {
     const tbody=$('gridBody'); tbody.textContent=''; activePlaybackIndex=-1; activeWordIndex=-1;
@@ -1901,7 +1995,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       const lyric=document.createElement('td'); lyric.className='lyric'; const textEditor=document.createElement('div'); textEditor.contentEditable='true'; textEditor.setAttribute('role','textbox'); textEditor.setAttribute('aria-multiline','false'); textEditor.setAttribute('aria-label',`Line ${i+1} lyrics`); textEditor.className='lyric-editor'; textEditor.spellcheck=false; textEditor.autocapitalize='off';
       renderWordAwareEditor(textEditor,row);
       lyric.append(textEditor); tr.append(num,time,lyric); frag.append(tr);
-      tr.addEventListener('click',e=>selectLineSelection(i,e));
+      tr.addEventListener('click',e=>{if(suppressGridLineClick)return;selectLineSelection(i,e);});
       tr.addEventListener('focusin',e=>{if(e.target===tr&&!selectedLineIndices.has(i))selectLineSelection(i,null);});
       timeInput.addEventListener('change',()=>{
         const parsed=parseTime(timeInput.value);
@@ -2505,7 +2599,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     const frag=document.createDocumentFragment();let cueCount=0;
     for(let lineIndex=0;lineIndex<rows.length;lineIndex++){
       const row=rows[lineIndex],win=getLineWindow(lineIndex),pps=timelineTrackWidth/Math.max(.08,win.end-win.start);
-      const lane=document.createElement('div');lane.className='timeline-lane-row';lane.dataset.lineIndex=String(lineIndex);lane.classList.toggle('selected-lane',selectedLineIndices.has(lineIndex));lane.style.setProperty('--lane-height','122px');
+      const lane=document.createElement('div');lane.className='timeline-lane-row';lane.dataset.lineIndex=String(lineIndex);lane.tabIndex=0;lane.setAttribute('aria-label','Line '+(lineIndex+1));lane.classList.toggle('selected-lane',selectedLineIndices.has(lineIndex));lane.style.setProperty('--lane-height','122px');
       const label=document.createElement('div');label.className='timeline-label';
       const number=document.createElement('strong');number.textContent=`Line ${lineIndex+1}`;
       const start=document.createElement('span');start.className='lane-start';start.textContent=fmtTime(row.start,2);
@@ -2987,6 +3081,10 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     if(!e.dataTransfer||!e.dataTransfer.files?.length)return;e.preventDefault();dragDepth=0;$('dropOverlay').classList.add('hidden');$('dropOverlay').setAttribute('aria-hidden','true');
     handleDroppedFiles(Array.from(e.dataTransfer.files));
   });
+  $('gridBody').addEventListener('pointerdown',e=>{startLineSelectionDrag(e,'lrc');});
+  document.addEventListener('pointermove',updateLineSelectionDrag);
+  document.addEventListener('pointerup',finishLineSelectionDrag);
+  document.addEventListener('pointercancel',finishLineSelectionDrag);
   $('navEdit').addEventListener('click',()=>setScreen('edit'));$('navSettings').addEventListener('click',()=>setScreen('settings'));
   $('navGenerate').addEventListener('click',()=>setScreen('generate'));wireGeneratePanel();
   $('viewLines').addEventListener('click',()=>setGridMode('lines'));$('viewWords').addEventListener('click',()=>setGridMode('words'));
@@ -3051,6 +3149,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     else if(e.button===1){wavePanState={pointerId:e.pointerId,lineIndex:Number(laneRow.dataset.lineIndex),canvas,startX:e.clientX,windowStart:Number(content.dataset.windowStart)||0,pps:Number(content.dataset.pps)||timelinePps};canvas.setPointerCapture?.(e.pointerId);content.classList.add('pan-active');e.preventDefault();}
   }
   $('timelineLanes').addEventListener('pointerdown',e=>{
+    if(startLineSelectionDrag(e,'ttml'))return;
     const marker=e.target.closest?.('.lane-playhead:not(.ghost)');
     if(e.button===0&&marker){startPlayheadDrag(e,marker);return;}
     if(e.target.closest?.('.word-clip:not(.no-cue)'))return;
@@ -3541,8 +3640,8 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     }
   },true);
   $('settingsScreen').addEventListener('focusout',()=>{if(pendingInstallationSettingsSnapshot&&!settingsFormHasFocus()){const pending=pendingInstallationSettingsSnapshot;applyInstallationSettingsSnapshot(pending,true);}});
-  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','doubleShiftIntervalMs','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorShortcutHints'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);if(id==='wordInspectorLayout'&&gridMode==='words')rerenderWordTimelinePreservingView();toast('Settings saved.');});
-  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,doubleShiftIntervalMs:450,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false,wordInspectorLayout:'right',showEditorShortcutHints:false,generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}};syncSettingsForm();saveSettings();applyGeneratorDefaults();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
+  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','centerModifierSelection','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','doubleShiftIntervalMs','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorShortcutHints'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);if(id==='wordInspectorLayout'&&gridMode==='words')rerenderWordTimelinePreservingView();toast('Settings saved.');});
+  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,doubleShiftIntervalMs:450,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false,wordInspectorLayout:'right',centerModifierSelection:false,showEditorShortcutHints:false,generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}};syncSettingsForm();saveSettings();applyGeneratorDefaults();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
   document.addEventListener('keydown',e=>{
     if((e.key==='Shift'||e.code==='ShiftLeft'||e.code==='ShiftRight')&&!e.repeat&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&activeScreen()==='edit'){
       const now=performance.now();
@@ -3591,8 +3690,8 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       selectedIndex=selectedWordRef?.lineIndex??currentLine;lastEditedIndex=selectedIndex;
       refreshWordSelection();updateWordInspector();updateStatus();return;
     }
-    if(e.key==='ArrowUp'){e.preventDefault();if(gridMode==='words')moveSelectedWord(-1);else setSelected(Math.max(0,selectedIndex-1),true);}
-    else if(e.key==='ArrowDown'){e.preventDefault();if(gridMode==='words')moveSelectedWord(1);else setSelected(Math.min(rows.length-1,selectedIndex+1),true);}
+    if(e.key==='ArrowUp'){e.preventDefault();if(e.shiftKey){const next=Math.max(0,selectedIndex<0?0:selectedIndex-1);selectLineSelection(next,{shiftKey:true},true);}else if(gridMode==='words')moveSelectedWord(-1);else setSelected(Math.max(0,selectedIndex-1),true);}
+    else if(e.key==='ArrowDown'){e.preventDefault();if(e.shiftKey){const next=Math.min(rows.length-1,selectedIndex<0?0:selectedIndex+1);selectLineSelection(next,{shiftKey:true},true);}else if(gridMode==='words')moveSelectedWord(1);else setSelected(Math.min(rows.length-1,selectedIndex+1),true);}
     else if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
       e.preventDefault();const direction=e.key==='ArrowLeft'?-1:1;
       if(gridMode==='words'&&e.shiftKey)seekWordBoundary(direction);

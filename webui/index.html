@@ -400,6 +400,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
         <div class="grid-footer"><span id="gridStatus">0 lines · 0 words</span><span id="status" class="status hidden"><strong>Ready</strong> · import files to begin</span><span id="lyricsFileName" class="file-name editor-lyrics-file-name" title="No lyrics loaded">No lyrics loaded</span></div>
         <div id="editorHotkeyBar" class="editor-hotkey-bar" aria-label="Keyboard shortcut hints">
           <span class="editor-hotkey-item lrc-controls-section"><kbd>↑ / ↓</kbd><span>Select line</span></span>
+          <span class="editor-hotkey-item lrc-controls-section"><kbd>Shift × 2</kbd><span>Jump to current line</span></span>
           <span class="editor-hotkey-item lrc-controls-section"><kbd>← / →</kbd><span>Nudge timing</span></span>
           <span class="editor-hotkey-item lrc-controls-section"><kbd>Space</kbd><span>Play / pause</span></span>
           <span class="editor-hotkey-item lrc-controls-section"><kbd>Ctrl+Z / Ctrl+Y</kbd><span>Undo / redo</span></span>
@@ -408,6 +409,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
           <span class="editor-hotkey-item ttml-controls-section hidden"><kbd>Drag word</kbd><span>Move word timing</span></span>
           <span class="editor-hotkey-item ttml-controls-section hidden"><kbd>Shift+← / →</kbd><span>Seek word boundary</span></span>
           <span class="editor-hotkey-item ttml-controls-section hidden"><kbd>F</kbd><span>Add word cue</span></span>
+          <span class="editor-hotkey-item ttml-controls-section hidden"><kbd>Shift × 2</kbd><span>Jump to current line</span></span>
           <span class="editor-hotkey-item ttml-controls-section hidden"><kbd>Ctrl+wheel</kbd><span>Zoom timeline</span></span>
         </div>
       </section>
@@ -588,6 +590,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
 <div id="timelineControlsMenu" class="timeline-controls-menu hidden" role="dialog" aria-label="LRC editor controls">
   <div class="floating-menu-title lrc-controls-section">LRC line controls</div>
   <div class="floating-menu-row lrc-controls-section"><span class="shortcut">↑ / ↓</span><span>Select the previous or next lyric line in the LRC grid.</span></div>
+  <div class="floating-menu-row lrc-controls-section"><span class="shortcut">Shift × 2</span><span>Jump to the line currently being edited.</span></div>
   <div class="floating-menu-row lrc-controls-section"><span class="shortcut">← / →</span><span>Nudge the selected line or seek during playback. Shift + arrows applies the configured multiplier.</span></div>
   <div class="floating-menu-row lrc-controls-section"><span class="shortcut">Ctrl+Z / Ctrl+Y</span><span>Undo / redo the last edit.</span></div>
   <div class="floating-menu-row lrc-controls-section"><span class="shortcut">Space</span><span>Play or pause. Ctrl + Space performs a block pause.</span></div>
@@ -599,6 +602,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Shift-drag</span><span>Snap the word or resized edge to the playhead when close, then to the adaptive time grid.</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Drag empty track</span><span>Box-select words in one line; Shift-drag empty lane or waveform space to select across lines.</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Ctrl+A</span><span>Select words on this line; Ctrl+Shift+A selects all word cues.</span></div>
+  <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Shift × 2</span><span>Jump to the current line in the timeline.</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Shift+← / →</span><span>Seek to the nearest word boundary. Plain arrows nudge the selected word or seek.</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">F</span><span>Add a timed word cue.</span></div>
   <div class="floating-menu-foot ttml-controls-section">Ctrl + wheel zooms around the cursor. Fit Lines resets the timeline scale. Word dragging, box selection, and playhead controls are available in TTML mode.</div>
@@ -3413,7 +3417,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     else if(e.key==='Delete'&&selectedIndex>=0){e.preventDefault();deleteEditorSelection();}
   });
   refreshAgentPresetSelect();
-  document.addEventListener('click',e=>{const target=e.target;if(target instanceof HTMLElement&&!target.closest('.toast'))$('toast').classList.add('hidden');});
+  document.addEventListener('click',e=>{const target=e.target;if(target instanceof HTMLElement&&!target.closest('.toast,.word-style-help'))$('toast').classList.add('hidden');});
   window.addEventListener('beforeunload',()=>{if(audioUrl)URL.revokeObjectURL(audioUrl);});
   wirePreferencesTabs();syncSettingsForm();outputMode=settings.defaultTab;updatePreview();renderGrid();updateStatus();refreshGenerateCapabilities();startInstallationSettingsSync();
 })();

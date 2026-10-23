@@ -284,3 +284,9 @@ User-specific collaboration guidance:
 - Removed automatic CSS capitalization from saved preset names in the agent preset dropdown so their displayed case matches the name as saved.
 - Fixed the preset dropdown appearing at the top-left corner by positioning it from the trigger's viewport rectangle when opened. It aligns to the trigger's left edge, flips above when there is insufficient space below, and is repositioned on window resize. The shared positioning helper also keeps the timeline controls menu anchored to its trigger.
 - Static validation passed: inline JavaScript compiles, no duplicate static HTML IDs, preset labels are not transformed to title case, and the floating menus use trigger-based positioning. Interactive browser testing remains outstanding.
+
+## Replace block-pause glyph with a centered stop icon
+
+- Replaced the unclear circular-arrow/pause-bars glyph on the Block Pause control with a simple filled square, commonly called a stop icon. The control's behavior and accessible label remain unchanged: pause and return to the start of the current playback segment.
+- Nudged the square down by 1px for optical alignment in both desktop and compact layouts.
+- Static validation passed: inline JavaScript compiles, no duplicate static HTML IDs, and the old SVG is replaced by a centered square path. Browser visual testing remains outstanding.

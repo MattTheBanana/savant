@@ -1262,14 +1262,14 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     return cue?{row,cue,lineIndex:ref.lineIndex,cueIndex:ref.cueIndex}:null;
   }
   let jumpToLineFrame=null;
-  function updateJumpToLineVisibility(lineIndex=selectedWordRef?.lineIndex){
-    const button=$('jumpToLineButton'),viewport=$('timelineViewport');
-    if(!button||!viewport||gridMode!=='words'||!Number.isInteger(lineIndex)){button?.classList.add('hidden');return;}
-    const lane=$('timelineLanes').querySelector('.timeline-lane-row[data-line-index="'+lineIndex+'"]');
-    if(!lane){button.classList.add('hidden');return;}
-    const viewportRect=viewport.getBoundingClientRect(),laneRect=lane.getBoundingClientRect();
-    const visible=laneRect.bottom>viewportRect.top+1&&laneRect.top<viewportRect.bottom-1;
-    button.classList.toggle('hidden',visible);
+  function updateJumpToLineVisibility(){
+    const button=$('jumpToLineButton'),viewport=$('timelineViewport'),ref=selectedWordRef;
+    if(!button||!viewport||gridMode!=='words'||!ref){button?.classList.add('hidden');return;}
+    const clip=$('timelineLanes').querySelector('.word-clip[data-line-index="'+ref.lineIndex+'"][data-cue-index="'+ref.cueIndex+'"]');
+    if(!clip){button.classList.add('hidden');return;}
+    const viewportRect=viewport.getBoundingClientRect(),clipRect=clip.getBoundingClientRect();
+    const fullyVisible=clipRect.top>=viewportRect.top+1&&clipRect.bottom<=viewportRect.bottom-1;
+    button.classList.toggle('hidden',fullyVisible);
   }
   function jumpToSelectedLine(){
     const lineIndex=selectedWordRef?.lineIndex,viewport=$('timelineViewport');if(!Number.isInteger(lineIndex)||!viewport)return;

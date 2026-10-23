@@ -212,3 +212,8 @@ User-specific collaboration guidance:
 
 - Removed the TTML-only reduced vertical padding from the shared line/word-count footer. LRC and TTML now both use the common `.grid-footer` padding (`10px 12px`), with no mode-specific padding difference.
 - Static checks passed after this follow-up: inline JavaScript compiles; no duplicate static HTML IDs; the TTML-only override is absent and the shared footer padding remains defined. Interactive appearance still needs browser confirmation.
+
+## Separate LRC Shift-arrow control description
+
+- Split the LRC Controls menu's left/right-arrow row into two controls: `← / →` nudges the selected line or seeks during playback; `Shift + ← / →` applies the configured multiplier to the nudge/seek step. Use the actual arrow symbols in the shortcut label.
+- Static checks passed: inline JavaScript compiles, there are no duplicate static HTML IDs, and the old combined description is removed.

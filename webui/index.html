@@ -2145,7 +2145,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     }else{
       selectedWordKeys.clear();selectedWordKeys.add(key);wordSelectionAnchorKey=key;
     }
-    selectedLineIndices.clear();lineSelectionAnchor=-1;
+    selectedLineIndices.clear();lineSelectionAnchor=-1;refreshLineSelectionVisuals();
     selectedWordRef=selectedWordKeys.has(key)?{lineIndex,cueIndex}:
       (selectedWordKeys.size?parseWordKey([...selectedWordKeys][0]):null);
     selectedIndex=selectedWordRef?.lineIndex??lineIndex;
@@ -2542,7 +2542,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   function startMarquee(e,lineIndex=null) {
     if(e.button!==0||(!e.shiftKey&&lineIndex===null)||e.target.closest('.word-clip:not(.no-cue)'))return;
     const content=e.target.closest('.timeline-lane-content');if(!content)return;
-    marqueeState={pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,x:e.clientX,y:e.clientY,moved:false,lineIndex};
+    marqueeState={pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,x:e.clientX,y:e.clientY,moved:false,lineIndex,shiftKey:e.shiftKey,ctrlKey:e.ctrlKey,metaKey:e.metaKey};
     $('timelineLanes').setPointerCapture?.(e.pointerId);e.preventDefault();
   }
   function updateMarquee(e) {
@@ -2568,7 +2568,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       // Pointer capture may retarget the synthetic click to the lane container.
       // Handle selection here and suppress the follow-up synthetic click.
       suppressTimelineClick=true;setTimeout(()=>{suppressTimelineClick=false;},0);
-      selectLineSelection(m.lineIndex,null);
+      selectLineSelection(m.lineIndex,{shiftKey:m.shiftKey,ctrlKey:m.ctrlKey,metaKey:m.metaKey});
     }
   }
   function renderGrid() {

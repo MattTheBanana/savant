@@ -339,7 +339,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
 .player-play-button{background:transparent;border-color:transparent;border-radius:50%;color:#f1fffc;font-size:16px}.player-play-button:disabled,.player-control-button:disabled{opacity:.4;cursor:default}.player-icon{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.player-play-button .player-icon{width:19px;height:19px;fill:currentColor;stroke:none;transform:translateX(-1px)}#playerPlayPause[aria-label="Pause Audio"] .player-icon{transform:translate(0px,1px)}.player-secondary-controls{grid-column:1;grid-row:2;display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;height:30px}.player-secondary-actions{display:flex;align-items:center;gap:8px;min-width:0}.player-volume-control{display:flex;align-items:center;gap:7px;min-width:0}.player-block-pause .player-icon{width:22px;height:22px;stroke-width:2}.player-mute-button .player-icon{width:20px;height:20px}
 .player-seek,.player-volume{appearance:none;-webkit-appearance:none;display:block;height:5px;min-width:20px;margin:0;border:0;border-radius:99px;outline:none;cursor:pointer;accent-color:var(--accent)}
 .player-seek{flex:1 1 auto;width:100%;background:linear-gradient(90deg,#76e4c1 0%,#76e4c1 var(--seek-progress,0%),#354358 var(--seek-progress,0%),#354358 100%)}
-.player-volume{flex:0 1 86px;width:86px;background:#354358}
+.player-volume{flex:0 1 86px;width:86px;background:linear-gradient(90deg,#76e4c1 0%,#76e4c1 var(--volume-progress,100%),#354358 var(--volume-progress,100%),#354358 100%)}
 .player-seek:disabled{opacity:.45;cursor:default}
 .player-seek::-webkit-slider-thumb,.player-volume::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;background:#e7fbf5;border:2px solid #3b8678;box-shadow:0 1px 4px #0006}
 .player-seek::-moz-range-thumb,.player-volume::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:#e7fbf5;border:2px solid #3b8678;box-shadow:0 1px 4px #0006}
@@ -3102,7 +3102,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       muteButton.setAttribute('aria-label',muted?'Unmute Audio':'Mute Audio');
       muteButton.title=muted?'Unmute Audio':'Mute Audio';
     }
-    if(volume){volume.value=String(Number(player.volume)||0);volume.disabled=!hasAudio;}
+    if(volume){const level=Math.min(1,Math.max(0,Number(player.volume)||0));volume.value=String(level);volume.style.setProperty('--volume-progress',String(level*100)+'%');volume.disabled=!hasAudio;}
   }
   $('playerPlayPause').addEventListener('click',()=>{
     if(player.paused){

@@ -3,7 +3,7 @@
 **Updated:** 2026-10-23  
 **Repository:** [MattTheBanana/savant](https://github.com/MattTheBanana/savant)  
 **Branch:** `main`  
-**Latest implementation commit:** [`70d235e9936c628818a030a74b73b6ad5ca68140`](https://github.com/MattTheBanana/savant/commit/70d235e9936c628818a030a74b73b6ad5ca68140)
+**Latest implementation commit:** [`3c9a7a3db3173a498b23bbb3efef31fb8807e8cf`](https://github.com/MattTheBanana/savant/commit/3c9a7a3db3173a498b23bbb3efef31fb8807e8cf)
 
 Primary UI file: `webui/index.html`  
 Backend and local filesystem APIs: `lyrics_editor.py`
@@ -86,6 +86,15 @@ Many browsers deliberately omit the parent directory from local dropped files, s
 
 - `LRC Controls` / `TTML Controls` and the saved-agent-preset menu use the shared `toggleFloatingMenu()`. It had been missing, so clicks raised a runtime ReferenceError. The helper now opens/closes the menus, maintains `aria-expanded`, closes the other floating menu, and positions the fixed controls menu next to the toolbar button.
 - The LRC context menu's Delete Line item now advertises the `Delete` key and tooltip. The existing keyboard handler deletes the selected line in LRC mode when keyboard focus is not inside an editable text/input control.
+
+### TTML toolbar, spacing, style help, and jump-to-current-line shortcut
+
+- In TTML mode, Add/Delete Line/Word actions are shown before the timeline zoom buttons, matching the LRC action-first toolbar arrangement.
+- The TTML editor's bottom padding and the adjacent line/word-count footer padding are reduced to tighten the gap above the filename/count row.
+- The TTML style-reference info icon is now a real button in the label row. Clicking it explains that the value is a TTML style ID, separate from Singer/agent metadata, and may have no visible effect without a matching defined style. The global toast-dismiss handler deliberately leaves this help toast visible.
+- Double-tapping Shift within 450 ms jumps the current/selected line into view in either editor mode. The shortcut is shown in the LRC and TTML Controls menus and the optional shortcut-hints bar.
+- In LRC mode, the Lyric column header has a compact **Jump to current line** button that appears when the currently edited/selected line is not fully visible. The click listener is delegated from `#gridHead` because `renderGrid()` rebuilds that header dynamically. Visibility updates on LRC grid render, line selection/focus, scroll, and resize.
+- Static verification: JavaScript parsing passed, the runtime header contains a single jump button, and the dynamic event delegation and both jump paths are present. GUI testing remains necessary to tune the visibility threshold and the double-Shift timing on the user's actual browser.
 
 ## Other current UI state
 

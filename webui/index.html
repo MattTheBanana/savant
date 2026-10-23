@@ -2859,7 +2859,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     const targetWordExists=target?.type==='word'&&Boolean(rows[target.lineIndex]?.wordCues?.[target.cueIndex]);
     // Text targets require an actual character selection; right-clicking elsewhere
     // on a row or on a word permits row/word copy and cut.
-    const canCopyOrCut=Boolean(target&&(target.type==='text'?textSelection:targetWordExists||((target.type==='line'||target.type==='word')&&targetLineExists)));
+    const canCopyOrCut=Boolean(target&&(target.type==='text'?textSelection:target.type==='word'?targetWordExists:target.type==='line'&&targetLineExists));
     const copyAction=addContextAction(menu,'Copy',copyContextTarget,{disabled:!canCopyOrCut,shortcut:'Ctrl+C'});
     const cutAction=addContextAction(menu,'Cut',cutContextTarget,{disabled:!canCopyOrCut,shortcut:'Ctrl+X'});
     const pasteAction=addContextAction(menu,'Paste',pasteContextTarget,{disabled:!editorClipboard,shortcut:'Ctrl+V'});

@@ -677,18 +677,30 @@ def create_navidrome_ttml(
     if not records:
         raise ValueError("Cannot create TTML: no lyric lines have usable timestamps.")
 
-    # Create cues for long instrumental gaps, mirroring the standard LRC output.
+    # Give instrumental cues the usable length of their musical gap instead of
+    # assigning every cue a short fixed duration that cuts the note off early.
     cue_records: list[dict[str, Any]] = []
     if instrumental_cues:
-        if records[0]["start"] >= instrumental_threshold:
-            cue_records.append({"start": 0.0, "end": min(0.75, max(0.1, records[0]["start"])), "text": "♪"})
+        first_start = records[0]["start"]
+        if first_start >= instrumental_threshold:
+            intro_end = max(0.01, first_start - min(0.05, first_start * 0.05))
+            cue_records.append({"start": 0.0, "end": intro_end, "text": "♪"})
         for previous, current in zip(records, records[1:]):
-            if current["start"] - previous["end"] >= instrumental_threshold:
-                cue_time = min(current["start"] - 0.05, previous["end"] + 0.30)
-                cue_records.append({"start": max(0.0, cue_time), "end": max(0.1, cue_time + 0.5), "text": "♪"})
-        if duration is not None and duration - records[-1]["end"] >= instrumental_threshold:
-            cue_time = min(duration, records[-1]["end"] + 0.30)
-            cue_records.append({"start": cue_time, "end": min(duration, cue_time + 0.5), "text": "♪"})
+            gap = current["start"] - previous["end"]
+            if gap >= instrumental_threshold:
+                # Preserve a short lead-in after the previous lyric and a small
+                # buffer before the next one, filling the rest of the instrumental gap.
+                cue_start = previous["end"] + min(0.30, gap * 0.20)
+                cue_end = current["start"] - min(0.05, gap * 0.05)
+                if cue_end <= cue_start:
+                    cue_start, cue_end = previous["end"], current["start"]
+                if cue_end > cue_start:
+                    cue_records.append({"start": max(0.0, cue_start), "end": cue_end, "text": "♪"})
+        if duration is not None:
+            outro_gap = duration - records[-1]["end"]
+            if outro_gap >= instrumental_threshold:
+                cue_start = records[-1]["end"] + min(0.30, outro_gap * 0.20)
+                cue_records.append({"start": cue_start, "end": duration, "text": "♪"})
 
     output: list[str] = [
         '<?xml version="1.0" encoding="UTF-8"?>',

@@ -3,7 +3,7 @@
 **Updated:** 2026-10-23  
 **Repository:** [MattTheBanana/savant](https://github.com/MattTheBanana/savant)  
 **Branch:** `main`  
-**Latest implementation commit:** [`dd7c6ac443926c43bc3489dbf6a4d264f4ac1929`](https://github.com/MattTheBanana/savant/commit/dd7c6ac443926c43bc3489dbf6a4d264f4ac1929)
+**Latest implementation commit:** [`4069c7d876efc7d1132107d8c905ffee575b48a5`](https://github.com/MattTheBanana/savant/commit/4069c7d876efc7d1132107d8c905ffee575b48a5)
 
 Primary UI file: `webui/index.html`  
 Backend and local filesystem APIs: `lyrics_editor.py`
@@ -132,6 +132,16 @@ Not yet run:
 - Python project tests.
 - Interactive browser checks of toolbar responsiveness, preference persistence, zoom appearance, line insertion, context menu behavior, and external clipboard interactions.
 - Real drag/drop tests across the user's browser/OS configuration.
+
+### Custom player bar, TTML agent presets, and configurable Shift shortcut
+
+- Replaced the browser-native `<audio controls>` UI with Savant-styled Play/Pause, seek, mute, and volume controls. The audio element remains only as the playback engine; the player dock has one separate current/duration readout, and obsolete native-control CSS selectors were removed.
+- Edit-screen buttons, editor context-menu actions, saved agent-preset actions, color picker controls, and player buttons render in consistent title case.
+- Importing TTML collects declared `ttm:agent` IDs as well as agent values attached to lines and word cues. Unique file-derived presets use the agent ID as the agent value and inherit the first available line/word style properties. On the next lyric import, prior file-derived presets are replaced while user-saved presets are preserved.
+- The TTML context-menu action now says **Delete Words** for a multi-word selection and **Delete Word** for one word. The top-bar action is plural only when more than one word is selected.
+- Added a **Double-Shift interval (milliseconds)** preference (150–1000 ms, default 450 ms). It is saved by the existing browser/installation settings synchronization and is used by the Shift × 2 jump shortcut.
+- Static checks on the latest UI source passed: inline JavaScript parses; there are no duplicate IDs; native audio controls and their old CSS-hiding rules are absent; the custom player controls and all expected media event updates exist; only one time-readout element exists; Shift timing is connected to settings; and both automatic agent presets and singular/plural delete labels are present.
+- Actual browser/GUI playback, agent-preset application against real TTML files, and changing/reloading the Shift preference have not yet been interactively tested.
 
 ## Working expectations
 

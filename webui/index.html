@@ -135,7 +135,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 /* Right-aligned, muted keyboard hints in the context menu. */
 .editor-context-menu button{display:flex;align-items:center;justify-content:space-between;gap:18px}
 .editor-context-menu .context-menu-label{min-width:0;text-align:left}
-.editor-context-menu .context-menu-shortcut{flex:0 0 auto;margin-left:auto;color:#75869b;font-size:10px;font-weight:500;white-space:nowrap}
+.editor-context-menu .context-menu-shortcut{flex:0 0 auto;margin-left:auto;color:#75869b;font-size:inherit;font-weight:500;white-space:nowrap}
 .editor-context-menu button.danger .context-menu-label{color:#ffb5b5}
 
 /* Local CLI generator */
@@ -233,6 +233,31 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
   .editor-bar-actions{white-space:normal;flex-wrap:wrap}
 }
 
+
+/* Preferences are split into vertical tabs for quicker navigation. */
+.preferences-layout{display:grid;grid-template-columns:176px minmax(0,1fr);gap:14px;align-items:start;padding:14px}
+.preferences-tabs{display:flex;flex-direction:column;gap:5px;position:sticky;top:0;align-self:start;padding:5px;border:1px solid var(--border);border-radius:10px;background:#101824}
+.preferences-tab{width:100%;text-align:left;padding:9px 11px;color:var(--muted);background:transparent;border-color:transparent;border-radius:7px;font-size:13px}
+.preferences-tab:hover{background:#1a2636;border-color:#34445a}
+.preferences-tab.active{color:var(--text);background:var(--panel2);border-color:#3d5068}
+.preferences-page[hidden]{display:none!important}
+.preferences-page .settings-grid{padding:0;align-content:start}
+.preferences-pages{min-width:0}
+.generate-output-destination .path-input-control{align-items:stretch}
+.generate-output-path-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;order:2}
+.generate-output-destination .generate-output-path-actions>.path-action-button{order:0;align-self:flex-start}
+.generate-output-destination .generate-output-location-actions{order:1;display:flex;flex-direction:row;align-items:center;gap:7px;flex-wrap:wrap;margin-top:0}
+.generate-output-destination .generate-output-location-actions button{white-space:nowrap}
+.path-suggestion-option .path-suggestion-name.path-suggestion-missing{color:var(--warn)}
+@media(max-width:780px){
+  .preferences-layout{grid-template-columns:minmax(0,1fr);gap:9px;padding:10px}
+  .preferences-tabs{position:static;flex-direction:row;overflow-x:auto;white-space:nowrap}
+  .preferences-tab{width:auto;flex:0 0 auto}
+  .preferences-page .settings-grid{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:620px){
+  .generate-output-destination .generate-output-location-actions{flex-direction:row;align-items:center;flex-wrap:wrap}
+}
 </style>
 </head>
 <body>
@@ -339,7 +364,7 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
       </div>
       <div class="generate-output-row">
         <div id="genOutputNameWrap" class="setting"><label for="genOutputName">Output filename</label><input id="genOutputName" type="text" placeholder="Defaults to the lyrics filename" autocomplete="off" spellcheck="false"><p>The LRC and generated TTML use this name. The lyrics filename is the default.</p></div>
-        <div id="genOutputDestination" class="setting generate-output-destination"><label for="genOutputDirectory">Output folder</label><div class="path-input-control"><input id="genOutputDirectory" type="text" placeholder="Defaults to the selected lyrics folder" autocomplete="off" spellcheck="false" data-output-directory-mode="auto" data-path-input="true" data-path-kind="folder" data-path-role="output-directory"><button class="small path-action-button" type="button" data-path-target="genOutputDirectory" data-path-kind="folder" data-path-title="Choose output folder">Browse…</button></div><div class="generate-output-location-actions"><button id="genChooseAudioDirectory" class="small" type="button">Use Audio Directory…</button><button id="genChooseLyricsDirectory" class="small" type="button">Use Lyrics Directory…</button><button id="genUseDefaultDirectory" class="small" type="button">Use Run Folder</button></div><p>Defaults to the folder containing the selected lyrics file. Browse for another folder.</p></div>
+        <div id="genOutputDestination" class="setting generate-output-destination"><label for="genOutputDirectory">Output folder</label><div class="path-input-control"><input id="genOutputDirectory" type="text" placeholder="Defaults to the selected lyrics folder" autocomplete="off" spellcheck="false" data-output-directory-mode="auto" data-path-input="true" data-path-kind="folder" data-path-role="output-directory"><div class="generate-output-path-actions"><button class="small path-action-button" type="button" data-path-target="genOutputDirectory" data-path-kind="folder" data-path-title="Choose output folder">Browse…</button><div class="generate-output-location-actions"><button id="genChooseAudioDirectory" class="small" type="button">Use Audio Directory</button><button id="genChooseLyricsDirectory" class="small" type="button">Use Lyrics Directory</button><button id="genUseDefaultDirectory" class="small" type="button">Use Run Folder</button></div></div></div><p>Defaults to the folder containing the selected lyrics file. Browse for another folder.</p></div>
       </div>
       <div id="genQuickToggles" class="generate-check-grid">
         <label class="generate-check"><input id="genWordLevel" type="checkbox"><span><strong>Generate word-timed TTML</strong><small>Write an LRC plus a Navidrome TTML sidecar.</small></span></label>
@@ -410,12 +435,35 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
   </section>
   <section id="settingsScreen" class="panel hidden">
     <div class="panel-head"><div><h2>Editor settings</h2><p>Adjust timing behavior and playback. Settings are saved in this browser on this computer.</p></div><button id="resetSettings" class="small">Reset defaults</button></div>
-    <div class="settings-grid">
-      <div class="settings-section-heading"><h3>Visuals</h3><p>Timeline context, labels, and selected-word inspector layout.</p></div>
+    <div class="preferences-layout">
+    <div class="preferences-tabs" role="tablist" aria-label="Preferences sections" aria-orientation="vertical">
+      <button id="prefTabVisuals" class="preferences-tab active" type="button" role="tab" aria-selected="true" aria-controls="prefPageVisuals" aria-orientation="vertical" tabindex="0" data-preferences-tab="visuals">Visuals</button>
+      <button id="prefTabUi" class="preferences-tab" type="button" role="tab" aria-selected="false" aria-controls="prefPageUi" aria-orientation="vertical" tabindex="-1" data-preferences-tab="ui">UI</button>
+      <button id="prefTabUtility" class="preferences-tab" type="button" role="tab" aria-selected="false" aria-controls="prefPageUtility" aria-orientation="vertical" tabindex="-1" data-preferences-tab="utility">Utility</button>
+      <button id="prefTabGenerator" class="preferences-tab" type="button" role="tab" aria-selected="false" aria-controls="prefPageGenerator" aria-orientation="vertical" tabindex="-1" data-preferences-tab="generator">Generator Defaults</button>
+    </div>
+    <div class="preferences-pages">
+      <section id="prefPageVisuals" class="preferences-page" role="tabpanel" aria-labelledby="prefTabVisuals" data-preferences-page="visuals">
+        <div class="settings-grid">
+<div class="settings-section-heading"><h3>Visuals</h3><p>Timeline context, labels, and selected-word inspector layout.</p></div>
       <div class="setting"><label for="timelineOverlap">Waveform edge context (seconds per side)</label><input id="timelineOverlap" type="number" min="0" max="5" step="0.05" value="0.45"><p>Show this much preceding/following waveform around each lyric line. Ctrl + scroll changes how much context is visible while keeping each line on one screen.</p></div><div class="setting"><label for="playheadLabelSize">Playhead time label size (px)</label><input id="playheadLabelSize" type="number" min="7" max="16" step="1" value="9"><p>Size of the timestamp shown beneath the red playhead marker.</p></div><div class="setting"><label for="dragAutoScrollSpeed">Word-drag edge scroll speed (px/sec)</label><input id="dragAutoScrollSpeed" type="number" min="40" max="1600" step="20" value="320"><p>How quickly the waveform view advances when dragging a word near or beyond a lane edge.</p></div><div class="setting"><label for="wordInspectorLayout">TTML word editor placement</label><select id="wordInspectorLayout"><option value="right">Right side</option><option value="bottom">Below timeline</option></select><p>Place the selected-word fields beside the timeline or stack them underneath it.</p></div>
-      <div class="settings-section-heading"><h3>UI</h3><p>Editor navigation, playback visibility, and post-generation behavior.</p></div>
+        </div>
+      </section>
+      <section id="prefPageUi" class="preferences-page" role="tabpanel" aria-labelledby="prefTabUi" data-preferences-page="ui" hidden>
+        <div class="settings-grid">
+<div class="settings-section-heading"><h3>UI</h3><p>Editor navigation, playback visibility, and post-generation behavior.</p></div>
       <div class="setting"><label for="defaultTab">Default preview</label><select id="defaultTab"><option value="lrc">LRC</option><option value="ttml">TTML</option></select><p>Which export preview to show when the editor opens.</p></div><div class="setting"><label for="autoFollow">Grid follow behavior</label><select id="autoFollow"><option value="true">Keep selected / playing line visible</option><option value="false">Do not auto-scroll</option></select><p>Follows keyboard selection and the active lyric during playback, unless you are typing.</p></div><div class="setting"><label for="showEditorControlsBar">Editor controls bar</label><select id="showEditorControlsBar"><option value="false">Hidden by default</option><option value="true">Show editor controls</option></select><p>Show import, zoom, add/delete, and context-specific Controls actions above the editor. The LRC/TTML switcher stays visible.</p></div><div class="setting"><label for="returnToEditAfterGenerate">After generation finishes</label><select id="returnToEditAfterGenerate"><option value="false">Stay on Generate and review results</option><option value="true">Open Edit automatically</option></select><p>Choose whether a completed CLI run takes you straight to the editor.</p></div><div class="setting"><label for="autoImportGeneratedOutput">Automatically import generated files</label><select id="autoImportGeneratedOutput"><option value="false">Off — use Import Output to Edit</option><option value="true">On — load audio and lyrics into Edit</option></select><p>When enabled, load the generated TTML (or LRC if TTML was not requested) and source audio in Edit after a successful run.</p></div>
-      <div class="settings-section-heading"><h3>Generator Defaults</h3><p>Saved in this browser and applied whenever the generator opens. Leave paths blank to use automatic locations.</p></div>
+        </div>
+      </section>
+      <section id="prefPageUtility" class="preferences-page" role="tabpanel" aria-labelledby="prefTabUtility" data-preferences-page="utility" hidden>
+        <div class="settings-grid">
+<div class="settings-section-heading"><h3>Utility</h3><p>Timing adjustments, plain-text defaults, language, and export naming.</p></div>
+      <div class="setting"><label for="nudgeStep">Fine nudge step (seconds)</label><input id="nudgeStep" type="number" min="0.001" max="1" step="0.001" value="0.020"><p>Left/right arrow nudges the selected line. Default: 20 ms.</p></div><div class="setting"><label for="shiftMultiplier">Shift + arrow multiplier</label><input id="shiftMultiplier" type="number" min="2" max="50" step="1" value="5"><p>Shift + left/right makes a larger correction.</p></div><div class="setting"><label for="replayLead">Replay lead-in (seconds)</label><input id="replayLead" type="number" min="0" max="15" step="0.1" value="2.0"><p>When starting playback after an edit, begin this long before the edited line.</p></div><div class="setting"><label for="txtSpacing">Initial spacing for plain TXT (seconds)</label><input id="txtSpacing" type="number" min="0.2" max="30" step="0.1" value="3.0"><p>TXT has no timestamps, so this is only an initial placeholder layout.</p></div><div class="setting"><label for="language">TTML language</label><input id="language" type="text" value="en" maxlength="20"><p>BCP-47 language code used in exported TTML.</p></div><div class="setting"><label for="downloadBase">Export filename suffix</label><select id="downloadBase"><option value="same">Use imported lyrics base name</option><option value="audio">Use audio base name</option></select><p>Controls the default downloaded filename.</p></div>
+        </div>
+      </section>
+      <section id="prefPageGenerator" class="preferences-page" role="tabpanel" aria-labelledby="prefTabGenerator" data-preferences-page="generator" hidden>
+        <div class="settings-grid">
+<div class="settings-section-heading"><h3>Generator Defaults</h3><p>Saved in this browser and applied whenever the generator opens. Leave paths blank to use automatic locations.</p></div>
 <div class="setting"><label for="prefGenMode">Default task</label><select id="prefGenMode"><option value="align">Align audio to lyrics</option><option value="adjust">Adjust an existing LRC</option><option value="doctor">Run diagnostics</option></select></div>
        <div class="setting"><label for="prefGenAligner">Default alignment backend</label><select id="prefGenAligner"><option value="whisperx">WhisperX</option><option value="tifa">TIFA</option></select></div>
        <div class="setting"><label for="prefGenLanguage">Default language code</label><input type="text" maxlength="20" id="prefGenLanguage" spellcheck="false"></div>
@@ -444,9 +492,10 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
        <div class="setting"><label for="prefGenDemucsModel">Default Demucs model</label><input type="text" id="prefGenDemucsModel" spellcheck="false"></div>
        <div class="setting"><label for="prefGenDemucsSegment">Default Demucs segment (seconds)</label><input type="number" min="2" max="7" step="1" id="prefGenDemucsSegment" spellcheck="false"></div>
        <div class="setting"><label for="prefGenVocalOutput">Default retained vocal stem path</label><div class="path-input-control"><input id="prefGenVocalOutput" type="text" placeholder="Optional; requires vocal separation" data-path-input="true" data-path-kind="save" data-path-role="default-output-file" autocomplete="off" spellcheck="false"><button class="small path-action-button" type="button" data-path-target="prefGenVocalOutput" data-path-kind="save" data-path-title="Choose default retained vocal stem path">Browse…</button></div></div>
-       <div class="settings-section-heading"><h3>Utility</h3><p>Timing adjustments, plain-text defaults, language, and export naming.</p></div>
-      <div class="setting"><label for="nudgeStep">Fine nudge step (seconds)</label><input id="nudgeStep" type="number" min="0.001" max="1" step="0.001" value="0.020"><p>Left/right arrow nudges the selected line. Default: 20 ms.</p></div><div class="setting"><label for="shiftMultiplier">Shift + arrow multiplier</label><input id="shiftMultiplier" type="number" min="2" max="50" step="1" value="5"><p>Shift + left/right makes a larger correction.</p></div><div class="setting"><label for="replayLead">Replay lead-in (seconds)</label><input id="replayLead" type="number" min="0" max="15" step="0.1" value="2.0"><p>When starting playback after an edit, begin this long before the edited line.</p></div><div class="setting"><label for="txtSpacing">Initial spacing for plain TXT (seconds)</label><input id="txtSpacing" type="number" min="0.2" max="30" step="0.1" value="3.0"><p>TXT has no timestamps, so this is only an initial placeholder layout.</p></div><div class="setting"><label for="language">TTML language</label><input id="language" type="text" value="en" maxlength="20"><p>BCP-47 language code used in exported TTML.</p></div><div class="setting"><label for="downloadBase">Export filename suffix</label><select id="downloadBase"><option value="same">Use imported lyrics base name</option><option value="audio">Use audio base name</option></select><p>Controls the default downloaded filename.</p></div>
+        </div>
+      </section>
     </div>
+  </div>
   </section>
   <p class="footer-note">Audio and lyric files are opened locally by your browser. This app does not upload them. Press <span class="shortcut">Esc</span> to leave a lyric text field and return to keyboard navigation.</p>
 </main>
@@ -781,6 +830,37 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
     if(!$('settingsScreen').classList.contains('hidden'))return 'settings';
     return 'edit';
   }
+  function setPreferencesTab(name,focusTab=false){
+    const tabs=Array.from(document.querySelectorAll('[data-preferences-tab]'));
+    const pages=Array.from(document.querySelectorAll('[data-preferences-page]'));
+    const selected=tabs.find(tab=>tab.dataset.preferencesTab===name)||tabs[0];
+    if(!selected)return;
+    for(const tab of tabs){
+      const active=tab===selected;
+      tab.classList.toggle('active',active);
+      tab.setAttribute('aria-selected',String(active));
+      tab.tabIndex=active?0:-1;
+    }
+    for(const page of pages)page.hidden=page.dataset.preferencesPage!==selected.dataset.preferencesTab;
+    if(focusTab)selected.focus();
+  }
+  function wirePreferencesTabs(){
+    const tabs=Array.from(document.querySelectorAll('[data-preferences-tab]'));
+    tabs.forEach((tab,index)=>{
+      tab.addEventListener('click',()=>setPreferencesTab(tab.dataset.preferencesTab));
+      tab.addEventListener('keydown',event=>{
+        let next=index;
+        if(event.key==='ArrowDown'||event.key==='ArrowRight')next=(index+1)%tabs.length;
+        else if(event.key==='ArrowUp'||event.key==='ArrowLeft')next=(index-1+tabs.length)%tabs.length;
+        else if(event.key==='Home')next=0;
+        else if(event.key==='End')next=tabs.length-1;
+        else return;
+        event.preventDefault();
+        setPreferencesTab(tabs[next].dataset.preferencesTab,true);
+      });
+    });
+    setPreferencesTab('visuals');
+  }
   function setScreen(screen) {
     $('editScreen').classList.toggle('hidden',screen!=='edit');$('generateScreen').classList.toggle('hidden',screen!=='generate');$('settingsScreen').classList.toggle('hidden',screen!=='settings');
     for(const [id,name] of [['navEdit','edit'],['navGenerate','generate'],['navSettings','settings']]){
@@ -801,11 +881,13 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
     if(key==='lyrics'){
       const outputDirectory=$('genOutputDirectory'),directoryMode=outputDirectory.dataset.outputDirectoryMode||'auto';
       const sourceDirectory=genSourceDirectory(file);
-      if(sourceDirectory&&['auto','lyrics'].includes(directoryMode)){
+      if(sourceDirectory&&directoryMode!=='custom'){
+        // Choosing lyrics should refresh automatic locations, including a prior "Use Run Folder" choice.
+        // Keep a directory only when the user explicitly browsed for it or configured a default folder.
         outputDirectory.value=sourceDirectory;
         outputDirectory.dataset.outputDirectoryMode='lyrics';
-      }else if(!sourceDirectory&&['auto','lyrics'].includes(directoryMode)){
-        // Browser drag/drop hides the source's absolute path; don't keep a stale folder from a previous lyric file.
+      }else if(!sourceDirectory&&directoryMode!=='custom'){
+        // Browser drag/drop may hide the source's absolute path; never keep a stale folder from a previous lyrics file.
         outputDirectory.value='';
         outputDirectory.dataset.outputDirectoryMode='auto';
       }
@@ -929,9 +1011,8 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
     (suggestions||[]).forEach((item,index)=>{
       const button=document.createElement('button');button.type='button';button.className='path-suggestion-option';button.setAttribute('role','option');button.setAttribute('aria-selected','false');button.dataset.index=String(index);
       const label=document.createElement('span');label.className='path-suggestion-name';label.textContent=item.path;
-      const kind=document.createElement('span');kind.className='path-suggestion-kind';kind.textContent=item.isDir?'Folder':item.exists?'File':'Use path';
-      if(!item.exists)kind.classList.add('path-suggestion-missing');
-      button.append(label,kind);
+      if(!item.exists&&item.isDir)label.classList.add('path-suggestion-missing');
+      button.append(label);
       button.addEventListener('pointerdown',event=>event.preventDefault());
       button.addEventListener('click',()=>choosePathSuggestion(input,index));
       menu.append(button);
@@ -2936,7 +3017,7 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
   refreshAgentPresetSelect();
   document.addEventListener('click',e=>{const target=e.target;if(target instanceof HTMLElement&&!target.closest('.toast'))$('toast').classList.add('hidden');});
   window.addEventListener('beforeunload',()=>{if(audioUrl)URL.revokeObjectURL(audioUrl);});
-  syncSettingsForm();outputMode=settings.defaultTab;updatePreview();renderGrid();updateStatus();refreshGenerateCapabilities();
+  wirePreferencesTabs();syncSettingsForm();outputMode=settings.defaultTab;updatePreview();renderGrid();updateStatus();refreshGenerateCapabilities();
 })();
 </script>
 </body>

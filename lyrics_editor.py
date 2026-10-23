@@ -1001,6 +1001,25 @@ class Handler(BaseHTTPRequestHandler):
                 }
                 run["log_path"].write_text("", encoding="utf-8")
                 command = _build_command(run, config, files)
+                operation = str(config.get("mode", "align"))
+                if operation in {"align", "adjust"} and not bool(config.get("dryRun")):
+                    existing_outputs = sorted({
+                        str(Path(str(artifact.get("path", ""))).expanduser().resolve())
+                        for artifact in run.get("artifacts", {}).values()
+                        if artifact.get("kind") in {"output", "diagnosis", "report"}
+                        and str(artifact.get("path", "")).strip()
+                        and Path(str(artifact.get("path", ""))).expanduser().exists()
+                    })
+                    if existing_outputs and not bool(config.get("overwritePromptConfirmed")):
+                        # No subprocess has been started. Discard this attempt's uploaded inputs
+                        # so the UI can ask first and submit a clean, approved request if needed.
+                        shutil.rmtree(run_dir, ignore_errors=True)
+                        self._send_json({
+                            "error": "Existing output files require overwrite confirmation.",
+                            "overwriteRequired": True,
+                            "existingOutputs": existing_outputs,
+                        }, 409)
+                        return
                 with RUNS_LOCK:
                     RUNS[run_id] = run
                 _set_progress(run, 1, "Queued")

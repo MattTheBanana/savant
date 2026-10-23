@@ -296,3 +296,9 @@ User-specific collaboration guidance:
 - Applied the same resize-aware horizontal offset and width reduction to the Generate and Preferences screen containers as the Edit screen, so their left edges align with the top-bar Edit button and their right edges remain aligned with the existing shell content edge.
 - The alignment helper now propagates its computed offset to all three main screens and continues to recalculate on window resize.
 - Static validation passed: inline JavaScript compiles, no duplicate static HTML IDs, and all three screens share the same alignment rule. Browser layout verification remains outstanding.
+
+## Center generator progress labels on their actual segments
+
+- Centered the current generator stage label using the actual rendered rectangle of the active progress segment, instead of estimating its position as a percentage of the track. This accounts for the gaps between segments and centers the first segment label as well as labels such as “Load forced-alignment model.”
+- Removed the completion-state rule that forced the label to the far right edge, so its text remains centered over the final segment too. The overall percentage label still moves above the step label when they overlap.
+- Static validation passed: inline JavaScript compiles, no duplicate static HTML IDs, and the step label uses rendered segment geometry. Browser visual confirmation remains outstanding.

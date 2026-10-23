@@ -271,3 +271,10 @@ User-specific collaboration guidance:
 - Enlarged and strengthened the block-pause glyph on desktop, with a proportionate size for the compact layout, so its visible weight better matches the other controls.
 - Added a live filled/unfilled gradient to the volume slider, driven by the current volume value and refreshed with player controls.
 - Static validation passed: inline JavaScript compiles, no duplicate static HTML IDs, and the volume fill is updated from the current slider value. Browser visual confirmation remains outstanding.
+
+## Align editor workspace and center filename in player bar
+
+- Added resize-aware alignment for the edit screen: its left edge is shifted to line up with the left edge of the top-bar Edit button, while its right edge remains in place so the usable panel width is reduced accordingly. The shift is bounded to avoid moving the screen outside the shell on very wide layouts.
+- Centered the loaded filename against the full player dock rather than the remaining flex space beside the controls. The title width is dynamically limited to the space that clears the left-side controls; the compact mobile layout retains its flow-based title placement.
+- Standardized visible word wording to `word or words`, including the TTML drag/nudge help and natural singular/plural wording in selection and preset-paste notifications.
+- Static validation passed: inline JavaScript compiles, no duplicate static HTML IDs, old `word(s)`/`word group` phrasing is removed from the relevant UI strings, and the alignment/centering calculations are connected to initialization and resize handling. Interactive/browser visual testing remains outstanding.

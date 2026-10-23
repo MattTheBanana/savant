@@ -809,8 +809,19 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
         outputDirectory.dataset.outputDirectoryMode='auto';
       }
       const nextDefault=file.name.replace(/\.[^.]+$/,'').trim()||'lyrics';
-      if(!genOutputNameCustom||$('genOutputName').value.trim()===genDefaultOutputName){$('genOutputName').value=nextDefault;genOutputNameCustom=false;}
-      genDefaultOutputName=nextDefault;
+      const preferredOutputName=String(settings.generatorDefaults?.outputName||'').trim();
+      if(preferredOutputName){
+        if(!genOutputNameCustom||$('genOutputName').value.trim()===genDefaultOutputName){
+          $('genOutputName').value=preferredOutputName;
+          genOutputNameCustom=true;
+        }
+        genDefaultOutputName=preferredOutputName;
+      }else{
+        if(!genOutputNameCustom||$('genOutputName').value.trim()===genDefaultOutputName){
+          $('genOutputName').value=nextDefault;genOutputNameCustom=false;
+        }
+        genDefaultOutputName=nextDefault;
+      }
     }
     updateGenerateConfigVisibility();renderGenerateInstallPrompts();
   }

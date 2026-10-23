@@ -308,3 +308,12 @@ User-specific collaboration guidance:
 - Restored the generator-completion label's right-edge alignment as a deliberate exception; active/in-progress stage labels remain centered over their actual segments.
 - Added a brief, colorful confetti burst originating from the rendered center of the “Generation Complete” label when a run transitions to success. The effect is triggered once per transition rather than on every progress poll and is disabled for users who prefer reduced motion. Warnings do not trigger the success confetti.
 - Static validation passed: inline JavaScript compiles, no duplicate static HTML IDs, right-edge completion alignment is restored, and the confetti animation/trigger and reduced-motion handling are present. Browser visual confirmation remains outstanding.
+
+## Generator output actions and instrumental cue duration
+
+- Moved four generated-output actions to the center of the generator footer between Run Generator and Import Output to Editor: Open LRC, Open TTML, Open LRC Directory, and Open TTML Directory. File/directory actions are disabled until a finished run exposes the corresponding available artifact.
+- Renamed the import button to `Import Output to Editor`. Removed the Output Files results tab/list; logs, clean diagnosis, and raw diagnosis remain in the Advanced generator pane. The source-audio artifact is no longer shown as an output item.
+- Added an `directory` mode to `/api/open-artifact` that opens the containing directory without selecting the output file. Kept the existing `file` and `folder` behaviors for compatibility.
+- Shifted the pause-state and stop icons 1px up and 1px right for better optical alignment.
+- Fixed generated TTML musical notes being too short: intro cues now span to just before the first lyric, inter-line cues span most of the available gap, and outro cues extend to the media duration. Added regression tests for all three cases in `tests/test_instrumental_cue_durations.py`.
+- Static validation passed: inline JavaScript compiles, no duplicate static HTML IDs, requested footer controls and routing are present, and cue duration regression tests are committed. Interactive GUI verification and execution of Python tests remain outstanding in this environment.

@@ -171,7 +171,7 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
             "label": "Source audio", "path": str(audio_source), "kind": "input",
             "name": original_audio_name,
         }
-    operation = str(config.get("mode", "align"))    operation = str(config.get("mode", "align"))
+    operation = str(config.get("mode", "align"))
     run["operation"] = operation
 
     if operation == "doctor":

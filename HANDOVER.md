@@ -190,3 +190,11 @@ User-specific collaboration guidance:
 - LRC lyric text is inset less from the time column and its right-side blank strip is wider for line selection.
 - Static verification after the change: inline JavaScript compiles; no duplicate static HTML IDs; the preference is wired through defaults, form synchronization, reset defaults, and save listeners; both jump-button visibility checks, two-row player layout, lyric gutter, and mode scroll restoration are present.
 - Not yet verified interactively in a browser. In particular, test mode switching during playback, switching after selecting an LRC line, the preference On/Off across reload and installation settings sync, viewport-edge jump visibility, and player layout at desktop/mobile widths.
+
+## Player dock typography and controls follow-up
+
+- The playback timer now sits immediately after the volume slider, before the filename metadata group.
+- File-size text matches the timer size at the breakpoints where the size is shown; the narrow-screen size follows the narrow-screen timer size.
+- Enlarged the Block Pause and mute/volume icons on desktop, with a proportional adjustment on compact screens. The play glyph is nudged left to optically center it, and the pause-bars geometry is centered separately.
+- Added more line-height and vertical padding to the filename to prevent descenders such as y and g from being clipped.
+- Static checks passed: inline JavaScript compiles, no duplicate HTML IDs, and the timer markup sits after the volume slider and before the filename group. Browser visual confirmation has not been run.

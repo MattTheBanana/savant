@@ -1,107 +1,173 @@
-# Savant GUI / Editor Handover
+# Savant — Development Handover
 
-**Prepared:** 2026-10-22  
+**Updated:** 2026-10-23  
 **Repository:** [MattTheBanana/savant](https://github.com/MattTheBanana/savant)  
-**Working branch:** `gui-progress-import-confirm`  
-**Branch HEAD when prepared:** `7f1d40f43f9a46f419bc217573371f135917d8b4` — “Center LRC auto-follow within the lyric panel”  
-**Status:** In progress; changes have not yet been fully validated. No PR has been opened for this branch.
+**Branch:** `main`  
+**Latest code commit before this handover update:** [`10d13225bf8b9b2d27b1777bf6962df62a479777`](https://github.com/MattTheBanana/savant/commit/10d13225bf8b9b2d27b1777bf6962df62a479777)
 
-## Repository and pull-request status
+Primary UI file: `webui/index.html`  
+Backend and local filesystem APIs: `lyrics_editor.py`
 
-- **PR #8** — “Add GUI CLI generator and improve editor workflow” — merged into `main`.
-- **PR #9** — “Shorten README, split docs into guides, and title-case menus” — open from `docs/short-readme-guides` into `main`. Keep this documentation work separate from the editor feature branch.
-- **`gui-progress-import-confirm`** — contains the ongoing UI/editor and Generate workflow work. Continue here; do not push this work directly to `main`.
-- Main files involved: `webui/index.html` and `lyrics_editor.py`.
+This document supersedes the older handover notes that describe a separate feature branch and PR status. The current work is on `main`. The latest Preferences/generator UI changes have static checks, but the current editor-controls regression has **not** been fixed yet.
 
-## Overall goal
+## Immediate priority — Repair the editor controls
 
-Finish the editor and Generate workflow requests collected in the conversation, test them, then open a pull request against `main`. Do not describe the features as complete until they have been validated in the actual GUI and the code checks pass.
+An earlier interpretation mixed up the user's request. The desired optional bar is the **bottom keyboard-shortcut / hotkey indicators bar**, not the functional toolbar at the top of the editor.
 
-## Requested behavior
+### 1. Keep the top editor toolbar visible
 
-### LRC / TTML editing and playback
+The top toolbar must remain visible regardless of the bottom hints preference. It contains:
 
-- LRC and TTML must follow the same active lyric line during playback and use the same underlying timing state.
-- Auto-follow should center the active line within its own scrollable editor panel when practical. At the beginning/end, clamp scrolling so the first/last line remains visible; do not scroll the whole page.
-- Apply the same behavior to both LRC and TTML panels.
-- Deleting a word at the start or end of a line must not recenter or unexpectedly change the timeline's visible time range.
-- Deleting a TTML line must be available from a toolbar control and the right-click/context menu, and must not switch the editor out of word-timing mode.
-- In the TTML inspector, show the line number and seconds on one row, with seconds right-aligned; put the line preview underneath, centered with horizontal margins and wrapping.
-- Remove the redundant “Waveform ready · shown per lyric line” status text.
-- Remove the “Lyric timing grid / Edit line starts and lyrics. When word timing exists, changes to a line’s word count create starter cues for further editing.” heading/instruction from above the LRC grid.
-- Keep editor height within the viewport. Scrolling should happen inside the LRC/TTML panels, not the whole page.
-- In the preview tab, make the rounded corners match the vertically rotated layout: curves at the top-right and bottom-right.
+- Import Audio and Import Lyrics.
+- Zoom out (`−`), Zoom in (`+`), and Fit Lines.
+- Add Line; Add Word when the editor is in TTML word mode; Delete Line / Delete Word(s) as appropriate.
+- The LRC/TTML-specific Controls dropdown.
 
-### Editor action bar and layout preferences
+The LRC/TTML mode switcher is its own row and must remain visible.
 
-- Put the LRC/TTML switcher at the top-left of the editor area.
-- Remove Import Audio and Import Lyrics from the top of the editor and put them on the action bar before the export/action buttons.
-- Arrange the action bar from left to right: +, −, Fit Lines at the far left; LRC/TTML toggles; Import Audio and Import Lyrics; then the remaining action buttons, grouped with sensible gaps/dividers; LRC Controls dropdown at the far right.
-- Add a saved preference to bias the action bar alignment left, center, or right.
-- Default the word editor/inspector to the right of the TTML editor, with a saved preference for a bottom/stacked layout.
+Relevant markup and functions in `webui/index.html`:
 
-### Generate workflow
+- `#editorModeSwitchRow`
+- `#editorActionBar`
+- `#editorImportGroup`
+- `#editorZoomControls`
+- `#editorActionButtons`
+- `#timelineControlsTrigger`
+- `syncEditorActionBar()`
+- `setGridMode()`
 
-- Provide basic output location choices: lyrics directory, audio directory, or default run folder. Output filename defaults to the input TXT stem, with editable output folder/name controls.
-- When enabled, automatically import generated audio and TTML into Edit after generation. When disabled, show an “Import Output to Edit” button next to Run; keep it disabled until output is ready.
-- Display progress as segmented steps: total percentage on the left and the current step label above the active segment. The active step/segment should visibly move as progress advances.
-- After a successful run, prevent rerunning until the configuration changes; show and clear finished feedback appropriately.
-- If overwrite confirmation is enabled, ask before overwriting existing output.
-- Remove the redundant second WhisperX refinement toggle and its `genRefine` / `genRefineWindow` UI/config. A disabled checkbox must not continue to appear checked.
+### 2. Make the preference control only the bottom hints bar
 
-## Changes that have been attempted
+The existing preference is named `showEditorControlsBar`, is saved in `lyrics-aligner-ui-settings`, and is applied by `applyEditorPreferences()`.
 
-Prior work on this branch has attempted changes in `webui/index.html` and `lyrics_editor.py`, including:
-- segmented generation progress UI and step labeling;
-- output directory/name fields and a local folder chooser endpoint;
-- automatic import preference plus a manual “Import Output to Edit” action;
-- overwrite confirmation and run-success button state;
-- artifact loading for generated audio/TTML;
-- removal of the second refinement toggle/config;
-- TTML line deletion controls and context-menu action;
-- preview-tab corner styling;
-- editor/action-bar and settings/layout changes;
-- a latest commit specifically targeting centered LRC auto-follow.
+The current problematic code is:
 
-**These are implementation attempts, not a verified feature list.** Re-read the current branch files and inspect the latest diff before extending or relying on any of this work.
+```javascript
+document.body.classList.toggle(
+  'show-editor-controls-bar',
+  Boolean(settings.showEditorControlsBar)
+);
+```
 
-## Known risks to inspect before calling this done
+paired with CSS that hides the actual functional toolbar and TTML timeline toolbar:
 
-1. **Auto-follow consistency:** `updateLiveHighlight` is the known entry point in `webui/index.html`. Inspect it and the render functions for both LRC and TTML. Avoid `scrollIntoView()` if it moves the page; calculate scroll position relative to the panel and clamp to valid bounds.
-2. **Timeline viewport preservation:** inspect `deleteWordCues`, `rerenderWordTimelinePreservingView`, and the relevant time-window helpers. Capture/restore the visible range when deleting the first/last word cue.
-3. **HTML/JS integrity:** the HTML file is large and was edited repeatedly. Check for duplicate IDs, stale element references after removing controls, event handlers attached to missing elements, inconsistent saved-preference key names, and JS syntax errors.
-4. **Python/API integrity:** inspect imports and helpers in `lyrics_editor.py` before trusting new routes. In particular verify whether `mimetypes` is imported and whether any referenced name such as `_safe_name` actually exists.
-5. **Artifact contract:** ensure the run snapshot/artifact metadata uses the keys expected by the import function; confirm the local artifact endpoint URL and route registration match. Verify `input-audio` is available when appropriate.
-6. **Folder picker:** the proposed picker uses Tkinter; verify it works in the app’s supported launch environment and fails gracefully if there is no desktop display.
-7. **Output naming:** test extensions, paths containing spaces/unicode, empty values, and overwrite-confirmation logic. Ensure output selection does not accidentally change the source file.
-8. **TTML deletion:** confirm deletion mutates the intended line, refreshes both views correctly, and preserves word-timing mode.
+```css
+body:not(.show-editor-controls-bar) #editorActionBar,
+body:not(.show-editor-controls-bar) .timeline-toolbar {
+  display: none !important;
+}
+```
 
-## Suggested next steps
+This behavior is incorrect.
 
-1. Re-fetch current `webui/index.html` and `lyrics_editor.py` from `gui-progress-import-confirm`; inspect the latest commit and diff against `main`.
-2. Finish LRC/TTML synchronized active-line highlighting and panel-local center-follow, including first/last line cases and playback seeking.
-3. Fix timeline-view preservation for deleting first/last word cues.
-4. Review the action-bar layout and both saved layout preferences at narrow and wide viewport sizes.
-5. Trace Generate end-to-end: choose output destination/name → run → segmented progress → ready state → auto-import or manual import → overwrite confirmation.
-6. Validate removal of the second refinement toggle in both UI and run/config payloads.
-7. Run a JS syntax parse on every inline script and check IDs/selectors. Run Python syntax compilation and the project’s available tests. Then perform manual GUI smoke tests with an audio file, LRC, TTML, and a generated output.
-8. Fix any failures and re-run the checks. Only then open a PR from `gui-progress-import-confirm` to `main`, summarizing behavior and test results.
+Rename the preference to something unambiguous, such as **Keyboard shortcut hints bar**, with Hide / Show choices, and wire it exclusively to a dedicated bottom bar. Ensure existing saved settings migrate gracefully (for example, map the old `showEditorControlsBar` key to the new preference or safely default the new preference to false). Do not tie this setting to `#editorActionBar` or any functional toolbar.
 
-## Minimum manual test checklist
+### 3. Add a dedicated bottom keyboard-hints bar
 
-- [ ] Play audio and seek across several lines: LRC and TTML highlight the same active line.
-- [ ] Active line centers in both panels; first/last line behavior is clamped; page does not scroll.
-- [ ] Delete first and last word cues; visible timeline range stays put.
-- [ ] Delete a TTML line from the toolbar and context menu while in word mode.
-- [ ] Confirm editor height fits the viewport and each lyric panel scrolls independently.
-- [ ] Verify action-bar order, alignment preference, and right/stacked inspector preference survive reload.
-- [ ] Generate with each output-folder choice and with default/custom names.
-- [ ] Verify progress segment/label advances and total percentage is shown.
-- [ ] Confirm auto-import and manual-import flows work; manual import stays disabled until ready.
-- [ ] Confirm overwrite prompt and successful-run lockout/config-change reset.
-- [ ] Confirm the removed refinement toggle no longer appears or leaks into config.
-- [ ] Run code checks and inspect console/server logs for errors.
+The current `#timelineControlsMenu` contains LRC/TTML keyboard and interaction hints, but it is a popup triggered by `#timelineControlsTrigger`. The current `#gridStatus` footer only shows editor status and the lyrics filename; it is not the requested keyboard-hints bar.
 
-## Handover principle
+Inspect the shortcut text already in `#timelineControlsMenu` and reuse appropriate hints to create a distinct, compact bar at the bottom of the editor. It must:
 
-Treat anything not covered by a passing check as unfinished. Keep the README/docs PR independent, and do not merge this feature branch until the editor synchronization, Generate workflow, and regression checks are complete.
+- Be independently showable/hideable via Preferences.
+- Reflect the active mode where that matters (LRC vs TTML).
+- Avoid unnecessarily duplicating identical shortcut text.
+- Remain separate from the Controls dropdown, which should continue to work.
+- Not obscure the persistent audio player dock or make the lyric editor unusably short.
+
+### 4. Repair the top toolbar layout
+
+The toolbar is not reliably appearing on one line. Current CSS gives `.editor-action-bar` a grid layout with six defined tracks, but some children are assigned up to grid column eight. At widths below roughly 1180px, other CSS switches the toolbar to flex with wrapping.
+
+Fix the layout intentionally:
+
+- Keep the top controls on one line at typical desktop widths.
+- Group imports, zoom actions, editing actions and the Controls dropdown logically.
+- Do not assign children to nonexistent grid tracks.
+- Do not hide controls to force one-line layout.
+- On narrow screens, permit a deliberate compact/responsive layout instead of overlap or clipping.
+
+### 5. Verify zoom buttons
+
+The zoom event handlers are present:
+
+```javascript
+$('zoomIn').addEventListener(
+  'click',
+  () => applyTimelineZoom(timelineZoom * 1.25)
+);
+$('zoomOut').addEventListener(
+  'click',
+  () => applyTimelineZoom(timelineZoom / 1.25)
+);
+$('zoomFit').addEventListener(
+  'click',
+  () => applyTimelineZoom(computeFitZoom(), true)
+);
+```
+
+The controls are disabled when `gridMode !== 'words'` by `syncEditorActionBar()`. This may be intentional because the timeline zoom applies to TTML word timing, but the buttons must work in TTML mode.
+
+Trace initialization of `timelineZoom`, timeline geometry, and `applyTimelineZoom()` rendering. Check for a zero or invalid initial zoom, uninitialized geometry, missing redraw, or stale UI state. Don't remove the LRC/TTML restriction without confirming the intended behavior.
+
+Expected:
+- `+` increases visible timeline detail.
+- `−` decreases visible timeline detail.
+- Fit Lines restores the fitted view.
+- Buttons have a clear and intentional disabled state when unavailable.
+
+### 6. Verify Add Line in both modes
+
+Existing controls and handlers include:
+
+- `#addLine`, wired to `addLine()` in LRC mode.
+- `#addLineTtml`, wired to `addTtmlLine()` in TTML mode.
+- `insertTtmlLineAt()` handles TTML line insertion.
+
+`syncEditorActionBar()` hides the top Add Line button in word mode, where the TTML-specific button is used. Verify the complete mode-transition flow.
+
+Expected:
+- **LRC:** the top Add Line button inserts an empty lyric line below the selected line, or at the end if none is selected.
+- **TTML:** the TTML Add Line button inserts a new TTML line and preserves word-timing mode.
+- Selection, rendered grid/timeline, preview, status, and undo history all update correctly.
+
+Do not treat the existence of a button or event-handler registration as proof it works.
+
+## Secondary outstanding issue — Generator lyrics path
+
+The generator output folder has reportedly still failed to populate automatically when lyrics are imported.
+
+In `genSetFile(key, file)`, selecting lyrics uses `genSourceDirectory(file)` and `outputDirectory.dataset.outputDirectoryMode` to decide whether to set `#genOutputDirectory`. The last code change attempts to refresh automatic locations while preserving an explicitly browsed/configured custom folder.
+
+The user has not yet said whether the failure occurs when using **Choose lyrics** or when dragging/dropping a file. The native picker returns an absolute local path, whereas browser drag-and-drop may hide the original absolute path. Ask which workflow fails before selecting a fix. Preserve custom output-folder choices.
+
+Do not let this separate generator issue block repair of the editor controls.
+
+## Other current UI state
+
+The following are present in the latest code and passed static checks in the last review, but still need real GUI verification:
+
+- Browser tab title follows the active section (for example, `savant • Edit`, `savant • Generate`, `savant • Preferences`).
+- Preferences uses vertical tabs in this order: Visuals, UI, Utility, Generator Defaults.
+- Generator's “Use Audio Directory” and “Use Lyrics Directory” actions sit beside Browse and have no trailing ellipses.
+- Path suggestion rows no longer show the right-side Folder/File label; paths for new directories use orange/missing-path styling.
+- Context-menu keyboard shortcut hints use the same font size as action labels.
+
+The latest code commit above changed `webui/index.html`. No interactive browser/native picker smoke test was completed in that environment.
+
+## Validation checklist before marking controls fixed
+
+1. Confirm the top toolbar remains visible when the keyboard-hints preference is Off.
+2. Turn the hints preference On and Off; verify only the bottom hints bar changes.
+3. Verify hints update sensibly when switching LRC/TTML modes.
+4. Test zoom in, zoom out and Fit Lines in TTML mode with an audio file and word cues loaded.
+5. Test Add Line in LRC mode and TTML mode, including first-line/end-of-list insertion.
+6. Confirm the LRC/TTML mode switcher, Controls dropdown and persistent audio player still work.
+7. Test at desktop and narrow window widths for clipping, overflow and overlapping buttons.
+8. Reload and confirm the hints preference persists.
+9. Parse all inline JavaScript; check duplicate IDs, stale DOM selectors, and HTML structure.
+10. Run Python syntax checks and available project tests. Perform an interactive GUI smoke test if the environment allows it.
+11. Commit the repair on `main`, then link the commit and clearly distinguish static checks from interactive tests.
+
+## Working expectations
+
+Read the current implementation before editing it. Make targeted changes and preserve unrelated functionality. Ask a concise clarifying question when user intent or an implementation choice is genuinely ambiguous. Do not claim behavior is fixed based on static checks alone.

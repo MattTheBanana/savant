@@ -272,6 +272,9 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
 #editorActionBar #timelineControlsTrigger{margin-left:auto;flex:0 0 auto;white-space:nowrap}
 #editorActionBar .editor-bar-separator{flex:0 0 1px}
 #editorActionBar .file-label{flex:0 0 auto}
+#editorActionBar:not(.word-mode) #editorZoomControls,
+#editorActionBar:not(.word-mode) #editorSep2,
+#editorActionBar:not(.word-mode) #editorSep3{display:none!important}
 @media(max-width:1180px){
   #editorActionBar{flex-flow:row wrap;gap:6px;overflow:visible}
   #editorActionBar .editor-bar-separator{display:none}
@@ -1722,6 +1725,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   }
   function syncEditorActionBar(){
     const wordMode=gridMode==='words';
+    $('editorActionBar').classList.toggle('word-mode',wordMode);
     $('addLine').classList.remove('hidden');
     $('addLine').disabled=false;
     $('addLine').textContent='+ Add Line';
@@ -1729,10 +1733,16 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     $('addWord').classList.toggle('hidden',!wordMode);
     $('addWord').disabled=!wordMode||!hasWordTiming;
     const timelineAvailable=wordMode&&hasWordTiming;
-    $('zoomOut').disabled=!timelineAvailable;$('zoomIn').disabled=!timelineAvailable;$('zoomFit').disabled=!timelineAvailable;
-    $('zoomOut').title=timelineAvailable?'Zoom out the TTML timeline':'Timeline zoom is available when TTML word cues are loaded';
-    $('zoomIn').title=timelineAvailable?'Zoom in the TTML timeline':'Timeline zoom is available when TTML word cues are loaded';
-    $('zoomFit').title=timelineAvailable?'Fit the longest lyric line across the lane with configured edge context':'Fit Lines is available when TTML word cues are loaded';
+    const fitZoom=Math.min(2000,computeFitZoom());
+    const currentZoom=Number(timelineZoom)||fitZoom;
+    const zoomTolerance=Math.max(.01,fitZoom*.001);
+    const atFit=currentZoom<=fitZoom+zoomTolerance;
+    $('zoomOut').disabled=!timelineAvailable||atFit;
+    $('zoomFit').disabled=!timelineAvailable||atFit;
+    $('zoomIn').disabled=!timelineAvailable||currentZoom>=2000;
+    $('zoomOut').title=!timelineAvailable?'Timeline zoom is available when TTML word cues are loaded':atFit?'Already at the Fit Lines scale':'Zoom out to the Fit Lines scale';
+    $('zoomIn').title=!timelineAvailable?'Timeline zoom is available when TTML word cues are loaded':currentZoom>=2000?'Maximum timeline zoom reached':'Zoom in the TTML timeline';
+    $('zoomFit').title=!timelineAvailable?'Fit Lines is available when TTML word cues are loaded':atFit?'Lines are already fitted':'Fit the longest available line context to the lane';
     $('deleteTtmlLine').classList.toggle('hidden',!wordMode);
     $('deleteTtmlLine').disabled=!wordMode||selectedIndex<0||selectedIndex>=rows.length;
     $('deleteLine').textContent=wordMode?'Delete Word(s)':'Delete Line';
@@ -1895,9 +1905,12 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     return {start,end,span:end-start};
   }
   function computeFitZoom() {
-    const context=Math.max(0,Number(settings.timelineOverlap)||0);let longest=.5;
-    rows.forEach((_,i)=>{const p=phraseExtent(i);longest=Math.max(longest,p.span+2*context);});
-    return Math.max(2,timelineTrackWidth/longest);
+    // Fit against the context each lane can actually show after clamping to the
+    // media/lyrics duration. Using an unclamped phrase+context span makes the
+    // displayed lane scale differ from timelineZoom near the beginning/end.
+    let longestVisibleSpan=.5;
+    rows.forEach((_,i)=>{longestVisibleSpan=Math.max(longestVisibleSpan,laneContextBounds(i).span);});
+    return Math.max(2,timelineTrackWidth/longestVisibleSpan);
   }
   function laneContextBounds(lineIndex) {
     const duration=timelineDuration(),phrase=phraseExtent(lineIndex),context=Math.max(0,Number(settings.timelineOverlap)||0);
@@ -2012,8 +2025,11 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     $('timelineInner').style.setProperty('--label-width',`${labelWidth}px`);
     if(!timelineGeometryReady||!(timelineZoom>0))timelineZoom=computeFitZoom();
     else if(Math.abs(timelineTrackWidth-oldWidth)>2)timelineZoom*=timelineTrackWidth/Math.max(1,oldWidth);
-    timelineGeometryReady=true;timelinePps=timelineZoom;
-    const minimum=Math.max(2,computeFitZoom()/4);timelineZoom=Math.max(minimum,Math.min(2000,timelineZoom));timelinePps=timelineZoom;
+    timelineGeometryReady=true;
+    const minimum=Math.min(2000,computeFitZoom());
+    timelineZoom=Math.max(minimum,Math.min(2000,timelineZoom));
+    if(Math.abs(timelineZoom-minimum)<=Math.max(.01,minimum*.001))timelineZoom=minimum;
+    timelinePps=timelineZoom;
     $('timelineZoomLabel').textContent=`${timelineZoom.toFixed(0)} px/sec · ${(timelineTrackWidth/Math.max(1,timelineZoom)).toFixed(2)}s view`;
   }
   function safeCssColor(value) {
@@ -2580,10 +2596,13 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   $('navEdit').addEventListener('click',()=>setScreen('edit'));$('navSettings').addEventListener('click',()=>setScreen('settings'));
   $('navGenerate').addEventListener('click',()=>setScreen('generate'));wireGeneratePanel();
   $('viewLines').addEventListener('click',()=>setGridMode('lines'));$('viewWords').addEventListener('click',()=>setGridMode('words'));
-  function minimumTimelineZoom(){return Math.max(2,computeFitZoom()/4);}
+  function minimumTimelineZoom(){return Math.min(2000,computeFitZoom());}
   function applyTimelineZoom(next,fit=false,anchor=null){
     if(zoomRenderFrame!==null){cancelAnimationFrame(zoomRenderFrame);zoomRenderFrame=null;pendingZoomRender=null;}
-    timelineZoom=Math.max(minimumTimelineZoom(),Math.min(2000,next));
+    const fitZoom=minimumTimelineZoom();
+    const requestedZoom=fit?fitZoom:Number(next);
+    timelineZoom=Math.max(fitZoom,Math.min(2000,Number.isFinite(requestedZoom)?requestedZoom:fitZoom));
+    if(Math.abs(timelineZoom-fitZoom)<=Math.max(.01,fitZoom*.001))timelineZoom=fitZoom;
     if(gridMode!=='words')return;
     timelinePps=timelineZoom;
     const requestedSpan=Math.min(timelineDuration(),timelineTrackWidth/Math.max(.08,timelineZoom));
@@ -2595,6 +2614,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     $('timelineZoomLabel').textContent=`${timelineZoom.toFixed(0)} px/sec · ${(timelineTrackWidth/Math.max(1,timelineZoom)).toFixed(2)}s view`;
     if(fit)$('timelineViewport').scrollTop=0;
     updateLiveHighlight(true);
+    syncEditorActionBar();
   }
   function scheduleTimelineZoom(next,anchor,scrollTop){
     pendingZoomRender={next,anchor,scrollTop};

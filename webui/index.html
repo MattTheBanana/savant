@@ -628,7 +628,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   <div class="floating-menu-row lrc-controls-section"><span class="shortcut">Shift + ← / →</span><span>Apply the configured multiplier to the nudge or seek step</span></div>
   <div class="floating-menu-title lrc-controls-section">Playback controls</div>
   <div class="floating-menu-row lrc-controls-section"><span class="shortcut">Space</span><span>Play or pause</span></div>
-  <div class="floating-menu-row lrc-controls-section"><span class="shortcut">Ctrl + Space</span><span>Pause and return to the start of the current playback segment</span></div>
+  <div class="floating-menu-row lrc-controls-section"><span class="shortcut">Ctrl + Space</span><span>Stop playback and return to the start of the current playback segment</span></div>
   <div class="floating-menu-title ttml-controls-section">TTML word controls</div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Left Click + Drag</span><span>Seek the audio by dragging the playhead or waveform</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Middle Click + Drag</span><span>Pan within the line’s edge context</span></div>
@@ -649,17 +649,17 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">← / →</span><span>Seek by the configured step when no word cue is selected</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Shift + ← / →</span><span>Seek to the nearest word boundary</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Space</span><span>Play or pause</span></div>
-  <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Ctrl + Space</span><span>Pause and return to the start of the current playback segment</span></div>
+  <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Ctrl + Space</span><span>Stop playback and return to the start of the current playback segment</span></div>
 </div>
 <div id="agentPresetMenu" class="agent-preset-menu hidden" role="menu" aria-label="Saved agent presets"></div>
 <div id="playerDock" class="audio-panel player-dock">
   <div class="player-transport-controls" role="group" aria-label="Audio seek bar">
     <input id="playerSeek" class="player-seek" type="range" min="0" max="1000" step="1" value="0" aria-label="Seek Audio" disabled>
   </div>
-  <div class="player-secondary-controls" role="group" aria-label="Playback, block pause, volume, and time">
+  <div class="player-secondary-controls" role="group" aria-label="Playback, stop, volume, and time">
     <div class="player-secondary-actions">
       <button id="playerPlayPause" class="player-control-button player-play-button" type="button" aria-label="Play Audio" title="Play Audio" disabled><svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 4.5 20 12 7 19.5z"/></svg></button>
-      <button id="playerBlockPause" class="player-control-button player-block-pause" type="button" aria-label="Block Pause" title="Block Pause: pause and return to the start of the current playback segment" disabled><svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6h12v12H6z" fill="currentColor" stroke="none"/></svg></button>
+      <button id="playerBlockPause" class="player-control-button player-block-pause" type="button" aria-label="Stop" title="Stop playback and return to the start of the current playback segment" disabled><svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6h12v12H6z" fill="currentColor" stroke="none"/></svg></button>
       <div class="player-volume-control">
         <button id="playerMute" class="player-control-button player-mute-button" type="button" aria-label="Mute Audio" title="Mute Audio" disabled><svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 9v6h4l5 5V4L7 9H3zM13.5 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02s-1.02-3.29-2.5-4.03zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" fill="currentColor" stroke="none"/></svg></button>
         <input id="playerVolume" class="player-volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume">

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import email.policy
 import importlib.util
 import shutil
@@ -24,11 +25,13 @@ from urllib.parse import unquote, urlparse
 
 ROOT = Path(__file__).resolve().parent
 HTML_PATH = ROOT / "webui" / "index.html"
+SETTINGS_PATH = ROOT / "savant-settings.txt"
 ALIGN_SCRIPT = ROOT / "lyrics_align.py"
 RUNS_ROOT = Path.home() / ".savant" / "runs"
 MAX_REQUEST_BYTES = 1024 * 1024 * 1024
 RUNS: dict[str, dict] = {}
 RUNS_LOCK = threading.RLock()
+SETTINGS_LOCK = threading.RLock()
 PROGRESS_PREFIX = "@@SAVANT_PROGRESS@@"
 
 
@@ -725,6 +728,58 @@ def _run_worker(run_id: str, command: list[str], env: dict[str, str]) -> None:
             process_obj.terminate()
 
 
+def _read_installation_settings() -> dict:
+    """Read the human-editable JSON settings file from the installation directory."""
+    with SETTINGS_LOCK:
+        try:
+            raw = SETTINGS_PATH.read_bytes()
+        except FileNotFoundError:
+            return {"exists": False, "revision": None, "settings": None}
+        except OSError:
+            raise
+        if len(raw) > 1_000_000:
+            raise ValueError("savant-settings.txt exceeds the 1 MiB settings file limit.")
+        try:
+            settings = json.loads(raw.decode("utf-8-sig"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise ValueError(
+                "savant-settings.txt is not valid UTF-8 JSON. Fix the file or restore valid JSON, then save it again."
+            ) from exc
+        if not isinstance(settings, dict):
+            raise ValueError("savant-settings.txt must contain a JSON object at the top level.")
+        return {
+            "exists": True,
+            "revision": hashlib.sha256(raw).hexdigest(),
+            "settings": settings,
+        }
+
+
+def _write_installation_settings(settings: dict, expected_revision: str | None) -> dict:
+    """Atomically persist settings unless the file changed outside the UI."""
+    if not isinstance(settings, dict):
+        raise ValueError("Settings must be a JSON object.")
+    raw = (json.dumps(settings, ensure_ascii=False, indent=2) + "\\n").encode("utf-8")
+    if len(raw) > 1_000_000:
+        raise ValueError("Settings exceed the 1 MiB file limit.")
+    with SETTINGS_LOCK:
+        current = _read_installation_settings()
+        if current["revision"] != expected_revision:
+            raise FileExistsError("The preferences file changed outside the UI.")
+        temporary = SETTINGS_PATH.with_name(SETTINGS_PATH.name + ".tmp")
+        try:
+            with temporary.open("wb") as stream:
+                stream.write(raw)
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.replace(temporary, SETTINGS_PATH)
+        finally:
+            try:
+                temporary.unlink(missing_ok=True)
+            except OSError:
+                pass
+        return _read_installation_settings()
+
+
 class Handler(BaseHTTPRequestHandler):
     def _send_bytes(self, payload: bytes, content_type: str, status: int = 200, filename: str | None = None, send_body: bool = True) -> None:
         self.send_response(status)
@@ -774,6 +829,12 @@ class Handler(BaseHTTPRequestHandler):
             return
         if route.path == "/api/health":
             self._send_json({"ok": True, "localOnly": True})
+            return
+        if route.path == "/api/settings":
+            try:
+                self._send_json(_read_installation_settings())
+            except (OSError, ValueError) as exc:
+                self._send_json({"error": str(exc)}, 400)
             return
         if route.path == "/api/capabilities":
             self._send_json(_capability_snapshot())
@@ -858,6 +919,30 @@ class Handler(BaseHTTPRequestHandler):
         route = urlparse(self.path)
         if not self._api_mutation_allowed():
             self._send_json({"error": "This local API only accepts requests from the Savant UI."}, 403)
+            return
+        if route.path == "/api/settings":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if length > 1_100_000:
+                    raise ValueError("Invalid settings request size.")
+                payload = json.loads(self.rfile.read(length).decode("utf-8"))
+                if not isinstance(payload, dict) or not isinstance(payload.get("settings"), dict):
+                    raise ValueError("The settings request must contain a JSON settings object.")
+                expected_revision = payload.get("expectedRevision")
+                if expected_revision is not None and not isinstance(expected_revision, str):
+                    raise ValueError("Invalid settings revision.")
+                try:
+                    snapshot = _write_installation_settings(payload["settings"], expected_revision)
+                except FileExistsError:
+                    self._send_json({
+                        "error": "savant-settings.txt changed since the UI last read it.",
+                        "conflict": True,
+                        "snapshot": _read_installation_settings(),
+                    }, 409)
+                    return
+                self._send_json(snapshot)
+            except (ValueError, OSError, json.JSONDecodeError) as exc:
+                self._send_json({"error": str(exc)}, 400)
             return
         if route.path == "/api/select-source":
             try:

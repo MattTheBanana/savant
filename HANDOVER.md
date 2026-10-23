@@ -240,3 +240,10 @@ User-specific collaboration guidance:
 - Pressing Escape in the TTML editor clears the selected line selection, resets the active selected-line index, and refreshes timeline selection styling, word inspector state, and action controls.
 - Existing Escape behavior for open context menus, preset menus, timeline controls, preview drawer, color picker, and word-style help retains priority. Word-cue selection is also cleared as part of clearing a TTML line selection.
 - Static validation passed: inline JavaScript compiles and there are no duplicate static HTML IDs. Interactive browser testing remains outstanding.
+
+## TTML Shift+Arrow nudge versus playback seek
+
+- In TTML word-editing mode, Left/Right nudges the selected word or word group by the normal step; Shift+Left/Right now applies the configured nudge multiplier instead of seeking to a word boundary.
+- When no word cue is selected, the arrow keys remain playback controls: Left/Right seeks by the configured step and Shift+Left/Right seeks to the nearest word boundary.
+- Split the former combined arrow-help description into separate word-editing and playback-control rows under the TTML Controls menu. Playback seeking rows are now listed under the `Playback controls` heading.
+- Static validation passed: inline JavaScript compiles, no duplicate static HTML IDs, and the old combined help row is removed. Interactive browser testing remains outstanding.

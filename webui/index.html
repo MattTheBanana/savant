@@ -621,7 +621,8 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   <div class="floating-menu-title ttml-controls-section">TTML word controls</div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Left Click + Drag</span><span>Seek the audio by dragging the playhead or waveform.</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Middle Click + Drag</span><span>Pan within the line’s edge context.</span></div>
-  <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Left Click + Drag on Word</span><span>Move selected word(s). Ctrl + Left Click + Drag moves only the word clicked from a multi-selection.</span></div>
+  <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Left Click + Drag on Word</span><span>Move selected word(s).</span></div>
+  <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Ctrl + Left Click + Drag on Word</span><span>From a multi-selection, move only the word clicked.</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Shift + Left Click + Drag on Word</span><span>Snap the word or resized edge to the playhead when close, then to the adaptive time grid.</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Left Click + Drag on Empty Space</span><span>Box-select words within one line.</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Shift + Left Click + Drag on Empty Space</span><span>Box-select word cues across multiple lines.</span></div>
@@ -2634,7 +2635,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     clip.addEventListener('pointerdown',e=>{
       if(e.button!==0)return;
       const key=wordKey(lineIndex,cueIndex),shiftDrag=e.shiftKey,edge=e.target instanceof HTMLElement?e.target.dataset.resize:'',ctrlDrag=(e.ctrlKey||e.metaKey)&&selectedWordKeys.has(key)&&selectedWordKeys.size>1;
-      if((e.ctrlKey||e.metaKey)&&!edge){selectWord(lineIndex,cueIndex,false,false,true);e.preventDefault();return;}
+      if((e.ctrlKey||e.metaKey)&&!edge&&!ctrlDrag){selectWord(lineIndex,cueIndex,false,false,true);e.preventDefault();return;}
       if(shiftDrag&&!edge){
         // Shift-click extends selection; Shift-drag a word body also enables playhead snap.
         if(!selectedWordKeys.has(key))selectWord(lineIndex,cueIndex,false,true,false);
@@ -2642,18 +2643,18 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       }else if(!selectedWordKeys.has(key))selectWord(lineIndex,cueIndex,false);
       else{selectedIndex=lineIndex;selectedWordRef={lineIndex,cueIndex};lastEditedIndex=lineIndex;updateWordInspector();}
       const row=rows[lineIndex],cue=row?.wordCues?.[cueIndex];if(!cue)return;
-      const groupKeys=edge?[key]:(shiftDrag?[...selectedWordKeys]:(!ctrlDrag&&selectedWordKeys.has(key)&&selectedWordKeys.size>1?[...selectedWordKeys]:[key]));
+      const groupKeys=edge||ctrlDrag?[key]:(shiftDrag?[...selectedWordKeys]:(!ctrlDrag&&selectedWordKeys.has(key)&&selectedWordKeys.size>1?[...selectedWordKeys]:[key]));
       const items=groupKeys.map(k=>{const ref=parseWordKey(k),c=rows[ref.lineIndex]?.wordCues?.[ref.cueIndex];return c?{...ref,start:c.start,end:c.end}:null;}).filter(Boolean);
       const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`);
       const pps=Number(lane?.dataset.pps)||timelinePps;
       const playheadTime=Number(player.currentTime)||0,itemMin=Math.min(...items.map(item=>item.start)),itemMax=Math.max(...items.map(item=>item.end));
       const initialSnapSide=itemMax<=playheadTime?'end':itemMin>=playheadTime?'start':Math.abs(playheadTime-itemMax)<=Math.abs(itemMin-playheadTime)?'end':'start';
-      wordDragState={pointerId:e.pointerId,lineIndex,cueIndex,mode:edge==='start'?'start':edge==='end'?'end':shiftDrag?'pending':'move',startX:e.clientX,lastClientX:e.clientX,downX:e.clientX,downY:e.clientY,origStart:cue.start,origEnd:cue.end,pps,gridInterval:Number(lane?.querySelector('.timeline-grid-overlay')?.dataset.interval)||timelineGridInterval(pps),items,groupMove:items.length>1,changed:false,historyBefore:captureHistoryState(),autoDelta:0,lastAutoTime:performance.now(),snapToPlayhead:shiftDrag,snapSide:shiftDrag?initialSnapSide:null,initialSnapSide,snapUsed:false,snapTarget:''};
-      clip.setPointerCapture?.(e.pointerId);if((!shiftDrag||edge)&&!autoScrollFrame)autoScrollFrame=requestAnimationFrame(runDragAutoScroll);e.preventDefault();
+      wordDragState={pointerId:e.pointerId,lineIndex,cueIndex,mode:edge==='start'?'start':edge==='end'?'end':ctrlDrag?'ctrl-pending':shiftDrag?'pending':'move',startX:e.clientX,lastClientX:e.clientX,downX:e.clientX,downY:e.clientY,origStart:cue.start,origEnd:cue.end,pps,gridInterval:Number(lane?.querySelector('.timeline-grid-overlay')?.dataset.interval)||timelineGridInterval(pps),items,groupMove:items.length>1,changed:false,historyBefore:captureHistoryState(),autoDelta:0,lastAutoTime:performance.now(),snapToPlayhead:shiftDrag,snapSide:shiftDrag?initialSnapSide:null,initialSnapSide,snapUsed:false,snapTarget:''};
+      clip.setPointerCapture?.(e.pointerId);if((!shiftDrag||edge)&&!ctrlDrag&&!autoScrollFrame)autoScrollFrame=requestAnimationFrame(runDragAutoScroll);e.preventDefault();
     });
     clip.addEventListener('pointermove',e=>{
       const d=wordDragState;if(!d||d.pointerId!==e.pointerId||d.lineIndex!==lineIndex||d.cueIndex!==cueIndex)return;
-      if(d.mode==='pending'){
+      if(d.mode==='pending'||d.mode==='ctrl-pending'){
         if(Math.hypot(e.clientX-d.downX,e.clientY-d.downY)<4)return;
         d.mode='move';if(!autoScrollFrame)autoScrollFrame=requestAnimationFrame(runDragAutoScroll);
       }
@@ -2661,7 +2662,8 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     });
     const endDrag=e=>{
       if(!wordDragState||wordDragState.pointerId!==e.pointerId||wordDragState.lineIndex!==lineIndex||wordDragState.cueIndex!==cueIndex)return;
-      const d=wordDragState,changed=d.changed,wasGroupMove=d.groupMove,snapped=d.snapUsed,snapTarget=d.snapTarget,historyBefore=d.historyBefore;wordDragState=null;if(autoScrollFrame){cancelAnimationFrame(autoScrollFrame);autoScrollFrame=null;}
+      const d=wordDragState,changed=d.changed,wasGroupMove=d.groupMove,snapped=d.snapUsed,snapTarget=d.snapTarget,historyBefore=d.historyBefore,wasCtrlClick=d.mode==='ctrl-pending';wordDragState=null;if(autoScrollFrame){cancelAnimationFrame(autoScrollFrame);autoScrollFrame=null;}
+      if(wasCtrlClick&&e.type!=='pointercancel'){selectWord(lineIndex,cueIndex,false,false,true);return;}
       if(changed){lastEditedIndex=lineIndex;selectedIndex=lineIndex;replayFromAnchor=true;rerenderWordTimelinePreservingView();refreshWordSelection();updatePreview();updateStatus();updateLiveHighlight();updateWordInspector();commitHistoryChange(historyBefore);toast(wasGroupMove?'Selected words shifted together.':snapped?(snapTarget==='grid'?'Word snapped to timeline grid.':'Word snapped to playhead.'):'Word timing updated.');}
     };
     clip.addEventListener('pointerup',endDrag);clip.addEventListener('pointercancel',endDrag);

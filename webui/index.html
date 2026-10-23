@@ -679,6 +679,54 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
     if(undoHistory.length>HISTORY_LIMIT)undoHistory.shift();
     restoreHistoryState(next);toast('Redo.');
   }
+  const GENERATOR_DEFAULT_FORM_FIELDS = [
+    ['mode','select'],['aligner','select'],['language','text'],['device','select'],['offset','text'],
+    ['outputName','text'],['outputDirectory','path'],['outputPath','path'],['ttmlOutputPath','path'],
+    ['wordLevel','bool'],['separateVocals','bool'],['instrumentalCues','bool'],['reviewReport','bool'],
+    ['reviewReportPath','path'],['overwrite','bool'],['dryRun','bool'],['alignModel','text'],
+    ['tifaRoot','path'],['tifaPython','path'],['tifaModel','path'],['tifaChunkSeconds','text'],
+    ['tifaContext','text'],['tifaDiagnosticsPath','path'],['contextRepair','bool'],
+    ['instrumentalThreshold','text'],['demucsModel','text'],['demucsSegment','text'],['vocalOutput','path']
+  ];
+  function generatorDefaultFormId(key){return 'prefGen'+key.charAt(0).toUpperCase()+key.slice(1);}
+  function readGeneratorDefaultsForm(){
+    const result={...DEFAULT_GENERATOR_DEFAULTS};
+    for(const [key,type] of GENERATOR_DEFAULT_FORM_FIELDS){
+      const el=$(generatorDefaultFormId(key));if(!el)continue;
+      result[key]=type==='bool'?el.value==='true':el.value;
+    }
+    return result;
+  }
+  function syncGeneratorDefaultsForm(){
+    const defaults={...DEFAULT_GENERATOR_DEFAULTS,...(settings.generatorDefaults||{})};
+    for(const [key,type] of GENERATOR_DEFAULT_FORM_FIELDS){
+      const el=$(generatorDefaultFormId(key));if(!el)continue;
+      el.value=type==='bool'?String(Boolean(defaults[key])):String(defaults[key]??'');
+    }
+  }
+  function applyGeneratorDefaults(){
+    const d={...DEFAULT_GENERATOR_DEFAULTS,...(settings.generatorDefaults||{})};
+    for(const [key] of GENERATOR_DEFAULT_FORM_FIELDS){
+      const el=$('gen'+key.charAt(0).toUpperCase()+key.slice(1));if(!el)continue;
+      if(el.type==='checkbox')el.checked=Boolean(d[key]);else el.value=String(d[key]??'');
+    }
+    $('genOutputDirectory').dataset.outputDirectoryMode=String(d.outputDirectory||'').trim()?'custom':'auto';
+    genDefaultOutputName=String(d.outputName||'').trim();
+    genOutputNameCustom=Boolean(genDefaultOutputName);
+  }
+  function persistGeneratorDefaults(applyNow=false){
+    settings.generatorDefaults=readGeneratorDefaultsForm();
+    try{localStorage.setItem('lyrics-aligner-ui-settings',JSON.stringify(settings));}
+    catch(_){toast('Could not save generator defaults in this browser.',true);return;}
+    if(applyNow)applyGeneratorDefaults();
+  }
+  function wireGeneratorDefaultsPreferences(){
+    for(const [key] of GENERATOR_DEFAULT_FORM_FIELDS){
+      const el=$(generatorDefaultFormId(key));if(!el)continue;
+      el.addEventListener('input',()=>persistGeneratorDefaults(false));
+      el.addEventListener('change',()=>persistGeneratorDefaults(true));
+    }
+  }
   function saveSettings() {
     for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorControlsBar']) {
       const el=$(key); if (!el) continue;
@@ -693,6 +741,7 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
     settings.playheadLabelSize=Math.min(16,Math.max(7,Number(settings.playheadLabelSize)||9));
     settings.dragAutoScrollSpeed=Math.min(1600,Math.max(40,Number(settings.dragAutoScrollSpeed)||320));
     document.documentElement.style.setProperty('--playhead-label-size',`${settings.playheadLabelSize}px`);
+    settings.generatorDefaults=readGeneratorDefaultsForm();
     applyEditorPreferences();
     localStorage.setItem('lyrics-aligner-ui-settings', JSON.stringify(settings));
   }
@@ -700,7 +749,7 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
     for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed']) $(key).value=settings[key];
     document.documentElement.style.setProperty('--playhead-label-size',`${settings.playheadLabelSize}px`);
     $('autoFollow').value=String(settings.autoFollow);
-    $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));$('autoImportGeneratedOutput').value=String(Boolean(settings.autoImportGeneratedOutput));$('wordInspectorLayout').value=settings.wordInspectorLayout||'right';$('showEditorControlsBar').value=String(Boolean(settings.showEditorControlsBar));applyEditorPreferences();
+    $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));$('autoImportGeneratedOutput').value=String(Boolean(settings.autoImportGeneratedOutput));$('wordInspectorLayout').value=settings.wordInspectorLayout||'right';$('showEditorControlsBar').value=String(Boolean(settings.showEditorControlsBar));syncGeneratorDefaultsForm();applyEditorPreferences();
   }
   function fmtTime(sec, places=3) {
     sec=Math.max(0,Number(sec)||0); const mins=Math.floor(sec/60), secs=sec-mins*60;
@@ -1069,7 +1118,7 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
     $('generateConfigTab').classList.toggle('active',!advanced);$('generateAdvancedTab').classList.toggle('active',advanced);$('generateConfigTab').setAttribute('aria-selected',String(!advanced));$('generateAdvancedTab').setAttribute('aria-selected',String(advanced));
   }
   function wireGeneratePanel(){
-    genWireFileInputs();$('generateConfigTab').addEventListener('click',()=>setGeneratePane('configuration'));$('generateAdvancedTab').addEventListener('click',()=>setGeneratePane('advanced'));
+    applyGeneratorDefaults();wireGeneratorDefaultsPreferences();genWireFileInputs();$('generateConfigTab').addEventListener('click',()=>setGeneratePane('configuration'));$('generateAdvancedTab').addEventListener('click',()=>setGeneratePane('advanced'));
     $('genMode').addEventListener('change',updateGenerateConfigVisibility);$('genAligner').addEventListener('change',updateGenerateConfigVisibility);$('genSeparateVocals').addEventListener('change',renderGenerateInstallPrompts);
     $('genOutputName').addEventListener('input',()=>{genOutputNameCustom=Boolean($('genOutputName').value.trim())&&$('genOutputName').value.trim()!==genDefaultOutputName;genMarkConfigChanged();});
     $('genChooseAudioFile').addEventListener('click',()=>genChooseSourceFile('audio'));$('genChooseLyricsFile').addEventListener('click',()=>genChooseSourceFile('lyrics'));
@@ -2695,7 +2744,7 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
     }
   },true);
   for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorControlsBar'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);if(id==='wordInspectorLayout'&&gridMode==='words')rerenderWordTimelinePreservingView();toast('Settings saved.');});
-  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false,wordInspectorLayout:'right',showEditorControlsBar:false};syncSettingsForm();saveSettings();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
+  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false,wordInspectorLayout:'right',showEditorControlsBar:false,generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}};syncSettingsForm();saveSettings();applyGeneratorDefaults();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
   document.addEventListener('keydown',e=>{
     if(e.ctrlKey&&e.key.toLowerCase()==='s'){e.preventDefault();if(gridMode==='words')exportTtml();else exportLrc();return;}
     const target=e.target; const lyricEditing=target instanceof HTMLElement&&Boolean(target.closest('.lyric-editor,#wordText'));

@@ -3788,6 +3788,14 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     if(e.key==='Escape'&&$('previewDrawer').classList.contains('open')){setPreviewDrawer(false);e.preventDefault();return;}
     if(e.key==='Escape'&&!$('colorPickerPopover').classList.contains('hidden')){closeColorPicker();e.preventDefault();return;}
     if(e.key==='Escape'&&!$('wordStyleHelpPopover').classList.contains('hidden')){$('wordStyleHelpPopover').classList.add('hidden');$('wordStyleHelp').setAttribute('aria-expanded','false');e.preventDefault();return;}
+    if(e.key==='Escape'&&activeScreen()==='edit'&&gridMode==='words'&&selectedLineIndices.size){
+      e.preventDefault();
+      selectedLineIndices.clear();lineSelectionAnchor=-1;
+      selectedWordKeys.clear();wordSelectionAnchorKey=null;selectedWordRef=null;
+      selectedIndex=-1;lastEditedIndex=-1;
+      refreshLineSelectionVisuals();refreshWordSelection();updateWordInspector();updateStatus();
+      return;
+    }
     if(e.code==='Space'&&e.ctrlKey&&!lyricEditing){e.preventDefault();blockPause();return;}
     if(e.code==='Space'&&!lyricEditing){e.preventDefault();playPause();return;}
     const editableLine=target instanceof HTMLElement?target.closest('.lyric-editor'):null;

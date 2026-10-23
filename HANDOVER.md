@@ -3,7 +3,7 @@
 **Updated:** 2026-10-23  
 **Repository:** [MattTheBanana/savant](https://github.com/MattTheBanana/savant)  
 **Branch:** `main`  
-**Latest implementation commit:** [`4069c7d876efc7d1132107d8c905ffee575b48a5`](https://github.com/MattTheBanana/savant/commit/4069c7d876efc7d1132107d8c905ffee575b48a5)
+**Latest implementation commit:** [`3c36d5f2707a7ba6a21be5e3695da30324119007`](https://github.com/MattTheBanana/savant/commit/3c36d5f2707a7ba6a21be5e3695da30324119007)
 
 Primary UI file: `webui/index.html`  
 Backend and local filesystem APIs: `lyrics_editor.py`
@@ -142,6 +142,15 @@ Not yet run:
 - Added a **Double-Shift interval (milliseconds)** preference (150–1000 ms, default 450 ms). It is saved by the existing browser/installation settings synchronization and is used by the Shift × 2 jump shortcut.
 - Static checks on the latest UI source passed: inline JavaScript parses; there are no duplicate IDs; native audio controls and their old CSS-hiding rules are absent; the custom player controls and all expected media event updates exist; only one time-readout element exists; Shift timing is connected to settings; and both automatic agent presets and singular/plural delete labels are present.
 - Actual browser/GUI playback, agent-preset application against real TTML files, and changing/reloading the Shift preference have not yet been interactively tested.
+
+### Modifier-based line and word selection
+
+- The LRC line grid supports plain click to select one line, Shift-click to select the inclusive range from the selection anchor, and Ctrl/Cmd-click to toggle individual lines. The line-number gutter is highlighted for every selected line.
+- The TTML timeline's left line label, empty word track, and other blank lane space use the same line-selection model and highlight the entire selected lane. Clicks on the waveform canvas remain dedicated to seeking/scrubbing.
+- TTML word blocks support Shift-click range selection across sequential word cues and Ctrl/Cmd-click to add/remove individual words. Existing marquee selection and drag-to-retime gestures remain separate.
+- The top-bar line delete action and TTML Delete Line action delete all selected lines and update their labels to **Delete Lines** when appropriate. Single-line deletion remains singular. Context-menu targeted line deletion stays scoped to the clicked line.
+- Line and word selection anchors are included in undo/redo snapshots. Importing new lyrics resets the selection to the first line.
+- Latest static verification: the inline JavaScript parses; there are no duplicate HTML IDs; the line-range, Ctrl/Cmd toggles, TTML gutter handling, word-range selection, and multi-line deletion paths are present. Interactive browser testing has not been run, so click/drag coexistence and visual feedback still need GUI verification.
 
 ## Working expectations
 

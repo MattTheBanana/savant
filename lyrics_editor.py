@@ -758,7 +758,7 @@ def _write_installation_settings(settings: dict, expected_revision: str | None) 
     """Atomically persist settings unless the file changed outside the UI."""
     if not isinstance(settings, dict):
         raise ValueError("Settings must be a JSON object.")
-    raw = (json.dumps(settings, ensure_ascii=False, indent=2) + "\\n").encode("utf-8")
+    raw = (json.dumps(settings, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
     if len(raw) > 1_000_000:
         raise ValueError("Settings exceed the 1 MiB file limit.")
     with SETTINGS_LOCK:

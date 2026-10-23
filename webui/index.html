@@ -942,6 +942,12 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
   }
   async function choosePathSuggestion(input,index){
     const state=pathSuggestionStates.get(input),item=state&&state.suggestions[index];if(!item)return;
+    if(item.isDir&&input.dataset.pathKind==='save'){
+      const separator=item.path.includes(String.fromCharCode(92))?String.fromCharCode(92):'/';
+      input.value=item.path.endsWith(separator)?item.path:item.path+separator;
+      closePathSuggestions(input);input.dataset.validatedPath='';
+      input.dispatchEvent(new Event('input',{bubbles:true}));input.focus();return;
+    }
     input.value=item.path;closePathSuggestions(input);
     input.dispatchEvent(new Event('input',{bubbles:true}));
     input.dispatchEvent(new Event('change',{bubbles:true}));
@@ -992,7 +998,7 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
       });
       input.addEventListener('input',()=>{
         const previous=pathSuggestionTimers.get(input);if(previous)clearTimeout(previous);
-        input.dataset.validatedPath='';
+        input.dataset.validatedPath='';validatedLocalPaths.clear();
         if(input.id==='genOutputDirectory')input.dataset.outputDirectoryMode=input.value.trim()?'custom':'auto';
         if(input.id.startsWith('prefGen'))persistGeneratorDefaults(false);else genMarkConfigChanged();
         pathSuggestionTimers.set(input,setTimeout(()=>genLoadPathSuggestions(input),140));
@@ -1003,7 +1009,8 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
         if(event.key==='ArrowDown'||event.key==='ArrowUp'){
           event.preventDefault();
           if(!visible||!count){genLoadPathSuggestions(input);return;}
-          state.active=(state.active+(event.key==='ArrowDown'?1:-1)+count)%count;
+          if(state.active<0)state.active=event.key==='ArrowDown'?0:count-1;
+          else state.active=(state.active+(event.key==='ArrowDown'?1:-1)+count)%count;
           Array.from(menu.querySelectorAll('.path-suggestion-option')).forEach((button,i)=>{
             button.classList.toggle('active',i===state.active);button.setAttribute('aria-selected',String(i===state.active));
           });

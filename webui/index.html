@@ -2634,7 +2634,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     clip.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();selectWord(lineIndex,cueIndex,false);$('wordText').focus();}});
     clip.addEventListener('pointerdown',e=>{
       if(e.button!==0)return;
-      const key=wordKey(lineIndex,cueIndex),shiftDrag=e.shiftKey,edge=e.target instanceof HTMLElement?e.target.dataset.resize:'',ctrlDrag=(e.ctrlKey||e.metaKey)&&selectedWordKeys.has(key)&&selectedWordKeys.size>1;
+      const key=wordKey(lineIndex,cueIndex),shiftDrag=e.shiftKey,edge=e.target instanceof HTMLElement?e.target.dataset.resize:'',ctrlDrag=!edge&&(e.ctrlKey||e.metaKey)&&selectedWordKeys.has(key)&&selectedWordKeys.size>1;
       if((e.ctrlKey||e.metaKey)&&!edge&&!ctrlDrag){selectWord(lineIndex,cueIndex,false,false,true);e.preventDefault();return;}
       if(shiftDrag&&!edge){
         // Shift-click extends selection; Shift-drag a word body also enables playhead snap.

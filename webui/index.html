@@ -179,18 +179,12 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .editor-layout>.panel{display:flex;flex-direction:column;height:100%;min-height:0;overflow:hidden}
 .editor-mode-switch-row{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);background:#0f1622}
 .editor-mode-switch-row .editor-bar-group{display:flex;align-items:center;gap:6px}
-.editor-action-bar{display:grid;grid-template-columns:minmax(0,auto) 1px auto 1px minmax(0,1fr) auto;align-items:center;gap:8px;flex:0 0 auto;padding:9px 12px;min-width:0}
-#editorSep1{display:none}#editorImportGroup{grid-column:1}#editorSep2{grid-column:2}#editorZoomControls{grid-column:3}#editorSep3{grid-column:4}#editorActionButtons{grid-column:5}#timelineControlsTrigger{grid-column:6}
+.editor-action-bar{display:flex;align-items:center;gap:8px;flex:0 0 auto;padding:9px 12px;min-width:0}
 body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
 .editor-bar-group{display:flex;align-items:center;gap:6px;min-width:0}
-#editorModeSwitch{grid-column:1}
-#editorSep1{grid-column:2}
-#editorImportGroup{grid-column:3;min-width:0;gap:8px}
-#editorSep2{grid-column:4}
-#editorZoomControls{grid-column:5}
-#editorSep3{grid-column:6}
-.editor-bar-actions{grid-column:7;justify-self:start;gap:6px;white-space:nowrap}
-#timelineControlsTrigger{grid-column:8;justify-self:end;white-space:nowrap}
+#editorImportGroup{min-width:0;gap:8px}
+.editor-bar-actions{gap:6px;white-space:nowrap}
+#timelineControlsTrigger{white-space:nowrap}
 .editor-bar-separator{width:1px;height:27px;background:#334256;display:block;justify-self:center}
 .action-import-group{display:flex;align-items:center;gap:5px;min-width:0}
 .action-import-button{padding:5px 8px;white-space:nowrap;font-size:12px}
@@ -262,23 +256,33 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
 /* The main controls bar is always visible and remains on one horizontal row. */
 #editorActionBar{
   display:flex!important;
-  flex-flow:row nowrap!important;
+  flex-flow:row nowrap;
   align-items:center;
   justify-content:flex-start;
   gap:8px;
   width:100%;
   min-width:0;
   flex:0 0 auto;
-  overflow-x:auto;
-  overflow-y:hidden;
-  scrollbar-width:thin;
+  overflow:visible;
 }
 #editorActionBar>*{flex:0 0 auto}
-#editorActionBar #editorImportGroup{flex-wrap:nowrap!important}
-#editorActionBar #editorActionButtons{display:flex;flex-flow:row nowrap!important;white-space:nowrap!important}
+#editorActionBar #editorImportGroup{flex-wrap:nowrap}
+#editorActionBar #editorZoomControls{white-space:nowrap}
+#editorActionBar #editorActionButtons{display:flex;flex-flow:row nowrap;white-space:nowrap}
 #editorActionBar #timelineControlsTrigger{margin-left:auto;flex:0 0 auto;white-space:nowrap}
 #editorActionBar .editor-bar-separator{flex:0 0 1px}
 #editorActionBar .file-label{flex:0 0 auto}
+@media(max-width:1180px){
+  #editorActionBar{flex-flow:row wrap;gap:6px;overflow:visible}
+  #editorActionBar .editor-bar-separator{display:none}
+  #editorActionBar #timelineControlsTrigger{margin-left:0}
+}
+@media(max-width:620px){
+  #editorActionBar{padding:8px}
+  #editorActionBar #editorImportGroup{gap:5px}
+  #editorActionBar #editorActionButtons{flex-flow:row wrap;white-space:normal}
+  #editorActionBar .editor-bar-actions{white-space:normal}
+}
 
 /* Optional keyboard shortcut hints sit along the bottom of the editor, separate from its controls. */
 .editor-hotkey-bar{
@@ -516,7 +520,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       <section id="prefPageUi" class="preferences-page" role="tabpanel" aria-labelledby="prefTabUi" data-preferences-page="ui" hidden>
         <div class="settings-grid">
 <div class="settings-section-heading"><h3>UI</h3><p>Editor navigation, playback visibility, and post-generation behavior.</p></div>
-      <div class="setting"><label for="defaultTab">Default preview</label><select id="defaultTab"><option value="lrc">LRC</option><option value="ttml">TTML</option></select><p>Which export preview to show when the editor opens.</p></div><div class="setting"><label for="autoFollow">Grid follow behavior</label><select id="autoFollow"><option value="true">Keep selected / playing line visible</option><option value="false">Do not auto-scroll</option></select><p>Follows keyboard selection and the active lyric during playback, unless you are typing.</p></div><div class="setting"><label for="showEditorShortcutHints">Bottom keyboard shortcut hints</label><select id="showEditorShortcutHints"><option value="false">Hidden</option><option value="true">Show shortcut hints</option></select><p>Show or hide the keyboard shortcut indicators along the bottom of the editor. The top controls bar always stays visible.</p></div><div class="setting"><label for="returnToEditAfterGenerate">After generation finishes</label><select id="returnToEditAfterGenerate"><option value="false">Stay on Generate and review results</option><option value="true">Open Edit automatically</option></select><p>Choose whether a completed CLI run takes you straight to the editor.</p></div><div class="setting"><label for="autoImportGeneratedOutput">Automatically import generated files</label><select id="autoImportGeneratedOutput"><option value="false">Off — use Import Output to Edit</option><option value="true">On — load audio and lyrics into Edit</option></select><p>When enabled, load the generated TTML (or LRC if TTML was not requested) and source audio in Edit after a successful run.</p></div>
+      <div class="setting"><label for="defaultTab">Default preview</label><select id="defaultTab"><option value="lrc">LRC</option><option value="ttml">TTML</option></select><p>Which export preview to show when the editor opens.</p></div><div class="setting"><label for="autoFollow">Grid follow behavior</label><select id="autoFollow"><option value="true">Keep selected / playing line visible</option><option value="false">Do not auto-scroll</option></select><p>Follows keyboard selection and the active lyric during playback, unless you are typing.</p></div><div class="setting"><label for="showEditorShortcutHints">Keyboard shortcut hints bar</label><select id="showEditorShortcutHints"><option value="false">Hide</option><option value="true">Show</option></select><p>Show or hide the compact keyboard shortcut indicators at the bottom of the editor. This setting does not affect the editor toolbar.</p></div><div class="setting"><label for="returnToEditAfterGenerate">After generation finishes</label><select id="returnToEditAfterGenerate"><option value="false">Stay on Generate and review results</option><option value="true">Open Edit automatically</option></select><p>Choose whether a completed CLI run takes you straight to the editor.</p></div><div class="setting"><label for="autoImportGeneratedOutput">Automatically import generated files</label><select id="autoImportGeneratedOutput"><option value="false">Off — use Import Output to Edit</option><option value="true">On — load audio and lyrics into Edit</option></select><p>When enabled, load the generated TTML (or LRC if TTML was not requested) and source audio in Edit after a successful run.</p></div>
         </div>
       </section>
       <section id="prefPageUtility" class="preferences-page" role="tabpanel" aria-labelledby="prefTabUtility" data-preferences-page="utility" hidden>
@@ -1677,7 +1681,11 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     $('addLine').title=wordMode?'Adds a new TTML lyric line below the selected line':'Inserts a new LRC line below the selected line';
     $('addWord').classList.toggle('hidden',!wordMode);
     $('addWord').disabled=!wordMode||!hasWordTiming;
-    $('zoomOut').disabled=!wordMode;$('zoomIn').disabled=!wordMode;$('zoomFit').disabled=!wordMode;
+    const timelineAvailable=wordMode&&hasWordTiming;
+    $('zoomOut').disabled=!timelineAvailable;$('zoomIn').disabled=!timelineAvailable;$('zoomFit').disabled=!timelineAvailable;
+    $('zoomOut').title=timelineAvailable?'Zoom out the TTML timeline':'Timeline zoom is available when TTML word cues are loaded';
+    $('zoomIn').title=timelineAvailable?'Zoom in the TTML timeline':'Timeline zoom is available when TTML word cues are loaded';
+    $('zoomFit').title=timelineAvailable?'Fit the longest lyric line across the lane with configured edge context':'Fit Lines is available when TTML word cues are loaded';
     $('deleteTtmlLine').classList.toggle('hidden',!wordMode);
     $('deleteTtmlLine').disabled=!wordMode||selectedIndex<0||selectedIndex>=rows.length;
     $('deleteLine').textContent=wordMode?'Delete Word(s)':'Delete Line';

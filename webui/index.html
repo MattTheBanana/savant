@@ -3307,7 +3307,8 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   $('lineTableWrap').addEventListener('scroll',updateLrcJumpToLineVisibility,{passive:true});
   document.addEventListener('scroll',()=>{updateJumpToLineVisibility();updateLrcJumpToLineVisibility();},true);
   $('timelineViewport').addEventListener('scroll',()=>updateJumpToLineVisibility(),{passive:true});
-  $('jumpToLrcLineButton').addEventListener('click',jumpToCurrentLine);
+  $('gridHead').addEventListener('click',e=>{if(e.target instanceof HTMLElement&&e.target.closest('#jumpToLrcLineButton'))jumpToCurrentLine();});
+  $('lineTableWrap').addEventListener('focusin',updateLrcJumpToLineVisibility);
   window.addEventListener('resize',()=>{updateJumpToLineVisibility();updateLrcJumpToLineVisibility();if(!$('colorPickerPopover').classList.contains('hidden'))positionColorPicker();});
   $('wordColor').addEventListener('input',()=>{const value=$('wordColor').value.trim();$('wordColor').style.color=safeCssColor(value)||'var(--text)';if(/^#[0-9a-f]{3,8}$/i.test(value)){$('colorPreviewSwatch').style.background=value;$('colorPreviewHex').textContent=value;const hsv=rgbToHsv(hexToRgb(value));if(hsv.s>0.001)colorPickerHue=hsv.h;}});
   $('wordItalicToggle').addEventListener('click',()=>toggleWordEmphasis('italic'));$('wordBoldToggle').addEventListener('click',()=>toggleWordEmphasis('bold'));

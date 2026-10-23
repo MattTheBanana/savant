@@ -181,7 +181,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .editor-mode-switch-row .editor-bar-group{display:flex;align-items:center;gap:6px}
 .editor-action-bar{display:grid;grid-template-columns:minmax(0,auto) 1px auto 1px minmax(0,1fr) auto;align-items:center;gap:8px;flex:0 0 auto;padding:9px 12px;min-width:0}
 #editorSep1{display:none}#editorImportGroup{grid-column:1}#editorSep2{grid-column:2}#editorZoomControls{grid-column:3}#editorSep3{grid-column:4}#editorActionButtons{grid-column:5}#timelineControlsTrigger{grid-column:6}
-body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-controls-bar) .timeline-toolbar{display:none!important}
+body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
 .editor-bar-group{display:flex;align-items:center;gap:6px;min-width:0}
 #editorModeSwitch{grid-column:1}
 #editorSep1{grid-column:2}
@@ -258,6 +258,59 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
 @media(max-width:620px){
   .generate-output-destination .generate-output-location-actions{flex-direction:row;align-items:center;flex-wrap:wrap}
 }
+
+/* The main controls bar is always visible and remains on one horizontal row. */
+#editorActionBar{
+  display:flex!important;
+  flex-flow:row nowrap!important;
+  align-items:center;
+  justify-content:flex-start;
+  gap:8px;
+  width:100%;
+  min-width:0;
+  flex:0 0 auto;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scrollbar-width:thin;
+}
+#editorActionBar>*{flex:0 0 auto}
+#editorActionBar #editorImportGroup{flex-wrap:nowrap!important}
+#editorActionBar #editorActionButtons{display:flex;flex-flow:row nowrap!important;white-space:nowrap!important}
+#editorActionBar #timelineControlsTrigger{margin-left:auto;flex:0 0 auto;white-space:nowrap}
+#editorActionBar .editor-bar-separator{flex:0 0 1px}
+#editorActionBar .file-label{flex:0 0 auto}
+
+/* Optional keyboard shortcut hints sit along the bottom of the editor, separate from its controls. */
+.editor-hotkey-bar{
+  display:flex;
+  align-items:center;
+  gap:8px 16px;
+  flex-wrap:wrap;
+  flex:0 0 auto;
+  min-width:0;
+  padding:7px 12px;
+  border-top:1px solid var(--border);
+  background:#101722;
+  color:var(--muted);
+  font-size:11px;
+}
+.editor-hotkey-item{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.editor-hotkey-item kbd{
+  font-family:var(--mono);
+  font-size:10px;
+  line-height:1.2;
+  color:#d4e1ef;
+  background:#0b111a;
+  border:1px solid #37465b;
+  border-radius:5px;
+  padding:3px 5px;
+}
+body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
+@media(max-width:620px){
+  #editorActionBar{gap:6px;padding:8px}
+  #editorActionBar #editorImportGroup{gap:5px}
+  .editor-hotkey-bar{gap:7px 10px;padding:7px 9px}
+}
 </style>
 </head>
 <body>
@@ -308,7 +361,6 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
         </div>
         <div id="lineTableWrap" class="table-wrap"><table><thead id="gridHead"><tr><th class="num">#</th><th class="time">Time</th><th>Lyric</th></tr></thead><tbody id="gridBody"><tr><td colspan="3" style="padding:30px;text-align:center;color:#91a1b5">Import an LRC, TTML, or TXT lyrics file.</td></tr></tbody></table></div>
         <div id="wordTimelineEditor" class="word-timeline-editor hidden">
-          <div class="ttml-line-actions"><button id="addLineTtml" class="small" type="button" title="Adds a new TTML lyric line below the selected line">+ Add Line</button></div>
           <div class="ttml-editor-layout" id="ttmlEditorLayout">
           <div id="timelineViewport" class="timeline-viewport" aria-label="Wrapped word timing timeline">
             <div id="timelineInner" class="timeline-inner">
@@ -332,6 +384,18 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
           </div>
         </div>
         <div class="grid-footer"><span id="gridStatus">0 lines · 0 words</span><span id="status" class="status hidden"><strong>Ready</strong> · import files to begin</span><span id="lyricsFileName" class="file-name editor-lyrics-file-name" title="No lyrics loaded">No lyrics loaded</span></div>
+        <div id="editorHotkeyBar" class="editor-hotkey-bar" aria-label="Keyboard shortcut hints">
+          <span class="editor-hotkey-item lrc-controls-section"><kbd>↑ / ↓</kbd><span>Select line</span></span>
+          <span class="editor-hotkey-item lrc-controls-section"><kbd>← / →</kbd><span>Nudge timing</span></span>
+          <span class="editor-hotkey-item lrc-controls-section"><kbd>Space</kbd><span>Play / pause</span></span>
+          <span class="editor-hotkey-item lrc-controls-section"><kbd>Ctrl+Z / Ctrl+Y</kbd><span>Undo / redo</span></span>
+          <span class="editor-hotkey-item lrc-controls-section"><kbd>Enter</kbd><span>Edit selected line</span></span>
+          <span class="editor-hotkey-item ttml-controls-section hidden"><kbd>Drag playhead</kbd><span>Seek audio</span></span>
+          <span class="editor-hotkey-item ttml-controls-section hidden"><kbd>Drag word</kbd><span>Move word timing</span></span>
+          <span class="editor-hotkey-item ttml-controls-section hidden"><kbd>Shift+← / →</kbd><span>Seek word boundary</span></span>
+          <span class="editor-hotkey-item ttml-controls-section hidden"><kbd>F</kbd><span>Add word cue</span></span>
+          <span class="editor-hotkey-item ttml-controls-section hidden"><kbd>Ctrl+wheel</kbd><span>Zoom timeline</span></span>
+        </div>
       </section>
     </div>
   </section>
@@ -452,7 +516,7 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
       <section id="prefPageUi" class="preferences-page" role="tabpanel" aria-labelledby="prefTabUi" data-preferences-page="ui" hidden>
         <div class="settings-grid">
 <div class="settings-section-heading"><h3>UI</h3><p>Editor navigation, playback visibility, and post-generation behavior.</p></div>
-      <div class="setting"><label for="defaultTab">Default preview</label><select id="defaultTab"><option value="lrc">LRC</option><option value="ttml">TTML</option></select><p>Which export preview to show when the editor opens.</p></div><div class="setting"><label for="autoFollow">Grid follow behavior</label><select id="autoFollow"><option value="true">Keep selected / playing line visible</option><option value="false">Do not auto-scroll</option></select><p>Follows keyboard selection and the active lyric during playback, unless you are typing.</p></div><div class="setting"><label for="showEditorControlsBar">Editor controls bar</label><select id="showEditorControlsBar"><option value="false">Hidden by default</option><option value="true">Show editor controls</option></select><p>Show import, zoom, add/delete, and context-specific Controls actions above the editor. The LRC/TTML switcher stays visible.</p></div><div class="setting"><label for="returnToEditAfterGenerate">After generation finishes</label><select id="returnToEditAfterGenerate"><option value="false">Stay on Generate and review results</option><option value="true">Open Edit automatically</option></select><p>Choose whether a completed CLI run takes you straight to the editor.</p></div><div class="setting"><label for="autoImportGeneratedOutput">Automatically import generated files</label><select id="autoImportGeneratedOutput"><option value="false">Off — use Import Output to Edit</option><option value="true">On — load audio and lyrics into Edit</option></select><p>When enabled, load the generated TTML (or LRC if TTML was not requested) and source audio in Edit after a successful run.</p></div>
+      <div class="setting"><label for="defaultTab">Default preview</label><select id="defaultTab"><option value="lrc">LRC</option><option value="ttml">TTML</option></select><p>Which export preview to show when the editor opens.</p></div><div class="setting"><label for="autoFollow">Grid follow behavior</label><select id="autoFollow"><option value="true">Keep selected / playing line visible</option><option value="false">Do not auto-scroll</option></select><p>Follows keyboard selection and the active lyric during playback, unless you are typing.</p></div><div class="setting"><label for="showEditorShortcutHints">Bottom keyboard shortcut hints</label><select id="showEditorShortcutHints"><option value="false">Hidden</option><option value="true">Show shortcut hints</option></select><p>Show or hide the keyboard shortcut indicators along the bottom of the editor. The top controls bar always stays visible.</p></div><div class="setting"><label for="returnToEditAfterGenerate">After generation finishes</label><select id="returnToEditAfterGenerate"><option value="false">Stay on Generate and review results</option><option value="true">Open Edit automatically</option></select><p>Choose whether a completed CLI run takes you straight to the editor.</p></div><div class="setting"><label for="autoImportGeneratedOutput">Automatically import generated files</label><select id="autoImportGeneratedOutput"><option value="false">Off — use Import Output to Edit</option><option value="true">On — load audio and lyrics into Edit</option></select><p>When enabled, load the generated TTML (or LRC if TTML was not requested) and source audio in Edit after a successful run.</p></div>
         </div>
       </section>
       <section id="prefPageUtility" class="preferences-page" role="tabpanel" aria-labelledby="prefTabUtility" data-preferences-page="utility" hidden>
@@ -601,11 +665,12 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
   };
   let settings = {
     nudgeStep: 0.02, shiftMultiplier: 5, replayLead: 2.0, txtSpacing: 3.0,
-    language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, returnToEditAfterGenerate: false, autoImportGeneratedOutput: false, wordInspectorLayout: 'right', showEditorControlsBar: false,
+    language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, returnToEditAfterGenerate: false, autoImportGeneratedOutput: false, wordInspectorLayout: 'right', showEditorShortcutHints: false,
     generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}
   };
   try { settings = {...settings, ...JSON.parse(localStorage.getItem('lyrics-aligner-ui-settings') || '{}')}; } catch (_) {}
   settings.generatorDefaults={...DEFAULT_GENERATOR_DEFAULTS,...(settings.generatorDefaults||{})};
+  delete settings.showEditorControlsBar; // Legacy preference incorrectly targeted the top toolbar.
   // Discard the temporary player visibility preference from the earlier UI interpretation.
   delete settings.showBottomPlayerBar;
   delete settings.playerBarPreferenceVersion;
@@ -618,7 +683,7 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
   }
   function applyEditorPreferences(){
     $('ttmlEditorLayout').classList.toggle('bottom',settings.wordInspectorLayout==='bottom');
-    document.body.classList.toggle('show-editor-controls-bar',Boolean(settings.showEditorControlsBar));
+    document.body.classList.toggle('show-editor-shortcut-hints',Boolean(settings.showEditorShortcutHints));
   }
   function captureTimelineView(){
     const viewport=$('timelineViewport'),editor=$('wordTimelineEditor');
@@ -778,10 +843,10 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
     }
   }
   function saveSettings() {
-    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorControlsBar']) {
+    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorShortcutHints']) {
       const el=$(key); if (!el) continue;
       settings[key] = ['language','defaultTab','downloadBase','wordInspectorLayout'].includes(key) ? el.value :
-        (key==='autoFollow'||key==='returnToEditAfterGenerate'||key==='autoImportGeneratedOutput'||key==='showEditorControlsBar') ? el.value==='true' : Number(el.value);
+        (key==='autoFollow'||key==='returnToEditAfterGenerate'||key==='autoImportGeneratedOutput'||key==='showEditorShortcutHints') ? el.value==='true' : Number(el.value);
     }
     settings.nudgeStep=Math.min(1,Math.max(.001,Number(settings.nudgeStep)||.02));
     settings.shiftMultiplier=Math.min(50,Math.max(2,Math.round(Number(settings.shiftMultiplier)||5)));
@@ -799,7 +864,7 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
     for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed']) $(key).value=settings[key];
     document.documentElement.style.setProperty('--playhead-label-size',`${settings.playheadLabelSize}px`);
     $('autoFollow').value=String(settings.autoFollow);
-    $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));$('autoImportGeneratedOutput').value=String(Boolean(settings.autoImportGeneratedOutput));$('wordInspectorLayout').value=settings.wordInspectorLayout||'right';$('showEditorControlsBar').value=String(Boolean(settings.showEditorControlsBar));syncGeneratorDefaultsForm();applyEditorPreferences();
+    $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));$('autoImportGeneratedOutput').value=String(Boolean(settings.autoImportGeneratedOutput));$('wordInspectorLayout').value=settings.wordInspectorLayout||'right';$('showEditorShortcutHints').value=String(Boolean(settings.showEditorShortcutHints));syncGeneratorDefaultsForm();applyEditorPreferences();
   }
   function fmtTime(sec, places=3) {
     sec=Math.max(0,Number(sec)||0); const mins=Math.floor(sec/60), secs=sec-mins*60;
@@ -1566,8 +1631,8 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
     trigger.title=wordMode?'TTML word editor shortcuts':'LRC line editor shortcuts';
     trigger.setAttribute('aria-label',label+' editor controls');
     menu.setAttribute('aria-label',label+' editor controls');
-    menu.querySelectorAll('.lrc-controls-section').forEach(el=>el.classList.toggle('hidden',wordMode));
-    menu.querySelectorAll('.ttml-controls-section').forEach(el=>el.classList.toggle('hidden',!wordMode));
+    document.querySelectorAll('.lrc-controls-section').forEach(el=>el.classList.toggle('hidden',wordMode));
+    document.querySelectorAll('.ttml-controls-section').forEach(el=>el.classList.toggle('hidden',!wordMode));
   }
   function setGridMode(mode) {
     const nextMode=mode==='words'?'words':'lines';
@@ -1606,9 +1671,11 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
   }
   function syncEditorActionBar(){
     const wordMode=gridMode==='words';
-    $('addLine').classList.toggle('hidden',wordMode);
+    $('addLine').classList.remove('hidden');
+    $('addLine').disabled=false;
+    $('addLine').textContent='+ Add Line';
+    $('addLine').title=wordMode?'Adds a new TTML lyric line below the selected line':'Inserts a new LRC line below the selected line';
     $('addWord').classList.toggle('hidden',!wordMode);
-    $('addLine').disabled=wordMode;
     $('addWord').disabled=!wordMode||!hasWordTiming;
     $('zoomOut').disabled=!wordMode;$('zoomIn').disabled=!wordMode;$('zoomFit').disabled=!wordMode;
     $('deleteTtmlLine').classList.toggle('hidden',!wordMode);
@@ -2543,7 +2610,7 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
   $('tabLrc').addEventListener('click',()=>{outputMode='lrc';updatePreview();});$('tabTtml').addEventListener('click',()=>{outputMode='ttml';updatePreview();});
   $('saveLrc').addEventListener('click',exportLrc);$('saveLrcTop').addEventListener('click',exportLrc);$('saveTtml').addEventListener('click',exportTtml);$('saveTtmlTop').addEventListener('click',exportTtml);
   $('copyPreview').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(outputMode==='lrc'?lrcOutput():ttmlOutput());toast('Preview copied to clipboard.');}catch(_){toast('Clipboard access was blocked by the browser. Select the preview and copy manually.',true);}});
-  $('addLine').addEventListener('click',addLine);$('addLineTtml').addEventListener('click',addTtmlLine);$('deleteLine').addEventListener('click',deleteEditorSelection);$('deleteTtmlLine').addEventListener('click',()=>removeLineAt(selectedIndex));
+  $('addLine').addEventListener('click',()=>{if(gridMode==='words')addTtmlLine();else addLine();});$('deleteLine').addEventListener('click',deleteEditorSelection);$('deleteTtmlLine').addEventListener('click',()=>removeLineAt(selectedIndex));
   $('wordStart').addEventListener('change',()=>{if(selectedWordRef)setWordTime(selectedWordRef.lineIndex,selectedWordRef.cueIndex,'start',$('wordStart').value);});
   $('wordEnd').addEventListener('change',()=>{if(selectedWordRef)setWordTime(selectedWordRef.lineIndex,selectedWordRef.cueIndex,'end',$('wordEnd').value);});
   $('wordText').addEventListener('change',()=>editSelectedWordText($('wordText').value));
@@ -2961,8 +3028,8 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
       flushActiveWordInspectorField();
     }
   },true);
-  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorControlsBar'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);if(id==='wordInspectorLayout'&&gridMode==='words')rerenderWordTimelinePreservingView();toast('Settings saved.');});
-  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false,wordInspectorLayout:'right',showEditorControlsBar:false,generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}};syncSettingsForm();saveSettings();applyGeneratorDefaults();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
+  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorShortcutHints'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);if(id==='wordInspectorLayout'&&gridMode==='words')rerenderWordTimelinePreservingView();toast('Settings saved.');});
+  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false,wordInspectorLayout:'right',showEditorShortcutHints:false,generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}};syncSettingsForm();saveSettings();applyGeneratorDefaults();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
   document.addEventListener('keydown',e=>{
     if(e.ctrlKey&&e.key.toLowerCase()==='s'){e.preventDefault();if(gridMode==='words')exportTtml();else exportLrc();return;}
     const target=e.target; const lyricEditing=target instanceof HTMLElement&&Boolean(target.closest('.lyric-editor,#wordText'));

@@ -434,7 +434,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Content-Security-Policy", "default-src 'self' 'unsafe-inline' blob: data:; media-src blob: data:; connect-src 'self'; img-src 'self' data: blob:")
         if filename:
-            safe = re.sub(r'[^A-Za-z0-9._ -]', "_", filename)
+            safe = re.sub(r"[^A-Za-z0-9._ '-]", "_", filename)
             self.send_header("Content-Disposition", f'attachment; filename="{safe}"')
         self.end_headers()
         if send_body:

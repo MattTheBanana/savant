@@ -67,12 +67,12 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .file-name{max-width:min(220px,19vw);min-width:60px}
 .status{margin-left:auto;font-size:11px}
 .drag-drop-note{display:none}
-.player-dock{display:none;position:fixed;left:0;right:0;bottom:0;height:var(--player-dock-height);z-index:80;margin:0!important;border-radius:0!important;border-left:0;border-right:0;border-bottom:0;padding:8px 16px;grid-template-columns:minmax(155px,.8fr) minmax(240px,2fr) auto;gap:14px;box-shadow:0 -8px 28px #0005}
+.player-dock{display:grid;position:fixed;left:0;right:0;bottom:0;height:var(--player-dock-height);z-index:80;margin:0!important;border-radius:0!important;border-left:0;border-right:0;border-bottom:0;padding:8px 16px;grid-template-columns:minmax(155px,.8fr) minmax(240px,2fr) auto;gap:14px;box-shadow:0 -8px 28px #0005}
 .player-dock-title{min-width:0;overflow:hidden}
 .player-dock .audio-title{font-size:13px}
 .player-dock .audio-sub{font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .player-dock audio{width:100%;min-width:0;height:38px}
-.player-dock audio::-webkit-media-controls-current-time-display,.player-dock audio::-webkit-media-controls-time-remaining-display{display:none}.player-dock .audio-time{font-size:11px}body.show-player-dock .player-dock{display:grid}
+.player-dock audio::-webkit-media-controls-current-time-display,.player-dock audio::-webkit-media-controls-time-remaining-display{display:none}.player-dock .audio-time{font-size:11px}
 .preview-backdrop{position:fixed;left:0;right:0;top:var(--app-header-height);bottom:var(--player-dock-height);z-index:50;background:#02060bb8;backdrop-filter:blur(1px);transition:opacity .18s ease}
 .preview-backdrop.hidden{display:none!important}
 .preview-drawer{position:fixed;left:0;top:var(--app-header-height);bottom:var(--player-dock-height);width:min(560px,calc(100vw - 28px));z-index:55;display:flex;flex-direction:column;border-radius:0 12px 12px 0;box-shadow:18px 0 45px #0008;transform:translateX(-103%);visibility:hidden;transition:transform .2s ease,visibility .2s ease;overflow:hidden}
@@ -177,7 +177,11 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 #generateScreen,#settingsScreen{flex:1;min-height:0;overflow:auto;width:100%;align-self:stretch}
 .editor-layout{display:grid;grid-template-columns:minmax(0,1fr);align-items:stretch;gap:0;flex:1;min-height:0;overflow:hidden}
 .editor-layout>.panel{display:flex;flex-direction:column;height:100%;min-height:0;overflow:hidden}
-.editor-action-bar{display:grid;grid-template-columns:auto 1px minmax(0,auto) 1px auto 1px minmax(0,1fr) auto;align-items:center;gap:8px;flex:0 0 auto;padding:9px 12px;min-width:0}
+.editor-mode-switch-row{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);background:#0f1622}
+.editor-mode-switch-row .editor-bar-group{display:flex;align-items:center;gap:6px}
+.editor-action-bar{display:grid;grid-template-columns:minmax(0,auto) 1px auto 1px minmax(0,1fr) auto;align-items:center;gap:8px;flex:0 0 auto;padding:9px 12px;min-width:0}
+#editorSep1{display:none}#editorImportGroup{grid-column:1}#editorSep2{grid-column:2}#editorZoomControls{grid-column:3}#editorSep3{grid-column:4}#editorActionButtons{grid-column:5}#timelineControlsTrigger{grid-column:6}
+body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-controls-bar) .timeline-toolbar{display:none!important}
 .editor-bar-group{display:flex;align-items:center;gap:6px;min-width:0}
 #editorModeSwitch{grid-column:1}
 #editorSep1{grid-column:2}
@@ -249,11 +253,12 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   <section id="editScreen">
     <div class="editor-layout">
       <section class="panel" aria-label="Lyrics editing grid">
-        <div class="editor-action-bar" id="editorActionBar" aria-label="Editor actions">
-          <div class="editor-bar-group" id="editorModeSwitch">
+        <div id="editorModeSwitchRow" class="editor-mode-switch-row" aria-label="Editor mode">          <div class="editor-bar-group" id="editorModeSwitch">
             <button id="viewLines" class="small primary" type="button" title="Sync line by line" aria-label="LRC — Sync line by line">LRC</button>
             <button id="viewWords" class="small" type="button" disabled title="Sync word by word" aria-label="TTML — Sync word by word">TTML</button>
-          </div>
+          </div></div>
+        <div class="editor-action-bar" id="editorActionBar" aria-label="Editor controls">
+
           <span class="editor-bar-separator" id="editorSep1" aria-hidden="true"></span>
           <div class="editor-bar-group" id="editorImportGroup">
             <div class="import-group action-import-group"><label class="file-label action-import-button" for="audioFile" title="Choose local audio">Import Audio</label><input id="audioFile" type="file" accept="audio/*"></div>
@@ -407,7 +412,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       <div class="settings-section-heading"><h3>Visuals</h3><p>Timeline context, labels, and selected-word inspector layout.</p></div>
       <div class="setting"><label for="timelineOverlap">Waveform edge context (seconds per side)</label><input id="timelineOverlap" type="number" min="0" max="5" step="0.05" value="0.45"><p>Show this much preceding/following waveform around each lyric line. Ctrl + scroll changes how much context is visible while keeping each line on one screen.</p></div><div class="setting"><label for="playheadLabelSize">Playhead time label size (px)</label><input id="playheadLabelSize" type="number" min="7" max="16" step="1" value="9"><p>Size of the timestamp shown beneath the red playhead marker.</p></div><div class="setting"><label for="dragAutoScrollSpeed">Word-drag edge scroll speed (px/sec)</label><input id="dragAutoScrollSpeed" type="number" min="40" max="1600" step="20" value="320"><p>How quickly the waveform view advances when dragging a word near or beyond a lane edge.</p></div><div class="setting"><label for="wordInspectorLayout">TTML word editor placement</label><select id="wordInspectorLayout"><option value="right">Right side</option><option value="bottom">Below timeline</option></select><p>Place the selected-word fields beside the timeline or stack them underneath it.</p></div>
       <div class="settings-section-heading"><h3>UI</h3><p>Editor navigation, playback visibility, and post-generation behavior.</p></div>
-      <div class="setting"><label for="defaultTab">Default preview</label><select id="defaultTab"><option value="lrc">LRC</option><option value="ttml">TTML</option></select><p>Which export preview to show when the editor opens.</p></div><div class="setting"><label for="autoFollow">Grid follow behavior</label><select id="autoFollow"><option value="true">Keep selected / playing line visible</option><option value="false">Do not auto-scroll</option></select><p>Follows keyboard selection and the active lyric during playback, unless you are typing.</p></div><div class="setting"><label for="showBottomPlayerBar">Bottom audio controls</label><select id="showBottomPlayerBar"><option value="false">Hide bottom audio controls</option><option value="true">Show bottom audio controls</option></select><p>Show or hide the fixed playback bar along the bottom edge of the app.</p></div><div class="setting"><label for="returnToEditAfterGenerate">After generation finishes</label><select id="returnToEditAfterGenerate"><option value="false">Stay on Generate and review results</option><option value="true">Open Edit automatically</option></select><p>Choose whether a completed CLI run takes you straight to the editor.</p></div><div class="setting"><label for="autoImportGeneratedOutput">Automatically import generated files</label><select id="autoImportGeneratedOutput"><option value="false">Off — use Import Output to Edit</option><option value="true">On — load audio and lyrics into Edit</option></select><p>When enabled, load the generated TTML (or LRC if TTML was not requested) and source audio in Edit after a successful run.</p></div>
+      <div class="setting"><label for="defaultTab">Default preview</label><select id="defaultTab"><option value="lrc">LRC</option><option value="ttml">TTML</option></select><p>Which export preview to show when the editor opens.</p></div><div class="setting"><label for="autoFollow">Grid follow behavior</label><select id="autoFollow"><option value="true">Keep selected / playing line visible</option><option value="false">Do not auto-scroll</option></select><p>Follows keyboard selection and the active lyric during playback, unless you are typing.</p></div><div class="setting"><label for="showEditorControlsBar">Editor controls bar</label><select id="showEditorControlsBar"><option value="false">Hidden by default</option><option value="true">Show editor controls</option></select><p>Show import, zoom, add/delete, and context-specific Controls actions above the editor. The LRC/TTML switcher stays visible.</p></div><div class="setting"><label for="returnToEditAfterGenerate">After generation finishes</label><select id="returnToEditAfterGenerate"><option value="false">Stay on Generate and review results</option><option value="true">Open Edit automatically</option></select><p>Choose whether a completed CLI run takes you straight to the editor.</p></div><div class="setting"><label for="autoImportGeneratedOutput">Automatically import generated files</label><select id="autoImportGeneratedOutput"><option value="false">Off — use Import Output to Edit</option><option value="true">On — load audio and lyrics into Edit</option></select><p>When enabled, load the generated TTML (or LRC if TTML was not requested) and source audio in Edit after a successful run.</p></div>
       <div class="settings-section-heading"><h3>Utility</h3><p>Timing adjustments, plain-text defaults, language, and export naming.</p></div>
       <div class="setting"><label for="nudgeStep">Fine nudge step (seconds)</label><input id="nudgeStep" type="number" min="0.001" max="1" step="0.001" value="0.020"><p>Left/right arrow nudges the selected line. Default: 20 ms.</p></div><div class="setting"><label for="shiftMultiplier">Shift + arrow multiplier</label><input id="shiftMultiplier" type="number" min="2" max="50" step="1" value="5"><p>Shift + left/right makes a larger correction.</p></div><div class="setting"><label for="replayLead">Replay lead-in (seconds)</label><input id="replayLead" type="number" min="0" max="15" step="0.1" value="2.0"><p>When starting playback after an edit, begin this long before the edited line.</p></div><div class="setting"><label for="txtSpacing">Initial spacing for plain TXT (seconds)</label><input id="txtSpacing" type="number" min="0.2" max="30" step="0.1" value="3.0"><p>TXT has no timestamps, so this is only an initial placeholder layout.</p></div><div class="setting"><label for="language">TTML language</label><input id="language" type="text" value="en" maxlength="20"><p>BCP-47 language code used in exported TTML.</p></div><div class="setting"><label for="downloadBase">Export filename suffix</label><select id="downloadBase"><option value="same">Use imported lyrics base name</option><option value="audio">Use audio base name</option></select><p>Controls the default downloaded filename.</p></div>
     </div>
@@ -507,19 +512,12 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   let pendingZoomRender = null;
   let settings = {
     nudgeStep: 0.02, shiftMultiplier: 5, replayLead: 2.0, txtSpacing: 3.0,
-    language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, returnToEditAfterGenerate: false, autoImportGeneratedOutput: false, wordInspectorLayout: 'right', showBottomPlayerBar: true
+    language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, returnToEditAfterGenerate: false, autoImportGeneratedOutput: false, wordInspectorLayout: 'right', showEditorControlsBar: false
   };
-  let savedUiSettings = {};
-  try {
-    savedUiSettings = JSON.parse(localStorage.getItem('lyrics-aligner-ui-settings') || '{}');
-    settings = {...settings, ...savedUiSettings};
-  } catch (_) {}
-  // Older saved settings inherited the temporary hidden-player default. Restore it once,
-  // then keep the user's explicit choice on subsequent launches.
-  if (savedUiSettings.playerBarPreferenceVersion !== 1) {
-    settings.showBottomPlayerBar = true;
-    settings.playerBarPreferenceVersion = 1;
-  }
+  try { settings = {...settings, ...JSON.parse(localStorage.getItem('lyrics-aligner-ui-settings') || '{}')}; } catch (_) {}
+  // Discard the temporary player visibility preference from the earlier UI interpretation.
+  delete settings.showBottomPlayerBar;
+  delete settings.playerBarPreferenceVersion;
   delete settings.editorActionAlignment;
   let toastTimer = null;
 
@@ -529,9 +527,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   }
   function applyEditorPreferences(){
     $('ttmlEditorLayout').classList.toggle('bottom',settings.wordInspectorLayout==='bottom');
-    const showPlayer=Boolean(settings.showBottomPlayerBar);
-    document.body.classList.toggle('show-player-dock',showPlayer);
-    document.documentElement.style.setProperty('--player-dock-height',showPlayer?(window.innerWidth<=620?'76px':'82px'):'0px');
+    document.body.classList.toggle('show-editor-controls-bar',Boolean(settings.showEditorControlsBar));
   }
   function captureTimelineView(){
     const viewport=$('timelineViewport'),editor=$('wordTimelineEditor');
@@ -625,10 +621,10 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     restoreHistoryState(next);toast('Redo.');
   }
   function saveSettings() {
-    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showBottomPlayerBar']) {
+    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorControlsBar']) {
       const el=$(key); if (!el) continue;
       settings[key] = ['language','defaultTab','downloadBase','wordInspectorLayout'].includes(key) ? el.value :
-        (key==='autoFollow'||key==='returnToEditAfterGenerate'||key==='autoImportGeneratedOutput'||key==='showBottomPlayerBar') ? el.value==='true' : Number(el.value);
+        (key==='autoFollow'||key==='returnToEditAfterGenerate'||key==='autoImportGeneratedOutput'||key==='showEditorControlsBar') ? el.value==='true' : Number(el.value);
     }
     settings.nudgeStep=Math.min(1,Math.max(.001,Number(settings.nudgeStep)||.02));
     settings.shiftMultiplier=Math.min(50,Math.max(2,Math.round(Number(settings.shiftMultiplier)||5)));
@@ -645,7 +641,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed']) $(key).value=settings[key];
     document.documentElement.style.setProperty('--playhead-label-size',`${settings.playheadLabelSize}px`);
     $('autoFollow').value=String(settings.autoFollow);
-    $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));$('autoImportGeneratedOutput').value=String(Boolean(settings.autoImportGeneratedOutput));$('wordInspectorLayout').value=settings.wordInspectorLayout||'right';$('showBottomPlayerBar').value=String(Boolean(settings.showBottomPlayerBar));applyEditorPreferences();
+    $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));$('autoImportGeneratedOutput').value=String(Boolean(settings.autoImportGeneratedOutput));$('wordInspectorLayout').value=settings.wordInspectorLayout||'right';$('showEditorControlsBar').value=String(Boolean(settings.showEditorControlsBar));applyEditorPreferences();
   }
   function fmtTime(sec, places=3) {
     sec=Math.max(0,Number(sec)||0); const mins=Math.floor(sec/60), secs=sec-mins*60;
@@ -2177,7 +2173,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   });
   $('timelineLanes').addEventListener('auxclick',e=>{if(e.button===1)e.preventDefault();});
   $('timelineLanes').addEventListener('contextmenu',e=>{if(e.target.closest('.lane-waveform-canvas'))e.preventDefault();});
-  window.addEventListener('resize',()=>{applyEditorPreferences();if(gridMode==='words')rerenderWordTimelinePreservingView();});
+  window.addEventListener('resize',()=>{if(gridMode==='words')rerenderWordTimelinePreservingView();});
   $('tabLrc').addEventListener('click',()=>{outputMode='lrc';updatePreview();});$('tabTtml').addEventListener('click',()=>{outputMode='ttml';updatePreview();});
   $('saveLrc').addEventListener('click',exportLrc);$('saveLrcTop').addEventListener('click',exportLrc);$('saveTtml').addEventListener('click',exportTtml);$('saveTtmlTop').addEventListener('click',exportTtml);
   $('copyPreview').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(outputMode==='lrc'?lrcOutput():ttmlOutput());toast('Preview copied to clipboard.');}catch(_){toast('Clipboard access was blocked by the browser. Select the preview and copy manually.',true);}});
@@ -2593,8 +2589,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       flushActiveWordInspectorField();
     }
   },true);
-  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showBottomPlayerBar'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);if(id==='wordInspectorLayout'&&gridMode==='words')rerenderWordTimelinePreservingView();toast('Settings saved.');});
-  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false,wordInspectorLayout:'right',showBottomPlayerBar:true,playerBarPreferenceVersion:1};syncSettingsForm();saveSettings();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
+  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorControlsBar'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);if(id==='wordInspectorLayout'&&gridMode==='words')rerenderWordTimelinePreservingView();toast('Settings saved.');});
+  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false,wordInspectorLayout:'right',showEditorControlsBar:false};syncSettingsForm();saveSettings();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
   document.addEventListener('keydown',e=>{
     if(e.ctrlKey&&e.key.toLowerCase()==='s'){e.preventDefault();if(gridMode==='words')exportTtml();else exportLrc();return;}
     const target=e.target; const lyricEditing=target instanceof HTMLElement&&Boolean(target.closest('.lyric-editor,#wordText'));

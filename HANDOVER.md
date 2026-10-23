@@ -229,3 +229,8 @@ User-specific collaboration guidance:
 - Fixed the underlying gesture: when Ctrl/Cmd is held on an already-selected word in a multi-selection, pointer-down now arms a pending single-word drag instead of immediately toggling the word out of the selection. Crossing the pointer movement threshold begins moving only that word. Releasing without moving still performs the normal Ctrl/Cmd-click selection toggle.
 - Ctrl-drag is limited to word bodies, not resize handles. Ordinary group drags and Shift-drag snap behavior remain on their existing paths.
 - Static validation passed: inline JavaScript compiles; no duplicate static HTML IDs; separate help rows and the Ctrl-drag pending/movement/toggle paths are present. Interactive pointer testing remains outstanding.
+
+## Clarified TTML Shift-drag snapping label
+
+- Updated the TTML Controls wording to `Shift + Left Click + Drag on Selection` — “Snaps the selection to the time grid or playhead when close.”
+- Static validation passed: inline JavaScript parses, no duplicate static HTML IDs, and the previous label/description are removed.

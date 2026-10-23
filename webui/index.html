@@ -6,7 +6,11 @@
 <title>savant • Edit</title>
 <style>
 :root{color-scheme:dark;--bg:#0c111b;--panel:#151c29;--panel2:#1b2534;--border:#2d3a4d;--text:#edf3fb;--muted:#9aa9be;--accent:#76e4c1;--accent2:#8bb8ff;--warn:#f5ce81;--danger:#ff9696;--radius:13px;--mono:ui-monospace,SFMono-Regular,Consolas,monospace;font-synthesis:none}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(1100px 500px at 15% -10%,#1b3045 0,transparent 68%),var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;color:var(--text);background:#233146;border:1px solid #394b62;border-radius:9px;padding:8px 12px}button:hover{border-color:var(--accent2);background:#2a3a51}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}button.primary{background:#246451;border-color:#328b70}button.primary:hover{background:#2c7b63}button.danger{background:#512b35;border-color:#793f4c}button.small{padding:5px 9px;font-size:12px}.app-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-bottom:1px solid #263244;background:#0f1622d9;position:sticky;top:0;z-index:5;backdrop-filter:blur(14px)}.brand{display:flex;align-items:center;gap:12px}.brand-mark{height:38px;width:38px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(135deg,#2e9578,#5b8ed2);color:#fff;font-size:21px;font-weight:800}.brand h1{font-size:17px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.header-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.shell{max-width:1500px;margin:0 auto;padding:20px 22px 36px}.nav{display:flex;gap:8px;margin-bottom:16px}.nav button{background:transparent;color:var(--muted);border-color:transparent}.nav button.active{color:var(--text);background:var(--panel2);border-color:var(--border)}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);padding:12px;border-radius:var(--radius);margin-bottom:14px}.file-label{display:inline-flex;gap:8px;align-items:center;background:#223147;border:1px solid #394b62;border-radius:9px;padding:8px 12px;cursor:pointer}.file-label:hover{border-color:var(--accent2)}input[type=file]{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.file-name{color:var(--muted);font-size:12px;max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.status{margin-left:auto;color:var(--muted);font-size:12px}.status strong{color:var(--accent);font-weight:600}.audio-panel{display:grid;grid-template-columns:minmax(220px,1fr) minmax(280px,2fr) auto;gap:16px;align-items:center;background:var(--panel);border:1px solid var(--border);padding:12px 15px;border-radius:var(--radius);margin-bottom:14px}.audio-title{font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.audio-sub{font-size:12px;color:var(--muted);margin-top:2px}.audio-panel audio{width:100%;height:36px}.audio-time{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}.editor-layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(320px,.7fr);gap:14px;align-items:start}.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;min-width:0}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 15px;border-bottom:1px solid var(--border)}.panel-head h2{font-size:14px;margin:0}.panel-head p{font-size:12px;color:var(--muted);margin:3px 0 0}.panel-actions{display:flex;gap:7px;flex-wrap:wrap}.editor-action-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 15px;border-bottom:1px solid var(--border);background:#111a27}.editor-actions-label{margin-right:auto;color:var(--muted);font-size:11px;font-weight:650;text-transform:uppercase;letter-spacing:.06em}@media(max-width:540px){.editor-action-bar{padding:9px 10px}.editor-actions-label{width:100%;margin:0}}.table-wrap{overflow:auto;max-height:calc(100vh - 360px);min-height:300px}table{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed}thead th{position:sticky;top:0;background:#1a2433;color:#afbed1;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.07em;padding:10px 12px;border-bottom:1px solid var(--border);z-index:1}th.num,td.num{width:54px;text-align:right}th.time,td.time{width:142px}tbody tr{background:transparent}tbody tr:hover{background:#1a2636}tbody tr.selected{background:#1b3440;box-shadow:inset 3px 0 var(--accent)}td{padding:5px 8px;border-bottom:1px solid #263142;vertical-align:middle}td.num{padding-right:12px;color:#75879f;font-family:var(--mono);font-size:12px}td.time input,td.lyric input{width:100%;background:transparent;border:1px solid transparent;border-radius:6px;color:var(--text);padding:8px 7px;outline:none}td.time input{font-family:var(--mono);font-size:12px;color:#a9d8cf}td.lyric input{font-size:13px}td.time input:focus,td.lyric input:focus{background:#0e1622;border-color:#527d83;outline:none}td.lyric input{min-width:120px}tbody tr.flagged td.num::after{content:' !';color:var(--warn);font-weight:bold}.grid-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;color:var(--muted);font-size:12px}.shortcut{font-family:var(--mono);background:#0b111a;border:1px solid #37465b;padding:2px 5px;border-radius:5px;color:#c8d4e3}.preview-tabs{display:flex;gap:7px}.preview-tabs button{font-size:12px;padding:5px 9px}.preview-tabs button.active{background:#245346;border-color:#367b66}.preview{white-space:pre;overflow:auto;max-height:calc(100vh - 385px);min-height:300px;margin:0;padding:14px;background:#0b1019;color:#c8d7e8;font:12px/1.65 var(--mono);tab-size:2}.preview-info{padding:10px 14px;border-top:1px solid var(--border);color:var(--muted);font-size:12px}.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:17px}.settings-section-heading{grid-column:1/-1;margin-top:4px;padding:8px 0 2px;border-bottom:1px solid var(--border)}.settings-section-heading h3{margin:0;color:#d7e5f5;font-size:12px;text-transform:uppercase;letter-spacing:.08em}.settings-section-heading p{margin:2px 0 7px;color:var(--muted);font-size:11px}.path-input-control{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px;align-items:center}.path-input-control input{min-width:0;width:100%}.path-action-button{white-space:nowrap}.setting{display:flex;flex-direction:column;gap:6px}.setting label{font-weight:600}.setting p{margin:0;color:var(--muted);font-size:12px}.setting input,.setting select{width:100%;background:#0e1622;border:1px solid var(--border);border-radius:8px;padding:9px 10px;color:var(--text)}.hidden{display:none!important}.footer-note{margin-top:14px;color:var(--muted);font-size:12px;text-align:center}.toast{position:fixed;right:20px;bottom:20px;background:#173b32;border:1px solid #377761;color:#e2fff4;padding:11px 15px;border-radius:10px;box-shadow:0 10px 30px #0005;z-index:20;max-width:min(500px,calc(100vw - 40px))}.toast.error{background:#48242d;border-color:#874756;color:#ffe6e6}.badge{font-size:11px;border:1px solid #3c4b62;border-radius:20px;padding:3px 8px;color:var(--muted)}.badge.good{border-color:#367b66;color:var(--accent)}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(1100px 500px at 15% -10%,#1b3045 0,transparent 68%),var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;color:var(--text);background:#233146;border:1px solid #394b62;border-radius:9px;padding:8px 12px}button:hover{border-color:var(--accent2);background:#2a3a51}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}button.primary{background:#246451;border-color:#328b70}button.primary:hover{background:#2c7b63}button.danger{background:#512b35;border-color:#793f4c}button.small{padding:5px 9px;font-size:12px}.app-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-bottom:1px solid #263244;background:#0f1622d9;position:sticky;top:0;z-index:5;backdrop-filter:blur(14px)}.brand{display:flex;align-items:center;gap:12px}.brand-mark{height:38px;width:38px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(135deg,#2e9578,#5b8ed2);color:#fff;font-size:21px;font-weight:800}.brand h1{font-size:17px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.header-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.shell{max-width:1500px;margin:0 auto;padding:20px 22px 36px}.nav{display:flex;gap:8px;margin-bottom:16px}.nav button{background:transparent;color:var(--muted);border-color:transparent}.nav button.active{color:var(--text);background:var(--panel2);border-color:var(--border)}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);padding:12px;border-radius:var(--radius);margin-bottom:14px}.file-label{display:inline-flex;gap:8px;align-items:center;background:#223147;border:1px solid #394b62;border-radius:9px;padding:8px 12px;cursor:pointer}.file-label:hover{border-color:var(--accent2)}input[type=file]{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.file-name{color:var(--muted);font-size:12px;max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.status{margin-left:auto;color:var(--muted);font-size:12px}.status strong{color:var(--accent);font-weight:600}.audio-panel{display:grid;grid-template-columns:minmax(220px,1fr) minmax(280px,2fr) auto;gap:16px;align-items:center;background:var(--panel);border:1px solid var(--border);padding:12px 15px;border-radius:var(--radius);margin-bottom:14px}.audio-title{font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.audio-sub{font-size:12px;color:var(--muted);margin-top:2px}.audio-panel audio{width:100%;height:36px}.audio-time{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}.editor-layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(320px,.7fr);gap:14px;align-items:start}.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;min-width:0}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 15px;border-bottom:1px solid var(--border)}.panel-head h2{font-size:14px;margin:0}.panel-head p{font-size:12px;color:var(--muted);margin:3px 0 0}.panel-actions{display:flex;gap:7px;flex-wrap:wrap}.editor-action-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 15px;border-bottom:1px solid var(--border);background:#111a27}.editor-actions-label{margin-right:auto;color:var(--muted);font-size:11px;font-weight:650;text-transform:uppercase;letter-spacing:.06em}@media(max-width:540px){.editor-action-bar{padding:9px 10px}.editor-actions-label{width:100%;margin:0}}.table-wrap{overflow:auto;max-height:calc(100vh - 360px);min-height:300px}table{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed}thead th{position:sticky;top:0;background:#1a2433;color:#afbed1;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.07em;padding:10px 12px;border-bottom:1px solid var(--border);z-index:1}th.num,td.num{width:54px;text-align:right}th.time,td.time{width:142px}tbody tr{background:transparent}tbody tr:hover{background:#1a2636}tbody tr.selected{background:#1b3440;box-shadow:inset 3px 0 var(--accent)}
+tbody tr.selected td.num{color:var(--accent);font-weight:800;background:#203748}
+.timeline-lane-row.selected-lane{background:#1b3440!important;outline:1px solid #76e4c188;outline-offset:-1px}
+.timeline-lane-row.selected-lane .timeline-label{background:#214052!important;border-right-color:var(--accent)}
+.timeline-lane-row.selected-lane .timeline-label strong{color:var(--accent)}td{padding:5px 8px;border-bottom:1px solid #263142;vertical-align:middle}td.num{padding-right:12px;color:#75879f;font-family:var(--mono);font-size:12px}td.time input,td.lyric input{width:100%;background:transparent;border:1px solid transparent;border-radius:6px;color:var(--text);padding:8px 7px;outline:none}td.time input{font-family:var(--mono);font-size:12px;color:#a9d8cf}td.lyric input{font-size:13px}td.time input:focus,td.lyric input:focus{background:#0e1622;border-color:#527d83;outline:none}td.lyric input{min-width:120px}tbody tr.flagged td.num::after{content:' !';color:var(--warn);font-weight:bold}.grid-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;color:var(--muted);font-size:12px}.shortcut{font-family:var(--mono);background:#0b111a;border:1px solid #37465b;padding:2px 5px;border-radius:5px;color:#c8d4e3}.preview-tabs{display:flex;gap:7px}.preview-tabs button{font-size:12px;padding:5px 9px}.preview-tabs button.active{background:#245346;border-color:#367b66}.preview{white-space:pre;overflow:auto;max-height:calc(100vh - 385px);min-height:300px;margin:0;padding:14px;background:#0b1019;color:#c8d7e8;font:12px/1.65 var(--mono);tab-size:2}.preview-info{padding:10px 14px;border-top:1px solid var(--border);color:var(--muted);font-size:12px}.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:17px}.settings-section-heading{grid-column:1/-1;margin-top:4px;padding:8px 0 2px;border-bottom:1px solid var(--border)}.settings-section-heading h3{margin:0;color:#d7e5f5;font-size:12px;text-transform:uppercase;letter-spacing:.08em}.settings-section-heading p{margin:2px 0 7px;color:var(--muted);font-size:11px}.path-input-control{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px;align-items:center}.path-input-control input{min-width:0;width:100%}.path-action-button{white-space:nowrap}.setting{display:flex;flex-direction:column;gap:6px}.setting label{font-weight:600}.setting p{margin:0;color:var(--muted);font-size:12px}.setting input,.setting select{width:100%;background:#0e1622;border:1px solid var(--border);border-radius:8px;padding:9px 10px;color:var(--text)}.hidden{display:none!important}.footer-note{margin-top:14px;color:var(--muted);font-size:12px;text-align:center}.toast{position:fixed;right:20px;bottom:20px;background:#173b32;border:1px solid #377761;color:#e2fff4;padding:11px 15px;border-radius:10px;box-shadow:0 10px 30px #0005;z-index:20;max-width:min(500px,calc(100vw - 40px))}.toast.error{background:#48242d;border-color:#874756;color:#ffe6e6}.badge{font-size:11px;border:1px solid #3c4b62;border-radius:20px;padding:3px 8px;color:var(--muted)}.badge.good{border-color:#367b66;color:var(--accent)}
 
 /* Live playback preview and drag/drop affordance. */
 tbody tr.playing{background:#25394d;box-shadow:inset 4px 0 var(--accent2)}
@@ -677,6 +681,9 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   let timelineTrackWidth = 600;
   let timelineGeometryReady = false;
   let selectedWordKeys = new Set();
+  let wordSelectionAnchorKey = null;
+  let selectedLineIndices = new Set();
+  let lineSelectionAnchor = -1;
   let agentPresets = [];
   try { agentPresets = JSON.parse(localStorage.getItem('savant-agent-presets') || '[]'); if(!Array.isArray(agentPresets))agentPresets=[]; } catch (_) { agentPresets=[]; }
   let colorPickerTab = 'palette';
@@ -802,7 +809,8 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       lyricFileName:$('lyricsFileName')?.textContent||'',
       selectedIndex,lastEditedIndex,replayFromAnchor,gridMode,
       selectedWordRef:selectedWordRef?{...selectedWordRef}:null,
-      selectedWordKeys:[...selectedWordKeys],focus
+      selectedWordKeys:[...selectedWordKeys],wordSelectionAnchorKey,
+      selectedLineIndices:[...selectedLineIndices],lineSelectionAnchor,focus
     };
   }
   function historyContent(state) {
@@ -824,7 +832,8 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       hasWordTiming=state.hasWordTiming;importedLyricsName=state.importedLyricsName;
       selectedIndex=state.selectedIndex;lastEditedIndex=state.lastEditedIndex;replayFromAnchor=state.replayFromAnchor;
       gridMode=state.gridMode;selectedWordRef=state.selectedWordRef?{...state.selectedWordRef}:null;
-      selectedWordKeys=new Set(state.selectedWordKeys||[]);
+      selectedWordKeys=new Set(state.selectedWordKeys||[]);wordSelectionAnchorKey=state.wordSelectionAnchorKey||null;
+      selectedLineIndices=new Set((state.selectedLineIndices||[]).filter(i=>Number.isInteger(i)&&i>=0&&i<rows.length));lineSelectionAnchor=Number.isInteger(state.lineSelectionAnchor)?state.lineSelectionAnchor:-1;
       $('lyricsFileName').textContent=state.lyricFileName;
       renderGrid();updatePreview();updateStatus();updateWordInspector();restoreTimelineView(state.timelineView);
       const focus=state.focus;
@@ -1784,7 +1793,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   }
   function importParsed(parsed,name) {
     const historyBefore=captureHistoryState();
-    rows=parsed.rows; metadata=parsed.metadata||[]; ttmlHeadInner=parsed.head||''; sourceFormat=parsed.format; hasWordTiming=Boolean(parsed.wordTiming); gridMode='lines'; selectedWordRef=null; selectedWordKeys.clear(); refreshAgentPresetsFromParsed(parsed);
+    rows=parsed.rows; metadata=parsed.metadata||[]; ttmlHeadInner=parsed.head||''; sourceFormat=parsed.format; hasWordTiming=Boolean(parsed.wordTiming); gridMode='lines'; selectedWordRef=null; selectedWordKeys.clear();wordSelectionAnchorKey=null;selectedLineIndices=new Set(rows.length?[0]:[]);lineSelectionAnchor=rows.length?0:-1; refreshAgentPresetsFromParsed(parsed);
     importedLyricsName=(name||'lyrics').replace(/\.(lrc|ttml|xml|txt)$/i,'')||'lyrics';
     selectedIndex=rows.length?0:-1; lastEditedIndex=-1; replayFromAnchor=true;
     if(rows.length) { renderGrid(); setSelected(0,true); }
@@ -1836,28 +1845,70 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     const wordCount=rows.reduce((total,row)=>total+(String(row.text||'').match(/\S+/g)||[]).length,0);
     $('gridStatus').textContent=`${rows.length} lines · ${wordCount} words`;
   }
+  function refreshLineSelectionVisuals(){
+    const selected=selectedLineIndices;
+    for(const tr of $('gridBody').querySelectorAll('tr[data-index]'))tr.classList.toggle('selected',selected.has(Number(tr.dataset.index)));
+    for(const lane of $('timelineLanes').querySelectorAll('.timeline-lane-row[data-line-index]'))lane.classList.toggle('selected-lane',selected.has(Number(lane.dataset.lineIndex)));
+    syncEditorActionBar();updateLrcJumpToLineVisibility();
+  }
+  function selectLineSelection(index,event=null,focusRow=false){
+    if(!Number.isInteger(index)||index<0||index>=rows.length)return;
+    const shift=Boolean(event?.shiftKey),toggle=Boolean(event?.ctrlKey||event?.metaKey);
+    if(gridMode==='words'){
+      selectedWordKeys.clear();selectedWordRef=null;wordSelectionAnchorKey=null;
+      refreshWordSelection();updateWordInspector();
+    }
+    if(toggle){
+      if(selectedLineIndices.has(index))selectedLineIndices.delete(index);
+      else selectedLineIndices.add(index);
+      if(lineSelectionAnchor<0||lineSelectionAnchor>=rows.length)lineSelectionAnchor=index;
+    }else if(shift){
+      const anchor=lineSelectionAnchor>=0&&lineSelectionAnchor<rows.length?lineSelectionAnchor:
+        selectedIndex>=0&&selectedIndex<rows.length?selectedIndex:index;
+      selectedLineIndices=new Set();
+      for(let i=Math.min(anchor,index);i<=Math.max(anchor,index);i++)selectedLineIndices.add(i);
+      if(lineSelectionAnchor<0)lineSelectionAnchor=anchor;
+    }else{
+      selectedLineIndices=new Set([index]);lineSelectionAnchor=index;
+    }
+    const chosen=selectedLineIndices.has(index)?index:[...selectedLineIndices].sort((a,b)=>a-b).at(-1);
+    selectedIndex=Number.isInteger(chosen)?chosen:-1;
+    lastEditedIndex=selectedIndex;
+    replayFromAnchor=true;
+    refreshLineSelectionVisuals();
+    if(settings.autoFollow&&selectedIndex>=0){
+      const row=$('gridBody').querySelector('tr[data-index="'+selectedIndex+'"]');
+      const lane=$('timelineLanes').querySelector('.timeline-lane-row[data-line-index="'+selectedIndex+'"]');
+      if(gridMode==='words'&&lane)scrollTimelineElementIntoView(lane);
+      else if(row)scrollElementToCenter($('lineTableWrap'),row);
+    }
+    if(focusRow&&selectedIndex>=0){
+      const row=$('gridBody').querySelector('tr[data-index="'+selectedIndex+'"]');
+      row?.focus();
+    }
+    updateStatus();updateLrcJumpToLineVisibility();syncEditorActionBar();
+  }
   function renderLineGrid() {
     const tbody=$('gridBody'); tbody.textContent=''; activePlaybackIndex=-1; activeWordIndex=-1;
+    if(!selectedLineIndices.size&&selectedIndex>=0&&selectedIndex<rows.length){selectedLineIndices.add(selectedIndex);if(lineSelectionAnchor<0)lineSelectionAnchor=selectedIndex;}
     if(!rows.length){tbody.innerHTML='<tr><td colspan="3" style="padding:30px;text-align:center;color:#91a1b5">Import an LRC, TTML, or TXT lyrics file.</td></tr>'; updateGridStats(); return;}
     const frag=document.createDocumentFragment();
     rows.forEach((row,i)=>{
-      const tr=document.createElement('tr'); tr.dataset.index=String(i); tr.tabIndex=0; if(i===selectedIndex) tr.classList.add('selected'); if(row.flagged) tr.classList.add('flagged');
+      const tr=document.createElement('tr'); tr.dataset.index=String(i); tr.tabIndex=0; if(selectedLineIndices.has(i)) tr.classList.add('selected'); if(row.flagged) tr.classList.add('flagged');
       const num=document.createElement('td'); num.className='num'; num.textContent=String(i+1); num.setAttribute('aria-label',`Line ${i+1}`);
       const time=document.createElement('td'); time.className='time'; const timeInput=document.createElement('input'); timeInput.type='text'; timeInput.value=fmtTime(row.start); timeInput.className='time-input'; timeInput.setAttribute('aria-label',`Line ${i+1} timestamp`); timeInput.spellcheck=false; timeInput.autocomplete='off';
       time.append(timeInput);
       const lyric=document.createElement('td'); lyric.className='lyric'; const textEditor=document.createElement('div'); textEditor.contentEditable='true'; textEditor.setAttribute('role','textbox'); textEditor.setAttribute('aria-multiline','false'); textEditor.setAttribute('aria-label',`Line ${i+1} lyrics`); textEditor.className='lyric-editor'; textEditor.spellcheck=false; textEditor.autocapitalize='off';
       renderWordAwareEditor(textEditor,row);
       lyric.append(textEditor); tr.append(num,time,lyric); frag.append(tr);
-      tr.addEventListener('click',()=>setSelected(i,false));
-      tr.addEventListener('focusin',()=>setSelected(i,false));
-      timeInput.addEventListener('focus',()=>setSelected(i,false));
+      tr.addEventListener('click',e=>selectLineSelection(i,e));
+      tr.addEventListener('focusin',e=>{if(e.target===tr&&!selectedLineIndices.has(i))selectLineSelection(i,null);});
       timeInput.addEventListener('change',()=>{
         const parsed=parseTime(timeInput.value);
         if(parsed===null||!Number.isFinite(parsed)||parsed<0){timeInput.value=fmtTime(row.start);toast('Timestamp must be MM:SS.mmm, HH:MM:SS.mmm, or seconds.',true);return;}
         shiftRowTime(i,parsed,true); timeInput.value=fmtTime(row.start); replayFromAnchor=true; renderPreviewOnly(); updateStatus(); updateLiveHighlight();
       });
       timeInput.addEventListener('keydown',e=>{ if(e.key==='Enter'){timeInput.blur();} if(e.key==='Escape'){timeInput.value=fmtTime(row.start);timeInput.blur();} });
-      textEditor.addEventListener('focus',()=>setSelected(i,false));
       textEditor.addEventListener('input',()=>{
         const historyBefore=captureHistoryState(),hadWordTiming=hasWordTiming;
         const newText=textEditor.textContent.replace(/\u00a0/g,' ');
@@ -1975,12 +2026,13 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     $('zoomIn').title=!timelineAvailable?'Timeline zoom is available when TTML word cues are loaded':currentZoom>=2000?'Maximum timeline zoom reached':'Zoom in the TTML timeline';
     $('zoomFit').title=!timelineAvailable?'Fit Lines is available when TTML word cues are loaded':atFit?'Lines are already fitted':'Fit the longest available line context to the lane';
     $('deleteTtmlLine').classList.toggle('hidden',!wordMode);
-    $('deleteTtmlLine').disabled=!wordMode||selectedIndex<0||selectedIndex>=rows.length;
-    $('deleteLine').textContent=wordMode?(selectedWordKeys.size>1?'Delete Words':'Delete Word'):'Delete Line';
+    $('deleteTtmlLine').textContent=selectedLineIndices.size>1?'Delete Lines':'Delete Line';
+    $('deleteTtmlLine').disabled=!wordMode||(!selectedLineIndices.size&&(selectedIndex<0||selectedIndex>=rows.length));
+    $('deleteLine').textContent=wordMode?(selectedWordKeys.size>1?'Delete Words':'Delete Word'):(selectedLineIndices.size>1?'Delete Lines':'Delete Line');
     $('deleteLine').setAttribute('aria-label',wordMode?(selectedWordKeys.size>1?'Delete selected word cues':'Delete selected word cue'):'Delete selected line');
     $('deleteLine').disabled=wordMode
       ? !(selectedWordKeys.size||selectedWordRef)
-      : selectedIndex<0||selectedIndex>=rows.length;
+      : !selectedLineIndices.size;
   }
   function allWordRefs() {
     const refs=[];
@@ -2078,15 +2130,30 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   }
   function selectWord(lineIndex,cueIndex,focus=false,extend=false,toggle=false) {
     flushActiveWordInspectorField();
-    const key=wordKey(lineIndex,cueIndex);
-    if(toggle){if(selectedWordKeys.has(key))selectedWordKeys.delete(key);else selectedWordKeys.add(key);if(!selectedWordKeys.size)selectedWordKeys.add(key);}
-    else if(extend)selectedWordKeys.add(key);
-    else {selectedWordKeys.clear();selectedWordKeys.add(key);}
-    selectedIndex=lineIndex; selectedWordRef={lineIndex,cueIndex}; lastEditedIndex=lineIndex; replayFromAnchor=true;
+    const key=wordKey(lineIndex,cueIndex),refs=allWordRefs();
+    if(toggle){
+      if(selectedWordKeys.has(key))selectedWordKeys.delete(key);else selectedWordKeys.add(key);
+      if(!wordSelectionAnchorKey)wordSelectionAnchorKey=key;
+    }else if(extend){
+      const anchorKey=wordSelectionAnchorKey||(selectedWordRef?wordKey(selectedWordRef.lineIndex,selectedWordRef.cueIndex):key);
+      let anchorIndex=refs.findIndex(ref=>wordKey(ref.lineIndex,ref.cueIndex)===anchorKey);
+      let targetIndex=refs.findIndex(ref=>wordKey(ref.lineIndex,ref.cueIndex)===key);
+      if(anchorIndex<0)anchorIndex=targetIndex;
+      if(targetIndex<0)targetIndex=anchorIndex;
+      selectedWordKeys=new Set(refs.slice(Math.min(anchorIndex,targetIndex),Math.max(anchorIndex,targetIndex)+1).map(ref=>wordKey(ref.lineIndex,ref.cueIndex)));
+      if(!wordSelectionAnchorKey)wordSelectionAnchorKey=anchorKey;
+    }else{
+      selectedWordKeys.clear();selectedWordKeys.add(key);wordSelectionAnchorKey=key;
+    }
+    selectedLineIndices.clear();lineSelectionAnchor=-1;
+    selectedWordRef=selectedWordKeys.has(key)?{lineIndex,cueIndex}:
+      (selectedWordKeys.size?parseWordKey([...selectedWordKeys][0]):null);
+    selectedIndex=selectedWordRef?.lineIndex??lineIndex;
+    lastEditedIndex=selectedIndex;replayFromAnchor=true;
     refreshWordSelection();
-    let ref=$('timelineLanes').querySelector(`.word-clip[data-line-index="${lineIndex}"][data-cue-index="${cueIndex}"]`);
-    const content=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`),cue=rows[lineIndex]?.wordCues?.[cueIndex];
-    if(content&&cue&&(cue.start<Number(content.dataset.windowStart)-.01||cue.end>Number(content.dataset.windowEnd)+.01)){rerenderWordTimelinePreservingView();ref=$('timelineLanes').querySelector(`.word-clip[data-line-index="${lineIndex}"][data-cue-index="${cueIndex}"]`);}
+    let ref=$('timelineLanes').querySelector('.word-clip[data-line-index="'+lineIndex+'"][data-cue-index="'+cueIndex+'"]');
+    const content=$('timelineLanes').querySelector('.timeline-lane-row[data-line-index="'+lineIndex+'"] .timeline-lane-content'),cue=rows[lineIndex]?.wordCues?.[cueIndex];
+    if(content&&cue&&(cue.start<Number(content.dataset.windowStart)-.01||cue.end>Number(content.dataset.windowEnd)+.01)){rerenderWordTimelinePreservingView();ref=$('timelineLanes').querySelector('.word-clip[data-line-index="'+lineIndex+'"][data-cue-index="'+cueIndex+'"]');}
     if(settings.autoFollow&&ref)scrollTimelineElementIntoView(ref);
     if(focus)ref?.focus();
     updateWordInspector();updateStatus();
@@ -2395,6 +2462,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     clip.addEventListener('pointerdown',e=>{
       if(e.button!==0)return;
       const key=wordKey(lineIndex,cueIndex),shiftDrag=e.shiftKey,edge=e.target instanceof HTMLElement?e.target.dataset.resize:'',ctrlDrag=(e.ctrlKey||e.metaKey)&&selectedWordKeys.has(key)&&selectedWordKeys.size>1;
+      if((e.ctrlKey||e.metaKey)&&!edge){selectWord(lineIndex,cueIndex,false,false,true);e.preventDefault();return;}
       if(shiftDrag&&!edge){
         // Shift-click extends selection; Shift-drag a word body also enables playhead snap.
         if(!selectedWordKeys.has(key))selectWord(lineIndex,cueIndex,false,true,false);
@@ -2429,6 +2497,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
 
     function renderWordGrid() {
     const tbody=$('timelineLanes');tbody.textContent='';activePlaybackIndex=-1;activeWordIndex=-1;
+    if(!selectedLineIndices.size&&selectedIndex>=0&&selectedIndex<rows.length&&!selectedWordRef){selectedLineIndices.add(selectedIndex);if(lineSelectionAnchor<0)lineSelectionAnchor=selectedIndex;}
     $('lineTableWrap').classList.add('hidden');$('wordTimelineEditor').classList.remove('hidden');
     $('ttmlEditorLayout').classList.toggle('empty',!hasWordTiming);
     setTimelineGeometry();
@@ -2436,7 +2505,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     const frag=document.createDocumentFragment();let cueCount=0;
     for(let lineIndex=0;lineIndex<rows.length;lineIndex++){
       const row=rows[lineIndex],win=getLineWindow(lineIndex),pps=timelineTrackWidth/Math.max(.08,win.end-win.start);
-      const lane=document.createElement('div');lane.className='timeline-lane-row';lane.dataset.lineIndex=String(lineIndex);lane.style.setProperty('--lane-height','122px');
+      const lane=document.createElement('div');lane.className='timeline-lane-row';lane.dataset.lineIndex=String(lineIndex);lane.classList.toggle('selected-lane',selectedLineIndices.has(lineIndex));lane.style.setProperty('--lane-height','122px');
       const label=document.createElement('div');label.className='timeline-label';
       const number=document.createElement('strong');number.textContent=`Line ${lineIndex+1}`;
       const start=document.createElement('span');start.className='lane-start';start.textContent=fmtTime(row.start,2);
@@ -2494,12 +2563,12 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
 
     function finishMarquee(e) {
     const m=marqueeState;if(!m||m.pointerId!==e.pointerId)return;marqueeState=null;$('timelineSelectionBox').classList.remove('visible');
-    if(m.moved){suppressTimelineClick=true;setTimeout(()=>{suppressTimelineClick=false;},0);const first=[...selectedWordKeys][0];if(first){selectedWordRef=parseWordKey(first);selectedIndex=selectedWordRef.lineIndex;lastEditedIndex=selectedIndex;}else selectedWordRef=null;updateWordInspector();updateStatus();toast(`${selectedWordKeys.size} word(s) selected. Drag a selected clip or use arrow keys to shift the group.`);}
+    if(m.moved){suppressTimelineClick=true;setTimeout(()=>{suppressTimelineClick=false;},0);const first=[...selectedWordKeys][0];if(first){selectedWordRef=parseWordKey(first);wordSelectionAnchorKey=first;selectedIndex=selectedWordRef.lineIndex;lastEditedIndex=selectedIndex;}else{selectedWordRef=null;wordSelectionAnchorKey=null;}updateWordInspector();updateStatus();toast(`${selectedWordKeys.size} word(s) selected. Drag a selected clip or use arrow keys to shift the group.`);}
     else if(m.lineIndex!==null){
       // Pointer capture may retarget the synthetic click to the lane container.
-      // Clear here as well so a plain click in empty track space always deselects.
-      selectedWordKeys.clear();selectedWordRef=null;selectedIndex=m.lineIndex;lastEditedIndex=m.lineIndex;
-      refreshWordSelection();updateWordInspector();updateStatus();
+      // Handle selection here and suppress the follow-up synthetic click.
+      suppressTimelineClick=true;setTimeout(()=>{suppressTimelineClick=false;},0);
+      selectLineSelection(m.lineIndex,null);
     }
   }
   function renderGrid() {
@@ -2533,11 +2602,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       if(first>=0){selectWord(index,first,focusRow);return;}
       toast(`Line ${index+1} has no word-level TTML cues.`,true);return;
     }
-    selectedIndex=index;
-    for(const tr of $('gridBody').querySelectorAll('tr[data-index]'))tr.classList.toggle('selected',Number(tr.dataset.index)===index);
-    if(settings.autoFollow){const tr=$('gridBody').querySelector(`tr[data-index="${index}"]`);if(tr)scrollElementToCenter($('lineTableWrap'),tr);}
-    if(focusRow){const row=$('gridBody').querySelector(`tr[data-index="${index}"]`);row?.focus();}
-    syncEditorActionBar();updateStatus();updateLrcJumpToLineVisibility();
+    selectLineSelection(index,null,focusRow);
   }
   function nudgeSelected(delta) {
     if(selectedIndex<0||selectedIndex>=rows.length)return;
@@ -2769,9 +2834,18 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     rows.splice(index,0,makeRow(start,'')); selectedIndex=index;lastEditedIndex=index;replayFromAnchor=true;renderGrid();setSelected(index,true);const input=$('gridBody').querySelector(`tr[data-index="${index}"] .lyric-editor`);input?.focus();updatePreview();updateStatus();commitHistoryChange(historyBefore);
   }
   function deleteLine(){
-    if(selectedIndex<0||selectedIndex>=rows.length)return;
-    const historyBefore=captureHistoryState();
-    rows.splice(selectedIndex,1);selectedIndex=Math.min(selectedIndex,rows.length-1);lastEditedIndex=selectedIndex;replayFromAnchor=true;selectedWordRef=null;selectedWordKeys.clear();hasWordTiming=rows.some(r=>r.wordCues&&r.wordCues.length);renderGrid();if(selectedIndex>=0)setSelected(selectedIndex,true);updatePreview();updateStatus();commitHistoryChange(historyBefore);
+    const requested=selectedLineIndices.size?[...selectedLineIndices]:selectedIndex>=0?[selectedIndex]:[];
+    const indices=[...new Set(requested.filter(i=>Number.isInteger(i)&&i>=0&&i<rows.length))].sort((a,b)=>b-a);
+    if(!indices.length)return;
+    const historyBefore=captureHistoryState(),nextIndex=Math.min(...indices);
+    indices.forEach(index=>rows.splice(index,1));
+    selectedIndex=rows.length?Math.min(nextIndex,rows.length-1):-1;lastEditedIndex=selectedIndex;replayFromAnchor=true;
+    selectedWordRef=null;selectedWordKeys.clear();wordSelectionAnchorKey=null;selectedLineIndices=new Set(selectedIndex>=0?[selectedIndex]:[]);lineSelectionAnchor=selectedIndex;
+    hasWordTiming=rows.some(r=>r.wordCues&&r.wordCues.length);
+    if(!hasWordTiming)gridMode='lines';
+    renderGrid();
+    if(gridMode==='words'&&selectedIndex>=0){const refs=allWordRefs(),chosen=refs.find(ref=>ref.lineIndex===selectedIndex)||refs.find(ref=>ref.lineIndex>=selectedIndex)||refs[0];if(chosen)selectWord(chosen.lineIndex,chosen.cueIndex,false);}
+    updatePreview();updateStatus();commitHistoryChange(historyBefore);
   }
   function deleteEditorSelection(){
     if(gridMode==='words'){
@@ -2999,9 +3073,12 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   $('timelineLanes').addEventListener('pointerup',e=>{finishMarquee(e);endWaveInteraction(e);});
   $('timelineLanes').addEventListener('pointercancel',e=>{finishMarquee(e);endWaveInteraction(e);});
   $('timelineLanes').addEventListener('click',e=>{
-    if(suppressTimelineClick){suppressTimelineClick=false;return;}if(e.target.closest('.word-clip:not(.no-cue)')||e.target.closest('.lane-waveform-canvas'))return;
-    const track=e.target.closest('.lane-word-track');if(track){selectedWordKeys.clear();selectedWordRef=null;selectedIndex=Number(track.dataset.lineIndex);lastEditedIndex=selectedIndex;refreshWordSelection();updateWordInspector();updateStatus();return;}
-    if(e.target.closest('.timeline-lane-content')){selectedWordKeys.clear();selectedWordRef=null;refreshWordSelection();updateWordInspector();updateStatus();}
+    if(suppressTimelineClick){suppressTimelineClick=false;return;}
+    if(e.target.closest('.word-clip:not(.no-cue)')||e.target.closest('.lane-waveform-canvas'))return;
+    const lane=e.target.closest('.timeline-lane-row[data-line-index]');
+    const lineIndex=Number(lane?.dataset.lineIndex);
+    if(!lane||!Number.isInteger(lineIndex))return;
+    if(e.target.closest('.timeline-label')||e.target.closest('.lane-word-track')||e.target.closest('.timeline-lane-content'))selectLineSelection(lineIndex,e);
   });
   $('timelineLanes').addEventListener('auxclick',e=>{if(e.button===1)e.preventDefault();});
   $('timelineLanes').addEventListener('contextmenu',e=>{if(e.target.closest('.lane-waveform-canvas'))e.preventDefault();});
@@ -3009,7 +3086,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   $('tabLrc').addEventListener('click',()=>{outputMode='lrc';updatePreview();});$('tabTtml').addEventListener('click',()=>{outputMode='ttml';updatePreview();});
   $('saveLrc').addEventListener('click',exportLrc);$('saveLrcTop').addEventListener('click',exportLrc);$('saveTtml').addEventListener('click',exportTtml);$('saveTtmlTop').addEventListener('click',exportTtml);
   $('copyPreview').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(outputMode==='lrc'?lrcOutput():ttmlOutput());toast('Preview copied to clipboard.');}catch(_){toast('Clipboard access was blocked by the browser. Select the preview and copy manually.',true);}});
-  $('addLine').addEventListener('click',()=>{if(gridMode==='words')addTtmlLine();else addLine();});$('deleteLine').addEventListener('click',deleteEditorSelection);$('deleteTtmlLine').addEventListener('click',()=>removeLineAt(selectedIndex));
+  $('addLine').addEventListener('click',()=>{if(gridMode==='words')addTtmlLine();else addLine();});$('deleteLine').addEventListener('click',deleteEditorSelection);$('deleteTtmlLine').addEventListener('click',deleteLine);
   $('wordStart').addEventListener('change',()=>{if(selectedWordRef)setWordTime(selectedWordRef.lineIndex,selectedWordRef.cueIndex,'start',$('wordStart').value);});
   $('wordEnd').addEventListener('change',()=>{if(selectedWordRef)setWordTime(selectedWordRef.lineIndex,selectedWordRef.cueIndex,'end',$('wordEnd').value);});
   $('wordText').addEventListener('change',()=>editSelectedWordText($('wordText').value));
@@ -3366,7 +3443,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     if(index<0||index>=rows.length)return;
     const historyBefore=captureHistoryState(),wasWords=gridMode==='words';
     rows.splice(index,1);selectedIndex=Math.min(index,rows.length-1);lastEditedIndex=selectedIndex;replayFromAnchor=true;
-    hasWordTiming=rows.some(r=>r.wordCues?.length);selectedWordRef=null;selectedWordKeys.clear();
+    hasWordTiming=rows.some(r=>r.wordCues?.length);selectedWordRef=null;selectedWordKeys.clear();wordSelectionAnchorKey=null;selectedLineIndices.clear();if(selectedIndex>=0)selectedLineIndices.add(selectedIndex);lineSelectionAnchor=selectedIndex;
     if(!hasWordTiming)gridMode='lines';else if(wasWords)gridMode='words';
     renderGrid();
     if(gridMode==='words'&&selectedIndex>=0){
@@ -3510,7 +3587,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       const currentLine=selectedWordRef?.lineIndex??fallbackLine;
       const refs=e.shiftKey?allWordRefs():allWordRefs().filter(ref=>ref.lineIndex===currentLine);
       selectedWordKeys=new Set(refs.map(ref=>wordKey(ref.lineIndex,ref.cueIndex)));
-      selectedWordRef=refs.length?{lineIndex:refs[0].lineIndex,cueIndex:refs[0].cueIndex}:null;
+      selectedWordRef=refs.length?{lineIndex:refs[0].lineIndex,cueIndex:refs[0].cueIndex}:null;wordSelectionAnchorKey=selectedWordRef?wordKey(selectedWordRef.lineIndex,selectedWordRef.cueIndex):null;
       selectedIndex=selectedWordRef?.lineIndex??currentLine;lastEditedIndex=selectedIndex;
       refreshWordSelection();updateWordInspector();updateStatus();return;
     }

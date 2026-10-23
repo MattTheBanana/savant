@@ -3,7 +3,7 @@
 **Updated:** 2026-10-23  
 **Repository:** [MattTheBanana/savant](https://github.com/MattTheBanana/savant)  
 **Branch:** `main`  
-**Latest implementation commit:** [`b7a7fae3d405390c3c6d738530fcc961a4d3cac6`](https://github.com/MattTheBanana/savant/commit/b7a7fae3d405390c3c6d738530fcc961a4d3cac6)
+**Latest implementation commit:** [`addd092d6d22ba602a51dddb16f4eb76780e7fc3`](https://github.com/MattTheBanana/savant/commit/addd092d6d22ba602a51dddb16f4eb76780e7fc3)
 
 Primary UI file: `webui/index.html`  
 Backend and local filesystem APIs: `lyrics_editor.py`
@@ -60,6 +60,13 @@ The drop handler tries to recover an absolute path from `File.path`, a `file://`
 
 Many browsers deliberately omit the parent directory from local dropped files, so recovering it is not always technically possible from browser data alone.
 
+### Generator overwrite confirmation and failure state
+
+- Before launching an alignment or adjustment subprocess, `/api/generate` checks resolved artifact paths for existing LRC, TTML, vocal, diagnosis, and report outputs. Dry runs skip this check.
+- If outputs already exist, the server returns an overwrite-required response without starting a worker and removes that attempt's temporary run directory. The UI lists existing paths in a built-in confirmation. Declining cancels the attempt; confirming retries with overwrite enabled for that run.
+- The prior generic confirmation tied only to the checkbox has been removed; no prompt is shown when no relevant output file exists.
+- A failed generation paints the entire segmented progress track red. Errors returned before a run is created also show the failed/red state. Verify with both a deliberately invalid run and a successful run that targets an existing output file.
+
 ## Other current UI state
 
 The following are present in `webui/index.html`; GUI verification remains outstanding:
@@ -82,6 +89,7 @@ Static checks against the latest UI source:
 - Generator drop-path resolver passed focused Windows/POSIX path and filename-match checks.
 - Shared line timestamp helper passed focused tests for first, middle, last, empty, descending-neighbor, and equal-neighbor cases.
 - Context-menu markup now has disabled-state logic for Copy/Cut/Paste and uses the new Add word label.
+- Generator JavaScript parses; output existence checks are placed before the worker thread starts. Confirmation retries reuse the selected uploads, and failed/start-error states apply red progress styling.
 
 Not yet run:
 

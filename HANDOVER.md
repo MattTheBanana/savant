@@ -207,3 +207,8 @@ User-specific collaboration guidance:
 - Switching from LRC to TTML with **Follow selected LRC line when switching to TTML** enabled now centers the selected line in the timeline. Switching from TTML to LRC centers the corresponding selected line in the line grid.
 - Mode changes cancel pending smooth-scroll animations and temporarily suppress playback-driven auto-pan while the view and selection are restored. This avoids the playback-follow handler fighting the mode-switch scroll restoration and should preserve the TTML viewport anchor while toggling modes during playback.
 - Static validation passed: inline JavaScript compiles; there are no duplicate static IDs; both direction-specific centering paths, preference guard, playback auto-pan suppression, scroll-animation cancellation, filename sizing, play-button default background, and workspace width are present. Interactive browser testing remains outstanding.
+
+## Matching LRC and TTML count footer spacing
+
+- Removed the TTML-only reduced vertical padding from the shared line/word-count footer. LRC and TTML now both use the common `.grid-footer` padding (`10px 12px`), with no mode-specific padding difference.
+- Static checks passed after this follow-up: inline JavaScript compiles; no duplicate static HTML IDs; the TTML-only override is absent and the shared footer padding remains defined. Interactive appearance still needs browser confirmation.

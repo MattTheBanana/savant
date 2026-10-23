@@ -3,7 +3,7 @@
 **Updated:** 2026-10-23  
 **Repository:** [MattTheBanana/savant](https://github.com/MattTheBanana/savant)  
 **Branch:** `main`  
-**Latest implementation commit:** [`e6b01b68b7c53ec86299e10be573dfee78cd66be`](https://github.com/MattTheBanana/savant/commit/e6b01b68b7c53ec86299e10be573dfee78cd66be)
+**Latest implementation commit:** [`77a5be2c39a289abf9e57a2a867966b37596314b`](https://github.com/MattTheBanana/savant/commit/77a5be2c39a289abf9e57a2a867966b37596314b)
 
 Primary UI file: `webui/index.html`  
 Backend and local filesystem APIs: `lyrics_editor.py`
@@ -152,6 +152,14 @@ Not yet run:
 - The top-bar line delete action and TTML Delete Line action delete all selected lines and update their labels to **Delete Lines** when appropriate. Single-line deletion remains singular. Context-menu targeted line deletion stays scoped to the clicked line.
 - Line and word selection anchors are included in undo/redo snapshots. Importing new lyrics resets the selection to the first line.
 - Latest static verification: the inline JavaScript parses; there are no duplicate HTML IDs; the LRC gutter, modifier clicks/drags, keyboard range selection, optional eased centering preference, TTML gutter selection, word-range selection, and multi-line deletion paths are present. Interactive browser testing has not been run, so pointer behavior and visual feedback still need GUI verification.
+
+### Controls menus, playback shortcuts, and selection scrolling
+
+- The editor Controls menu lists shortcuts as consistent visible gestures, including `Left Click + Drag`, `Middle Click + Drag`, `Shift + Left Click + Drag`, and `Ctrl + Scroll Wheel`. The former TTML footnote is now a normal row. Both LRC and TTML menus have separate Space and Ctrl + Space playback entries; Ctrl + Z / Ctrl + Y remain in the right-click menu, not the Controls menu.
+- `Shift + F` inserts a line via the same mode-aware behavior as the Add Line button: LRC line in LRC mode and a blank TTML line in TTML mode. The TTML right-click menu includes Select All Words in Line (`Ctrl + A`) and Select All Words in All Lines (`Ctrl + Shift + A`), backed by the same selection helper as the keyboard shortcuts.
+- The UI preference `centerModifierSelection` now covers clicking/keyboard-selecting lines and selecting TTML words. When off, the editor avoids centering and only scrolls lines into view as needed; when on, it uses eased centering for selected lines and clicked words.
+- TTML style-reference information is shown in a viewport-clamped popover anchored to the info button, rather than a toast pinned to the bottom edge. The LRC Jump to Current Line button uses standard small-button styling.
+- Actual browser/GUI verification has not been run. Static verification on the latest UI source passed: inline JavaScript parses; no duplicate HTML IDs; the info popover, select-all context actions, Shift + F handler, updated Controls rows, and shared centering preference are present.
 
 ## Working expectations
 

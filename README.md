@@ -1,4 +1,4 @@
-# Savant
+# Savant - Local lyric alignment generator and editor
 
 **Savant lines up lyrics with a song, then helps you fine-tune the timing.** It includes a command-line aligner and a browser-based editor with a **Generate** panel.
 

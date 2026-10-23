@@ -676,18 +676,30 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     tifaDiagnosticsPath:'',contextRepair:true,instrumentalThreshold:'6',
     demucsModel:'htdemucs',demucsSegment:'6',vocalOutput:''
   };
-  let settings = {
+  const DEFAULT_UI_SETTINGS = {
     nudgeStep: 0.02, shiftMultiplier: 5, replayLead: 2.0, txtSpacing: 3.0,
     language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, returnToEditAfterGenerate: false, autoImportGeneratedOutput: false, wordInspectorLayout: 'right', showEditorShortcutHints: false,
     generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}
   };
-  try { settings = {...settings, ...JSON.parse(localStorage.getItem('lyrics-aligner-ui-settings') || '{}')}; } catch (_) {}
+  let settings = {...DEFAULT_UI_SETTINGS,generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}};
+  try {
+    const stored=JSON.parse(localStorage.getItem('lyrics-aligner-ui-settings') || '{}');
+    if(stored&&typeof stored==='object'&&!Array.isArray(stored))settings={...settings,...stored};
+  } catch (_) {}
   settings.generatorDefaults={...DEFAULT_GENERATOR_DEFAULTS,...(settings.generatorDefaults||{})};
   delete settings.showEditorControlsBar; // Legacy preference incorrectly targeted the top toolbar.
   // Discard the temporary player visibility preference from the earlier UI interpretation.
   delete settings.showBottomPlayerBar;
   delete settings.playerBarPreferenceVersion;
   delete settings.editorActionAlignment;
+  let installationSettingsRevision=null;
+  let installationSettingsReady=false;
+  let installationSettingsPollTimer=null;
+  let installationSettingsSaveTimer=null;
+  let installationSettingsSaveBusy=false;
+  let installationSettingsSavePending=false;
+  let installationSettingsSyncWarningShown=false;
+  let pendingInstallationSettingsSnapshot=null;
   let toastTimer = null;
 
   function toast(message, error=false) {
@@ -846,6 +858,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     settings.generatorDefaults=readGeneratorDefaultsForm();
     try{localStorage.setItem('lyrics-aligner-ui-settings',JSON.stringify(settings));}
     catch(_){toast('Could not save generator defaults in this browser.',true);return;}
+    scheduleInstallationSettingsSave();
     if(applyNow)applyGeneratorDefaults();
   }
   function wireGeneratorDefaultsPreferences(){
@@ -854,6 +867,113 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       el.addEventListener('input',()=>persistGeneratorDefaults(false));
       el.addEventListener('change',()=>persistGeneratorDefaults(true));
     }
+  }
+  function normalizeInstallationSettings(value){
+    const source=value&&typeof value==='object'&&!Array.isArray(value)?value:{};
+    const next={...DEFAULT_UI_SETTINGS,...source,generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS,...(source.generatorDefaults||{})}};
+    delete next.showEditorControlsBar;delete next.showBottomPlayerBar;delete next.playerBarPreferenceVersion;delete next.editorActionAlignment;
+    return next;
+  }
+  function settingsFormHasFocus(){
+    const active=document.activeElement;
+    return active instanceof HTMLElement&&$('settingsScreen').contains(active)&&active.matches('input,select,textarea');
+  }
+  function applyInstallationSettingsSnapshot(snapshot,notify=false){
+    if(!snapshot?.exists||!snapshot.settings||settingsFormHasFocus())return false;
+    const previousOverlap=Number(settings.timelineOverlap),previousInspectorLayout=settings.wordInspectorLayout;
+    settings=normalizeInstallationSettings(snapshot.settings);
+    installationSettingsRevision=snapshot.revision||null;
+    pendingInstallationSettingsSnapshot=null;
+    try{localStorage.setItem('lyrics-aligner-ui-settings',JSON.stringify(settings));}catch(_){}
+    syncSettingsForm();applyGeneratorDefaults();updateGenerateConfigVisibility();
+    outputMode=settings.defaultTab||'lrc';updatePreview();
+    if(gridMode==='words'&&(previousOverlap!==Number(settings.timelineOverlap)||previousInspectorLayout!==settings.wordInspectorLayout)){
+      rerenderWordTimelinePreservingView();
+    }else updateLiveHighlight(true);
+    if(notify)toast('Preferences synchronized from savant-settings.txt.');
+    return true;
+  }
+  async function getInstallationSettingsSnapshot(){
+    const response=await fetch('/api/settings',{cache:'no-store'});let result={};
+    try{result=await response.json();}catch(_){}
+    if(!response.ok)throw new Error(result.error||'Could not read savant-settings.txt.');
+    return result;
+  }
+  function scheduleInstallationSettingsSave(delay=250){
+    if(!installationSettingsReady)return;
+    if(installationSettingsSaveTimer!==null)clearTimeout(installationSettingsSaveTimer);
+    installationSettingsSaveTimer=setTimeout(()=>{installationSettingsSaveTimer=null;void saveSettingsToInstallationFile();},delay);
+  }
+  async function saveSettingsToInstallationFile(){
+    if(!installationSettingsReady)return;
+    if(installationSettingsSaveBusy){installationSettingsSavePending=true;return;}
+    installationSettingsSaveBusy=true;
+    const payload=JSON.parse(JSON.stringify(settings)),expectedRevision=installationSettingsRevision;
+    try{
+      const response=await fetch('/api/settings',{method:'POST',headers:{'Content-Type':'application/json','X-Savant-UI':'1'},body:JSON.stringify({settings:payload,expectedRevision})});
+      let result={};try{result=await response.json();}catch(_){}
+      if(response.status===409&&result.conflict){
+        if(result.snapshot?.exists){
+          pendingInstallationSettingsSnapshot=result.snapshot;
+          if(applyInstallationSettingsSnapshot(result.snapshot,true))installationSettingsSyncWarningShown=false;
+        }else{
+          installationSettingsRevision=null;
+          scheduleInstallationSettingsSave(80);
+        }
+      }else if(!response.ok)throw new Error(result.error||'Could not write savant-settings.txt.');
+      else{
+        installationSettingsRevision=result.revision||null;
+        installationSettingsSyncWarningShown=false;
+      }
+    }catch(error){
+      if(!installationSettingsSyncWarningShown){
+        toast('Could not save preferences to savant-settings.txt. Browser storage is still available. '+error.message,true);
+        installationSettingsSyncWarningShown=true;
+      }
+    }finally{
+      installationSettingsSaveBusy=false;
+      if(installationSettingsSavePending){
+        installationSettingsSavePending=false;
+        scheduleInstallationSettingsSave(80);
+      }
+    }
+  }
+  async function pollInstallationSettings(initial=false){
+    try{
+      const snapshot=await getInstallationSettingsSnapshot();
+      installationSettingsSyncWarningShown=false;
+      if(!installationSettingsReady){
+        installationSettingsReady=true;
+        if(snapshot.exists){
+          if(!applyInstallationSettingsSnapshot(snapshot,false))pendingInstallationSettingsSnapshot=snapshot;
+        }else{
+          installationSettingsRevision=null;
+          scheduleInstallationSettingsSave(0);
+        }
+      }else if(snapshot.exists){
+        if(snapshot.revision!==installationSettingsRevision){
+          if(!applyInstallationSettingsSnapshot(snapshot,true))pendingInstallationSettingsSnapshot=snapshot;
+        }
+      }else if(installationSettingsRevision!==null){
+        // If the file was deliberately removed, recreate it from the current UI state.
+        installationSettingsRevision=null;
+        scheduleInstallationSettingsSave(80);
+      }else if(!installationSettingsSaveBusy&&installationSettingsSaveTimer===null){
+        scheduleInstallationSettingsSave(0);
+      }
+    }catch(error){
+      if(!installationSettingsReady)installationSettingsReady=true;
+      if(!installationSettingsSyncWarningShown){
+        toast('The installation preferences file is not available yet. Savant will keep checking. '+error.message,true);
+        installationSettingsSyncWarningShown=true;
+      }
+    }finally{
+      installationSettingsPollTimer=setTimeout(()=>pollInstallationSettings(false),1200);
+    }
+  }
+  function startInstallationSettingsSync(){
+    if(installationSettingsPollTimer!==null)clearTimeout(installationSettingsPollTimer);
+    void pollInstallationSettings(true);
   }
   function saveSettings() {
     for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorShortcutHints']) {
@@ -872,6 +992,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     settings.generatorDefaults=readGeneratorDefaultsForm();
     applyEditorPreferences();
     localStorage.setItem('lyrics-aligner-ui-settings', JSON.stringify(settings));
+    scheduleInstallationSettingsSave();
   }
   function syncSettingsForm() {
     for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed']) $(key).value=settings[key];
@@ -2896,6 +3017,27 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     colorPickerHistoryBefore=null;colorPickerTab='palette';pop.classList.remove('hidden');renderColorPicker();positionColorPicker();
   }
   function closeColorPicker(){if($('colorPickerPopover').classList.contains('hidden'))return;$('colorPickerPopover').classList.add('hidden');finishColorPickerHistory();}
+  function toggleFloatingMenu(trigger,menu){
+    if(!trigger||!menu)return;
+    const opening=menu.classList.contains('hidden');
+    for(const other of [ $('agentPresetMenu'), $('timelineControlsMenu') ]){
+      if(!other||other===menu)continue;
+      other.classList.add('hidden');
+      const otherTrigger=other.id==='agentPresetMenu'?$('agentPresetTrigger'):$('timelineControlsTrigger');
+      otherTrigger?.setAttribute('aria-expanded','false');
+    }
+    if(!opening){
+      menu.classList.add('hidden');trigger.setAttribute('aria-expanded','false');return;
+    }
+    menu.classList.remove('hidden');trigger.setAttribute('aria-expanded','true');
+    if(menu.id==='timelineControlsMenu'){
+      const rect=trigger.getBoundingClientRect(),menuRect=menu.getBoundingClientRect();
+      const margin=10,left=Math.max(margin,Math.min(window.innerWidth-menuRect.width-margin,rect.right-menuRect.width));
+      let top=rect.bottom+7;
+      if(top+menuRect.height>window.innerHeight-margin)top=Math.max(margin,rect.top-menuRect.height-7);
+      menu.style.left=Math.round(left)+'px';menu.style.top=Math.round(top)+'px';
+    }
+  }
   function addMenuSeparator(menu){const el=document.createElement('div');el.className='context-menu-separator';menu.append(el);}
   function addMenuHeading(menu,text){const el=document.createElement('div');el.className='context-menu-heading';el.textContent=text;menu.append(el);}
   function addContextAction(menu,label,action,{disabled=false,footer=false,shortcut='',tooltip=''}={}){
@@ -2926,7 +3068,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       addContextAction(menu,'Insert line above this line',()=>insertLineAt(target.lineIndex),{tooltip:'Insert a new line before this line'});
       addContextAction(menu,'Insert line below this line',()=>insertLineAt(target.lineIndex+1),{tooltip:'Insert a new line after this line'});
       addMenuSeparator(menu);
-      const deleteLineAction=addContextAction(menu,'Delete Line',()=>removeLineAt(target.lineIndex),{footer:true});
+      const deleteLineAction=addContextAction(menu,'Delete Line',()=>removeLineAt(target.lineIndex),{footer:true,shortcut:'Delete',tooltip:'Delete this line. The Delete key also deletes the selected line.'});
       deleteLineAction.classList.add('danger');
     }
     if(gridMode==='words'&&target?.type==='word'){
@@ -3169,6 +3311,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       flushActiveWordInspectorField();
     }
   },true);
+  $('settingsScreen').addEventListener('focusout',()=>{if(pendingInstallationSettingsSnapshot&&!settingsFormHasFocus()){const pending=pendingInstallationSettingsSnapshot;applyInstallationSettingsSnapshot(pending,true);}});
   for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorShortcutHints'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);if(id==='wordInspectorLayout'&&gridMode==='words')rerenderWordTimelinePreservingView();toast('Settings saved.');});
   $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false,wordInspectorLayout:'right',showEditorShortcutHints:false,generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}};syncSettingsForm();saveSettings();applyGeneratorDefaults();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
   document.addEventListener('keydown',e=>{
@@ -3225,7 +3368,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   refreshAgentPresetSelect();
   document.addEventListener('click',e=>{const target=e.target;if(target instanceof HTMLElement&&!target.closest('.toast'))$('toast').classList.add('hidden');});
   window.addEventListener('beforeunload',()=>{if(audioUrl)URL.revokeObjectURL(audioUrl);});
-  wirePreferencesTabs();syncSettingsForm();outputMode=settings.defaultTab;updatePreview();renderGrid();updateStatus();refreshGenerateCapabilities();
+  wirePreferencesTabs();syncSettingsForm();outputMode=settings.defaultTab;updatePreview();renderGrid();updateStatus();refreshGenerateCapabilities();startInstallationSettingsSync();
 })();
 </script>
 </body>

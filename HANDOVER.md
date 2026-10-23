@@ -222,3 +222,10 @@ User-specific collaboration guidance:
 
 - Combined the separate `Left Click + Drag Playhead` and `Left Click + Drag Waveform` help rows into one `Left Click + Drag` row: “Seek the audio by dragging the playhead or waveform.”
 - Static validation passed: inline JavaScript compiles, there are no duplicate static HTML IDs, and the two old rows are replaced by the combined description.
+
+## TTML Ctrl-drag for moving one word from a multi-selection
+
+- Split the TTML word-drag help into two rows: `Left Click + Drag on Word` moves the selected word(s); `Ctrl + Left Click + Drag on Word` moves only the clicked word from a multi-selection.
+- Fixed the underlying gesture: when Ctrl/Cmd is held on an already-selected word in a multi-selection, pointer-down now arms a pending single-word drag instead of immediately toggling the word out of the selection. Crossing the pointer movement threshold begins moving only that word. Releasing without moving still performs the normal Ctrl/Cmd-click selection toggle.
+- Ctrl-drag is limited to word bodies, not resize handles. Ordinary group drags and Shift-drag snap behavior remain on their existing paths.
+- Static validation passed: inline JavaScript compiles; no duplicate static HTML IDs; separate help rows and the Ctrl-drag pending/movement/toggle paths are present. Interactive pointer testing remains outstanding.

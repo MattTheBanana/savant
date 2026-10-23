@@ -173,7 +173,9 @@ def _nearest_existing_directory(path: Path) -> Path | None:
 
 def _path_can_write(directory: Path) -> bool:
     try:
-        return directory.is_dir() and os.access(directory, os.W_OK | os.X_OK)
+        # Windows does not expose POSIX directory execute permissions in the same way.
+        required = os.W_OK | (os.X_OK if os.name != "nt" else 0)
+        return directory.is_dir() and os.access(directory, required)
     except OSError:
         return False
 
@@ -195,7 +197,7 @@ def _validate_path_request(path_text: str, kind: str, role: str = "") -> dict:
         if exists:
             if not path.is_dir():
                 return {"status": "invalid", "message": f"This path is a file, not a folder: {path}"}
-            required = os.R_OK | os.X_OK
+            required = os.R_OK | (os.X_OK if os.name != "nt" else 0)
             if "output" in role:
                 required |= os.W_OK
             if not os.access(path, required):
@@ -225,7 +227,7 @@ def _validate_path_request(path_text: str, kind: str, role: str = "") -> dict:
             return {"status": "missing", "path": str(path), "message": f"This file or folder does not exist: {path}"}
         if not (path.is_file() or path.is_dir()):
             return {"status": "invalid", "message": f"This path is not a regular file or folder: {path}"}
-        required = os.R_OK | (os.X_OK if path.is_dir() else 0)
+        required = os.R_OK | (os.X_OK if path.is_dir() and os.name != "nt" else 0)
         if not os.access(path, required):
             return {"status": "inaccessible", "message": f"The file or folder is not readable: {path}"}
         return {"status": "ok", "path": str(path), "exists": True, "isDir": path.is_dir()}

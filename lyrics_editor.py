@@ -149,6 +149,176 @@ def _add_switch(command: list[str], flag: str, config: dict, key: str) -> None:
         command.append(flag)
 
 
+def _nearest_existing_directory(path: Path) -> Path | None:
+    """Return the closest existing directory ancestor, even if path itself is missing."""
+    candidate = path
+    try:
+        if candidate.exists() and not candidate.is_dir():
+            candidate = candidate.parent
+    except OSError:
+        candidate = candidate.parent
+    while True:
+        try:
+            if candidate.exists():
+                if candidate.is_dir():
+                    return candidate
+                candidate = candidate.parent
+                continue
+        except OSError:
+            pass
+        if candidate.parent == candidate:
+            return None
+        candidate = candidate.parent
+
+
+def _path_can_write(directory: Path) -> bool:
+    try:
+        return directory.is_dir() and os.access(directory, os.W_OK | os.X_OK)
+    except OSError:
+        return False
+
+
+def _validate_path_request(path_text: str, kind: str, role: str = "") -> dict:
+    """Validate a user-selected generator path and describe safe create options."""
+    raw = str(path_text or "").strip()
+    if not raw:
+        return {"status": "invalid", "message": "Enter a path first."}
+    if kind not in {"folder", "open", "save", "any"}:
+        return {"status": "invalid", "message": "Unsupported path type."}
+    try:
+        path = Path(raw).expanduser().resolve(strict=False)
+        exists = path.exists()
+    except (OSError, RuntimeError, ValueError) as exc:
+        return {"status": "inaccessible", "message": f"Could not resolve this path: {exc}"}
+
+    if kind == "folder":
+        if exists:
+            if not path.is_dir():
+                return {"status": "invalid", "message": f"This path is a file, not a folder: {path}"}
+            required = os.R_OK | os.X_OK
+            if "output" in role:
+                required |= os.W_OK
+            if not os.access(path, required):
+                return {"status": "inaccessible", "message": f"The folder is not accessible with the required permissions: {path}"}
+            return {"status": "ok", "path": str(path), "exists": True, "isDir": True}
+        ancestor = _nearest_existing_directory(path.parent)
+        if ancestor is None:
+            return {"status": "inaccessible", "message": f"No accessible parent folder was found for: {path}"}
+        if not _path_can_write(ancestor):
+            return {"status": "inaccessible", "message": f"Cannot create this folder because the parent is not writable: {ancestor}"}
+        return {
+            "status": "missing-folder", "path": str(path), "createPath": str(path),
+            "createable": True, "message": f"The folder does not exist: {path}",
+        }
+
+    if kind == "open":
+        if not exists:
+            return {"status": "missing", "path": str(path), "message": f"This file does not exist: {path}"}
+        if not path.is_file():
+            return {"status": "invalid", "message": f"Choose an existing file: {path}"}
+        if not os.access(path, os.R_OK):
+            return {"status": "inaccessible", "message": f"The file is not readable: {path}"}
+        return {"status": "ok", "path": str(path), "exists": True, "isDir": False}
+
+    if kind == "any":
+        if not exists:
+            return {"status": "missing", "path": str(path), "message": f"This file or folder does not exist: {path}"}
+        if not (path.is_file() or path.is_dir()):
+            return {"status": "invalid", "message": f"This path is not a regular file or folder: {path}"}
+        required = os.R_OK | (os.X_OK if path.is_dir() else 0)
+        if not os.access(path, required):
+            return {"status": "inaccessible", "message": f"The file or folder is not readable: {path}"}
+        return {"status": "ok", "path": str(path), "exists": True, "isDir": path.is_dir()}
+
+    # "save" means a future output file. Do not create an empty file here; the
+    # CLI creates the file when it actually generates the output.
+    if exists:
+        if path.is_dir():
+            return {"status": "invalid", "message": f"An output file path points to a folder: {path}"}
+        if not os.access(path, os.W_OK):
+            return {"status": "inaccessible", "message": f"The existing output file is not writable: {path}"}
+        if not _path_can_write(path.parent):
+            return {"status": "inaccessible", "message": f"The parent folder is not writable: {path.parent}"}
+        return {"status": "ok", "path": str(path), "exists": True, "isDir": False}
+
+    if path.parent.exists():
+        if not path.parent.is_dir():
+            return {"status": "invalid", "message": f"The parent path is not a folder: {path.parent}"}
+        if not _path_can_write(path.parent):
+            return {"status": "inaccessible", "message": f"The parent folder is not writable: {path.parent}"}
+        return {"status": "missing-file", "path": str(path), "exists": False, "createable": False}
+    ancestor = _nearest_existing_directory(path.parent)
+    if ancestor is None:
+        return {"status": "inaccessible", "message": f"No accessible parent folder was found for: {path}"}
+    if not _path_can_write(ancestor):
+        return {"status": "inaccessible", "message": f"Cannot create output folders because this parent is not writable: {ancestor}"}
+    return {
+        "status": "missing-parent", "path": str(path), "createPath": str(path.parent),
+        "createable": True, "message": f"The output folder does not exist: {path.parent}",
+    }
+
+
+def _local_path_suggestions(raw_text: str, kind: str, limit: int = 18) -> dict:
+    """List local filesystem entries that extend a partially typed path."""
+    if kind not in {"folder", "open", "save", "any"}:
+        return {"suggestions": [], "message": "Unsupported path type.", "error": True}
+    raw = str(raw_text or "").strip()
+    try:
+        if not raw:
+            parent, prefix = Path.home(), ""
+        else:
+            candidate = Path(raw).expanduser()
+            ends_with_separator = raw.endswith(("/", "\\"))
+            if ends_with_separator or candidate.is_dir():
+                parent, prefix = candidate, ""
+            else:
+                parent = candidate.parent if candidate.parent != Path(".") or candidate.is_absolute() else Path.cwd()
+                prefix = candidate.name
+            if not parent.is_absolute():
+                parent = Path.cwd() / parent
+        parent = parent.resolve(strict=False)
+        if not parent.exists():
+            return {"suggestions": [], "message": f"Folder not found: {parent}", "error": False}
+        if not parent.is_dir():
+            return {"suggestions": [], "message": f"Not a folder: {parent}", "error": True}
+        entries = []
+        for entry in sorted(parent.iterdir(), key=lambda item: (not item.is_dir(), item.name.casefold())):
+            try:
+                is_dir = entry.is_dir()
+                if prefix and not entry.name.casefold().startswith(prefix.casefold()):
+                    continue
+                if kind == "folder" and not is_dir:
+                    continue
+                if kind == "open" and (is_dir or not entry.is_file()):
+                    continue
+                entries.append({
+                    "path": str(entry), "name": entry.name, "isDir": is_dir,
+                    "exists": True, "readable": os.access(entry, os.R_OK),
+                    "writable": os.access(entry, os.W_OK),
+                })
+                if len(entries) >= max(1, min(40, limit)):
+                    break
+            except OSError:
+                continue
+        if raw:
+            typed = Path(raw).expanduser()
+            try:
+                typed_path = typed.resolve(strict=False)
+                if not typed_path.exists() and not any(item["path"] == str(typed_path) for item in entries):
+                    entries.append({
+                        "path": str(typed_path), "name": typed_path.name or str(typed_path),
+                        "isDir": kind == "folder" or (kind == "any" and not typed_path.suffix),
+                        "exists": False, "readable": False, "writable": False, "candidate": True,
+                    })
+            except (OSError, RuntimeError, ValueError):
+                pass
+        return {"suggestions": entries[:max(1, min(40, limit + 1))], "baseDirectory": str(parent)}
+    except PermissionError as exc:
+        return {"suggestions": [], "message": f"Folder is inaccessible: {exc}", "error": True}
+    except (OSError, RuntimeError, ValueError) as exc:
+        return {"suggestions": [], "message": f"Could not list path suggestions: {exc}", "error": True}
+
+
 def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]]) -> list[str]:
     directory: Path = run["directory"]
     saved = {name: _save_upload(directory / "inputs", name, item) for name, item in files.items()}
@@ -660,6 +830,61 @@ class Handler(BaseHTTPRequestHandler):
             except (ValueError, OSError, json.JSONDecodeError, RuntimeError) as exc:
                 self._send_json({"error": str(exc)}, 400)
             return
+        if route.path == "/api/path-suggestions":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if length > 100_000:
+                    raise ValueError("Invalid path suggestion request.")
+                payload = json.loads(self.rfile.read(length).decode("utf-8"))
+                result = _local_path_suggestions(
+                    str(payload.get("path", "")),
+                    str(payload.get("kind", "any")),
+                    int(payload.get("limit", 18)),
+                )
+                self._send_json(result)
+            except (ValueError, OSError, json.JSONDecodeError) as exc:
+                self._send_json({"error": str(exc)}, 400)
+            return
+        if route.path == "/api/validate-path":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if length > 100_000:
+                    raise ValueError("Invalid path validation request.")
+                payload = json.loads(self.rfile.read(length).decode("utf-8"))
+                self._send_json(_validate_path_request(
+                    str(payload.get("path", "")),
+                    str(payload.get("kind", "any")),
+                    str(payload.get("role", "")),
+                ))
+            except (ValueError, OSError, json.JSONDecodeError) as exc:
+                self._send_json({"status": "invalid", "message": str(exc)}, 400)
+            return
+        if route.path == "/api/create-path":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if length > 100_000:
+                    raise ValueError("Invalid directory creation request.")
+                payload = json.loads(self.rfile.read(length).decode("utf-8"))
+                raw_path = str(payload.get("path", "")).strip()
+                if not raw_path:
+                    raise ValueError("Choose a folder path first.")
+                directory = Path(raw_path).expanduser().resolve(strict=False)
+                if directory.exists():
+                    if not directory.is_dir():
+                        raise ValueError(f"The requested folder path is a file: {directory}")
+                    if not _path_can_write(directory):
+                        raise PermissionError(f"The folder is not writable: {directory}")
+                else:
+                    ancestor = _nearest_existing_directory(directory.parent)
+                    if ancestor is None or not _path_can_write(ancestor):
+                        raise PermissionError(f"The parent is not accessible or writable: {directory.parent}")
+                    directory.mkdir(parents=True, exist_ok=True)
+                    if not directory.is_dir() or not _path_can_write(directory):
+                        raise PermissionError(f"The created folder is not writable: {directory}")
+                self._send_json({"ok": True, "path": str(directory)})
+            except (ValueError, OSError, json.JSONDecodeError, RuntimeError) as exc:
+                self._send_json({"error": str(exc)}, 400)
+            return
         if route.path == "/api/browse-path":
             try:
                 length = int(self.headers.get("Content-Length", "0"))
@@ -667,7 +892,7 @@ class Handler(BaseHTTPRequestHandler):
                     raise ValueError("Invalid path picker request.")
                 payload = json.loads(self.rfile.read(length).decode("utf-8"))
                 kind = str(payload.get("kind", "open"))
-                if kind not in {"folder", "open", "save"}:
+                if kind not in {"folder", "open", "save", "any"}:
                     raise ValueError("Choose a folder, existing file, or output file.")
                 title = str(payload.get("title", "Choose a local path")).strip()[:200] or "Choose a local path"
                 current_text = str(payload.get("currentPath", "")).strip()

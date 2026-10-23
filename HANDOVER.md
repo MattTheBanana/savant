@@ -3,7 +3,7 @@
 **Updated:** 2026-10-23  
 **Repository:** [MattTheBanana/savant](https://github.com/MattTheBanana/savant)  
 **Branch:** `main`  
-**Latest implementation commit:** [`addd092d6d22ba602a51dddb16f4eb76780e7fc3`](https://github.com/MattTheBanana/savant/commit/addd092d6d22ba602a51dddb16f4eb76780e7fc3)
+**Latest implementation commit:** [`83c1e9dd28a7670e57305b958b423d67eb0960f4`](https://github.com/MattTheBanana/savant/commit/83c1e9dd28a7670e57305b958b423d67eb0960f4)
 
 Primary UI file: `webui/index.html`  
 Backend and local filesystem APIs: `lyrics_editor.py`

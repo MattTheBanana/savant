@@ -1632,7 +1632,7 @@ def run_tifa_alignment(
         # Stream TIFA stdout and stderr together so the local GUI can consume tqdm
         # updates and animate the active stage instead of waiting for inference to end.
         for raw_line in process.stdout:
-            line = raw_line.rstrip("\\r\\n")
+            line = raw_line.rstrip("\r\n")
             if not line:
                 continue
             output_tail.append(line)
@@ -1641,9 +1641,9 @@ def run_tifa_alignment(
             print(line, flush=True)
         return_code = process.wait()
         if return_code != 0:
-            detail = "\\n".join(output_tail).strip() or "No diagnostic output was returned."
+            detail = "\n".join(output_tail).strip() or "No diagnostic output was returned."
             raise RuntimeError(
-                f"TIFA inference failed with exit code {return_code}. Check the TIFA install/model paths.\\n{detail[-5000:]}"
+                f"TIFA inference failed with exit code {return_code}. Check the TIFA install/model paths.\n{detail[-5000:]}"
             )
 
         tifa_mapped: list[list[dict[str, Any] | None]] = [list() for _ in lines]

@@ -583,6 +583,7 @@ def _open_path(path: Path, mode: str) -> None:
 def _friendly_cli_failure(return_code: int, output: str) -> str:
     """Turn the CLI's own error message into a concise, named status for the UI."""
     detail = ""
+    is_argparse_error = False
     for raw_line in reversed(str(output or "").splitlines()):
         line = raw_line.strip()
         if line.upper().startswith("ERROR:"):
@@ -592,6 +593,7 @@ def _friendly_cli_failure(return_code: int, output: str) -> str:
         match = re.search(r"\berror:\s*(.+)$", line, flags=re.IGNORECASE)
         if match:
             detail = match.group(1).strip()
+            is_argparse_error = True
             break
 
     exception_type = ""
@@ -654,8 +656,10 @@ def _friendly_cli_failure(return_code: int, output: str) -> str:
         name = "File Permission Error"
     elif exception_type == "FileExistsError":
         name = "Output Already Exists"
-    elif exception_type in {"ValueError", "TypeError"}:
+    elif exception_type == "ValueError":
         name = "Invalid Input or Settings"
+    elif is_argparse_error:
+        name = "Invalid CLI Arguments"
     elif exception_type:
         name = f"Alignment Runtime Error ({exception_type})"
     elif return_code == 2:

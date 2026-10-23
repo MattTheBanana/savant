@@ -47,11 +47,11 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .word-clip.no-cue{background:#252e3d;border-style:dashed;border-color:#4d5d70;color:#9aabc0;cursor:default}
 .lane-playhead{position:absolute;top:0;bottom:0;width:2px;background:#ff646e;z-index:7;pointer-events:none;cursor:ew-resize;box-shadow:0 0 0 1px #ff646e28;display:none}.lane-playhead-handle{position:absolute;left:-7px;top:0;width:16px;height:66px;background:transparent;pointer-events:auto;cursor:ew-resize;touch-action:none}.lane-playhead.visible{display:block}.lane-playhead.ghost{opacity:.34;z-index:6}.lane-playhead.ghost .lane-playhead-handle,.lane-playhead.ghost .lane-playhead-time{display:none}.lane-playhead-handle:focus-visible{outline:2px solid var(--accent);outline-offset:1px}.lane-playhead:before{content:'';position:absolute;left:-5px;top:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #ff646e}.lane-playhead-time{position:absolute;left:50%;top:10px;transform:translateX(-50%);font-family:var(--mono);font-size:var(--playhead-label-size,9px);line-height:1;color:#ffc2c6;background:#101721dd;border:1px solid #773f48;border-radius:3px;padding:2px 3px;white-space:nowrap;font-weight:500;letter-spacing:0;box-shadow:0 1px 3px #0005}.lane-playhead.offscreen-left:before{left:-5px;border-top-color:transparent;border-left:0;border-right:7px solid #ff646e;border-top:5px solid transparent;border-bottom:5px solid transparent;top:1px}.lane-playhead.offscreen-right:before{left:-5px;border-top-color:transparent;border-right:0;border-left:7px solid #ff646e;border-top:5px solid transparent;border-bottom:5px solid transparent;top:1px}.lane-waveform-canvas{touch-action:pan-y;user-select:none}.timeline-lane-content.pan-active,.lane-waveform-wrapper.pan-active{cursor:grabbing!important}
 .timeline-selection-box{position:absolute;z-index:20;border:1px solid #76e4c1;background:#76e4c126;box-shadow:0 0 0 1px #76e4c12b;pointer-events:none;display:none}.timeline-selection-box.visible{display:block}
-.word-inspector{margin-top:11px;border:1px solid var(--border);background:#121b29;border-radius:9px;padding:10px 11px}.word-inspector-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}.word-inspector-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:9px;align-items:end}.word-inspector-text{grid-column:span 2}.word-inspector-field{display:flex;flex-direction:column;gap:4px;min-width:0}.word-inspector-field label{font-size:10px;color:#a6b6c9;text-transform:uppercase;letter-spacing:.06em}.word-inspector-field input,.word-inspector-field select{width:100%;min-width:0;background:#09111b;border:1px solid #34455a;border-radius:6px;color:var(--text);padding:8px 9px;font-size:12px}.word-inspector-field input:focus,.word-inspector-field select:focus{outline:2px solid var(--accent2);outline-offset:1px}.timeline-empty{padding:26px;text-align:center;color:#91a1b5;min-width:0}.timeline-empty strong{display:block;color:#d9e6f5;margin-bottom:5px}
+.word-inspector{margin-top:11px;border:1px solid var(--border);background:#121b29;border-radius:9px;padding:10px 11px}.word-inspector-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}.word-inspector-heading-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;min-width:0}.word-inspector-heading-actions #wordInspectorMeta{white-space:nowrap;text-align:right}.word-inspector-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:9px;align-items:end}.word-inspector-text{grid-column:span 2}.word-inspector-field{display:flex;flex-direction:column;gap:4px;min-width:0}.word-inspector-field label{font-size:10px;color:#a6b6c9;text-transform:uppercase;letter-spacing:.06em}.word-inspector-field input,.word-inspector-field select{width:100%;min-width:0;background:#09111b;border:1px solid #34455a;border-radius:6px;color:var(--text);padding:8px 9px;font-size:12px}.word-inspector-field input:focus,.word-inspector-field select:focus{outline:2px solid var(--accent2);outline-offset:1px}.timeline-empty{padding:26px;text-align:center;color:#91a1b5;min-width:0}.timeline-empty strong{display:block;color:#d9e6f5;margin-bottom:5px}
 @media(max-width:950px){.timeline-viewport{max-height:65vh}.word-inspector-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.word-inspector-text{grid-column:1/-1}.timeline-inner{--label-width:118px}}
 @media(max-width:540px){.timeline-toolbar{align-items:flex-start}.timeline-help{max-width:100%}.word-inspector-fields{grid-template-columns:1fr 1fr}.timeline-inner{--label-width:94px}.timeline-lane-row{min-height:116px}.timeline-lane-content{grid-template-rows:62px 48px}.lane-waveform-wrapper,.lane-waveform-canvas{height:62px}.lane-playhead-handle{height:62px}}
 @media(max-width:1000px){.editor-layout{grid-template-columns:1fr}.table-wrap,.preview{max-height:none}.audio-panel{grid-template-columns:1fr}.status{margin-left:0}}@media(max-width:620px){.app-header{padding:12px}.shell{padding:12px}.brand p{display:none}.file-name{max-width:180px}.settings-grid{grid-template-columns:1fr}.toolbar{align-items:flex-start}.toolbar>*{max-width:100%}th.time,td.time{width:128px}th.num,td.num{width:42px}.panel-actions{margin-left:auto}}
-.word-format-toggles{display:flex;gap:6px}.word-format-toggle{min-width:40px;padding:6px 12px;font-size:15px}.word-format-toggle[aria-pressed="true"]{background:#245346;border-color:#367b66;color:#fff}.word-style-help{font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}.agent-preset-row{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid #2a394c;padding-top:9px}.agent-preset-picker{position:relative;flex:1;min-width:150px}.agent-preset-picker>button{width:100%;text-align:left}.agent-preset-menu{position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:100;min-width:220px;max-height:260px;overflow:auto;padding:5px;border:1px solid #455972;border-radius:9px;background:#101927;box-shadow:0 14px 35px #000b}.agent-preset-option{display:flex;align-items:center;gap:5px;padding:2px}.agent-preset-option button{border-radius:6px;padding:6px 8px;font-size:12px}.agent-preset-option .agent-preset-apply{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;background:transparent;border-color:transparent}.agent-preset-option .agent-preset-delete{flex:0 0 30px;width:30px;padding:5px;color:#ffb5b5;background:#39232c;border-color:#613640;font-size:17px;line-height:1}.agent-preset-option .agent-preset-delete:hover{background:#642a38;border-color:#a04a5d}.agent-preset-empty{padding:9px;color:var(--muted);font-size:12px}.agent-preset-menu.hidden{display:none!important}.color-text-input{font-family:var(--mono);font-weight:700}.color-picker-popover{position:fixed;z-index:80;width:min(320px,calc(100vw - 20px));padding:11px;border:1px solid #496079;border-radius:12px;background:#111a28;box-shadow:0 18px 55px #000a}.color-picker-tabs{display:flex;gap:5px;margin-bottom:9px}.color-picker-tabs button{flex:1;min-width:0;padding:7px 4px;font-size:12px}.color-picker-tabs button.active{background:#245346;border-color:#367b66}.color-swatches{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin-bottom:10px}.color-swatch{height:22px;padding:0;border:1px solid #ffffff40;border-radius:5px;min-width:0}.color-picker-content{display:grid;gap:9px}.sv-pad{height:142px;border:1px solid #ffffff55;border-radius:6px;touch-action:none;cursor:crosshair}.color-range{display:grid;grid-template-columns:62px 1fr 38px;gap:8px;align-items:center;font-size:11px;color:#c0cede}.color-range input{width:100%;min-width:0;padding:0;accent-color:#76e4c1}.color-range output{text-align:right;font-family:var(--mono)}.color-picker-preview{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px}.color-picker-preview span{width:24px;height:18px;border:1px solid #ffffff55;border-radius:4px}.editor-context-menu{position:fixed;z-index:90;min-width:230px;max-width:min(320px,calc(100vw - 20px));max-height:min(75vh,620px);overflow:auto;padding:5px;border:1px solid #455972;border-radius:10px;background:#101927;box-shadow:0 18px 55px #000b}.editor-context-menu button{display:block;width:100%;text-align:left;padding:7px 10px;background:transparent;border-color:transparent;border-radius:6px;font-size:12px}.editor-context-menu button:hover{background:#26384d;border-color:#405773}.editor-context-menu .context-menu-heading{padding:8px 10px 3px;color:#91a5bd;font-size:10px;text-transform:uppercase;letter-spacing:.08em}.editor-context-menu .context-menu-separator{height:1px;background:#2e3d51;margin:5px 3px}.editor-context-menu .context-menu-footer{border-top:1px solid #2e3d51;margin-top:5px;padding-top:5px}.editor-context-menu button:disabled{opacity:.4;cursor:not-allowed}.color-picker-popover.hidden,.editor-context-menu.hidden{display:none!important}
+.word-format-toggles{display:flex;gap:6px}.word-format-toggle{min-width:40px;padding:6px 12px;font-size:15px}.word-format-toggle[aria-pressed="true"]{background:#245346;border-color:#367b66;color:#fff}.word-style-help{font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}.agent-preset-row{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid #2a394c;padding-top:9px}.agent-preset-picker{position:relative;flex:1;min-width:150px}.agent-preset-picker>button{width:100%;text-align:left}.agent-preset-menu{position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:100;min-width:220px;max-height:260px;overflow:auto;padding:5px;border:1px solid #455972;border-radius:9px;background:#101927;box-shadow:0 14px 35px #000b}.agent-preset-option{display:flex;align-items:center;gap:5px;padding:2px}.agent-preset-option button{border-radius:6px;padding:6px 8px;font-size:12px}.agent-preset-option .agent-preset-apply{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;background:transparent;border-color:transparent}.agent-preset-option .agent-preset-delete{flex:0 0 30px;width:30px;padding:5px;color:#ffb5b5;background:#39232c;border-color:#613640;font-size:17px;line-height:1}.agent-preset-option .agent-preset-delete:hover{background:#642a38;border-color:#a04a5d}.agent-preset-empty{padding:9px;color:var(--muted);font-size:12px}.agent-preset-menu.hidden{display:none!important}.color-text-input{font-family:var(--mono);font-weight:700}.color-picker-popover{position:fixed;z-index:80;width:min(320px,calc(100vw - 20px));padding:11px;border:1px solid #496079;border-radius:12px;background:#111a28;box-shadow:0 18px 55px #000a}.color-picker-tabs{display:flex;gap:5px;margin-bottom:9px}.color-picker-tabs button{flex:1;min-width:0;padding:7px 4px;font-size:12px}.color-picker-tabs button.active{background:#245346;border-color:#367b66}.color-swatches{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin-bottom:10px}.color-swatch{height:22px;padding:0;border:1px solid #ffffff40;border-radius:5px;min-width:0}.color-picker-content{display:grid;gap:9px}.sv-pad{height:142px;border:1px solid #ffffff55;border-radius:6px;touch-action:none;cursor:crosshair}.color-range{display:grid;grid-template-columns:62px 1fr 38px;gap:8px;align-items:center;font-size:11px;color:#c0cede}.color-range input{width:100%;min-width:0;padding:0;accent-color:#76e4c1}.color-range output{text-align:right;font-family:var(--mono)}.color-picker-preview{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px}.color-picker-preview span{width:24px;height:18px;border:1px solid #ffffff55;border-radius:4px}.editor-context-menu{position:fixed;z-index:90;min-width:230px;max-width:min(320px,calc(100vw - 20px));max-height:min(75vh,620px);overflow:auto;padding:5px;border:1px solid #455972;border-radius:10px;background:#101927;box-shadow:0 18px 55px #000b}.editor-context-menu button{display:block;width:100%;text-align:left;padding:7px 10px;background:transparent;border-color:transparent;border-radius:6px;font-size:12px}.editor-context-menu button:hover{background:#26384d;border-color:#405773}.editor-context-menu .context-menu-heading{padding:8px 10px 3px;color:#91a5bd;font-size:12px;text-transform:none;letter-spacing:0}.editor-context-menu .context-menu-separator{height:1px;background:#2e3d51;margin:5px 3px}.editor-context-menu .context-menu-footer{border-top:1px solid #2e3d51;margin-top:5px;padding-top:5px}.editor-context-menu button:disabled{opacity:.4;cursor:not-allowed}.color-picker-popover.hidden,.editor-context-menu.hidden{display:none!important}
 
 :root{--app-header-height:68px;--player-dock-height:82px}
 .app-header{height:var(--app-header-height);min-height:var(--app-header-height);padding:9px 18px;z-index:80}
@@ -72,7 +72,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .player-dock .audio-title{font-size:13px}
 .player-dock .audio-sub{font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .player-dock audio{width:100%;min-width:0;height:38px}
-.player-dock .audio-time{font-size:11px}
+.player-dock audio::-webkit-media-controls-current-time-display,.player-dock audio::-webkit-media-controls-time-remaining-display{display:none}.player-dock .audio-time{font-size:11px}
 .preview-backdrop{position:fixed;left:0;right:0;top:var(--app-header-height);bottom:var(--player-dock-height);z-index:50;background:#02060bb8;backdrop-filter:blur(1px);transition:opacity .18s ease}
 .preview-backdrop.hidden{display:none!important}
 .preview-drawer{position:fixed;left:0;top:var(--app-header-height);bottom:var(--player-dock-height);width:min(560px,calc(100vw - 28px));z-index:55;display:flex;flex-direction:column;border-radius:0 12px 12px 0;box-shadow:18px 0 45px #0008;transform:translateX(-103%);visibility:hidden;transition:transform .2s ease,visibility .2s ease;overflow:hidden}
@@ -164,8 +164,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .generate-result-pane{padding:11px;min-width:0}.generate-result-pane.hidden{display:none!important}.generate-log-view{margin:0;max-height:340px;min-height:180px;overflow:auto;padding:12px;border:1px solid #27364a;border-radius:8px;background:#090f18;color:#c8d7e8;font:11px/1.55 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere}
 .generate-clean-diagnosis{display:grid;gap:10px}.generate-diagnosis-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.generate-diagnosis-stat{padding:10px;border:1px solid var(--border);border-radius:8px;background:#111a27}.generate-diagnosis-stat span{font-size:10px;color:var(--muted)}.generate-diagnosis-stat strong{display:block;font-size:17px;margin-top:4px;overflow-wrap:anywhere}
 .generate-diagnosis-chunks{width:100%;border-collapse:collapse;font-size:11px}.generate-diagnosis-chunks th,.generate-diagnosis-chunks td{padding:7px 8px;border:1px solid var(--border);text-align:left}.generate-diagnosis-chunks th{position:static;background:#172232}.generate-diagnosis-notes{margin:0;padding-left:19px;font-size:11px;color:#c9d5e3}.generate-artifacts{display:grid;gap:8px}.generate-artifact-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:#111a27}.generate-artifact-info{min-width:0;display:grid;gap:3px}.generate-artifact-info strong{font-size:12px}.generate-artifact-info span{color:var(--muted);font-size:10px;overflow-wrap:anywhere}.generate-artifact-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.generate-run-status{padding:13px 16px 0}.generate-run-status.hidden{display:none!important}.generate-progress-heading{display:flex;align-items:center;justify-content:flex-start;gap:12px;font-size:11px;color:var(--muted);margin:0 0 6px}.generate-progress-heading strong{font-size:13px;color:var(--text);font-weight:750;white-space:nowrap}.generate-progress-stage-wrap{position:relative;padding-top:22px;margin-bottom:13px}.generate-current-step{position:absolute;top:0;left:0;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;line-height:16px;font-weight:700;color:var(--accent);transition:left .2s;pointer-events:none}.generate-segment-track{display:flex;gap:4px;height:12px;width:100%;border-radius:7px;overflow:visible}.generate-segment{position:relative;flex:1;min-width:0;height:100%;overflow:hidden;border:1px solid #2a394d;background:#070c13;border-radius:3px}.generate-segment-fill{display:block;height:100%;width:0;background:linear-gradient(90deg,#328b70,#76e4c1);transition:width .25s,background .25s}.generate-segment.active{border-color:#76e4c1;box-shadow:0 0 0 1px #76e4c133}.generate-segment.active .generate-segment-fill{background:linear-gradient(90deg,#2f9576,#9af2d5)}.generate-segment.complete .generate-segment-fill{width:100%}.generate-run-status.finished{border-top:1px solid #367b66}.generate-run-status.failed{border-top:1px solid #874756}
-@keyframes genProgressShimmer{from{background-position:100% 0}to{background-position:-100% 0}}
+.generate-run-status{padding:13px 16px 0}.generate-run-status.hidden{display:none!important}.generate-progress-heading{display:flex;align-items:center;justify-content:flex-start;gap:12px;font-size:11px;color:var(--muted);margin:0 0 6px}.generate-progress-heading strong{font-size:13px;color:var(--text);font-weight:750;white-space:nowrap}.generate-progress-stage-wrap{position:relative;padding-top:22px;margin-bottom:13px}.generate-current-step{position:absolute;top:0;left:0;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;line-height:16px;font-weight:700;color:var(--accent);transition:left .2s;pointer-events:none}.generate-segment-track{display:flex;gap:4px;height:12px;width:100%;border-radius:7px;overflow:visible}.generate-segment{position:relative;flex:1;min-width:0;height:100%;overflow:hidden;border:1px solid #2a394d;background:#070c13;border-radius:3px}.generate-segment-fill{position:absolute;left:0;top:0;display:block;height:100%;width:0;background:#59c6a3;border-radius:inherit;transition:width .12s linear;will-change:width,transform}.generate-segment.active{border-color:#76e4c1;box-shadow:0 0 0 1px #76e4c133}.generate-segment.complete .generate-segment-fill{width:100%}.generate-segment.indeterminate .generate-segment-fill{width:35%!important;animation:genSegmentSweep 1.15s ease-in-out infinite}.generate-segment.indeterminate.complete .generate-segment-fill{animation:none}.generate-run-status.finished{border-top:1px solid #367b66}.generate-run-status.failed{border-top:1px solid #874756}
+@keyframes genProgressShimmer{from{background-position:100% 0}to{background-position:-100% 0}}@keyframes genSegmentSweep{0%{transform:translateX(-110%);opacity:.55}45%{opacity:1}100%{transform:translateX(300%);opacity:.65}}
 .generate-run-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-top:1px solid var(--border);background:#111a27}.generate-run-footer .generate-muted{flex:1;min-width:0;text-align:center}.generate-run-button{min-width:170px;font-weight:700}.generate-run-button:disabled{opacity:.55;cursor:not-allowed}.generate-output-destination{grid-column:1/-1}.generate-output-location-actions{display:flex;gap:7px;flex-wrap:wrap}.generate-output-location-actions button{white-space:nowrap}
 @media(max-width:950px){.generate-basic-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.generate-advanced-grid{grid-template-columns:1fr}.generate-diagnosis-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.generate-pane{padding:10px}.generate-drop-grid,.generate-basic-grid,.generate-check-grid{grid-template-columns:1fr}.generate-json-uploads{grid-template-columns:1fr}.generate-tools-row{align-items:stretch;flex-direction:column}.generate-run-footer{align-items:stretch;flex-direction:column}.generate-run-footer .generate-muted{text-align:left;order:0}.generate-run-footer #genRunButton{order:-1}.generate-run-footer #genImportButton{order:1}.generate-run-button{width:100%}.generate-output-location-actions{flex-direction:column;align-items:stretch}.generate-install-item,.generate-artifact-row{align-items:flex-start;flex-direction:column}.generate-artifact-actions{justify-content:flex-start}.generate-results{margin:10px}.generate-subnav{padding:9px}.generate-subnav button{flex:1;padding:8px 5px;font-size:12px}}
@@ -187,9 +187,6 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 #editorSep3{grid-column:6}
 .editor-bar-actions{grid-column:7;justify-self:start;gap:6px;white-space:nowrap}
 #timelineControlsTrigger{grid-column:8;justify-self:end;white-space:nowrap}
-.editor-action-bar[data-actions-align="left"] .editor-bar-actions{justify-self:start}
-.editor-action-bar[data-actions-align="center"] .editor-bar-actions{justify-self:center}
-.editor-action-bar[data-actions-align="right"] .editor-bar-actions{justify-self:end}
 .editor-bar-separator{width:1px;height:27px;background:#334256;display:block;justify-self:center}
 .action-import-group{display:flex;align-items:center;gap:5px;min-width:0}
 .action-import-button{padding:5px 8px;white-space:nowrap;font-size:12px}
@@ -206,7 +203,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .ttml-editor-layout.bottom .word-inspector{height:auto;max-height:38vh;overflow:auto;margin-top:0}
 .timeline-viewport{height:100%;min-height:0;max-height:none}
 .word-inspector{margin-top:0;min-height:0;min-width:0;overflow:auto}
-.grid-footer{flex:0 0 auto}
+ .grid-footer{flex:0 0 auto}.editor-lyrics-file-name{margin-left:auto;max-width:min(46vw,560px);text-align:right;flex:0 1 auto}
 .timeline-label{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto minmax(0,1fr);align-items:start;gap:4px 8px}
 .timeline-label strong{grid-column:1;grid-row:1;min-width:0}
 .timeline-label .lane-start{grid-column:2;grid-row:1;text-align:right;white-space:nowrap;max-width:none;align-self:start}
@@ -216,9 +213,6 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   .editor-action-bar{display:flex;flex-wrap:wrap}
   .editor-bar-separator{display:none}
   .editor-bar-actions{justify-self:auto}
-  .editor-action-bar[data-actions-align="left"] .editor-bar-actions{margin-left:0;margin-right:auto}
-  .editor-action-bar[data-actions-align="center"] .editor-bar-actions{margin-left:auto;margin-right:auto}
-  .editor-action-bar[data-actions-align="right"] .editor-bar-actions{margin-left:auto;margin-right:0}
   #timelineControlsTrigger{margin-left:auto}
   #editorImportGroup{flex-wrap:wrap}
 }
@@ -255,15 +249,15 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   <section id="editScreen">
     <div class="editor-layout">
       <section class="panel" aria-label="Lyrics editing grid">
-        <div class="editor-action-bar" id="editorActionBar" data-actions-align="left" aria-label="Editor actions">
+        <div class="editor-action-bar" id="editorActionBar" aria-label="Editor actions">
           <div class="editor-bar-group" id="editorModeSwitch">
             <button id="viewLines" class="small primary" type="button" title="Sync line by line" aria-label="LRC — Sync line by line">LRC</button>
             <button id="viewWords" class="small" type="button" disabled title="Sync word by word" aria-label="TTML — Sync word by word">TTML</button>
           </div>
           <span class="editor-bar-separator" id="editorSep1" aria-hidden="true"></span>
           <div class="editor-bar-group" id="editorImportGroup">
-            <div class="import-group action-import-group"><label class="file-label action-import-button" for="audioFile" title="Choose local audio">Import Audio</label><input id="audioFile" type="file" accept="audio/*"><span id="audioFileName" class="file-name action-file-name" title="No audio selected">No audio</span></div>
-            <div class="import-group action-import-group"><label class="file-label action-import-button" for="lyricsFile" title="Choose local lyrics">Import Lyrics</label><input id="lyricsFile" type="file" accept=".lrc,.ttml,.xml,.txt,text/plain,application/xml"><span id="lyricsFileName" class="file-name action-file-name" title="No lyrics loaded">No lyrics</span></div>
+            <div class="import-group action-import-group"><label class="file-label action-import-button" for="audioFile" title="Choose local audio">Import Audio</label><input id="audioFile" type="file" accept="audio/*"></div>
+            <div class="import-group action-import-group"><label class="file-label action-import-button" for="lyricsFile" title="Choose local lyrics">Import Lyrics</label><input id="lyricsFile" type="file" accept=".lrc,.ttml,.xml,.txt,text/plain,application/xml"></div>
           </div>
           <span class="editor-bar-separator" id="editorSep2" aria-hidden="true"></span>
           <div class="editor-bar-group" id="editorZoomControls" aria-label="TTML timeline zoom">
@@ -274,8 +268,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
           </div>
           <span class="editor-bar-separator" id="editorSep3" aria-hidden="true"></span>
           <div class="editor-bar-group editor-bar-actions" id="editorActionButtons">
-            <button id="addLine" class="small" type="button">+ Add Line</button>
-            <button id="addWord" class="small" type="button" title="Add a timed word cue (F)">+ Add Word</button>
+            <button id="addLine" class="small" type="button" title="Inserts line under current line">+ Add Line</button>
+            <button id="addWord" class="small" type="button" title="Adds a word cue at the playhead (F)">+ Add Word</button>
             <button id="deleteTtmlLine" class="small danger hidden" type="button">Delete Line</button>
             <button id="deleteLine" class="small danger" type="button">Delete Line</button>
           </div>
@@ -284,6 +278,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         </div>
         <div id="lineTableWrap" class="table-wrap"><table><thead id="gridHead"><tr><th class="num">#</th><th class="time">Time</th><th>Lyric</th></tr></thead><tbody id="gridBody"><tr><td colspan="3" style="padding:30px;text-align:center;color:#91a1b5">Import an LRC, TTML, or TXT lyrics file.</td></tr></tbody></table></div>
         <div id="wordTimelineEditor" class="word-timeline-editor hidden">
+          <div class="timeline-toolbar"><div class="timeline-toolbar-group"><button id="addLineTtml" class="small" type="button" title="Inserts line under current line">+ Add Line</button></div></div>
           <div class="ttml-editor-layout" id="ttmlEditorLayout">
           <div id="timelineViewport" class="timeline-viewport" aria-label="Wrapped word timing timeline">
             <div id="timelineInner" class="timeline-inner">
@@ -292,7 +287,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
             </div>
           </div>
           <div id="wordInspector" class="word-inspector hidden">
-            <div class="word-inspector-title"><strong id="wordInspectorHeading">Selected word</strong><span id="wordInspectorMeta" class="timeline-zoom-label">Choose a word block above</span></div>
+            <div class="word-inspector-title"><strong id="wordInspectorHeading">Selected word</strong><div class="word-inspector-heading-actions"><span id="wordInspectorMeta" class="timeline-zoom-label">Choose a word block above</span><button id="jumpToLineButton" class="small hidden" type="button" title="Scroll the selected lyric line into view">Jump to line</button></div></div>
             <div class="word-inspector-fields">
               <div class="word-inspector-field"><label for="wordStart">Start</label><input id="wordStart" type="text" inputmode="decimal" aria-label="Selected word start timestamp"></div>
               <div class="word-inspector-field"><label for="wordEnd">End</label><input id="wordEnd" type="text" inputmode="decimal" aria-label="Selected word end timestamp"></div>
@@ -306,7 +301,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
           </div>
           </div>
         </div>
-        <div class="grid-footer"><span id="gridStatus">0 lines</span><span id="status" class="status"><strong>Ready</strong> · import files to begin</span><span><span class="shortcut">↑</span>/<span class="shortcut">↓</span> select · <span class="shortcut">←</span>/<span class="shortcut">→</span> nudge or seek · <span class="shortcut">Shift+←/→</span> word edges · <span class="shortcut">Ctrl+Z</span> undo · <span class="shortcut">Ctrl+Y</span> redo · <span class="shortcut">Space</span> play/pause · <span class="shortcut">Ctrl+Space</span> block pause · <span class="shortcut">F</span> add word (TTML)</span></div>
+        <div class="grid-footer"><span id="gridStatus">0 lines · 0 words</span><span id="status" class="status hidden"><strong>Ready</strong> · import files to begin</span><span id="lyricsFileName" class="file-name editor-lyrics-file-name" title="No lyrics loaded">No lyrics loaded</span></div>
       </section>
     </div>
   </section>
@@ -321,12 +316,12 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       <div class="generate-drop-grid">
         <div id="genAudioDrop" class="generate-drop-zone" tabindex="0" role="button" aria-label="Choose or drop an audio file">
           <div class="generate-drop-icon">♫</div><strong>Audio file</strong><span id="genAudioName" class="generate-file-name">Drop audio here or choose a file</span>
-          <label class="small file-label" for="genAudioFile">Choose audio</label><input id="genAudioFile" class="generate-file-input" type="file" accept="audio/*">
+          <button id="genChooseAudioFile" class="small file-label" type="button">Choose audio</button><input id="genAudioFile" class="generate-file-input" type="file" accept="audio/*">
           <span class="generate-drop-help">FLAC, WAV, MP3, M4A, OGG and other FFmpeg formats</span>
         </div>
         <div id="genLyricsDrop" class="generate-drop-zone" tabindex="0" role="button" aria-label="Choose or drop lyrics">
           <div class="generate-drop-icon">≡</div><strong id="genLyricsTitle">Lyrics / transcript</strong><span id="genLyricsName" class="generate-file-name">Drop text, LRC, or TTML here</span>
-          <label class="small file-label" for="genLyricsFile">Choose lyrics</label><input id="genLyricsFile" class="generate-file-input" type="file" accept=".txt,.lrc,.ttml,.xml,text/plain,application/xml">
+          <button id="genChooseLyricsFile" class="small file-label" type="button">Choose lyrics</button><input id="genLyricsFile" class="generate-file-input" type="file" accept=".txt,.lrc,.ttml,.xml,text/plain,application/xml">
           <span id="genLyricsHelp" class="generate-drop-help">Plain text or LRC for alignment; choose an LRC for timestamp adjustment.</span>
         </div>
       </div>
@@ -422,7 +417,6 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       <div class="setting"><label for="downloadBase">Export filename suffix</label><select id="downloadBase"><option value="same">Use imported lyrics base name</option><option value="audio">Use audio base name</option></select><p>Controls the default downloaded filename.</p></div>
       <div class="setting"><label for="returnToEditAfterGenerate">After generation finishes</label><select id="returnToEditAfterGenerate"><option value="false">Stay on Generate and review results</option><option value="true">Open Edit automatically</option></select><p>Choose whether a completed CLI run takes you straight to the editor.</p></div>
       <div class="setting"><label for="autoImportGeneratedOutput">Automatically import generated files</label><select id="autoImportGeneratedOutput"><option value="false">Off — use Import Output to Edit</option><option value="true">On — load audio and lyrics into Edit</option></select><p>When enabled, load the generated TTML (or LRC if TTML was not requested) and source audio in Edit after a successful run.</p></div>
-      <div class="setting"><label for="editorActionAlignment">Editor action alignment</label><select id="editorActionAlignment"><option value="left">Left</option><option value="center">Center</option><option value="right">Right</option></select><p>Choose whether the Add / Delete buttons sit left, center, or right on the editor action bar.</p></div>
       <div class="setting"><label for="wordInspectorLayout">TTML word editor placement</label><select id="wordInspectorLayout"><option value="right">Right side</option><option value="bottom">Below timeline</option></select><p>Place the selected-word fields beside the timeline or stack them underneath it.</p></div>
     </div>
   </section>
@@ -521,9 +515,11 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   let pendingZoomRender = null;
   let settings = {
     nudgeStep: 0.02, shiftMultiplier: 5, replayLead: 2.0, txtSpacing: 3.0,
-    language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, returnToEditAfterGenerate: false, autoImportGeneratedOutput: false, editorActionAlignment: 'left', wordInspectorLayout: 'right'
+    language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, returnToEditAfterGenerate: false, autoImportGeneratedOutput: false, wordInspectorLayout: 'right'
   };
   try { settings = {...settings, ...JSON.parse(localStorage.getItem('lyrics-aligner-ui-settings') || '{}')}; } catch (_) {}
+  delete settings.editorActionAlignment;
+  delete settings.editorActionAlignment;
   let toastTimer = null;
 
   function toast(message, error=false) {
@@ -531,29 +527,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.add('hidden'),4200);
   }
   function applyEditorPreferences(){
-    const alignment=['left','center','right'].includes(settings.editorActionAlignment)?settings.editorActionAlignment:'left';
-    $('editorActionBar').dataset.actionsAlign=alignment;
     $('ttmlEditorLayout').classList.toggle('bottom',settings.wordInspectorLayout==='bottom');
-  }
-  function positionFloatingMenu(trigger,menu){
-    menu.classList.remove('hidden');
-    const padding=10,gap=6,rect=trigger.getBoundingClientRect();
-    const headerHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-header-height'))||68;
-    const dockHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--player-dock-height'))||82;
-    const topLimit=headerHeight+padding,bottomLimit=Math.max(topLimit+90,window.innerHeight-dockHeight-padding);
-    const width=menu.offsetWidth||Math.min(320,window.innerWidth-padding*2);
-    const maxLeft=Math.max(padding,window.innerWidth-width-padding);
-    const left=Math.max(padding,Math.min(maxLeft,rect.left));
-    menu.style.maxHeight=Math.max(90,bottomLimit-topLimit)+'px';
-    const height=menu.offsetHeight;
-    const below=rect.bottom+gap,above=rect.top-height-gap;
-    const top=below+height<=bottomLimit?below:Math.max(topLimit,Math.min(bottomLimit-height,above));
-    menu.style.left=Math.round(left)+'px';menu.style.top=Math.round(top)+'px';
-  }
-  function toggleFloatingMenu(trigger,menu){
-    const opening=menu.classList.contains('hidden');
-    if(opening)positionFloatingMenu(trigger,menu);else menu.classList.add('hidden');
-    trigger.setAttribute('aria-expanded',String(opening));
   }
   function captureTimelineView(){
     const viewport=$('timelineViewport'),editor=$('wordTimelineEditor');
@@ -647,9 +621,9 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     restoreHistoryState(next);toast('Redo.');
   }
   function saveSettings() {
-    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','editorActionAlignment','wordInspectorLayout']) {
+    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout']) {
       const el=$(key); if (!el) continue;
-      settings[key] = ['language','defaultTab','downloadBase','editorActionAlignment','wordInspectorLayout'].includes(key) ? el.value :
+      settings[key] = ['language','defaultTab','downloadBase','wordInspectorLayout'].includes(key) ? el.value :
         (key==='autoFollow'||key==='returnToEditAfterGenerate'||key==='autoImportGeneratedOutput') ? el.value==='true' : Number(el.value);
     }
     settings.nudgeStep=Math.min(1,Math.max(.001,Number(settings.nudgeStep)||.02));
@@ -666,7 +640,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed']) $(key).value=settings[key];
     document.documentElement.style.setProperty('--playhead-label-size',`${settings.playheadLabelSize}px`);
     $('autoFollow').value=String(settings.autoFollow);
-    $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));$('autoImportGeneratedOutput').value=String(Boolean(settings.autoImportGeneratedOutput));$('editorActionAlignment').value=settings.editorActionAlignment||'left';$('wordInspectorLayout').value=settings.wordInspectorLayout||'right';applyEditorPreferences();
+    $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));$('autoImportGeneratedOutput').value=String(Boolean(settings.autoImportGeneratedOutput));$('wordInspectorLayout').value=settings.wordInspectorLayout||'right';applyEditorPreferences();
   }
   function fmtTime(sec, places=3) {
     sec=Math.max(0,Number(sec)||0); const mins=Math.floor(sec/60), secs=sec-mins*60;
@@ -728,12 +702,25 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       $('genFooterStatus').textContent='Settings changed. Ready for another run.';
     }
   }
-  async function genChooseOutputDirectory(kind){
+  async function genPickLocalSource(kind){
     try{
-      const result=await genFetchJson('/api/select-folder',{method:'POST',headers:{'Content-Type':'application/json','X-Savant-UI':'1'},body:JSON.stringify({kind,audioName:genFiles.audio?.name||'',lyricsName:genFiles.lyrics?.name||''})});
-      if(result.cancelled)return;
-      $('genOutputDirectory').value=result.path||'';genMarkConfigChanged();
-    }catch(error){toast(error.message||'Could not open the local folder picker.',true);}
+      const result=await genFetchJson('/api/select-source',{method:'POST',headers:{'Content-Type':'application/json','X-Savant-UI':'1'},body:JSON.stringify({kind})});
+      if(result.cancelled)return null;
+      return {name:result.name,path:result.path,size:Number(result.size)||0,type:result.type||'application/octet-stream',nativeSource:true};
+    }catch(error){toast(error.message||'Could not open the local file picker.',true);return null;}
+  }
+  async function genChooseSourceFile(kind){const file=await genPickLocalSource(kind);if(file)genSetFile(kind,file);}
+  function genSourceDirectory(file){
+    const raw=String(file?.path||'').trim();if(!raw)return '';
+    const normalized=raw.replace(/\\/g,'/'),index=normalized.lastIndexOf('/');
+    return index>0?normalized.slice(0,index):index===0?'/':'';
+  }
+  async function genChooseOutputDirectory(kind){
+    let source=genFiles[kind];
+    if(!genSourceDirectory(source)){source=await genPickLocalSource(kind);if(!source)return;genSetFile(kind,source);}
+    const directory=genSourceDirectory(source);
+    if(!directory){toast('The selected source file has no usable local path.',true);return;}
+    $('genOutputDirectory').value=directory;genMarkConfigChanged();
   }
   function genSetImportButton(snapshot){
     const artifacts=snapshot?.artifacts||[];
@@ -749,7 +736,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     try{
       $('genImportButton').disabled=true;
       let audio=genFiles.audio;
-      if(audio){loadAudio(audio);}
+      if(audio instanceof File){loadAudio(audio);}
       else{
         const audioResponse=await fetch('/api/runs/'+encodeURIComponent(runId)+'/artifacts/input-audio');
         if(audioResponse.ok){const blob=await audioResponse.blob();audio=new File([blob],genLastSnapshot.sourceAudioName||'audio', {type:blob.type||'application/octet-stream'});loadAudio(audio);}
@@ -766,8 +753,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     for(const [key,inputId] of GEN_FILE_INPUTS){
       $(inputId).addEventListener('change',()=>{if($(inputId).files?.[0])genSetFile(key,$(inputId).files[0]);});
       const zone=$({audio:'genAudioDrop',lyrics:'genLyricsDrop',singerConfig:'genSingerDrop',lineOffsets:'genLineOffsetsDrop',phraseOffsets:'genPhraseOffsetsDrop'}[key]);
-      zone.addEventListener('click',e=>{if(!e.target.closest('label,button,input'))$(inputId).click();});
-      zone.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('label,button,input')){e.preventDefault();$(inputId).click();}});
+      zone.addEventListener('click',e=>{if(e.target.closest('label,button,input'))return;if(key==='audio'||key==='lyrics')genChooseSourceFile(key);else $(inputId).click();});
+      zone.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('label,button,input')){e.preventDefault();if(key==='audio'||key==='lyrics')genChooseSourceFile(key);else $(inputId).click();}});
       zone.addEventListener('dragenter',e=>{e.preventDefault();e.stopPropagation();zone.classList.add('dragover');});
       zone.addEventListener('dragover',e=>{e.preventDefault();e.stopPropagation();zone.classList.add('dragover');if(e.dataTransfer)e.dataTransfer.dropEffect='copy';});
       zone.addEventListener('dragleave',e=>{e.preventDefault();e.stopPropagation();zone.classList.remove('dragover');});
@@ -786,7 +773,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function genGetConfig(modeOverride=null){
     const mode=modeOverride||$('genMode').value;
     const outputName=$('genOutputName').value.trim();
-    return {mode,aligner:$('genAligner').value,language:$('genLanguage').value.trim()||'en',device:$('genDevice').value,offset:$('genOffset').value||'0',
+    return {mode,aligner:$('genAligner').value,language:$('genLanguage').value.trim()||'en',device:$('genDevice').value,offset:$('genOffset').value||'0',audioSourcePath:genFiles.audio?.path||'',lyricsSourcePath:genFiles.lyrics?.path||'',
       wordLevel:$('genWordLevel').checked,separateVocals:$('genSeparateVocals').checked,instrumentalCues:$('genInstrumentalCues').checked,
       outputDirectory:$('genOutputDirectory').value.trim(),outputName:mode==='adjust'&&!genOutputNameCustom?((outputName||genDefaultOutputName||'lyrics')+'.adjusted'):outputName,outputPath:$('genOutputPath').value.trim(),ttmlOutputPath:$('genTtmlOutputPath').value.trim(),reviewReport:$('genReviewReport').checked,reviewReportPath:$('genReviewReportPath').value.trim(),
       overwrite:$('genOverwrite').checked,dryRun:$('genDryRun').checked,alignModel:$('genAlignModel').value.trim(),tifaRoot:$('genAligner').value==='tifa' ? $('genTifaRoot').value.trim() : '',tifaPython:$('genAligner').value==='tifa' ? $('genTifaPython').value.trim() : '',tifaModel:$('genAligner').value==='tifa' ? $('genTifaModel').value.trim() : '',
@@ -861,6 +848,12 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       active=Math.max(0,thresholds.findIndex(value=>overall<value));if(active<0)active=stages.length-1;
     }
     const track=$('genSegmentTrack');
+    let tqdmPercent=null;
+    if(/prepare audio|separate vocals|demucs|tifa alignment|singing-trained/i.test(lower)){
+      const tqdmMatches=[...String(snapshot.logs||'').replace(/\r/g,'\n').matchAll(/(\d{1,3})%\s*\|[^|\r\n]*\|\s*(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)/g)];
+      const last=tqdmMatches[tqdmMatches.length-1];
+      if(last&&Number(last[3])>0)tqdmPercent=Math.max(0,Math.min(100,Number(last[2])/Number(last[3])*100));
+    }
     if(track.children.length!==stages.length){
       track.textContent='';
       for(const label of stages){
@@ -875,7 +868,9 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       const current=index===active&&!done;
       segment.classList.toggle('complete',done);segment.classList.toggle('active',current);
       const fill=segment.querySelector('.generate-segment-fill');
-      fill.style.width=done?'100%':current?(Number(snapshot.stepProgress)>0?Math.max(18,Math.min(100,Number(snapshot.stepProgress)))+'%':'48%'):'0%';
+      const currentFill=current?(tqdmPercent!==null?tqdmPercent:(Number(snapshot.stepProgress)>0?Math.max(0,Math.min(100,Number(snapshot.stepProgress))):35)):0;
+      segment.classList.toggle('indeterminate',current&&tqdmPercent===null&&!(Number(snapshot.stepProgress)>0));
+      fill.style.width=done?'100%':current?currentFill+'%':'0%';
       segment.title=stages[index];segment.setAttribute('aria-label',stages[index]);
     });
     $('genOverallText').textContent=overall+'% overall';
@@ -928,8 +923,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if(mode==='align'&&/\.ttml?$/i.test(genFiles.lyrics.name)){toast('Use TXT or LRC source lyrics for alignment; TTML can be opened in the editor.',true);return;}
     if(config.overwrite&&!config.dryRun&&['align','adjust'].includes(mode)&&!window.confirm('Overwrite is enabled. Existing output files at the selected paths may be replaced. Continue?'))return;
     const form=new FormData();form.append('config',JSON.stringify(config));
-    if(mode==='align'&&genFiles.audio)form.append('audio',genFiles.audio,genFiles.audio.name);
-    if(mode!=='doctor'&&genFiles.lyrics)form.append('lyrics',genFiles.lyrics,genFiles.lyrics.name);
+    if(mode==='align'&&genFiles.audio instanceof File)form.append('audio',genFiles.audio,genFiles.audio.name);
+    if(mode!=='doctor'&&genFiles.lyrics instanceof File)form.append('lyrics',genFiles.lyrics,genFiles.lyrics.name);
     if(mode==='align'&&genFiles.singerConfig)form.append('singerConfig',genFiles.singerConfig,genFiles.singerConfig.name);
     if((mode==='align'||mode==='adjust')&&genFiles.lineOffsets)form.append('lineOffsets',genFiles.lineOffsets,genFiles.lineOffsets.name);
     if((mode==='align'||mode==='adjust')&&genFiles.phraseOffsets)form.append('phraseOffsets',genFiles.phraseOffsets,genFiles.phraseOffsets.name);
@@ -983,6 +978,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     genWireFileInputs();$('generateConfigTab').addEventListener('click',()=>setGeneratePane('configuration'));$('generateAdvancedTab').addEventListener('click',()=>setGeneratePane('advanced'));
     $('genMode').addEventListener('change',updateGenerateConfigVisibility);$('genAligner').addEventListener('change',updateGenerateConfigVisibility);$('genSeparateVocals').addEventListener('change',renderGenerateInstallPrompts);
     $('genOutputName').addEventListener('input',()=>{genOutputNameCustom=Boolean($('genOutputName').value.trim())&&$('genOutputName').value.trim()!==genDefaultOutputName;genMarkConfigChanged();});
+    $('genChooseAudioFile').addEventListener('click',()=>genChooseSourceFile('audio'));$('genChooseLyricsFile').addEventListener('click',()=>genChooseSourceFile('lyrics'));
     $('genChooseLyricsDirectory').addEventListener('click',()=>genChooseOutputDirectory('lyrics'));$('genChooseAudioDirectory').addEventListener('click',()=>genChooseOutputDirectory('audio'));
     $('genUseDefaultDirectory').addEventListener('click',()=>{$('genOutputDirectory').value='';genMarkConfigChanged();});
     $('genOutputDirectory').addEventListener('input',genMarkConfigChanged);
@@ -1128,9 +1124,13 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       }
     }
   }
+  function updateGridStats(){
+    const wordCount=rows.reduce((total,row)=>total+(String(row.text||'').match(/\S+/g)||[]).length,0);
+    $('gridStatus').textContent=`${rows.length} lines · ${wordCount} words`;
+  }
   function renderLineGrid() {
     const tbody=$('gridBody'); tbody.textContent=''; activePlaybackIndex=-1; activeWordIndex=-1;
-    if(!rows.length){tbody.innerHTML='<tr><td colspan="3" style="padding:30px;text-align:center;color:#91a1b5">Import an LRC, TTML, or TXT lyrics file.</td></tr>'; $('gridStatus').textContent='0 lines'; return;}
+    if(!rows.length){tbody.innerHTML='<tr><td colspan="3" style="padding:30px;text-align:center;color:#91a1b5">Import an LRC, TTML, or TXT lyrics file.</td></tr>'; updateGridStats(); return;}
     const frag=document.createDocumentFragment();
     rows.forEach((row,i)=>{
       const tr=document.createElement('tr'); tr.dataset.index=String(i); tr.tabIndex=0; if(i===selectedIndex) tr.classList.add('selected'); if(row.flagged) tr.classList.add('flagged');
@@ -1170,6 +1170,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
           if(hadWordTiming&&newText.trim()&&(!row.wordCues||!row.wordCues.length))ensureWordCues(row,i);
         }
         row.originalText=row.text;
+        updateGridStats();
         hasWordTiming=rows.some(r=>r.wordCues&&r.wordCues.length);
         $('viewWords').disabled=!rows.some(r=>String(r.text||'').trim());
         if(gridMode==='words'&&!hasWordTiming)gridMode='lines';
@@ -1191,7 +1192,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         else if(e.key==='Enter'){e.preventDefault();textEditor.blur();if(i+1<rows.length){setSelected(i+1,true);const next=tbody.querySelector(`tr[data-index="${i+1}"] .lyric-editor`);next?.focus();}}
       });
     });
-    tbody.append(frag); $('gridStatus').textContent=`${rows.length} line(s) · ${hasWordTiming?'word timings imported':'line-level source timing'} · live preview follows playback`;
+    tbody.append(frag); updateGridStats();
     updateLiveHighlight();
   }
   function setGridMode(mode) {
@@ -1261,13 +1262,32 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const row=rows[ref.lineIndex];const cue=row?.wordCues?.[ref.cueIndex];
     return cue?{row,cue,lineIndex:ref.lineIndex,cueIndex:ref.cueIndex}:null;
   }
+  let jumpToLineFrame=null;
+  function updateJumpToLineVisibility(lineIndex=selectedWordRef?.lineIndex){
+    const button=$('jumpToLineButton'),viewport=$('timelineViewport');
+    if(!button||!viewport||gridMode!=='words'||!Number.isInteger(lineIndex)){button?.classList.add('hidden');return;}
+    const lane=$('timelineLanes').querySelector('.timeline-lane-row[data-line-index="'+lineIndex+'"]');
+    if(!lane){button.classList.add('hidden');return;}
+    const viewportRect=viewport.getBoundingClientRect(),laneRect=lane.getBoundingClientRect();
+    const visible=laneRect.bottom>viewportRect.top+1&&laneRect.top<viewportRect.bottom-1;
+    button.classList.toggle('hidden',visible);
+  }
+  function jumpToSelectedLine(){
+    const lineIndex=selectedWordRef?.lineIndex,viewport=$('timelineViewport');if(!Number.isInteger(lineIndex)||!viewport)return;
+    const lane=$('timelineLanes').querySelector('.timeline-lane-row[data-line-index="'+lineIndex+'"]');if(!lane)return;
+    if(jumpToLineFrame!==null)cancelAnimationFrame(jumpToLineFrame);
+    const viewportRect=viewport.getBoundingClientRect(),laneRect=lane.getBoundingClientRect();
+    const start=viewport.scrollTop,delta=viewport.scrollTop+laneRect.top-viewportRect.top-(viewport.clientHeight-lane.offsetHeight)/2,started=performance.now(),duration=280;
+    const animate=now=>{const t=Math.min(1,(now-started)/duration),eased=t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;viewport.scrollTop=start+delta*eased;if(t<1)jumpToLineFrame=requestAnimationFrame(animate);else{jumpToLineFrame=null;updateJumpToLineVisibility(lineIndex);}};
+    jumpToLineFrame=requestAnimationFrame(animate);
+  }
   function updateWordInspector() {
     const record=cueForRef();
     if(!record){
       wordInspectorShownKey=null;
       $('wordInspector').classList.add('hidden');$('wordInspectorHeading').textContent='Selected word';$('wordInspectorMeta').textContent='Choose a word block above';
       for(const id of ['wordStart','wordEnd','wordText','wordAgent','wordStyle','wordFontStyle','wordFontWeight','wordColor'])$(id).value='';
-      syncFormatToggleUI(null);
+      syncFormatToggleUI(null);updateJumpToLineVisibility();
       return;
     }
     const {row,cue,lineIndex,cueIndex}=record,key=wordKey(lineIndex,cueIndex);
@@ -1282,7 +1302,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     for(const [id,value] of Object.entries(values)){const el=$(id);if(el&&(changedWord||document.activeElement!==el))el.value=value;}
     const colorInput=$('wordColor');if(colorInput)colorInput.style.color=safeCssColor(cue.color)||'var(--text)';
     syncFormatToggleUI(cue);
-    wordInspectorShownKey=key;
+    wordInspectorShownKey=key;updateJumpToLineVisibility(lineIndex);
     const active=document.activeElement;
     if(changedWord&&active instanceof HTMLElement&&active.closest('#wordInspector')&&wordInspectorFieldIds.includes(active.id))active.blur();
   }
@@ -1290,7 +1310,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function parseWordKey(key){const [lineIndex,cueIndex]=String(key).split(':').map(Number);return {lineIndex,cueIndex};}
   function refreshWordSelection(){
     for(const clip of $('timelineLanes').querySelectorAll('.word-clip[data-line-index]'))clip.classList.toggle('selected',selectedWordKeys.has(wordKey(Number(clip.dataset.lineIndex),Number(clip.dataset.cueIndex))));
-    $('gridStatus').textContent=`${rows.length} lyric lane(s) · ${allWordRefs().length} timed word(s) · ${selectedWordKeys.size>1?`${selectedWordKeys.size} words selected · `:''}drag or box-select to refine TTML`;
+    updateGridStats();
     syncEditorActionBar();
   }
   function selectWord(lineIndex,cueIndex,focus=false,extend=false,toggle=false) {
@@ -1676,7 +1696,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       const playhead=document.createElement('div');playhead.className='lane-playhead visible';playhead.dataset.lineIndex=String(lineIndex);playhead.setAttribute('aria-hidden','true');const playheadHandle=document.createElement('span');playheadHandle.className='lane-playhead-handle';playheadHandle.setAttribute('aria-hidden','true');const playheadLabel=document.createElement('span');playheadLabel.className='lane-playhead-time';playhead.append(playheadHandle,playheadLabel);
       content.append(waveWrap,track,grid,playhead);lane.append(label,content);frag.append(lane);
     }
-    tbody.append(frag);$('gridStatus').textContent=`${rows.length} lyric lane(s) · ${cueCount} timed word(s) · box-select to shift multiple words`;
+    tbody.append(frag);updateGridStats();
     $('wordInspector').classList.toggle('hidden',!cueForRef());updateWordInspector();refreshWordSelection();updateLiveHighlight();
   }
   function startMarquee(e,lineIndex=null) {
@@ -1924,6 +1944,16 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function baseName() { const chosen=settings.downloadBase==='audio'&&audioName?audioName:importedLyricsName; return (chosen||'lyrics').replace(/\.(lrc|ttml|xml|txt)$/i,''); }
   function exportLrc(){ if(!rows.length){toast('Load lyrics before exporting.',true);return;}download(baseName()+'.lrc',lrcOutput(),'text/plain;charset=utf-8'); }
   function exportTtml(){ if(!rows.length){toast('Load lyrics before exporting.',true);return;}download(baseName()+'.ttml',ttmlOutput(),'application/ttml+xml;charset=utf-8'); }
+  function addTtmlLine(){
+    const historyBefore=captureHistoryState();
+    const index=selectedIndex>=0?selectedIndex+1:rows.length;
+    const start=selectedIndex>=0&&rows[selectedIndex]?rows[selectedIndex].start+settings.txtSpacing:(rows.length?rows[rows.length-1].start+settings.txtSpacing:0);
+    rows.splice(index,0,makeRow(start,'',{wordCues:[]}));
+    selectedIndex=index;lastEditedIndex=index;replayFromAnchor=true;selectedWordRef=null;selectedWordKeys.clear();
+    hasWordTiming=rows.some(row=>row.wordCues?.length);
+    renderGrid();updateWordInspector();updatePreview();updateStatus();commitHistoryChange(historyBefore);
+    toast('New lyric line added. Add its word cues at the playhead.');
+  }
   function addLine() {
     const historyBefore=captureHistoryState();
     if(gridMode==='words')setGridMode('lines');
@@ -1975,7 +2005,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if(!file)return;
     if(audioUrl)URL.revokeObjectURL(audioUrl);
     audioUrl=URL.createObjectURL(file);audioName=file.name.replace(/\.[^.]+$/,'');player.src=audioUrl;player.load();
-    $('audioTitle').textContent=file.name;$('audioSub').textContent=`${(file.size/1048576).toFixed(1)} MB · local browser playback`;$('audioFileName').textContent=file.name;$('audioFileName').title=file.name;
+    $('audioTitle').textContent=file.name;$('audioSub').textContent=`${(file.size/1048576).toFixed(1)} MB · local browser playback`;
     if(gridMode==='words')renderWordGrid();
     buildWaveform(file);
     updateLiveHighlight();toast(`Loaded audio ${file.name}.`);
@@ -2109,7 +2139,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   $('tabLrc').addEventListener('click',()=>{outputMode='lrc';updatePreview();});$('tabTtml').addEventListener('click',()=>{outputMode='ttml';updatePreview();});
   $('saveLrc').addEventListener('click',exportLrc);$('saveLrcTop').addEventListener('click',exportLrc);$('saveTtml').addEventListener('click',exportTtml);$('saveTtmlTop').addEventListener('click',exportTtml);
   $('copyPreview').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(outputMode==='lrc'?lrcOutput():ttmlOutput());toast('Preview copied to clipboard.');}catch(_){toast('Clipboard access was blocked by the browser. Select the preview and copy manually.',true);}});
-  $('addLine').addEventListener('click',addLine);$('deleteLine').addEventListener('click',deleteEditorSelection);$('deleteTtmlLine').addEventListener('click',()=>removeLineAt(selectedIndex));
+  $('addLine').addEventListener('click',addLine);$('addLineTtml').addEventListener('click',addTtmlLine);$('deleteLine').addEventListener('click',deleteEditorSelection);$('deleteTtmlLine').addEventListener('click',()=>removeLineAt(selectedIndex));
   $('wordStart').addEventListener('change',()=>{if(selectedWordRef)setWordTime(selectedWordRef.lineIndex,selectedWordRef.cueIndex,'start',$('wordStart').value);});
   $('wordEnd').addEventListener('change',()=>{if(selectedWordRef)setWordTime(selectedWordRef.lineIndex,selectedWordRef.cueIndex,'end',$('wordEnd').value);});
   $('wordText').addEventListener('change',()=>editSelectedWordText($('wordText').value));
@@ -2162,7 +2192,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       const apply=document.createElement('button');apply.type='button';apply.className='agent-preset-apply';apply.textContent=p.name;apply.title=p.name;apply.setAttribute('role','menuitem');apply.addEventListener('click',()=>{menu.classList.add('hidden');trigger.setAttribute('aria-expanded','false');applyAgentPreset(p.id);});
       const remove=document.createElement('button');remove.type='button';remove.className='agent-preset-delete';remove.textContent='×';remove.title=`Delete preset ${p.name}`;remove.setAttribute('aria-label',`Delete preset ${p.name}`);remove.addEventListener('click',e=>{
         e.stopPropagation();
-        if(!confirm(`make sure you want to delete ${p.name}`))return;
+        if(!confirm(`Are you sure you want to delete ${p.name}?`))return;
         agentPresets=agentPresets.filter(item=>String(item.id)!==String(p.id));persistAgentPresets();refreshAgentPresetSelect();toast(`Deleted agent preset “${p.name}”.`);
       });
       row.append(apply,remove);menu.append(row);
@@ -2242,26 +2272,30 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     PRESET_COLORS.forEach(hex=>{const button=document.createElement('button');button.type='button';button.className='color-swatch';button.style.background=hex;button.setAttribute('aria-label',hex);button.title=hex;button.setAttribute('aria-pressed',String(current===hex));button.addEventListener('click',()=>{beginColorPickerHistory();applyPickerColor(hex);renderColorSwatches();updatePickerPreview();finishColorPickerHistory();});host.append(button);});
   }
   function renderColorPicker(){$('colorPickerPopover').querySelectorAll('[data-color-tab]').forEach(button=>{const active=button.dataset.colorTab===colorPickerTab;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));});renderColorSwatches();renderColorPickerContent();}
+  function positionColorPicker(){
+    const input=$('wordColor'),pop=$('colorPickerPopover');if(!input||pop.classList.contains('hidden'))return;
+    const rect=input.getBoundingClientRect(),padding=10,gap=8;
+    const headerHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-header-height'))||68;
+    const dockHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--player-dock-height'))||82;
+    const maxHeight=Math.max(150,window.innerHeight-headerHeight-dockHeight-padding*2);
+    pop.style.maxHeight=maxHeight+'px';pop.style.overflowY='auto';
+    const width=pop.offsetWidth||Math.min(320,window.innerWidth-padding*2),height=Math.min(pop.scrollHeight||355,maxHeight);
+    const maxLeft=Math.max(padding,window.innerWidth-width-padding),centered=rect.left+rect.width/2-width/2;
+    const x=Math.round(Math.max(padding,Math.min(maxLeft,centered)));
+    const maxBottom=window.innerHeight-dockHeight-padding,below=rect.bottom+gap;
+    const top=below+height<=maxBottom?below:Math.max(headerHeight+padding,rect.top-height-gap);
+    pop.style.left=x+'px';pop.style.top=Math.round(top)+'px';
+  }
   function openColorPicker(){
     const input=$('wordColor'),pop=$('colorPickerPopover'),record=cueForRef();if(!record)return;
     colorPickerHue=rgbToHsv(hexToRgb(input.value||record.cue.color||'#ffffff')).h;
-    colorPickerHistoryBefore=null;colorPickerTab='palette';pop.classList.remove('hidden');renderColorPicker();
-    const rect=input.getBoundingClientRect(),padding=10,gap=12;
-    const headerHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-header-height'))||68;
-    const dockHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--player-dock-height'))||82;
-    const width=pop.offsetWidth||Math.min(320,window.innerWidth-padding*2),height=pop.offsetHeight||355;
-    const maxLeft=Math.max(padding,window.innerWidth-width-padding),right=rect.right+gap,left=rect.left-width-gap;
-    // Open to the right by default; use the left side only if the viewport doesn't allow it.
-    const x=right+width<=window.innerWidth-padding?right:left>=padding?left:Math.max(padding,Math.min(maxLeft,right));
-    const minTop=headerHeight+padding,maxTop=Math.max(minTop,window.innerHeight-dockHeight-height-padding);
-    const desiredTop=rect.bottom+16,top=Math.max(minTop,Math.min(maxTop,desiredTop));
-    pop.style.left=Math.round(Math.max(padding,Math.min(maxLeft,x)))+'px';pop.style.top=Math.round(top)+'px';
+    colorPickerHistoryBefore=null;colorPickerTab='palette';pop.classList.remove('hidden');renderColorPicker();positionColorPicker();
   }
   function closeColorPicker(){if($('colorPickerPopover').classList.contains('hidden'))return;$('colorPickerPopover').classList.add('hidden');finishColorPickerHistory();}
   function addMenuSeparator(menu){const el=document.createElement('div');el.className='context-menu-separator';menu.append(el);}
   function addMenuHeading(menu,text){const el=document.createElement('div');el.className='context-menu-heading';el.textContent=text;menu.append(el);}
-  function addContextAction(menu,label,action,{disabled=false,footer=false,shortcut=''}={}){
-    const button=document.createElement('button');button.type='button';button.disabled=disabled;button.setAttribute('role','menuitem');if(footer)button.classList.add('context-menu-footer');
+  function addContextAction(menu,label,action,{disabled=false,footer=false,shortcut='',tooltip=''}={}){
+    const button=document.createElement('button');button.type='button';button.disabled=disabled;button.setAttribute('role','menuitem');if(tooltip)button.title=tooltip;if(footer)button.classList.add('context-menu-footer');
     const title=document.createElement('span');title.className='context-menu-label';title.textContent=label;button.append(title);
     if(shortcut){const keys=document.createElement('span');keys.className='context-menu-shortcut';keys.textContent=shortcut;keys.setAttribute('aria-hidden','true');button.append(keys);}
     button.addEventListener('click',()=>{const previous=contextMenuTarget;hideEditorContextMenu();contextMenuTarget=previous;try{if(!disabled)action();}finally{contextMenuTarget=null;}});menu.append(button);return button;
@@ -2276,8 +2310,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if(gridMode==='words'){addMenuSeparator(menu);addContextAction(menu,'Make new word',addWordCue,{disabled:!hasWordTiming,shortcut:'F'});}
     if(gridMode==='lines'&&target?.lineIndex!==undefined){
       addMenuSeparator(menu);
-      addContextAction(menu,'Insert line above this line',()=>insertLineAt(target.lineIndex));
-      addContextAction(menu,'Insert line below this line',()=>insertLineAt(target.lineIndex+1));
+      addContextAction(menu,'Insert line above this line',()=>insertLineAt(target.lineIndex),{tooltip:'Inserts line under current line'});
+      addContextAction(menu,'Insert line below this line',()=>insertLineAt(target.lineIndex+1),{tooltip:'Inserts line under current line'});
       const deleteLineAction=addContextAction(menu,'Delete line',()=>removeLineAt(target.lineIndex),{footer:true});
       deleteLineAction.classList.add('danger');
     }
@@ -2476,6 +2510,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   },true);
   $('colorPickerPopover').addEventListener('click',e=>{const tab=e.target.closest?.('[data-color-tab]');if(tab){colorPickerTab=tab.dataset.colorTab;renderColorPicker();}});
   $('wordColor').addEventListener('click',openColorPicker);
+  $('jumpToLineButton').addEventListener('click',jumpToSelectedLine);$('timelineViewport').addEventListener('scroll',()=>updateJumpToLineVisibility(),{passive:true});window.addEventListener('resize',()=>{if(!$('colorPickerPopover').classList.contains('hidden'))positionColorPicker();});
   $('wordColor').addEventListener('input',()=>{const value=$('wordColor').value.trim();$('wordColor').style.color=safeCssColor(value)||'var(--text)';if(/^#[0-9a-f]{3,8}$/i.test(value)){$('colorPreviewSwatch').style.background=value;$('colorPreviewHex').textContent=value;const hsv=rgbToHsv(hexToRgb(value));if(hsv.s>0.001)colorPickerHue=hsv.h;}});
   $('wordItalicToggle').addEventListener('click',()=>toggleWordEmphasis('italic'));$('wordBoldToggle').addEventListener('click',()=>toggleWordEmphasis('bold'));
   $('addWord').addEventListener('click',addWordCue);$('saveAgentPreset').addEventListener('click',saveAgentPreset);
@@ -2516,8 +2551,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       flushActiveWordInspectorField();
     }
   },true);
-  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','editorActionAlignment','wordInspectorLayout'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);if(id==='wordInspectorLayout'&&gridMode==='words')rerenderWordTimelinePreservingView();toast('Settings saved.');});
-  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false,editorActionAlignment:'left',wordInspectorLayout:'right'};syncSettingsForm();saveSettings();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
+  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);if(id==='wordInspectorLayout'&&gridMode==='words')rerenderWordTimelinePreservingView();toast('Settings saved.');});
+  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false,wordInspectorLayout:'right'};syncSettingsForm();saveSettings();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
   document.addEventListener('keydown',e=>{
     if(e.ctrlKey&&e.key.toLowerCase()==='s'){e.preventDefault();if(gridMode==='words')exportTtml();else exportLrc();return;}
     const target=e.target; const lyricEditing=target instanceof HTMLElement&&Boolean(target.closest('.lyric-editor,#wordText'));

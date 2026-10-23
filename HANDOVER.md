@@ -3,10 +3,12 @@
 **Updated:** 2026-10-23  
 **Repository:** [MattTheBanana/savant](https://github.com/MattTheBanana/savant)  
 **Branch:** `main`  
-**Latest implementation commit:** [`df86b2a239d44bf3a29af0719f4df018966a3b53`](https://github.com/MattTheBanana/savant/commit/df86b2a239d44bf3a29af0719f4df018966a3b53)
+**Latest implementation commit:** [`7f56150d9522cc09103d332e1ace057bf6ca22a8`](https://github.com/MattTheBanana/savant/commit/7f56150d9522cc09103d332e1ace057bf6ca22a8)
 
 Primary UI file: `webui/index.html`  
 Backend and local filesystem APIs: `lyrics_editor.py`
+
+General project architecture, development workflow, validation guidance, and collaboration expectations: [`DEVELOPMENT.md`](DEVELOPMENT.md).
 
 The recent changes are committed to `main`. JavaScript parse and static checks have passed, but no interactive GUI smoke test has been run. Distinguish static checks from actual user-facing verification.
 
@@ -161,13 +163,20 @@ Not yet run:
 - TTML style-reference information is shown in a viewport-clamped popover anchored to the info button, rather than a toast pinned to the bottom edge. The LRC Jump to Current Line button uses standard small-button styling.
 - Actual browser/GUI verification has not been run. Static verification on the latest UI source passed: inline JavaScript parses; no duplicate HTML IDs; the info popover, select-all context actions, Shift + F handler, updated Controls rows, and shared centering preference are present.
 
-### Custom audio player dock
+### Custom audio player dock and branding
 
-- The fixed player dock keeps the seek/progress bar on its upper row, with a compact controls row beneath it containing circular play/pause, block pause, mute/unmute SVG icons, volume slider, and a time display to hundredths.
+- The fixed dock has a full-width seek/progress bar, a controls row (circular play/pause, Block Pause, mute/unmute SVG icons, volume slider, and current/duration time to hundredths), and a separate metadata row. The audio filename is centered beneath the controls, and file size is right-aligned on that row.
+- The top-left wordmark is the text “Savant” in medium-weight italics, without a music-symbol mark.
 - Block Pause reuses `blockPause()`: when audio is playing, it pauses and seeks back to `playbackStartPosition`, the start of the current playback segment. Pressing the action while paused follows the existing keyboard behavior and starts playback.
-- The mute and playback controls use inline SVG artwork, not emoji glyphs. The volume control remains visible on narrow screens with a reduced width.
-- Static verification: inline JavaScript parses; no duplicate HTML IDs; control IDs and event handlers for seek, play/pause, block pause, mute, and volume are present. Actual responsive browser testing has not yet been run.
+- The mute and playback controls use inline SVG artwork, not emoji glyphs. The volume control remains visible on narrow screens with a reduced width. The time display uses `fmtTime(..., 2)`.
+- Latest static verification: inline JavaScript parses; no duplicate HTML IDs; full-width seek bar, metadata row, filename/file-size layout, branding styles, and player control IDs are present. Actual responsive browser testing has not yet been run.
 
 ## Working expectations
 
-Read current implementation before editing it. Make targeted changes and preserve unrelated functionality. Ask a concise clarifying question when intent or implementation choice is genuinely ambiguous. Implement clear requirements completely; distinguish static checks from interactive validation. Commit changes on `main` and link commits in implementation reports.
+Read current implementation before editing it. Make targeted changes and preserve unrelated functionality. Ask a concise clarifying question when a material ambiguity blocks a correct implementation; don't repeatedly ask questions already answered in the conversation. Be thorough about implementing each requested detail and checking for adjacent regressions. Distinguish static checks from interactive validation. Commit changes on `main`, update this handover and the general `DEVELOPMENT.md` when appropriate, and link commits in implementation reports.
+
+User-specific collaboration guidance:
+- “Add a preference for that” means implement a real option in the Preferences UI, with a sensible default and persistence through the existing local/browser plus `savant-settings.txt` synchronization path. It does not mean only changing the default or adding a temporary toggle.
+- The user primarily uses Windows CMD, so default shell instructions to CMD syntax unless they ask for PowerShell or another shell.
+- Preserve local model weights, outputs, and untracked custom files. Never recommend destructive cleanup or force-reset operations as a casual troubleshooting step; back up and compare conflicting files first.
+- Thoroughness and accuracy matter: inspect relevant code, implement the whole request, validate syntax and static invariants, and say explicitly when real GUI/browser testing was not performed.

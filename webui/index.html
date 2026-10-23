@@ -47,11 +47,11 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .word-clip.no-cue{background:#252e3d;border-style:dashed;border-color:#4d5d70;color:#9aabc0;cursor:default}
 .lane-playhead{position:absolute;top:0;bottom:0;width:2px;background:#ff646e;z-index:7;pointer-events:none;cursor:ew-resize;box-shadow:0 0 0 1px #ff646e28;display:none}.lane-playhead-handle{position:absolute;left:-7px;top:0;width:16px;height:66px;background:transparent;pointer-events:auto;cursor:ew-resize;touch-action:none}.lane-playhead.visible{display:block}.lane-playhead.ghost{opacity:.34;z-index:6}.lane-playhead.ghost .lane-playhead-handle,.lane-playhead.ghost .lane-playhead-time{display:none}.lane-playhead-handle:focus-visible{outline:2px solid var(--accent);outline-offset:1px}.lane-playhead:before{content:'';position:absolute;left:-5px;top:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #ff646e}.lane-playhead-time{position:absolute;left:50%;top:10px;transform:translateX(-50%);font-family:var(--mono);font-size:var(--playhead-label-size,9px);line-height:1;color:#ffc2c6;background:#101721dd;border:1px solid #773f48;border-radius:3px;padding:2px 3px;white-space:nowrap;font-weight:500;letter-spacing:0;box-shadow:0 1px 3px #0005}.lane-playhead.offscreen-left:before{left:-5px;border-top-color:transparent;border-left:0;border-right:7px solid #ff646e;border-top:5px solid transparent;border-bottom:5px solid transparent;top:1px}.lane-playhead.offscreen-right:before{left:-5px;border-top-color:transparent;border-right:0;border-left:7px solid #ff646e;border-top:5px solid transparent;border-bottom:5px solid transparent;top:1px}.lane-waveform-canvas{touch-action:pan-y;user-select:none}.timeline-lane-content.pan-active,.lane-waveform-wrapper.pan-active{cursor:grabbing!important}
 .timeline-selection-box{position:absolute;z-index:20;border:1px solid #76e4c1;background:#76e4c126;box-shadow:0 0 0 1px #76e4c12b;pointer-events:none;display:none}.timeline-selection-box.visible{display:block}
-.word-inspector{margin-top:11px;border:1px solid var(--border);background:#121b29;border-radius:9px;padding:10px 11px}.word-inspector-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}.word-inspector-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:9px;align-items:end}.word-inspector-text{grid-column:span 2}.word-inspector-field{display:flex;flex-direction:column;gap:4px;min-width:0}.word-inspector-field label{font-size:10px;color:#a6b6c9;text-transform:uppercase;letter-spacing:.06em}.word-inspector-field input,.word-inspector-field select{width:100%;min-width:0;background:#09111b;border:1px solid #34455a;border-radius:6px;color:var(--text);padding:8px 9px;font-size:12px}.word-inspector-field input:focus,.word-inspector-field select:focus{outline:2px solid var(--accent2);outline-offset:1px}.timeline-empty{padding:26px;text-align:center;color:#91a1b5;min-width:0}.timeline-empty strong{display:block;color:#d9e6f5;margin-bottom:5px}
+.word-inspector{margin-top:11px;border:1px solid var(--border);background:#121b29;border-radius:9px;padding:10px 11px}.word-inspector-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}.word-inspector-heading-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;min-width:0}.word-inspector-heading-actions #wordInspectorMeta{white-space:nowrap;text-align:right}.word-inspector-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:9px;align-items:end}.word-inspector-text{grid-column:span 2}.word-inspector-field{display:flex;flex-direction:column;gap:4px;min-width:0}.word-inspector-field label{font-size:10px;color:#a6b6c9;text-transform:uppercase;letter-spacing:.06em}.word-inspector-field input,.word-inspector-field select{width:100%;min-width:0;background:#09111b;border:1px solid #34455a;border-radius:6px;color:var(--text);padding:8px 9px;font-size:12px}.word-inspector-field input:focus,.word-inspector-field select:focus{outline:2px solid var(--accent2);outline-offset:1px}.timeline-empty{padding:26px;text-align:center;color:#91a1b5;min-width:0}.timeline-empty strong{display:block;color:#d9e6f5;margin-bottom:5px}
 @media(max-width:950px){.timeline-viewport{max-height:65vh}.word-inspector-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.word-inspector-text{grid-column:1/-1}.timeline-inner{--label-width:118px}}
 @media(max-width:540px){.timeline-toolbar{align-items:flex-start}.timeline-help{max-width:100%}.word-inspector-fields{grid-template-columns:1fr 1fr}.timeline-inner{--label-width:94px}.timeline-lane-row{min-height:116px}.timeline-lane-content{grid-template-rows:62px 48px}.lane-waveform-wrapper,.lane-waveform-canvas{height:62px}.lane-playhead-handle{height:62px}}
 @media(max-width:1000px){.editor-layout{grid-template-columns:1fr}.table-wrap,.preview{max-height:none}.audio-panel{grid-template-columns:1fr}.status{margin-left:0}}@media(max-width:620px){.app-header{padding:12px}.shell{padding:12px}.brand p{display:none}.file-name{max-width:180px}.settings-grid{grid-template-columns:1fr}.toolbar{align-items:flex-start}.toolbar>*{max-width:100%}th.time,td.time{width:128px}th.num,td.num{width:42px}.panel-actions{margin-left:auto}}
-.word-format-toggles{display:flex;gap:6px}.word-format-toggle{min-width:40px;padding:6px 12px;font-size:15px}.word-format-toggle[aria-pressed="true"]{background:#245346;border-color:#367b66;color:#fff}.word-style-help{font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}.agent-preset-row{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid #2a394c;padding-top:9px}.agent-preset-picker{position:relative;flex:1;min-width:150px}.agent-preset-picker>button{width:100%;text-align:left}.agent-preset-menu{position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:100;min-width:220px;max-height:260px;overflow:auto;padding:5px;border:1px solid #455972;border-radius:9px;background:#101927;box-shadow:0 14px 35px #000b}.agent-preset-option{display:flex;align-items:center;gap:5px;padding:2px}.agent-preset-option button{border-radius:6px;padding:6px 8px;font-size:12px}.agent-preset-option .agent-preset-apply{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;background:transparent;border-color:transparent}.agent-preset-option .agent-preset-delete{flex:0 0 30px;width:30px;padding:5px;color:#ffb5b5;background:#39232c;border-color:#613640;font-size:17px;line-height:1}.agent-preset-option .agent-preset-delete:hover{background:#642a38;border-color:#a04a5d}.agent-preset-empty{padding:9px;color:var(--muted);font-size:12px}.agent-preset-menu.hidden{display:none!important}.color-text-input{font-family:var(--mono);font-weight:700}.color-picker-popover{position:fixed;z-index:80;width:min(320px,calc(100vw - 20px));padding:11px;border:1px solid #496079;border-radius:12px;background:#111a28;box-shadow:0 18px 55px #000a}.color-picker-tabs{display:flex;gap:5px;margin-bottom:9px}.color-picker-tabs button{flex:1;min-width:0;padding:7px 4px;font-size:12px}.color-picker-tabs button.active{background:#245346;border-color:#367b66}.color-swatches{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin-bottom:10px}.color-swatch{height:22px;padding:0;border:1px solid #ffffff40;border-radius:5px;min-width:0}.color-picker-content{display:grid;gap:9px}.sv-pad{height:142px;border:1px solid #ffffff55;border-radius:6px;touch-action:none;cursor:crosshair}.color-range{display:grid;grid-template-columns:62px 1fr 38px;gap:8px;align-items:center;font-size:11px;color:#c0cede}.color-range input{width:100%;min-width:0;padding:0;accent-color:#76e4c1}.color-range output{text-align:right;font-family:var(--mono)}.color-picker-preview{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px}.color-picker-preview span{width:24px;height:18px;border:1px solid #ffffff55;border-radius:4px}.editor-context-menu{position:fixed;z-index:90;min-width:230px;max-width:min(320px,calc(100vw - 20px));max-height:min(75vh,620px);overflow:auto;padding:5px;border:1px solid #455972;border-radius:10px;background:#101927;box-shadow:0 18px 55px #000b}.editor-context-menu button{display:block;width:100%;text-align:left;padding:7px 10px;background:transparent;border-color:transparent;border-radius:6px;font-size:12px}.editor-context-menu button:hover{background:#26384d;border-color:#405773}.editor-context-menu .context-menu-heading{padding:8px 10px 3px;color:#91a5bd;font-size:10px;text-transform:uppercase;letter-spacing:.08em}.editor-context-menu .context-menu-separator{height:1px;background:#2e3d51;margin:5px 3px}.editor-context-menu .context-menu-footer{border-top:1px solid #2e3d51;margin-top:5px;padding-top:5px}.editor-context-menu button:disabled{opacity:.4;cursor:not-allowed}.color-picker-popover.hidden,.editor-context-menu.hidden{display:none!important}
+.word-format-toggles{display:flex;gap:6px}.word-format-toggle{min-width:40px;padding:6px 12px;font-size:15px}.word-format-toggle[aria-pressed="true"]{background:#245346;border-color:#367b66;color:#fff}.word-style-help{font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}.agent-preset-row{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid #2a394c;padding-top:9px}.agent-preset-picker{position:relative;flex:1;min-width:150px}.agent-preset-picker>button{width:100%;text-align:left}.agent-preset-menu{position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:100;min-width:220px;max-height:260px;overflow:auto;padding:5px;border:1px solid #455972;border-radius:9px;background:#101927;box-shadow:0 14px 35px #000b}.agent-preset-option{display:flex;align-items:center;gap:5px;padding:2px}.agent-preset-option button{border-radius:6px;padding:6px 8px;font-size:12px}.agent-preset-option .agent-preset-apply{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;background:transparent;border-color:transparent}.agent-preset-option .agent-preset-delete{flex:0 0 30px;width:30px;padding:5px;color:#ffb5b5;background:#39232c;border-color:#613640;font-size:17px;line-height:1}.agent-preset-option .agent-preset-delete:hover{background:#642a38;border-color:#a04a5d}.agent-preset-empty{padding:9px;color:var(--muted);font-size:12px}.agent-preset-menu.hidden{display:none!important}.color-text-input{font-family:var(--mono);font-weight:700}.color-picker-popover{position:fixed;z-index:80;width:min(320px,calc(100vw - 20px));padding:11px;border:1px solid #496079;border-radius:12px;background:#111a28;box-shadow:0 18px 55px #000a}.color-picker-tabs{display:flex;gap:5px;margin-bottom:9px}.color-picker-tabs button{flex:1;min-width:0;padding:7px 4px;font-size:12px}.color-picker-tabs button.active{background:#245346;border-color:#367b66}.color-swatches{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin-bottom:10px}.color-swatch{height:22px;padding:0;border:1px solid #ffffff40;border-radius:5px;min-width:0}.color-picker-content{display:grid;gap:9px}.sv-pad{height:142px;border:1px solid #ffffff55;border-radius:6px;touch-action:none;cursor:crosshair}.color-range{display:grid;grid-template-columns:62px 1fr 38px;gap:8px;align-items:center;font-size:11px;color:#c0cede}.color-range input{width:100%;min-width:0;padding:0;accent-color:#76e4c1}.color-range output{text-align:right;font-family:var(--mono)}.color-picker-preview{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px}.color-picker-preview span{width:24px;height:18px;border:1px solid #ffffff55;border-radius:4px}.editor-context-menu{position:fixed;z-index:90;min-width:230px;max-width:min(320px,calc(100vw - 20px));max-height:min(75vh,620px);overflow:auto;padding:5px;border:1px solid #455972;border-radius:10px;background:#101927;box-shadow:0 18px 55px #000b}.editor-context-menu button{display:block;width:100%;text-align:left;padding:7px 10px;background:transparent;border-color:transparent;border-radius:6px;font-size:12px}.editor-context-menu button:hover{background:#26384d;border-color:#405773}.editor-context-menu .context-menu-heading{padding:8px 10px 3px;color:#91a5bd;font-size:12px;text-transform:none;letter-spacing:0}.editor-context-menu .context-menu-separator{height:1px;background:#2e3d51;margin:5px 3px}.editor-context-menu .context-menu-footer{border-top:1px solid #2e3d51;margin-top:5px;padding-top:5px}.editor-context-menu button:disabled{opacity:.4;cursor:not-allowed}.color-picker-popover.hidden,.editor-context-menu.hidden{display:none!important}
 
 :root{--app-header-height:68px;--player-dock-height:82px}
 .app-header{height:var(--app-header-height);min-height:var(--app-header-height);padding:9px 18px;z-index:80}
@@ -72,7 +72,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .player-dock .audio-title{font-size:13px}
 .player-dock .audio-sub{font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .player-dock audio{width:100%;min-width:0;height:38px}
-.player-dock .audio-time{font-size:11px}
+.player-dock audio::-webkit-media-controls-current-time-display,.player-dock audio::-webkit-media-controls-time-remaining-display{display:none}.player-dock .audio-time{font-size:11px}
 .preview-backdrop{position:fixed;left:0;right:0;top:var(--app-header-height);bottom:var(--player-dock-height);z-index:50;background:#02060bb8;backdrop-filter:blur(1px);transition:opacity .18s ease}
 .preview-backdrop.hidden{display:none!important}
 .preview-drawer{position:fixed;left:0;top:var(--app-header-height);bottom:var(--player-dock-height);width:min(560px,calc(100vw - 28px));z-index:55;display:flex;flex-direction:column;border-radius:0 12px 12px 0;box-shadow:18px 0 45px #0008;transform:translateX(-103%);visibility:hidden;transition:transform .2s ease,visibility .2s ease;overflow:hidden}
@@ -81,7 +81,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .preview-drawer .preview{flex:1;min-height:0;max-height:none;width:100%}
 .preview-drawer .preview-info{flex:0 0 auto}
 .preview-drawer .grid-footer{flex:0 0 auto}
-.preview-shelf-tab{position:fixed;left:0;top:calc(var(--app-header-height) + 22vh);z-index:49;writing-mode:vertical-rl;transform:rotate(180deg);border-radius:8px 8px 0 0;padding:13px 8px;background:#172536;border-color:#465b73;color:#dfeafa;font-size:12px;letter-spacing:.02em;box-shadow:0 7px 22px #0006}
+.preview-shelf-tab{position:fixed;left:0;top:calc(var(--app-header-height) + 22vh);z-index:49;writing-mode:vertical-rl;transform:rotate(180deg);border-radius:8px 0 0 8px;padding:13px 8px;background:#172536;border-color:#465b73;color:#dfeafa;font-size:12px;letter-spacing:.02em;box-shadow:0 7px 22px #0006}
 .preview-shelf-tab[hidden]{display:none!important}
 .agent-preset-menu{position:fixed;left:0;right:auto;top:0;z-index:110;width:min(300px,calc(100vw - 20px));min-width:220px;max-height:min(320px,calc(100vh - 20px));overflow:auto;padding:5px;border:1px solid #455972;border-radius:9px;background:#101927;box-shadow:0 14px 35px #000b}
 .agent-preset-picker{position:relative;flex:1;min-width:150px}
@@ -164,17 +164,77 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .generate-result-pane{padding:11px;min-width:0}.generate-result-pane.hidden{display:none!important}.generate-log-view{margin:0;max-height:340px;min-height:180px;overflow:auto;padding:12px;border:1px solid #27364a;border-radius:8px;background:#090f18;color:#c8d7e8;font:11px/1.55 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere}
 .generate-clean-diagnosis{display:grid;gap:10px}.generate-diagnosis-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.generate-diagnosis-stat{padding:10px;border:1px solid var(--border);border-radius:8px;background:#111a27}.generate-diagnosis-stat span{font-size:10px;color:var(--muted)}.generate-diagnosis-stat strong{display:block;font-size:17px;margin-top:4px;overflow-wrap:anywhere}
 .generate-diagnosis-chunks{width:100%;border-collapse:collapse;font-size:11px}.generate-diagnosis-chunks th,.generate-diagnosis-chunks td{padding:7px 8px;border:1px solid var(--border);text-align:left}.generate-diagnosis-chunks th{position:static;background:#172232}.generate-diagnosis-notes{margin:0;padding-left:19px;font-size:11px;color:#c9d5e3}.generate-artifacts{display:grid;gap:8px}.generate-artifact-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:#111a27}.generate-artifact-info{min-width:0;display:grid;gap:3px}.generate-artifact-info strong{font-size:12px}.generate-artifact-info span{color:var(--muted);font-size:10px;overflow-wrap:anywhere}.generate-artifact-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.generate-run-status{padding:13px 16px 0}.generate-run-status.hidden{display:none!important}.generate-progress-heading{display:flex;justify-content:space-between;gap:12px;font-size:11px;color:var(--muted);margin:0 0 6px}.generate-progress-heading strong{font-size:12px;color:var(--text);font-weight:650}.generate-progress-track{height:8px;border-radius:99px;overflow:hidden;background:#070c13;border:1px solid #27364a;margin-bottom:12px}.generate-progress-fill{height:100%;width:0;background:linear-gradient(90deg,#328b70,#76e4c1);transition:width .25s}.generate-progress-fill.indeterminate{background:linear-gradient(90deg,transparent,#76e4c1,#89baff,transparent);background-size:200% 100%;animation:genProgressShimmer 1.4s linear infinite}
-@keyframes genProgressShimmer{from{background-position:100% 0}to{background-position:-100% 0}}
-.generate-run-footer{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:14px 16px;border-top:1px solid var(--border);background:#111a27}.generate-run-button{min-width:170px;font-weight:700}.generate-run-button:disabled{opacity:.55;cursor:wait}
+.generate-run-status{padding:13px 16px 0}.generate-run-status.hidden{display:none!important}.generate-progress-heading{display:flex;align-items:center;justify-content:flex-start;gap:12px;font-size:11px;color:var(--muted);margin:0 0 6px}.generate-progress-heading strong{font-size:13px;color:var(--text);font-weight:750;white-space:nowrap}.generate-progress-stage-wrap{position:relative;padding-top:22px;margin-bottom:13px}.generate-current-step{position:absolute;top:0;left:0;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;line-height:16px;font-weight:700;color:var(--accent);transition:left .2s;pointer-events:none}.generate-segment-track{display:flex;gap:4px;height:12px;width:100%;border-radius:7px;overflow:visible}.generate-segment{position:relative;flex:1;min-width:0;height:100%;overflow:hidden;border:1px solid #2a394d;background:#070c13;border-radius:3px}.generate-segment-fill{position:absolute;left:0;top:0;display:block;height:100%;width:0;background:#59c6a3;border-radius:inherit;transition:width .12s linear;will-change:width,transform}.generate-segment.active{border-color:#76e4c1;box-shadow:0 0 0 1px #76e4c133}.generate-segment.complete .generate-segment-fill{width:100%}.generate-segment.indeterminate .generate-segment-fill{width:35%!important;animation:genSegmentSweep 1.15s ease-in-out infinite}.generate-segment.indeterminate.complete .generate-segment-fill{animation:none}.generate-run-status.finished{border-top:1px solid #367b66}.generate-run-status.failed{border-top:1px solid #874756}
+@keyframes genProgressShimmer{from{background-position:100% 0}to{background-position:-100% 0}}@keyframes genSegmentSweep{0%{transform:translateX(-110%);opacity:.55}45%{opacity:1}100%{transform:translateX(300%);opacity:.65}}
+.generate-run-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-top:1px solid var(--border);background:#111a27}.generate-run-footer .generate-muted{flex:1;min-width:0;text-align:center}.generate-run-button{min-width:170px;font-weight:700}.generate-run-button:disabled{opacity:.55;cursor:not-allowed}.generate-output-destination{grid-column:1/-1}.generate-output-location-actions{display:flex;gap:7px;flex-wrap:wrap}.generate-output-location-actions button{white-space:nowrap}
 @media(max-width:950px){.generate-basic-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.generate-advanced-grid{grid-template-columns:1fr}.generate-diagnosis-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:620px){.generate-pane{padding:10px}.generate-drop-grid,.generate-basic-grid,.generate-check-grid{grid-template-columns:1fr}.generate-json-uploads{grid-template-columns:1fr}.generate-tools-row,.generate-run-footer{align-items:stretch;flex-direction:column}.generate-run-button{width:100%}.generate-install-item,.generate-artifact-row{align-items:flex-start;flex-direction:column}.generate-artifact-actions{justify-content:flex-start}.generate-results{margin:10px}.generate-subnav{padding:9px}.generate-subnav button{flex:1;padding:8px 5px;font-size:12px}}
+@media(max-width:620px){.generate-pane{padding:10px}.generate-drop-grid,.generate-basic-grid,.generate-check-grid{grid-template-columns:1fr}.generate-json-uploads{grid-template-columns:1fr}.generate-tools-row{align-items:stretch;flex-direction:column}.generate-run-footer{align-items:stretch;flex-direction:column}.generate-run-footer .generate-muted{text-align:left;order:0}.generate-run-footer #genRunButton{order:-1}.generate-run-footer #genImportButton{order:1}.generate-run-button{width:100%}.generate-output-location-actions{flex-direction:column;align-items:stretch}.generate-install-item,.generate-artifact-row{align-items:flex-start;flex-direction:column}.generate-artifact-actions{justify-content:flex-start}.generate-results{margin:10px}.generate-subnav{padding:9px}.generate-subnav button{flex:1;padding:8px 5px;font-size:12px}}
+
+/* Full-height editor workspace: the lyric grids own their scrolling. */
+.shell{height:calc(100vh - var(--app-header-height) - var(--player-dock-height));max-height:calc(100vh - var(--app-header-height) - var(--player-dock-height));display:flex;flex-direction:column;overflow:hidden;padding:12px 22px}
+.shell>.footer-note{display:none}
+#editScreen{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden}
+#generateScreen,#settingsScreen{flex:1;min-height:0;overflow:auto;width:100%;align-self:stretch}
+.editor-layout{display:grid;grid-template-columns:minmax(0,1fr);align-items:stretch;gap:0;flex:1;min-height:0;overflow:hidden}
+.editor-layout>.panel{display:flex;flex-direction:column;height:100%;min-height:0;overflow:hidden}
+.editor-action-bar{display:grid;grid-template-columns:auto 1px minmax(0,auto) 1px auto 1px minmax(0,1fr) auto;align-items:center;gap:8px;flex:0 0 auto;padding:9px 12px;min-width:0}
+.editor-bar-group{display:flex;align-items:center;gap:6px;min-width:0}
+#editorModeSwitch{grid-column:1}
+#editorSep1{grid-column:2}
+#editorImportGroup{grid-column:3;min-width:0;gap:8px}
+#editorSep2{grid-column:4}
+#editorZoomControls{grid-column:5}
+#editorSep3{grid-column:6}
+.editor-bar-actions{grid-column:7;justify-self:start;gap:6px;white-space:nowrap}
+#timelineControlsTrigger{grid-column:8;justify-self:end;white-space:nowrap}
+.editor-bar-separator{width:1px;height:27px;background:#334256;display:block;justify-self:center}
+.action-import-group{display:flex;align-items:center;gap:5px;min-width:0}
+.action-import-button{padding:5px 8px;white-space:nowrap;font-size:12px}
+.action-file-name{display:inline-block;max-width:82px;font-size:10px}
+.status{margin-left:0;white-space:nowrap}
+#status strong{color:var(--accent)}
+.table-wrap{flex:1;min-height:0;max-height:none;overflow:auto;overscroll-behavior:contain}
+.word-timeline-editor{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;padding:9px 10px 10px}
+.ttml-editor-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(255px,.42fr);grid-template-rows:minmax(0,1fr);gap:10px;flex:1;min-height:0;overflow:hidden}
+.ttml-editor-layout.empty{grid-template-columns:minmax(0,1fr)}
+.ttml-editor-layout.bottom{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto}
+.ttml-editor-layout>.timeline-viewport{height:100%;min-height:0;max-height:none;flex:1;overflow-x:hidden;overflow-y:auto}
+.ttml-editor-layout:not(.bottom) .word-inspector{height:100%;max-height:100%;overflow:auto;margin-top:0}
+.ttml-editor-layout.bottom .word-inspector{height:auto;max-height:38vh;overflow:auto;margin-top:0}
+.timeline-viewport{height:100%;min-height:0;max-height:none}
+.word-inspector{margin-top:0;min-height:0;min-width:0;overflow:auto}
+ .grid-footer{flex:0 0 auto}.editor-lyrics-file-name{margin-left:auto;max-width:min(46vw,560px);text-align:right;flex:0 1 auto}
+.timeline-label{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto minmax(0,1fr);align-items:start;gap:4px 8px}
+.timeline-label strong{grid-column:1;grid-row:1;min-width:0}
+.timeline-label .lane-start{grid-column:2;grid-row:1;text-align:right;white-space:nowrap;max-width:none;align-self:start}
+.timeline-label .lane-summary{grid-column:1/-1;grid-row:2;justify-self:center;align-self:center;max-width:100%;padding:4px 0 0;text-align:center;font:inherit;color:#b6c7dc;white-space:normal;overflow-wrap:anywhere;line-height:1.3}
+#wordInspectorHeading{overflow-wrap:anywhere}
+@media(max-width:1180px){
+  .editor-action-bar{display:flex;flex-wrap:wrap}
+  .editor-bar-separator{display:none}
+  .editor-bar-actions{justify-self:auto}
+  #timelineControlsTrigger{margin-left:auto}
+  #editorImportGroup{flex-wrap:wrap}
+}
+@media(max-width:1000px){
+  .ttml-editor-layout:not(.bottom){grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto}
+  .ttml-editor-layout:not(.bottom) .word-inspector{height:auto;max-height:30vh}
+  .editor-action-bar{gap:6px}
+}
+@media(max-width:620px){
+  .shell{padding:8px}
+  .editor-action-bar{padding:8px}
+  .action-file-name{display:none}
+  .ttml-editor-layout.bottom .word-inspector{max-height:30vh}
+  .editor-bar-actions{white-space:normal;flex-wrap:wrap}
+}
+
 </style>
 </head>
 <body>
 <header class="app-header">
   <div class="header-left">
-    <div class="brand"><div class="brand-mark">♫</div><div><h1>Savant</h1><p>Local lyric timing editor</p></div></div>
+    <div class="brand"><div class="brand-mark">♫</div><div><h1>Savant</h1></div></div>
     <button id="navEdit" class="header-nav active" aria-current="page">Edit</button>
     <button id="navGenerate" class="header-nav" aria-label="Generate" title="Generate lyric timings">Generate</button>
     <button id="navSettings" class="header-nav" aria-label="Preferences" title="Preferences">Preferences</button>
@@ -187,26 +247,39 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 </header>
 <main class="shell">
   <section id="editScreen">
-    <div class="toolbar">
-      <div class="import-group"><label class="file-label" for="audioFile">♫ Import audio</label><input id="audioFile" type="file" accept="audio/*"><span id="audioFileName" class="file-name">No audio selected</span></div>
-      <div class="import-group"><label class="file-label" for="lyricsFile">↥ Import lyrics</label><input id="lyricsFile" type="file" accept=".lrc,.ttml,.xml,.txt,text/plain,application/xml"><span id="lyricsFileName" class="file-name">No lyrics loaded</span></div>
-      <span id="status" class="status"><strong>Ready</strong> · import files to begin</span>
-    </div>
-    <div class="editor-layout">    <div class="editor-layout">
+    <div class="editor-layout">
       <section class="panel" aria-label="Lyrics editing grid">
-        <div class="panel-head"><div><h2>Lyric timing grid</h2><p id="gridDescription">Edit line timing in LRC view or fine-tune individual word cues in TTML view.</p></div><div class="panel-actions"><button id="viewLines" class="small active" title="Sync line by line" aria-label="LRC — Sync line by line">LRC</button><button id="viewWords" class="small" disabled title="Sync word by word" aria-label="TTML — Sync word by word">TTML</button></div></div>
-        <div class="editor-action-bar" aria-label="Editing actions">
-          <span id="editorActionsLabel" class="editor-actions-label">LRC line actions</span>
-          <button id="addLine" class="small">+ Add Line</button>
-          <button id="addWord" class="small" title="Add a timed word cue (F)">+ Add Word</button>
-          <button id="deleteLine" class="small danger">Delete Line</button>
+        <div class="editor-action-bar" id="editorActionBar" aria-label="Editor actions">
+          <div class="editor-bar-group" id="editorModeSwitch">
+            <button id="viewLines" class="small primary" type="button" title="Sync line by line" aria-label="LRC — Sync line by line">LRC</button>
+            <button id="viewWords" class="small" type="button" disabled title="Sync word by word" aria-label="TTML — Sync word by word">TTML</button>
+          </div>
+          <span class="editor-bar-separator" id="editorSep1" aria-hidden="true"></span>
+          <div class="editor-bar-group" id="editorImportGroup">
+            <div class="import-group action-import-group"><label class="file-label action-import-button" for="audioFile" title="Choose local audio">Import Audio</label><input id="audioFile" type="file" accept="audio/*"></div>
+            <div class="import-group action-import-group"><label class="file-label action-import-button" for="lyricsFile" title="Choose local lyrics">Import Lyrics</label><input id="lyricsFile" type="file" accept=".lrc,.ttml,.xml,.txt,text/plain,application/xml"></div>
+          </div>
+          <span class="editor-bar-separator" id="editorSep2" aria-hidden="true"></span>
+          <div class="editor-bar-group" id="editorZoomControls" aria-label="TTML timeline zoom">
+            <button id="zoomOut" class="small" type="button" aria-label="Zoom out line detail" title="Zoom out">−</button>
+            <button id="zoomIn" class="small" type="button" aria-label="Zoom in line detail" title="Zoom in">+</button>
+            <button id="zoomFit" class="small" type="button" title="Fit the longest lyric line across the lane with configured edge context">Fit Lines</button>
+            <span id="timelineZoomLabel" class="timeline-zoom-label">Fit longest line</span>
+          </div>
+          <span class="editor-bar-separator" id="editorSep3" aria-hidden="true"></span>
+          <div class="editor-bar-group editor-bar-actions" id="editorActionButtons">
+            <button id="addLine" class="small" type="button" title="Inserts line under current line">+ Add Line</button>
+            <button id="addWord" class="small" type="button" title="Adds a word cue at the playhead (F)">+ Add Word</button>
+            <button id="deleteTtmlLine" class="small danger hidden" type="button">Delete Line</button>
+            <button id="deleteLine" class="small danger" type="button">Delete Line</button>
+          </div>
+          <button id="timelineControlsTrigger" class="small editor-controls-trigger" type="button" aria-haspopup="dialog" aria-expanded="false">Controls ▾</button>
+          <span id="waveformStatus" class="hidden" aria-hidden="true"></span>
         </div>
         <div id="lineTableWrap" class="table-wrap"><table><thead id="gridHead"><tr><th class="num">#</th><th class="time">Time</th><th>Lyric</th></tr></thead><tbody id="gridBody"><tr><td colspan="3" style="padding:30px;text-align:center;color:#91a1b5">Import an LRC, TTML, or TXT lyrics file.</td></tr></tbody></table></div>
         <div id="wordTimelineEditor" class="word-timeline-editor hidden">
-          <div class="timeline-toolbar">
-            <div class="timeline-toolbar-group"><button id="zoomOut" class="small" aria-label="Zoom out line detail">−</button><button id="zoomIn" class="small" aria-label="Zoom in line detail">+</button><button id="zoomFit" class="small" title="Fit the longest lyric line across the lane with configured edge context">Fit lines</button><span id="timelineZoomLabel" class="timeline-zoom-label">Fit longest line</span></div>
-            <div class="timeline-toolbar-group"><span id="waveformStatus" class="timeline-zoom-label">Waveform waits for audio</span><button id="timelineControlsTrigger" class="small" type="button" aria-haspopup="dialog" aria-expanded="false">Controls ▾</button></div>
-          </div>
+          <div class="timeline-toolbar"><div class="timeline-toolbar-group"><button id="addLineTtml" class="small" type="button" title="Inserts line under current line">+ Add Line</button></div></div>
+          <div class="ttml-editor-layout" id="ttmlEditorLayout">
           <div id="timelineViewport" class="timeline-viewport" aria-label="Wrapped word timing timeline">
             <div id="timelineInner" class="timeline-inner">
               <div id="timelineLanes"></div>
@@ -214,7 +287,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
             </div>
           </div>
           <div id="wordInspector" class="word-inspector hidden">
-            <div class="word-inspector-title"><strong id="wordInspectorHeading">Selected word</strong><span id="wordInspectorMeta" class="timeline-zoom-label">Choose a word block above</span></div>
+            <div class="word-inspector-title"><strong id="wordInspectorHeading">Selected word</strong><div class="word-inspector-heading-actions"><span id="wordInspectorMeta" class="timeline-zoom-label">Choose a word block above</span><button id="jumpToLineButton" class="small hidden" type="button" title="Scroll the selected lyric line into view">Jump to line</button></div></div>
             <div class="word-inspector-fields">
               <div class="word-inspector-field"><label for="wordStart">Start</label><input id="wordStart" type="text" inputmode="decimal" aria-label="Selected word start timestamp"></div>
               <div class="word-inspector-field"><label for="wordEnd">End</label><input id="wordEnd" type="text" inputmode="decimal" aria-label="Selected word end timestamp"></div>
@@ -226,8 +299,9 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
               <div class="agent-preset-row"><label for="agentPresetTrigger">Agent preset</label><div class="agent-preset-picker"><button type="button" id="agentPresetTrigger" class="small" aria-haspopup="menu" aria-expanded="false">Agent presets ▾</button></div><button type="button" id="saveAgentPreset" class="small">+ New preset</button></div>
             </div>
           </div>
+          </div>
         </div>
-        <div class="grid-footer"><span id="gridStatus">0 lines</span><span><span class="shortcut">↑</span>/<span class="shortcut">↓</span> select · <span class="shortcut">←</span>/<span class="shortcut">→</span> nudge or seek · <span class="shortcut">Shift+←/→</span> word edges · <span class="shortcut">Ctrl+Z</span> undo · <span class="shortcut">Ctrl+Y</span> redo · <span class="shortcut">Space</span> play/pause · <span class="shortcut">Ctrl+Space</span> block pause · <span class="shortcut">F</span> add word (TTML)</span></div>
+        <div class="grid-footer"><span id="gridStatus">0 lines · 0 words</span><span id="status" class="status hidden"><strong>Ready</strong> · import files to begin</span><span id="lyricsFileName" class="file-name editor-lyrics-file-name" title="No lyrics loaded">No lyrics loaded</span></div>
       </section>
     </div>
   </section>
@@ -242,12 +316,12 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       <div class="generate-drop-grid">
         <div id="genAudioDrop" class="generate-drop-zone" tabindex="0" role="button" aria-label="Choose or drop an audio file">
           <div class="generate-drop-icon">♫</div><strong>Audio file</strong><span id="genAudioName" class="generate-file-name">Drop audio here or choose a file</span>
-          <label class="small file-label" for="genAudioFile">Choose audio</label><input id="genAudioFile" class="generate-file-input" type="file" accept="audio/*">
+          <button id="genChooseAudioFile" class="small file-label" type="button">Choose audio</button><input id="genAudioFile" class="generate-file-input" type="file" accept="audio/*">
           <span class="generate-drop-help">FLAC, WAV, MP3, M4A, OGG and other FFmpeg formats</span>
         </div>
         <div id="genLyricsDrop" class="generate-drop-zone" tabindex="0" role="button" aria-label="Choose or drop lyrics">
           <div class="generate-drop-icon">≡</div><strong id="genLyricsTitle">Lyrics / transcript</strong><span id="genLyricsName" class="generate-file-name">Drop text, LRC, or TTML here</span>
-          <label class="small file-label" for="genLyricsFile">Choose lyrics</label><input id="genLyricsFile" class="generate-file-input" type="file" accept=".txt,.lrc,.ttml,.xml,text/plain,application/xml">
+          <button id="genChooseLyricsFile" class="small file-label" type="button">Choose lyrics</button><input id="genLyricsFile" class="generate-file-input" type="file" accept=".txt,.lrc,.ttml,.xml,text/plain,application/xml">
           <span id="genLyricsHelp" class="generate-drop-help">Plain text or LRC for alignment; choose an LRC for timestamp adjustment.</span>
         </div>
       </div>
@@ -257,11 +331,12 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         <div id="genLanguageWrap" class="setting"><label for="genLanguage">Language code</label><input id="genLanguage" value="en" maxlength="20" spellcheck="false"><p>Language used in the recording.</p></div>
         <div id="genDeviceWrap" class="setting"><label for="genDevice">Compute device</label><select id="genDevice"><option value="auto">Auto detect</option><option value="cuda">CUDA GPU</option><option value="cpu">CPU</option></select><p>Auto is recommended for most systems.</p></div>
         <div id="genOffsetWrap" class="setting"><label for="genOffset">Global timing offset (seconds)</label><input id="genOffset" type="number" min="-30" max="30" step="0.01" value="0"><p>Negative values move timings earlier.</p></div>
+        <div id="genOutputDestination" class="setting generate-output-destination"><label for="genOutputDirectory">Output folder</label><input id="genOutputDirectory" type="text" placeholder="Default: a new Savant run folder" autocomplete="off" spellcheck="false"><div class="generate-output-location-actions"><button id="genChooseLyricsDirectory" class="small" type="button">Use Lyrics Directory…</button><button id="genChooseAudioDirectory" class="small" type="button">Use Audio Directory…</button><button id="genUseDefaultDirectory" class="small" type="button">Use Run Folder</button></div><p>The browser hides the original file paths. Use a button to pick the directory where your lyrics or audio are stored.</p></div>
+        <div id="genOutputNameWrap" class="setting"><label for="genOutputName">Output filename</label><input id="genOutputName" type="text" placeholder="Defaults to the lyrics filename" autocomplete="off" spellcheck="false"><p>The LRC and generated TTML use this name. The lyrics filename is the default.</p></div>
       </div>
       <div id="genQuickToggles" class="generate-check-grid">
         <label class="generate-check"><input id="genWordLevel" type="checkbox"><span><strong>Generate word-timed TTML</strong><small>Write an LRC plus a Navidrome TTML sidecar.</small></span></label>
         <label class="generate-check"><input id="genSeparateVocals" type="checkbox"><span><strong>Separate vocals first</strong><small>Uses optional local Demucs vocal isolation.</small></span></label>
-        <label class="generate-check"><input id="genRefine" type="checkbox"><span><strong>Refine line timings</strong><small>WhisperX second pass; ignored by TIFA.</small></span></label>
         <label class="generate-check"><input id="genInstrumentalCues" type="checkbox"><span><strong>Add instrumental cues</strong><small>Add ♪ markers for long gaps and intros/outros.</small></span></label>
       </div>
       <p class="generate-note">The first run can download model weights and take a while. Choose Dry run under Advanced Options to validate inputs and output paths without loading a model.</p>
@@ -269,7 +344,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     <section id="generateAdvancedPane" class="generate-pane hidden" role="tabpanel" aria-labelledby="generateAdvancedTab">
       <div class="generate-advanced-grid">
         <div class="generate-advanced-card"><h3>Output Files</h3>
-          <div class="setting"><label for="genOutputPath">LRC output path</label><input id="genOutputPath" type="text" placeholder="Automatic: under your home folder, in a Savant run folder"><p>Optional full local path. Leaving this blank keeps output inside the run folder.</p></div>
+          <div class="setting"><label for="genOutputPath">Custom LRC output path (optional)</label><input id="genOutputPath" type="text" placeholder="Leave blank to use the basic folder and filename"><p>A full path here overrides the basic output folder and filename.</p></div>
           <div class="setting"><label for="genTtmlOutputPath">TTML output path</label><input id="genTtmlOutputPath" type="text" placeholder="Automatic when word timing is enabled"></div>
           <div class="setting"><label for="genReviewReportPath">Review report path</label><input id="genReviewReportPath" type="text" placeholder="Automatic: alignment-review.txt"></div>
           <label class="generate-check compact"><input id="genReviewReport" type="checkbox"><span><strong>Write alignment review report</strong><small>Timing warnings and model-disagreement notes.</small></span></label>
@@ -290,7 +365,6 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         </div>
         <div class="generate-advanced-card"><h3>Timing and audio extras</h3>
           <div class="generate-fields-two">
-            <div class="setting"><label for="genRefineWindow">Refine window (seconds)</label><input id="genRefineWindow" type="number" min="0.1" max="5" step="0.05" value="0.8"></div>
             <div class="setting"><label for="genInstrumentalThreshold">Instrumental gap (seconds)</label><input id="genInstrumentalThreshold" type="number" min="0.1" max="120" step="0.5" value="6"></div>
             <div class="setting"><label for="genDemucsModel">Demucs model</label><input id="genDemucsModel" value="htdemucs"></div>
             <div class="setting"><label for="genDemucsSegment">Demucs segment (seconds)</label><input id="genDemucsSegment" type="number" min="2" max="7" step="1" value="6"></div>
@@ -319,12 +393,13 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       </section>
     </section>
     <section id="generateRunStatus" class="generate-run-status hidden" aria-live="polite">
-      <div class="generate-progress-heading"><strong id="genCurrentStep">Preparing generator…</strong><span id="genOverallText">0% overall</span></div>
-      <div class="generate-progress-track" role="progressbar" aria-label="Total progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="genOverallBar" class="generate-progress-fill" style="width:0%"></div></div>
-      <div class="generate-progress-heading"><span>Current step progress</span><span id="genStepText">Starting…</span></div>
-      <div class="generate-progress-track" role="progressbar" aria-label="Current step progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="genStepBar" class="generate-progress-fill indeterminate" style="width:35%"></div></div>
+      <div class="generate-progress-heading"><strong id="genOverallText">0% overall</strong></div>
+      <div class="generate-progress-stage-wrap">
+        <span id="genCurrentStep" class="generate-current-step">Preparing generator…</span>
+        <div id="genSegmentTrack" class="generate-segment-track" role="progressbar" aria-label="Generation progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+      </div>
     </section>
-    <div class="generate-run-footer"><span id="genFooterStatus" class="generate-muted">Choose an audio file and lyrics to begin.</span><button id="genRunButton" class="primary generate-run-button"><span aria-hidden="true">▶</span> Run Generator</button></div>
+    <div class="generate-run-footer"><button id="genRunButton" class="primary generate-run-button"><span aria-hidden="true">▶</span> Run Generator</button><span id="genFooterStatus" class="generate-muted">Choose an audio file and lyrics to begin.</span><button id="genImportButton" class="generate-run-button" type="button" disabled>Import Output to Edit</button></div>
   </section>
   <section id="settingsScreen" class="panel hidden">
     <div class="panel-head"><div><h2>Editor settings</h2><p>Adjust timing behavior and playback. Settings are saved in this browser on this computer.</p></div><button id="resetSettings" class="small">Reset defaults</button></div>
@@ -341,6 +416,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       <div class="setting"><label for="dragAutoScrollSpeed">Word-drag edge scroll speed (px/sec)</label><input id="dragAutoScrollSpeed" type="number" min="40" max="1600" step="20" value="320"><p>How quickly the waveform view advances when dragging a word near or beyond a lane edge.</p></div>
       <div class="setting"><label for="downloadBase">Export filename suffix</label><select id="downloadBase"><option value="same">Use imported lyrics base name</option><option value="audio">Use audio base name</option></select><p>Controls the default downloaded filename.</p></div>
       <div class="setting"><label for="returnToEditAfterGenerate">After generation finishes</label><select id="returnToEditAfterGenerate"><option value="false">Stay on Generate and review results</option><option value="true">Open Edit automatically</option></select><p>Choose whether a completed CLI run takes you straight to the editor.</p></div>
+      <div class="setting"><label for="autoImportGeneratedOutput">Automatically import generated files</label><select id="autoImportGeneratedOutput"><option value="false">Off — use Import Output to Edit</option><option value="true">On — load audio and lyrics into Edit</option></select><p>When enabled, load the generated TTML (or LRC if TTML was not requested) and source audio in Edit after a successful run.</p></div>
+      <div class="setting"><label for="wordInspectorLayout">TTML word editor placement</label><select id="wordInspectorLayout"><option value="right">Right side</option><option value="bottom">Below timeline</option></select><p>Place the selected-word fields beside the timeline or stack them underneath it.</p></div>
     </div>
   </section>
   <p class="footer-note">Audio and lyric files are opened locally by your browser. This app does not upload them. Press <span class="shortcut">Esc</span> to leave a lyric text field and return to keyboard navigation.</p>
@@ -353,8 +430,13 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   <div id="previewInfo" class="preview-info">LRC is compatible with common players. TTML can preserve word cues when imported from an existing word-timed TTML.</div>
   <div class="grid-footer"><button id="copyPreview" class="small">Copy preview</button><div class="panel-actions"><button id="saveLrc" class="small">Download LRC</button><button id="saveTtml" class="small primary">Download TTML</button></div></div>
 </section>
-<div id="timelineControlsMenu" class="timeline-controls-menu hidden" role="dialog" aria-label="TTML timeline controls">
-  <div class="floating-menu-title">TTML timeline controls</div>
+<div id="timelineControlsMenu" class="timeline-controls-menu hidden" role="dialog" aria-label="Editor controls">
+  <div class="floating-menu-title">Editor controls</div>
+  <div class="floating-menu-row"><span class="shortcut">↑ / ↓</span><span>Select the previous or next lyric line in the LRC grid.</span></div>
+  <div class="floating-menu-row"><span class="shortcut">← / →</span><span>Nudge the selected line or seek during playback. Shift + arrows applies the configured multiplier or adjusts word edges.</span></div>
+  <div class="floating-menu-row"><span class="shortcut">Ctrl+Z / Ctrl+Y</span><span>Undo / redo the last edit.</span></div>
+  <div class="floating-menu-row"><span class="shortcut">Space</span><span>Play or pause. Ctrl + Space performs a block pause.</span></div>
+  <div class="floating-menu-title">TTML word editing</div>
   <div class="floating-menu-row"><span class="shortcut">Drag playhead</span><span>Seek the audio to a precise time.</span></div>
   <div class="floating-menu-row"><span class="shortcut">Left-drag waveform</span><span>Seek by dragging the waveform.</span></div>
   <div class="floating-menu-row"><span class="shortcut">Middle-drag</span><span>Pan within the line’s edge context.</span></div>
@@ -364,7 +446,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   <div class="floating-menu-row"><span class="shortcut">Ctrl+A</span><span>Select words on this line; Ctrl+Shift+A selects all word cues.</span></div>
   <div class="floating-menu-row"><span class="shortcut">Shift+← / →</span><span>Seek to the nearest word boundary. Plain arrows nudge the selected word or seek.</span></div>
   <div class="floating-menu-row"><span class="shortcut">F</span><span>Add a timed word cue.</span></div>
-  <div class="floating-menu-foot">Ctrl+wheel zooms around the cursor. Fit lines resets the timeline scale.</div>
+  <div class="floating-menu-foot">Ctrl + wheel zooms around the cursor. Fit Lines resets the timeline scale. Word dragging, box selection, and playhead controls are available in TTML mode.</div>
 </div>
 <div id="agentPresetMenu" class="agent-preset-menu hidden" role="menu" aria-label="Saved agent presets"></div>
 <div id="playerDock" class="audio-panel player-dock">
@@ -433,34 +515,18 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   let pendingZoomRender = null;
   let settings = {
     nudgeStep: 0.02, shiftMultiplier: 5, replayLead: 2.0, txtSpacing: 3.0,
-    language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, returnToEditAfterGenerate: false
+    language: 'en', defaultTab: 'lrc', autoFollow: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, returnToEditAfterGenerate: false, autoImportGeneratedOutput: false, wordInspectorLayout: 'right'
   };
   try { settings = {...settings, ...JSON.parse(localStorage.getItem('lyrics-aligner-ui-settings') || '{}')}; } catch (_) {}
+  delete settings.editorActionAlignment;
   let toastTimer = null;
 
   function toast(message, error=false) {
     const el=$('toast'); el.textContent=message; el.classList.remove('hidden','error'); if(error) el.classList.add('error');
     clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.add('hidden'),4200);
   }
-  function positionFloatingMenu(trigger,menu){
-    menu.classList.remove('hidden');
-    const padding=10,gap=6,rect=trigger.getBoundingClientRect();
-    const headerHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-header-height'))||68;
-    const dockHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--player-dock-height'))||82;
-    const topLimit=headerHeight+padding,bottomLimit=Math.max(topLimit+90,window.innerHeight-dockHeight-padding);
-    const width=menu.offsetWidth||Math.min(320,window.innerWidth-padding*2);
-    const maxLeft=Math.max(padding,window.innerWidth-width-padding);
-    const left=Math.max(padding,Math.min(maxLeft,rect.left));
-    menu.style.maxHeight=Math.max(90,bottomLimit-topLimit)+'px';
-    const height=menu.offsetHeight;
-    const below=rect.bottom+gap,above=rect.top-height-gap;
-    const top=below+height<=bottomLimit?below:Math.max(topLimit,Math.min(bottomLimit-height,above));
-    menu.style.left=Math.round(left)+'px';menu.style.top=Math.round(top)+'px';
-  }
-  function toggleFloatingMenu(trigger,menu){
-    const opening=menu.classList.contains('hidden');
-    if(opening)positionFloatingMenu(trigger,menu);else menu.classList.add('hidden');
-    trigger.setAttribute('aria-expanded',String(opening));
+  function applyEditorPreferences(){
+    $('ttmlEditorLayout').classList.toggle('bottom',settings.wordInspectorLayout==='bottom');
   }
   function captureTimelineView(){
     const viewport=$('timelineViewport'),editor=$('wordTimelineEditor');
@@ -484,13 +550,15 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     }
     viewport.scrollTop=Math.max(0,Math.min(targetTop,Math.max(0,viewport.scrollHeight-viewport.clientHeight)));
   }
-  function scrollTimelineElementIntoView(element){
-    const viewport=$('timelineViewport');if(!viewport||!element)return;
+  function scrollElementToCenter(viewport,element){
+    if(!viewport||!element||viewport.clientHeight<=0)return;
     const rect=viewport.getBoundingClientRect(),item=element.getBoundingClientRect();
-    const top=rect.top+viewport.clientTop,bottom=rect.bottom-viewport.clientTop;
-    if(item.top<top)viewport.scrollTop-=top-item.top;
-    else if(item.bottom>bottom)viewport.scrollTop+=item.bottom-bottom;
+    const visibleCenter=rect.top+viewport.clientTop+viewport.clientHeight/2;
+    const itemCenter=item.top+item.height/2;
+    viewport.scrollTop+=itemCenter-visibleCenter;
+    viewport.scrollTop=Math.max(0,Math.min(viewport.scrollTop,viewport.scrollHeight-viewport.clientHeight));
   }
+  function scrollTimelineElementIntoView(element){scrollElementToCenter($('timelineViewport'),element);}
   function captureHistoryState() {
     const active=document.activeElement;
     let focus=null;
@@ -552,10 +620,10 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     restoreHistoryState(next);toast('Redo.');
   }
   function saveSettings() {
-    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate']) {
+    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout']) {
       const el=$(key); if (!el) continue;
-      settings[key] = ['language','defaultTab','downloadBase'].includes(key) ? el.value :
-        (key==='autoFollow'||key==='returnToEditAfterGenerate') ? el.value==='true' : Number(el.value);
+      settings[key] = ['language','defaultTab','downloadBase','wordInspectorLayout'].includes(key) ? el.value :
+        (key==='autoFollow'||key==='returnToEditAfterGenerate'||key==='autoImportGeneratedOutput') ? el.value==='true' : Number(el.value);
     }
     settings.nudgeStep=Math.min(1,Math.max(.001,Number(settings.nudgeStep)||.02));
     settings.shiftMultiplier=Math.min(50,Math.max(2,Math.round(Number(settings.shiftMultiplier)||5)));
@@ -571,7 +639,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed']) $(key).value=settings[key];
     document.documentElement.style.setProperty('--playhead-label-size',`${settings.playheadLabelSize}px`);
     $('autoFollow').value=String(settings.autoFollow);
-    $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));
+    $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));$('autoImportGeneratedOutput').value=String(Boolean(settings.autoImportGeneratedOutput));$('wordInspectorLayout').value=settings.wordInspectorLayout||'right';applyEditorPreferences();
   }
   function fmtTime(sec, places=3) {
     sec=Math.max(0,Number(sec)||0); const mins=Math.floor(sec/60), secs=sec-mins*60;
@@ -612,19 +680,80 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 
   const genFiles={audio:null,lyrics:null,singerConfig:null,lineOffsets:null,phraseOffsets:null};
   let genCapabilities=null,genActiveRunId=null,genPollTimer=null,genRunBusy=false,genResultTab='logs',genLastSnapshot=null,genDiagnosisLoadedFor=null,genIsInstallRun=false;
+  let genDefaultOutputName='',genOutputNameCustom=false,genCompletedNeedsConfigChange=false,genOutputReady=false,genImportedRunId=null;
   const GEN_FILE_INPUTS=[['audio','genAudioFile','genAudioName'],['lyrics','genLyricsFile','genLyricsName'],['singerConfig','genSingerFile','genSingerName'],['lineOffsets','genLineOffsetsFile','genLineOffsetsName'],['phraseOffsets','genPhraseOffsetsFile','genPhraseOffsetsName']];
   function genSetFile(key,file){
-    if(!file)return;genFiles[key]=file;
+    if(!file)return;genMarkConfigChanged();genFiles[key]=file;
     const nameId={audio:'genAudioName',lyrics:'genLyricsName',singerConfig:'genSingerName',lineOffsets:'genLineOffsetsName',phraseOffsets:'genPhraseOffsetsName'}[key];
     if(nameId){$(nameId).textContent=file.name;$(nameId).classList.remove('empty');}
+    if(key==='lyrics'){
+      const nextDefault=file.name.replace(/\.[^.]+$/,'').trim()||'lyrics';
+      if(!genOutputNameCustom||$('genOutputName').value.trim()===genDefaultOutputName){$('genOutputName').value=nextDefault;genOutputNameCustom=false;}
+      genDefaultOutputName=nextDefault;
+    }
     updateGenerateConfigVisibility();renderGenerateInstallPrompts();
+  }
+  function genMarkConfigChanged(){
+    if(genRunBusy)return;
+    if(genCompletedNeedsConfigChange){
+      genCompletedNeedsConfigChange=false;genOutputReady=false;$('genImportButton').disabled=true;
+      $('genRunButton').disabled=false;$('genRunButton').innerHTML='<span aria-hidden="true">▶</span> Run Generator';
+      $('genFooterStatus').textContent='Settings changed. Ready for another run.';
+    }
+  }
+  async function genPickLocalSource(kind){
+    try{
+      const result=await genFetchJson('/api/select-source',{method:'POST',headers:{'Content-Type':'application/json','X-Savant-UI':'1'},body:JSON.stringify({kind})});
+      if(result.cancelled)return null;
+      return {name:result.name,path:result.path,size:Number(result.size)||0,type:result.type||'application/octet-stream',nativeSource:true};
+    }catch(error){toast(error.message||'Could not open the local file picker.',true);return null;}
+  }
+  async function genChooseSourceFile(kind){const file=await genPickLocalSource(kind);if(file)genSetFile(kind,file);}
+  function genSourceDirectory(file){
+    const raw=String(file?.path||'').trim();if(!raw)return '';
+    const normalized=raw.split(String.fromCharCode(92)).join('/'),index=normalized.lastIndexOf('/');
+    return index>0?normalized.slice(0,index):index===0?'/':'';
+  }
+  async function genChooseOutputDirectory(kind){
+    let source=genFiles[kind];
+    if(!genSourceDirectory(source)){source=await genPickLocalSource(kind);if(!source)return;genSetFile(kind,source);}
+    const directory=genSourceDirectory(source);
+    if(!directory){toast('The selected source file has no usable local path.',true);return;}
+    $('genOutputDirectory').value=directory;genMarkConfigChanged();
+  }
+  function genSetImportButton(snapshot){
+    const artifacts=snapshot?.artifacts||[];
+    genOutputReady=!genIsInstallRun&&['success','warning'].includes(snapshot?.status)&&artifacts.some(a=>a.key==='output-lrc'&&a.available);
+    $('genImportButton').disabled=!genOutputReady||genImportedRunId===snapshot?.id;
+  }
+  async function genImportOutput(runId=genLastSnapshot?.id,automatic=false){
+    if(!runId||!genLastSnapshot||genLastSnapshot.id!==runId||!['success','warning'].includes(genLastSnapshot.status)){
+      if(!automatic)toast('Generated output is not ready to import.',true);return;
+    }
+    const artifacts=genLastSnapshot.artifacts||[],ttml=artifacts.find(a=>a.key==='output-ttml'&&a.available),lrc=artifacts.find(a=>a.key==='output-lrc'&&a.available);
+    if(!ttml&&!lrc){if(!automatic)toast('No generated lyric output is available to import.',true);return;}
+    try{
+      $('genImportButton').disabled=true;
+      let audio=genFiles.audio;
+      if(audio instanceof File){loadAudio(audio);}
+      else{
+        const audioResponse=await fetch('/api/runs/'+encodeURIComponent(runId)+'/artifacts/input-audio');
+        if(audioResponse.ok){const blob=await audioResponse.blob();audio=new File([blob],genLastSnapshot.sourceAudioName||'audio', {type:blob.type||'application/octet-stream'});loadAudio(audio);}
+      }
+      const lyricArtifact=ttml||lrc,endpoint='/api/runs/'+encodeURIComponent(runId)+'/artifacts/'+encodeURIComponent(lyricArtifact.key);
+      const response=await fetch(endpoint);if(!response.ok){let error='Could not read generated output.';try{error=(await response.json()).error||error;}catch(_){}throw new Error(error);}
+      const blob=await response.blob(),file=new File([blob],lyricArtifact.name,{type:blob.type||'text/plain'});
+      await loadLyrics(file);setScreen('edit');genImportedRunId=runId;
+      toast(ttml?'Imported source audio and generated TTML into Edit.':'Imported source audio and generated LRC into Edit.');
+    }catch(error){$('genImportButton').disabled=false;toast('Import failed: '+error.message,true);}
+    finally{genSetImportButton(genLastSnapshot);}
   }
   function genWireFileInputs(){
     for(const [key,inputId] of GEN_FILE_INPUTS){
       $(inputId).addEventListener('change',()=>{if($(inputId).files?.[0])genSetFile(key,$(inputId).files[0]);});
       const zone=$({audio:'genAudioDrop',lyrics:'genLyricsDrop',singerConfig:'genSingerDrop',lineOffsets:'genLineOffsetsDrop',phraseOffsets:'genPhraseOffsetsDrop'}[key]);
-      zone.addEventListener('click',e=>{if(!e.target.closest('label,button,input'))$(inputId).click();});
-      zone.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('label,button,input')){e.preventDefault();$(inputId).click();}});
+      zone.addEventListener('click',e=>{if(e.target.closest('label,button,input'))return;if(key==='audio'||key==='lyrics')genChooseSourceFile(key);else $(inputId).click();});
+      zone.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('label,button,input')){e.preventDefault();if(key==='audio'||key==='lyrics')genChooseSourceFile(key);else $(inputId).click();}});
       zone.addEventListener('dragenter',e=>{e.preventDefault();e.stopPropagation();zone.classList.add('dragover');});
       zone.addEventListener('dragover',e=>{e.preventDefault();e.stopPropagation();zone.classList.add('dragover');if(e.dataTransfer)e.dataTransfer.dropEffect='copy';});
       zone.addEventListener('dragleave',e=>{e.preventDefault();e.stopPropagation();zone.classList.remove('dragover');});
@@ -632,22 +761,23 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     }
   }
   function updateGenerateConfigVisibility(){
-    const mode=$('genMode').value,doctor=mode==='doctor',adjust=mode==='adjust',tifa=$('genAligner').value==='tifa';
+    const mode=$('genMode').value,doctor=mode==='doctor',adjust=mode==='adjust';
     $('genAudioDrop').classList.toggle('hidden',doctor||adjust);$('genLyricsDrop').classList.toggle('hidden',doctor);
     for(const id of ['genAlignOptions','genLanguageWrap','genDeviceWrap'])$(id).classList.toggle('hidden',doctor||adjust);
     $('genOffsetWrap').classList.toggle('hidden',doctor);$('genQuickToggles').classList.toggle('hidden',doctor||adjust);
     $('genLyricsTitle').textContent=adjust?'Existing LRC to adjust':'Lyrics / transcript';
     $('genLyricsHelp').textContent=adjust?'Choose an LRC; output defaults to a separate adjusted file.':'Plain text or LRC for alignment; LRC for timing adjustment.';
-    $('genRefine').disabled=tifa||adjust||doctor;$('genRefine').closest('label').style.opacity=$('genRefine').disabled?'.55':'1';
-    $('genContextRepair').closest('label').toggleAttribute('hidden',adjust||doctor);renderGenerateInstallPrompts();
+    $('genContextRepair').closest('label').toggleAttribute('hidden',adjust||doctor||$('genAligner').value!=='tifa');renderGenerateInstallPrompts();
   }
   function genGetConfig(modeOverride=null){
-    return {mode:modeOverride||$('genMode').value,aligner:$('genAligner').value,language:$('genLanguage').value.trim()||'en',device:$('genDevice').value,offset:$('genOffset').value||'0',
-      wordLevel:$('genWordLevel').checked,separateVocals:$('genSeparateVocals').checked,refine:$('genRefine').checked,instrumentalCues:$('genInstrumentalCues').checked,
-      outputPath:$('genOutputPath').value.trim(),ttmlOutputPath:$('genTtmlOutputPath').value.trim(),reviewReport:$('genReviewReport').checked,reviewReportPath:$('genReviewReportPath').value.trim(),
+    const mode=modeOverride||$('genMode').value;
+    const outputName=$('genOutputName').value.trim();
+    return {mode,aligner:$('genAligner').value,language:$('genLanguage').value.trim()||'en',device:$('genDevice').value,offset:$('genOffset').value||'0',audioSourcePath:genFiles.audio?.path||'',lyricsSourcePath:genFiles.lyrics?.path||'',
+      wordLevel:$('genWordLevel').checked,separateVocals:$('genSeparateVocals').checked,instrumentalCues:$('genInstrumentalCues').checked,
+      outputDirectory:$('genOutputDirectory').value.trim(),outputName:mode==='adjust'&&!genOutputNameCustom?((outputName||genDefaultOutputName||'lyrics')+'.adjusted'):outputName,outputPath:$('genOutputPath').value.trim(),ttmlOutputPath:$('genTtmlOutputPath').value.trim(),reviewReport:$('genReviewReport').checked,reviewReportPath:$('genReviewReportPath').value.trim(),
       overwrite:$('genOverwrite').checked,dryRun:$('genDryRun').checked,alignModel:$('genAlignModel').value.trim(),tifaRoot:$('genAligner').value==='tifa' ? $('genTifaRoot').value.trim() : '',tifaPython:$('genAligner').value==='tifa' ? $('genTifaPython').value.trim() : '',tifaModel:$('genAligner').value==='tifa' ? $('genTifaModel').value.trim() : '',
       tifaChunkSeconds:$('genTifaChunkSeconds').value||'42',tifaContext:$('genTifaContext').value||'1.8',tifaDiagnosticsPath:$('genAligner').value==='tifa' ? $('genTifaDiagnosticsPath').value.trim() : '',contextRepair:$('genContextRepair').checked,
-      refineWindow:$('genRefineWindow').value||'0.8',instrumentalThreshold:$('genInstrumentalThreshold').value||'6',demucsModel:$('genDemucsModel').value.trim()||'htdemucs',demucsSegment:$('genDemucsSegment').value||'6',vocalOutput:$('genVocalOutput').value.trim()};
+      instrumentalThreshold:$('genInstrumentalThreshold').value||'6',demucsModel:$('genDemucsModel').value.trim()||'htdemucs',demucsSegment:$('genDemucsSegment').value||'6',vocalOutput:$('genVocalOutput').value.trim()};
   }
   async function genFetchJson(url,options={}){
     const response=await fetch(url,options);let result={};try{result=await response.json();}catch(_){}
@@ -691,13 +821,66 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     for(const key of ['logs','clean','raw','files'])$('genResult'+key[0].toUpperCase()+key.slice(1)).classList.toggle('hidden',key!==tab);
     if(tab==='raw'&&genLastSnapshot)loadGenerateDiagnosis(genLastSnapshot.id);
   }
+  function genProgressStages(snapshot){
+    const operation=String(snapshot.operation||'align');
+    if(operation==='adjust')return ['Validate LRC','Apply Adjustment','Write LRC','Complete'];
+    if(operation==='doctor')return ['Start Diagnostics','Run Checks','Complete'];
+    if(operation.startsWith('install-'))return ['Start Install','Install Packages','Complete'];
+    return ['Validate Inputs','Load Model','Prepare Audio','Align Lyrics',$('genAligner').value==='tifa'?'TIFA Alignment':'Finalize Timings','Build Outputs','Write Files','Complete'];
+  }
   function genSetProgress(snapshot){
-    $('generateRunStatus').classList.remove('hidden');$('genCurrentStep').textContent=snapshot.step||'Working…';
-    const overall=Math.max(0,Math.min(100,Number(snapshot.overallProgress)||0)),step=Math.max(0,Math.min(100,Number(snapshot.stepProgress)||0));
-    $('genOverallText').textContent=overall+'% overall';$('genOverallBar').style.width=overall+'%';$('genOverallBar').parentElement.setAttribute('aria-valuenow',String(overall));
-    $('genStepText').textContent=step===0&&snapshot.status==='running'?'Working…':step+'%';$('genStepBar').style.width=step+'%';$('genStepBar').parentElement.setAttribute('aria-valuenow',String(step));$('genStepBar').classList.toggle('indeterminate',snapshot.status==='running'&&step===0);
-    $('genRunStatusBadge').textContent=({queued:'Queued',running:'Running',success:'Completed',warning:'Completed with warnings',failed:'Failed'})[snapshot.status]||snapshot.status;
-    $('genFooterStatus').textContent=snapshot.error||((snapshot.status==='success'||snapshot.status==='warning')?'Finished. Review outputs and logs.':snapshot.status==='failed'?'Task failed. Open Logs for details.':'Working locally…');
+    const host=$('generateRunStatus');host.classList.remove('hidden','finished','failed');
+    const overall=Math.max(0,Math.min(100,Number(snapshot.overallProgress)||0));
+    const stages=genProgressStages(snapshot),step=String(snapshot.step||'Working…'),lower=step.toLowerCase();
+    let active=0;
+    if(['success','warning'].includes(snapshot.status)||overall>=100||/generation complete|adjustment complete|dry run complete|install task complete/.test(lower))active=stages.length-1;
+    else if(/validat/.test(lower))active=0;
+    else if(/load|model|ffmpeg|alignment libraries|install/.test(lower))active=Math.min(1,stages.length-1);
+    else if(/prepare audio|audio ready|separate vocals/.test(lower))active=Math.min(2,stages.length-1);
+    else if(/first-pass|lyric alignment/.test(lower))active=Math.min(3,stages.length-1);
+    else if(/tifa|refine/.test(lower))active=Math.min(4,stages.length-1);
+    else if(/build lrc|build output/.test(lower))active=Math.min(5,stages.length-1);
+    else if(/write output|write adjusted|write lrc/.test(lower))active=Math.max(0,stages.length-2);
+    else if(snapshot.status==='failed')active=Math.min(stages.length-1,stages.length-2);
+    else{
+      const thresholds=stages.length===8?[3,18,43,60,80,82,90,100]:stages.map((_,i)=>(i+1)*100/stages.length);
+      active=Math.max(0,thresholds.findIndex(value=>overall<value));if(active<0)active=stages.length-1;
+    }
+    const track=$('genSegmentTrack');
+    let tqdmPercent=null;
+    if(/prepare audio|separate vocals|demucs|tifa alignment|singing-trained/i.test(lower)){
+      const tqdmMatches=[...String(snapshot.logs||'').replace(/\r/g,'\n').matchAll(/(\d{1,3})%\s*\|[^|\r\n]*\|\s*(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)/g)];
+      const last=tqdmMatches[tqdmMatches.length-1];
+      if(last&&Number(last[3])>0)tqdmPercent=Math.max(0,Math.min(100,Number(last[2])/Number(last[3])*100));
+    }
+    if(track.children.length!==stages.length){
+      track.textContent='';
+      for(const label of stages){
+        const segment=document.createElement('span');segment.className='generate-segment';segment.title=label;
+        segment.setAttribute('aria-label',label);
+        const fill=document.createElement('span');fill.className='generate-segment-fill';segment.append(fill);track.append(segment);
+      }
+    }
+    const segments=[...track.querySelectorAll('.generate-segment')];
+    segments.forEach((segment,index)=>{
+      const done=index<active||['success','warning'].includes(snapshot.status);
+      const current=index===active&&!done;
+      segment.classList.toggle('complete',done);segment.classList.toggle('active',current);
+      const fill=segment.querySelector('.generate-segment-fill');
+      const currentFill=current?(tqdmPercent!==null?tqdmPercent:(Number(snapshot.stepProgress)>0?Math.max(0,Math.min(100,Number(snapshot.stepProgress))):35)):0;
+      segment.classList.toggle('indeterminate',current&&tqdmPercent===null&&!(Number(snapshot.stepProgress)>0));
+      fill.style.width=done?'100%':current?currentFill+'%':'0%';
+      segment.title=stages[index];segment.setAttribute('aria-label',stages[index]);
+    });
+    $('genOverallText').textContent=overall+'% overall';
+    track.setAttribute('aria-valuenow',String(overall));
+    $('genCurrentStep').textContent=['success','warning'].includes(snapshot.status)?(snapshot.status==='warning'?'Completed With Warnings':'Generation Complete'):snapshot.status==='failed'?'Generation Failed':step;
+    $('genCurrentStep').title=step;
+    $('genCurrentStep').style.left=((active+0.5)/stages.length*100)+'%';
+    $('genCurrentStep').style.transform=active===0?'translateX(0)':active===stages.length-1?'translateX(-100%)':'translateX(-50%)';
+    $('genRunStatusBadge').textContent=({queued:'Queued',running:'Running',success:'Completed',warning:'Completed With Warnings',failed:'Failed'})[snapshot.status]||snapshot.status;
+    host.classList.toggle('finished',['success','warning'].includes(snapshot.status));host.classList.toggle('failed',snapshot.status==='failed');
+    $('genFooterStatus').textContent=snapshot.error||(snapshot.status==='success'?'Generation complete. Review the output files or import them into Edit.':snapshot.status==='warning'?'Generation finished with warnings. Review the logs and output files.':snapshot.status==='failed'?'Generation failed. Open Logs for details.':'Working locally…');
   }
   function genRenderArtifacts(snapshot){
     const container=$('genArtifacts');container.textContent='';const artifacts=snapshot.artifacts||[];
@@ -737,9 +920,10 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if(mode==='adjust'&&!genFiles.lyrics){toast('Choose an existing LRC to adjust.',true);return;}
     if(mode==='adjust'&&!/\.lrc$/i.test(genFiles.lyrics.name)){toast('Adjust mode requires an .lrc file.',true);return;}
     if(mode==='align'&&/\.ttml?$/i.test(genFiles.lyrics.name)){toast('Use TXT or LRC source lyrics for alignment; TTML can be opened in the editor.',true);return;}
+    if(config.overwrite&&!config.dryRun&&['align','adjust'].includes(mode)&&!window.confirm('Overwrite is enabled. Existing output files at the selected paths may be replaced. Continue?'))return;
     const form=new FormData();form.append('config',JSON.stringify(config));
-    if(mode==='align'&&genFiles.audio)form.append('audio',genFiles.audio,genFiles.audio.name);
-    if(mode!=='doctor'&&genFiles.lyrics)form.append('lyrics',genFiles.lyrics,genFiles.lyrics.name);
+    if(mode==='align'&&genFiles.audio instanceof File)form.append('audio',genFiles.audio,genFiles.audio.name);
+    if(mode!=='doctor'&&genFiles.lyrics instanceof File)form.append('lyrics',genFiles.lyrics,genFiles.lyrics.name);
     if(mode==='align'&&genFiles.singerConfig)form.append('singerConfig',genFiles.singerConfig,genFiles.singerConfig.name);
     if((mode==='align'||mode==='adjust')&&genFiles.lineOffsets)form.append('lineOffsets',genFiles.lineOffsets,genFiles.lineOffsets.name);
     if((mode==='align'||mode==='adjust')&&genFiles.phraseOffsets)form.append('phraseOffsets',genFiles.phraseOffsets,genFiles.phraseOffsets.name);
@@ -752,21 +936,34 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     await startGeneratorRequest('/api/install',JSON.stringify({kind}),label||option.label,true);
   }
   async function startGeneratorRequest(url,body,label,isInstall=false){
-    genRunBusy=true;genIsInstallRun=isInstall;$('genRunButton').disabled=true;$('genRunButton').textContent=isInstall?'Installing…':'Running…';$('genFooterStatus').textContent=label+'…';
-    $('generateRunStatus').classList.remove('hidden');$('genCurrentStep').textContent=label+'…';$('genOverallBar').style.width='1%';$('genOverallText').textContent='Starting';$('genStepBar').classList.add('indeterminate');
+    genRunBusy=true;genIsInstallRun=isInstall;if(!isInstall)genImportedRunId=null;$('genRunButton').disabled=true;$('genRunButton').textContent=isInstall?'Installing…':'Running…';$('genFooterStatus').textContent=label+'…';
+    $('genImportButton').disabled=true;genOutputReady=false;genCompletedNeedsConfigChange=false;
+    $('generateRunStatus').classList.remove('hidden','finished','failed');$('genCurrentStep').textContent=label+'…';$('genOverallText').textContent='0% overall';$('genSegmentTrack').setAttribute('aria-valuenow','0');
+    $('genSegmentTrack').querySelectorAll('.generate-segment').forEach((segment,index)=>{segment.classList.toggle('active',index===0);segment.classList.remove('complete');segment.querySelector('.generate-segment-fill').style.width=index===0?'35%':'0%';});
     selectGenerateResult('logs');$('genLogs').textContent=isInstall?'Starting '+label+'…\n':'Uploading files to the local Savant server and starting the CLI…\n';
     try{const response=await fetch(url,{method:'POST',headers:{'X-Savant-UI':'1',...(isInstall?{'Content-Type':'application/json'}:{})},body}),result=await response.json();if(!response.ok)throw new Error(result.error||'The local task could not be started.');
       genActiveRunId=result.runId;genDiagnosisLoadedFor=null;genLastSnapshot={id:result.runId,status:'queued',logs:$('genLogs').textContent,artifacts:[]};await pollGeneratorRun(result.runId);
-    }catch(error){genRunBusy=false;$('genRunButton').disabled=false;$('genRunButton').textContent='▶ Run Generator';$('genFooterStatus').textContent=error.message;toast(error.message,true);}
+    }catch(error){genRunBusy=false;genIsInstallRun=false;$('genRunButton').disabled=false;$('genRunButton').innerHTML='<span aria-hidden="true">▶</span> Run Generator';$('genImportButton').disabled=true;$('genFooterStatus').textContent=error.message;toast(error.message,true);}
   }
   async function pollGeneratorRun(runId){
     if(genPollTimer)clearTimeout(genPollTimer);if(!genRunBusy||genActiveRunId!==runId)return;
     try{const snapshot=await genFetchJson('/api/runs/'+encodeURIComponent(runId));genLastSnapshot=snapshot;genSetProgress(snapshot);$('genLogs').textContent=snapshot.logs||'(No output yet.)';if(genResultTab==='logs')$('genLogs').scrollTop=$('genLogs').scrollHeight;
       genRenderArtifacts(snapshot);renderGenerateInstallPrompts();if((snapshot.artifacts||[]).some(a=>a.key==='tifa-diagnosis'&&a.available))await loadGenerateDiagnosis(runId);
       if(['success','warning','failed'].includes(snapshot.status)){
-        genRunBusy=false;$('genRunButton').disabled=false;$('genRunButton').textContent='▶ Run Generator';await refreshGenerateCapabilities();renderGenerateInstallPrompts();
-        if(genIsInstallRun&&snapshot.status==='success')toast('Install task finished. Run diagnostics to verify it.');
-        if(!genIsInstallRun&&snapshot.status!=='failed'&&settings.returnToEditAfterGenerate){setScreen('edit');toast('Generation finished. Review output files or continue editing.');}
+        const wasInstall=genIsInstallRun;genRunBusy=false;
+        if(!wasInstall&&['success','warning'].includes(snapshot.status)){
+          genCompletedNeedsConfigChange=true;$('genRunButton').disabled=true;$('genRunButton').textContent='✓ Generated';genSetImportButton(snapshot);
+        }else{
+          $('genRunButton').disabled=false;$('genRunButton').innerHTML='<span aria-hidden="true">▶</span> Run Generator';
+          genSetImportButton(snapshot);
+        }
+        await refreshGenerateCapabilities();renderGenerateInstallPrompts();
+        if(wasInstall&&snapshot.status==='success')toast('Install task finished. Run diagnostics to verify it.');
+        if(!wasInstall&&['success','warning'].includes(snapshot.status)){
+          if(settings.autoImportGeneratedOutput)await genImportOutput(runId,true);
+          else if(settings.returnToEditAfterGenerate){setScreen('edit');toast('Generation finished. Review output files or continue editing.');}
+          else toast(snapshot.status==='warning'?'Generation finished with warnings. Review the logs and output files.':'Generation complete. The Run button is paused until you change a setting; import is ready.');
+        }
         genIsInstallRun=false;return;
       }
     }catch(error){$('genFooterStatus').textContent='Could not refresh local job status: '+error.message;}
@@ -779,7 +976,13 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function wireGeneratePanel(){
     genWireFileInputs();$('generateConfigTab').addEventListener('click',()=>setGeneratePane('configuration'));$('generateAdvancedTab').addEventListener('click',()=>setGeneratePane('advanced'));
     $('genMode').addEventListener('change',updateGenerateConfigVisibility);$('genAligner').addEventListener('change',updateGenerateConfigVisibility);$('genSeparateVocals').addEventListener('change',renderGenerateInstallPrompts);
-    $('genRunButton').addEventListener('click',()=>startGenerator());$('genDoctorButton').addEventListener('click',()=>{$('genMode').value='doctor';updateGenerateConfigVisibility();startGenerator('doctor');});
+    $('genOutputName').addEventListener('input',()=>{genOutputNameCustom=Boolean($('genOutputName').value.trim())&&$('genOutputName').value.trim()!==genDefaultOutputName;genMarkConfigChanged();});
+    $('genChooseAudioFile').addEventListener('click',()=>genChooseSourceFile('audio'));$('genChooseLyricsFile').addEventListener('click',()=>genChooseSourceFile('lyrics'));
+    $('genChooseLyricsDirectory').addEventListener('click',()=>genChooseOutputDirectory('lyrics'));$('genChooseAudioDirectory').addEventListener('click',()=>genChooseOutputDirectory('audio'));
+    $('genUseDefaultDirectory').addEventListener('click',()=>{$('genOutputDirectory').value='';genMarkConfigChanged();});
+    $('genOutputDirectory').addEventListener('input',genMarkConfigChanged);
+    $('genRunButton').addEventListener('click',()=>startGenerator());$('genImportButton').addEventListener('click',()=>genImportOutput());$('genDoctorButton').addEventListener('click',()=>{$('genMode').value='doctor';updateGenerateConfigVisibility();startGenerator('doctor');});
+    for(const element of document.querySelectorAll('#generateScreen input, #generateScreen select')){element.addEventListener('input',()=>{if(element.id!=='genOutputName')genMarkConfigChanged();});element.addEventListener('change',genMarkConfigChanged);}
     for(const button of document.querySelectorAll('[data-gen-result]'))button.addEventListener('click',()=>selectGenerateResult(button.dataset.genResult));updateGenerateConfigVisibility();
   }
   function cleanPlainLine(line) {
@@ -860,7 +1063,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         return null;
       }).filter(Boolean);
       const end=parseTime(p.getAttribute('end'));
-      out.push(makeRow(start,rawText,{wordCues:cues.length?cues:null,rawEnd:end,lineAgent,lineStyle,lineFontStyle,lineFontWeight,lineColor}));
+      const lineStart=cues.length?Math.max(0,Number(cues[0].start)||0):start;
+      out.push(makeRow(lineStart,rawText,{wordCues:cues.length?cues:null,rawEnd:end,lineAgent,lineStyle,lineFontStyle,lineFontWeight,lineColor}));
     }
     out.sort((a,b)=>a.start-b.start);
     return {rows:out,metadata:[],head:headInner,format:'ttml',wordTiming:out.some(r=>r.wordCues&&r.wordCues.length)};
@@ -877,7 +1081,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if(rows.length) { renderGrid(); setSelected(0,true); }
     else renderGrid();
     updatePreview(); updateStatus();
-    $('lyricsFileName').textContent=name||'Lyrics imported';
+    $('lyricsFileName').textContent=name||'Lyrics imported';$('lyricsFileName').title=name||'Lyrics imported';
     commitHistoryChange(historyBefore);
     toast(`Loaded ${rows.length} lyric line(s) from ${name}.`);
   }
@@ -919,9 +1123,13 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       }
     }
   }
+  function updateGridStats(){
+    const wordCount=rows.reduce((total,row)=>total+(String(row.text||'').match(/\S+/g)||[]).length,0);
+    $('gridStatus').textContent=`${rows.length} lines · ${wordCount} words`;
+  }
   function renderLineGrid() {
     const tbody=$('gridBody'); tbody.textContent=''; activePlaybackIndex=-1; activeWordIndex=-1;
-    if(!rows.length){tbody.innerHTML='<tr><td colspan="3" style="padding:30px;text-align:center;color:#91a1b5">Import an LRC, TTML, or TXT lyrics file.</td></tr>'; $('gridStatus').textContent='0 lines'; return;}
+    if(!rows.length){tbody.innerHTML='<tr><td colspan="3" style="padding:30px;text-align:center;color:#91a1b5">Import an LRC, TTML, or TXT lyrics file.</td></tr>'; updateGridStats(); return;}
     const frag=document.createDocumentFragment();
     rows.forEach((row,i)=>{
       const tr=document.createElement('tr'); tr.dataset.index=String(i); tr.tabIndex=0; if(i===selectedIndex) tr.classList.add('selected'); if(row.flagged) tr.classList.add('flagged');
@@ -961,6 +1169,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
           if(hadWordTiming&&newText.trim()&&(!row.wordCues||!row.wordCues.length))ensureWordCues(row,i);
         }
         row.originalText=row.text;
+        updateGridStats();
         hasWordTiming=rows.some(r=>r.wordCues&&r.wordCues.length);
         $('viewWords').disabled=!rows.some(r=>String(r.text||'').trim());
         if(gridMode==='words'&&!hasWordTiming)gridMode='lines';
@@ -982,7 +1191,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
         else if(e.key==='Enter'){e.preventDefault();textEditor.blur();if(i+1<rows.length){setSelected(i+1,true);const next=tbody.querySelector(`tr[data-index="${i+1}"] .lyric-editor`);next?.focus();}}
       });
     });
-    tbody.append(frag); $('gridStatus').textContent=`${rows.length} line(s) · ${hasWordTiming?'word timings imported':'line-level source timing'} · live preview follows playback`;
+    tbody.append(frag); updateGridStats();
     updateLiveHighlight();
   }
   function setGridMode(mode) {
@@ -999,6 +1208,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       });
       hasWordTiming=rows.some(row=>row.wordCues?.length);
     }
+    activePlaybackIndex=-1;activeWordIndex=-1;
     gridMode=nextMode;
     $('viewLines').classList.toggle('primary',gridMode==='lines');
     $('viewWords').classList.toggle('primary',gridMode==='words');
@@ -1020,11 +1230,13 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   }
   function syncEditorActionBar(){
     const wordMode=gridMode==='words';
-    $('editorActionsLabel').textContent=wordMode?'TTML word actions':'LRC line actions';
     $('addLine').classList.toggle('hidden',wordMode);
     $('addWord').classList.toggle('hidden',!wordMode);
     $('addLine').disabled=wordMode;
     $('addWord').disabled=!wordMode||!hasWordTiming;
+    $('zoomOut').disabled=!wordMode;$('zoomIn').disabled=!wordMode;$('zoomFit').disabled=!wordMode;
+    $('deleteTtmlLine').classList.toggle('hidden',!wordMode);
+    $('deleteTtmlLine').disabled=!wordMode||selectedIndex<0||selectedIndex>=rows.length;
     $('deleteLine').textContent=wordMode?'Delete Word(s)':'Delete Line';
     $('deleteLine').setAttribute('aria-label',wordMode?'Delete selected word cues':'Delete selected line');
     $('deleteLine').disabled=wordMode
@@ -1049,13 +1261,32 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const row=rows[ref.lineIndex];const cue=row?.wordCues?.[ref.cueIndex];
     return cue?{row,cue,lineIndex:ref.lineIndex,cueIndex:ref.cueIndex}:null;
   }
+  let jumpToLineFrame=null;
+  function updateJumpToLineVisibility(){
+    const button=$('jumpToLineButton'),viewport=$('timelineViewport'),ref=selectedWordRef;
+    if(!button||!viewport||gridMode!=='words'||!ref){button?.classList.add('hidden');return;}
+    const clip=$('timelineLanes').querySelector('.word-clip[data-line-index="'+ref.lineIndex+'"][data-cue-index="'+ref.cueIndex+'"]');
+    if(!clip){button.classList.add('hidden');return;}
+    const viewportRect=viewport.getBoundingClientRect(),clipRect=clip.getBoundingClientRect();
+    const fullyVisible=clipRect.top>=viewportRect.top+1&&clipRect.bottom<=viewportRect.bottom-1;
+    button.classList.toggle('hidden',fullyVisible);
+  }
+  function jumpToSelectedLine(){
+    const lineIndex=selectedWordRef?.lineIndex,viewport=$('timelineViewport');if(!Number.isInteger(lineIndex)||!viewport)return;
+    const lane=$('timelineLanes').querySelector('.timeline-lane-row[data-line-index="'+lineIndex+'"]');if(!lane)return;
+    if(jumpToLineFrame!==null)cancelAnimationFrame(jumpToLineFrame);
+    const viewportRect=viewport.getBoundingClientRect(),laneRect=lane.getBoundingClientRect();
+    const start=viewport.scrollTop,delta=viewport.scrollTop+laneRect.top-viewportRect.top-(viewport.clientHeight-lane.offsetHeight)/2,started=performance.now(),duration=280;
+    const animate=now=>{const t=Math.min(1,(now-started)/duration),eased=t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;viewport.scrollTop=start+delta*eased;if(t<1)jumpToLineFrame=requestAnimationFrame(animate);else{jumpToLineFrame=null;updateJumpToLineVisibility(lineIndex);}};
+    jumpToLineFrame=requestAnimationFrame(animate);
+  }
   function updateWordInspector() {
     const record=cueForRef();
     if(!record){
       wordInspectorShownKey=null;
       $('wordInspector').classList.add('hidden');$('wordInspectorHeading').textContent='Selected word';$('wordInspectorMeta').textContent='Choose a word block above';
       for(const id of ['wordStart','wordEnd','wordText','wordAgent','wordStyle','wordFontStyle','wordFontWeight','wordColor'])$(id).value='';
-      syncFormatToggleUI(null);
+      syncFormatToggleUI(null);updateJumpToLineVisibility();
       return;
     }
     const {row,cue,lineIndex,cueIndex}=record,key=wordKey(lineIndex,cueIndex);
@@ -1070,7 +1301,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     for(const [id,value] of Object.entries(values)){const el=$(id);if(el&&(changedWord||document.activeElement!==el))el.value=value;}
     const colorInput=$('wordColor');if(colorInput)colorInput.style.color=safeCssColor(cue.color)||'var(--text)';
     syncFormatToggleUI(cue);
-    wordInspectorShownKey=key;
+    wordInspectorShownKey=key;updateJumpToLineVisibility(lineIndex);
     const active=document.activeElement;
     if(changedWord&&active instanceof HTMLElement&&active.closest('#wordInspector')&&wordInspectorFieldIds.includes(active.id))active.blur();
   }
@@ -1078,7 +1309,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function parseWordKey(key){const [lineIndex,cueIndex]=String(key).split(':').map(Number);return {lineIndex,cueIndex};}
   function refreshWordSelection(){
     for(const clip of $('timelineLanes').querySelectorAll('.word-clip[data-line-index]'))clip.classList.toggle('selected',selectedWordKeys.has(wordKey(Number(clip.dataset.lineIndex),Number(clip.dataset.cueIndex))));
-    $('gridStatus').textContent=`${rows.length} lyric lane(s) · ${allWordRefs().length} timed word(s) · ${selectedWordKeys.size>1?`${selectedWordKeys.size} words selected · `:''}drag or box-select to refine TTML`;
+    updateGridStats();
     syncEditorActionBar();
   }
   function selectWord(lineIndex,cueIndex,focus=false,extend=false,toggle=false) {
@@ -1141,7 +1372,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     row.text=row.wordCues.map(c=>c.text).join('');row.originalText=row.text;
     const clip=$('timelineLanes').querySelector(`.word-clip[data-line-index="${lineIndex}"][data-cue-index="${cueIndex}"] .word-label`);
     if(clip)clip.textContent=String(cue.text||'').trim()||'(empty)';
-    const laneLabel=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-label span:last-child`);
+    const laneLabel=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-label .lane-summary`);
     if(laneLabel){laneLabel.textContent=row.text;laneLabel.title=row.text;}
     updateWordInspector();updatePreview();updateStatus();updateLiveHighlight();
     commitHistoryChange(historyBefore);
@@ -1210,9 +1441,10 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const minStart=bounds.start,maxStart=Math.max(minStart,bounds.end-safeSpan);
     return Math.max(minStart,Math.min(maxStart,start));
   }
-  function setLaneWindowRange(lineIndex,start,span) {
+  function setLaneWindowRange(lineIndex,start,span,preserveAnchor=false) {
     const lane=$('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"] .timeline-lane-content`);if(!lane)return;
-    span=laneVisibleSpan(lineIndex,span);start=clampLaneWindowStart(lineIndex,start,span);
+    span=preserveAnchor?Math.max(.08,Math.min(timelineDuration(),Number(span)||.08)):laneVisibleSpan(lineIndex,span);
+    start=preserveAnchor?Math.max(0,Math.min(Math.max(0,timelineDuration()-span),Number(start)||0)):clampLaneWindowStart(lineIndex,start,span);
     const end=start+span,pps=timelineTrackWidth/span;
     lane.dataset.windowStart=String(start);lane.dataset.windowEnd=String(end);lane.dataset.pps=String(pps);
     const grid=lane.querySelector('.timeline-grid-overlay');
@@ -1265,9 +1497,16 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     ctx.stroke();
     ctx.fillStyle='#96a9bc';ctx.font='9px ui-monospace,Consolas,monospace';ctx.textBaseline='bottom';ctx.fillText(fmtTime(windowStart,2),4,height-2);ctx.fillText(fmtTime(windowEnd,2),Math.max(4,width-58),height-2);
   }
-  function rerenderWordTimelinePreservingView(fit=false) {
+  function rerenderWordTimelinePreservingView(fit=false,preserveWindows=null) {
     const vp=$('timelineViewport'),top=vp?.scrollTop||0;
     renderWordGrid();
+    if(preserveWindows&&gridMode==='words'){
+      for(const [lineIndex,window] of preserveWindows){
+        if($('timelineLanes').querySelector(`.timeline-lane-row[data-line-index="${lineIndex}"]`)){
+          setLaneWindowRange(lineIndex,window.start,window.span,true);
+        }
+      }
+    }
     if(vp)vp.scrollTop=fit?0:Math.min(top,Math.max(0,vp.scrollHeight-vp.clientHeight));
   }
   function setTimelineGeometry() {
@@ -1419,6 +1658,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     function renderWordGrid() {
     const tbody=$('timelineLanes');tbody.textContent='';activePlaybackIndex=-1;activeWordIndex=-1;
     $('lineTableWrap').classList.add('hidden');$('wordTimelineEditor').classList.remove('hidden');
+    $('ttmlEditorLayout').classList.toggle('empty',!hasWordTiming);
     setTimelineGeometry();
     if(!hasWordTiming){tbody.innerHTML='<div class="timeline-empty"><strong>No word-level TTML cues</strong>Import a word-timed TTML file to see each lyric line above its own waveform segment. The line/LRC view remains available for simpler timing edits.</div>';$('wordInspector').classList.add('hidden');return;}
     const frag=document.createDocumentFragment();let cueCount=0;
@@ -1428,7 +1668,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       const label=document.createElement('div');label.className='timeline-label';
       const number=document.createElement('strong');number.textContent=`Line ${lineIndex+1}`;
       const start=document.createElement('span');start.className='lane-start';start.textContent=fmtTime(row.start,2);
-      const summary=document.createElement('span');summary.textContent=row.text;summary.title=row.text;
+      const summary=document.createElement('span');summary.className='lane-summary';summary.textContent=row.text;summary.title=row.text;
       label.append(number,start,summary);
       const content=document.createElement('div');content.className='timeline-lane-content';content.style.width=`${timelineTrackWidth}px`;content.dataset.windowStart=String(win.start);content.dataset.windowEnd=String(win.end);content.dataset.pps=String(pps);
       const waveWrap=document.createElement('div');waveWrap.className='lane-waveform-wrapper';
@@ -1455,7 +1695,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       const playhead=document.createElement('div');playhead.className='lane-playhead visible';playhead.dataset.lineIndex=String(lineIndex);playhead.setAttribute('aria-hidden','true');const playheadHandle=document.createElement('span');playheadHandle.className='lane-playhead-handle';playheadHandle.setAttribute('aria-hidden','true');const playheadLabel=document.createElement('span');playheadLabel.className='lane-playhead-time';playhead.append(playheadHandle,playheadLabel);
       content.append(waveWrap,track,grid,playhead);lane.append(label,content);frag.append(lane);
     }
-    tbody.append(frag);$('gridStatus').textContent=`${rows.length} lyric lane(s) · ${cueCount} timed word(s) · box-select to shift multiple words`;
+    tbody.append(frag);updateGridStats();
     $('wordInspector').classList.toggle('hidden',!cueForRef());updateWordInspector();refreshWordSelection();updateLiveHighlight();
   }
   function startMarquee(e,lineIndex=null) {
@@ -1493,7 +1733,6 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function renderGrid() {
     $('viewWords').disabled=!rows.some(row=>String(row.text||'').trim());
     $('viewLines').classList.toggle('primary',gridMode==='lines');$('viewWords').classList.toggle('primary',gridMode==='words');
-    $('gridDescription').textContent=gridMode==='words'?'Adjust each word cue against its line waveform; select or box-select words to edit them.':'Edit line starts and lyrics. When word timing exists, changes to a line’s word count create starter cues for further editing.';
     if(gridMode==='words')renderWordGrid();else {
       $('wordTimelineEditor').classList.add('hidden');$('lineTableWrap').classList.remove('hidden');
       $('gridHead').innerHTML='<tr><th class="num">#</th><th class="time">Time</th><th>Lyric</th></tr>';
@@ -1523,7 +1762,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     }
     selectedIndex=index;
     for(const tr of $('gridBody').querySelectorAll('tr[data-index]'))tr.classList.toggle('selected',Number(tr.dataset.index)===index);
-    if(settings.autoFollow){const tr=$('gridBody').querySelector(`tr[data-index="${index}"]`);tr?.scrollIntoView({block:'nearest'});}
+    if(settings.autoFollow){const tr=$('gridBody').querySelector(`tr[data-index="${index}"]`);if(tr)scrollElementToCenter($('lineTableWrap'),tr);}
     if(focusRow){const row=$('gridBody').querySelector(`tr[data-index="${index}"]`);row?.focus();}
     syncEditorActionBar();updateStatus();
   }
@@ -1597,7 +1836,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       activePlaybackIndex=nextIndex;activeWordIndex=-1;
       if(activePlaybackIndex>=0){const current=$('gridBody').querySelector(`tr[data-index="${activePlaybackIndex}"]`);current?.classList.add('playing');
         const typing=document.activeElement instanceof HTMLElement&&document.activeElement.matches('.lyric-editor,.time-input');
-        if(!typing&&settings.autoFollow&&!player.paused&&activeScreen()==='edit')current?.scrollIntoView({block:'nearest'});
+        if(!typing&&settings.autoFollow&&!player.paused&&activeScreen()==='edit'&&current)scrollElementToCenter($('lineTableWrap'),current);
       }
     }
     if(activeWordIndex!==nextWord){
@@ -1704,6 +1943,16 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   function baseName() { const chosen=settings.downloadBase==='audio'&&audioName?audioName:importedLyricsName; return (chosen||'lyrics').replace(/\.(lrc|ttml|xml|txt)$/i,''); }
   function exportLrc(){ if(!rows.length){toast('Load lyrics before exporting.',true);return;}download(baseName()+'.lrc',lrcOutput(),'text/plain;charset=utf-8'); }
   function exportTtml(){ if(!rows.length){toast('Load lyrics before exporting.',true);return;}download(baseName()+'.ttml',ttmlOutput(),'application/ttml+xml;charset=utf-8'); }
+  function addTtmlLine(){
+    const historyBefore=captureHistoryState();
+    const index=selectedIndex>=0?selectedIndex+1:rows.length;
+    const start=selectedIndex>=0&&rows[selectedIndex]?rows[selectedIndex].start+settings.txtSpacing:(rows.length?rows[rows.length-1].start+settings.txtSpacing:0);
+    rows.splice(index,0,makeRow(start,'',{wordCues:[]}));
+    selectedIndex=index;lastEditedIndex=index;replayFromAnchor=true;selectedWordRef=null;selectedWordKeys.clear();
+    hasWordTiming=rows.some(row=>row.wordCues?.length);
+    renderGrid();updateWordInspector();updatePreview();updateStatus();commitHistoryChange(historyBefore);
+    toast('New lyric line added. Add its word cues at the playhead.');
+  }
   function addLine() {
     const historyBefore=captureHistoryState();
     if(gridMode==='words')setGridMode('lines');
@@ -1723,7 +1972,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     deleteLine();
   }
 
-  function drawWaveform(){$('waveformStatus').textContent=waveformPeaks?'Waveform ready · shown per lyric line':(player.src?'Waveform loading / unavailable':'Waveform waits for audio');}
+  function drawWaveform(){const status=$('waveformStatus');if(status)status.textContent='';}
   async function buildWaveform(file) {
     const token=++waveformBuildToken;waveformPeaks=null;$('waveformStatus').textContent='Decoding audio for waveform…';drawWaveform();
     if(file.size>350*1024*1024){$('waveformStatus').textContent='Waveform skipped for very large file';drawWaveform();return;}
@@ -1755,7 +2004,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if(!file)return;
     if(audioUrl)URL.revokeObjectURL(audioUrl);
     audioUrl=URL.createObjectURL(file);audioName=file.name.replace(/\.[^.]+$/,'');player.src=audioUrl;player.load();
-    $('audioTitle').textContent=file.name;$('audioSub').textContent=`${(file.size/1048576).toFixed(1)} MB · local browser playback`;$('audioFileName').textContent=file.name;
+    $('audioTitle').textContent=file.name;$('audioSub').textContent=`${(file.size/1048576).toFixed(1)} MB · local browser playback`;
     if(gridMode==='words')renderWordGrid();
     buildWaveform(file);
     updateLiveHighlight();toast(`Loaded audio ${file.name}.`);
@@ -1889,7 +2138,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
   $('tabLrc').addEventListener('click',()=>{outputMode='lrc';updatePreview();});$('tabTtml').addEventListener('click',()=>{outputMode='ttml';updatePreview();});
   $('saveLrc').addEventListener('click',exportLrc);$('saveLrcTop').addEventListener('click',exportLrc);$('saveTtml').addEventListener('click',exportTtml);$('saveTtmlTop').addEventListener('click',exportTtml);
   $('copyPreview').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(outputMode==='lrc'?lrcOutput():ttmlOutput());toast('Preview copied to clipboard.');}catch(_){toast('Clipboard access was blocked by the browser. Select the preview and copy manually.',true);}});
-  $('addLine').addEventListener('click',addLine);$('deleteLine').addEventListener('click',deleteEditorSelection);
+  $('addLine').addEventListener('click',addLine);$('addLineTtml').addEventListener('click',addTtmlLine);$('deleteLine').addEventListener('click',deleteEditorSelection);$('deleteTtmlLine').addEventListener('click',()=>removeLineAt(selectedIndex));
   $('wordStart').addEventListener('change',()=>{if(selectedWordRef)setWordTime(selectedWordRef.lineIndex,selectedWordRef.cueIndex,'start',$('wordStart').value);});
   $('wordEnd').addEventListener('change',()=>{if(selectedWordRef)setWordTime(selectedWordRef.lineIndex,selectedWordRef.cueIndex,'end',$('wordEnd').value);});
   $('wordText').addEventListener('change',()=>editSelectedWordText($('wordText').value));
@@ -1942,7 +2191,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       const apply=document.createElement('button');apply.type='button';apply.className='agent-preset-apply';apply.textContent=p.name;apply.title=p.name;apply.setAttribute('role','menuitem');apply.addEventListener('click',()=>{menu.classList.add('hidden');trigger.setAttribute('aria-expanded','false');applyAgentPreset(p.id);});
       const remove=document.createElement('button');remove.type='button';remove.className='agent-preset-delete';remove.textContent='×';remove.title=`Delete preset ${p.name}`;remove.setAttribute('aria-label',`Delete preset ${p.name}`);remove.addEventListener('click',e=>{
         e.stopPropagation();
-        if(!confirm(`make sure you want to delete ${p.name}`))return;
+        if(!confirm(`Are you sure you want to delete ${p.name}?`))return;
         agentPresets=agentPresets.filter(item=>String(item.id)!==String(p.id));persistAgentPresets();refreshAgentPresetSelect();toast(`Deleted agent preset “${p.name}”.`);
       });
       row.append(apply,remove);menu.append(row);
@@ -2022,26 +2271,30 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     PRESET_COLORS.forEach(hex=>{const button=document.createElement('button');button.type='button';button.className='color-swatch';button.style.background=hex;button.setAttribute('aria-label',hex);button.title=hex;button.setAttribute('aria-pressed',String(current===hex));button.addEventListener('click',()=>{beginColorPickerHistory();applyPickerColor(hex);renderColorSwatches();updatePickerPreview();finishColorPickerHistory();});host.append(button);});
   }
   function renderColorPicker(){$('colorPickerPopover').querySelectorAll('[data-color-tab]').forEach(button=>{const active=button.dataset.colorTab===colorPickerTab;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));});renderColorSwatches();renderColorPickerContent();}
+  function positionColorPicker(){
+    const input=$('wordColor'),pop=$('colorPickerPopover');if(!input||pop.classList.contains('hidden'))return;
+    const rect=input.getBoundingClientRect(),padding=10,gap=8;
+    const headerHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-header-height'))||68;
+    const dockHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--player-dock-height'))||82;
+    const maxHeight=Math.max(150,window.innerHeight-headerHeight-dockHeight-padding*2);
+    pop.style.maxHeight=maxHeight+'px';pop.style.overflowY='auto';
+    const width=pop.offsetWidth||Math.min(320,window.innerWidth-padding*2),height=Math.min(pop.scrollHeight||355,maxHeight);
+    const maxLeft=Math.max(padding,window.innerWidth-width-padding),centered=rect.left+rect.width/2-width/2;
+    const x=Math.round(Math.max(padding,Math.min(maxLeft,centered)));
+    const maxBottom=window.innerHeight-dockHeight-padding,below=rect.bottom+gap;
+    const top=below+height<=maxBottom?below:Math.max(headerHeight+padding,rect.top-height-gap);
+    pop.style.left=x+'px';pop.style.top=Math.round(top)+'px';
+  }
   function openColorPicker(){
     const input=$('wordColor'),pop=$('colorPickerPopover'),record=cueForRef();if(!record)return;
     colorPickerHue=rgbToHsv(hexToRgb(input.value||record.cue.color||'#ffffff')).h;
-    colorPickerHistoryBefore=null;colorPickerTab='palette';pop.classList.remove('hidden');renderColorPicker();
-    const rect=input.getBoundingClientRect(),padding=10,gap=12;
-    const headerHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-header-height'))||68;
-    const dockHeight=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--player-dock-height'))||82;
-    const width=pop.offsetWidth||Math.min(320,window.innerWidth-padding*2),height=pop.offsetHeight||355;
-    const maxLeft=Math.max(padding,window.innerWidth-width-padding),right=rect.right+gap,left=rect.left-width-gap;
-    // Open to the right by default; use the left side only if the viewport doesn't allow it.
-    const x=right+width<=window.innerWidth-padding?right:left>=padding?left:Math.max(padding,Math.min(maxLeft,right));
-    const minTop=headerHeight+padding,maxTop=Math.max(minTop,window.innerHeight-dockHeight-height-padding);
-    const desiredTop=rect.bottom+16,top=Math.max(minTop,Math.min(maxTop,desiredTop));
-    pop.style.left=Math.round(Math.max(padding,Math.min(maxLeft,x)))+'px';pop.style.top=Math.round(top)+'px';
+    colorPickerHistoryBefore=null;colorPickerTab='palette';pop.classList.remove('hidden');renderColorPicker();positionColorPicker();
   }
   function closeColorPicker(){if($('colorPickerPopover').classList.contains('hidden'))return;$('colorPickerPopover').classList.add('hidden');finishColorPickerHistory();}
   function addMenuSeparator(menu){const el=document.createElement('div');el.className='context-menu-separator';menu.append(el);}
   function addMenuHeading(menu,text){const el=document.createElement('div');el.className='context-menu-heading';el.textContent=text;menu.append(el);}
-  function addContextAction(menu,label,action,{disabled=false,footer=false,shortcut=''}={}){
-    const button=document.createElement('button');button.type='button';button.disabled=disabled;button.setAttribute('role','menuitem');if(footer)button.classList.add('context-menu-footer');
+  function addContextAction(menu,label,action,{disabled=false,footer=false,shortcut='',tooltip=''}={}){
+    const button=document.createElement('button');button.type='button';button.disabled=disabled;button.setAttribute('role','menuitem');if(tooltip)button.title=tooltip;if(footer)button.classList.add('context-menu-footer');
     const title=document.createElement('span');title.className='context-menu-label';title.textContent=label;button.append(title);
     if(shortcut){const keys=document.createElement('span');keys.className='context-menu-shortcut';keys.textContent=shortcut;keys.setAttribute('aria-hidden','true');button.append(keys);}
     button.addEventListener('click',()=>{const previous=contextMenuTarget;hideEditorContextMenu();contextMenuTarget=previous;try{if(!disabled)action();}finally{contextMenuTarget=null;}});menu.append(button);return button;
@@ -2056,8 +2309,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     if(gridMode==='words'){addMenuSeparator(menu);addContextAction(menu,'Make new word',addWordCue,{disabled:!hasWordTiming,shortcut:'F'});}
     if(gridMode==='lines'&&target?.lineIndex!==undefined){
       addMenuSeparator(menu);
-      addContextAction(menu,'Insert line above this line',()=>insertLineAt(target.lineIndex));
-      addContextAction(menu,'Insert line below this line',()=>insertLineAt(target.lineIndex+1));
+      addContextAction(menu,'Insert line above this line',()=>insertLineAt(target.lineIndex),{tooltip:'Inserts line under current line'});
+      addContextAction(menu,'Insert line below this line',()=>insertLineAt(target.lineIndex+1),{tooltip:'Inserts line under current line'});
       const deleteLineAction=addContextAction(menu,'Delete Line',()=>removeLineAt(target.lineIndex),{footer:true});
       deleteLineAction.classList.add('danger');
     }
@@ -2069,6 +2322,9 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       addContextAction(menu,'+ Save new agent preset…',saveAgentPreset,{footer:true,disabled:!cueForRef()});
       addMenuSeparator(menu);const key=wordKey(target.lineIndex,target.cueIndex),refs=selectedWordKeys.has(key)?[...selectedWordKeys].map(parseWordKey):[{lineIndex:target.lineIndex,cueIndex:target.cueIndex}];
       const deleteAction=addContextAction(menu,'Delete word',()=>deleteWordCues(refs.filter(ref=>rows[ref.lineIndex]?.wordCues?.[ref.cueIndex])),{footer:true});deleteAction.classList.add('danger');
+    }
+    if(gridMode==='words'&&Number.isInteger(target?.lineIndex)){
+      addMenuSeparator(menu);const deleteTtmlLine=addContextAction(menu,'Delete Line',()=>removeLineAt(target.lineIndex),{footer:true});deleteTtmlLine.classList.add('danger');
     }
     menu.classList.remove('hidden');
     const pad=6,header=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-header-height'))||68,dock=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--player-dock-height'))||82;
@@ -2167,13 +2423,50 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     }
   }
     function deleteWordCues(refs,verb='deleted'){
-    if(!refs.length)return;const historyBefore=captureHistoryState(),grouped=new Map();refs.forEach(ref=>{if(!grouped.has(ref.lineIndex))grouped.set(ref.lineIndex,new Set());grouped.get(ref.lineIndex).add(ref.cueIndex);});
-    for(const [lineIndex,indices] of grouped){const row=rows[lineIndex];if(!row?.wordCues)continue;row.wordCues=row.wordCues.filter((_,i)=>!indices.has(i));row.text=row.wordCues.map(c=>c.text).join('');row.originalText=row.text;if(!row.wordCues.length)row.wordCues=null;}
-    selectedWordKeys.clear();const next=allWordRefs()[0];selectedWordRef=next?{lineIndex:next.lineIndex,cueIndex:next.cueIndex}:null;selectedIndex=selectedWordRef?.lineIndex??Math.max(0,selectedIndex);hasWordTiming=rows.some(r=>r.wordCues?.length);
-    if(!hasWordTiming&&gridMode==='words')gridMode='lines';
-    rerenderWordTimelinePreservingView();updateWordInspector();updatePreview();updateStatus();commitHistoryChange(historyBefore);toast(`Word cue(s) ${verb}.`);
+    if(!refs.length)return;
+    const historyBefore=captureHistoryState(),wasWords=gridMode==='words',windows=new Map();
+    if(wasWords)for(const lane of $('timelineLanes').querySelectorAll('.timeline-lane-row')){
+      const content=lane.querySelector('.timeline-lane-content');if(!content)continue;
+      const start=Number(content.dataset.windowStart)||0,end=Number(content.dataset.windowEnd)||0;
+      windows.set(Number(lane.dataset.lineIndex),{start,span:Math.max(.08,end-start)});
+    }
+    const prior=selectedWordRef?{...selectedWordRef}:{...refs[0]},grouped=new Map();
+    refs.forEach(ref=>{if(!grouped.has(ref.lineIndex))grouped.set(ref.lineIndex,new Set());grouped.get(ref.lineIndex).add(ref.cueIndex);});
+    for(const [lineIndex,indices] of grouped){
+      const row=rows[lineIndex];if(!row?.wordCues)continue;
+      row.wordCues=row.wordCues.filter((_,i)=>!indices.has(i));row.text=row.wordCues.map(c=>c.text).join('');row.originalText=row.text;
+      if(row.wordCues.length)row.start=Math.max(0,Number(row.wordCues[0].start)||0);
+      else row.wordCues=null;
+    }
+    hasWordTiming=rows.some(r=>r.wordCues?.length);
+    if(!hasWordTiming)gridMode='lines';
+    selectedWordKeys.clear();selectedWordRef=null;
+    if(hasWordTiming){
+      const sameLine=rows[prior.lineIndex]?.wordCues||[];
+      if(sameLine.length){
+        const cueIndex=Math.min(Math.max(0,prior.cueIndex),sameLine.length-1);
+        selectedWordRef={lineIndex:prior.lineIndex,cueIndex};selectedWordKeys.add(wordKey(prior.lineIndex,cueIndex));selectedIndex=prior.lineIndex;
+      }else{
+        const allRefs=allWordRefs(),next=allRefs.find(ref=>ref.lineIndex>=prior.lineIndex)||allRefs[allRefs.length-1];
+        if(next){selectedWordRef={lineIndex:next.lineIndex,cueIndex:next.cueIndex};selectedWordKeys.add(wordKey(next.lineIndex,next.cueIndex));selectedIndex=next.lineIndex;}
+        else selectedIndex=Math.max(0,Math.min(prior.lineIndex,rows.length-1));
+      }
+    }else selectedIndex=Math.max(0,Math.min(prior.lineIndex,rows.length-1));
+    rerenderWordTimelinePreservingView(false,windows);updateWordInspector();updatePreview();updateStatus();commitHistoryChange(historyBefore);toast(`Word cue(s) ${verb}.`);
   }
-  function removeLineAt(index){if(index<0||index>=rows.length)return;const historyBefore=captureHistoryState();if(gridMode==='words')setGridMode('lines');rows.splice(index,1);selectedIndex=Math.min(index,rows.length-1);lastEditedIndex=selectedIndex;replayFromAnchor=true;hasWordTiming=rows.some(r=>r.wordCues?.length);selectedWordRef=null;selectedWordKeys.clear();renderGrid();if(selectedIndex>=0)setSelected(selectedIndex,true);updatePreview();updateStatus();commitHistoryChange(historyBefore);}
+  function removeLineAt(index){
+    if(index<0||index>=rows.length)return;
+    const historyBefore=captureHistoryState(),wasWords=gridMode==='words';
+    rows.splice(index,1);selectedIndex=Math.min(index,rows.length-1);lastEditedIndex=selectedIndex;replayFromAnchor=true;
+    hasWordTiming=rows.some(r=>r.wordCues?.length);selectedWordRef=null;selectedWordKeys.clear();
+    if(!hasWordTiming)gridMode='lines';else if(wasWords)gridMode='words';
+    renderGrid();
+    if(gridMode==='words'&&selectedIndex>=0){
+      const refs=allWordRefs(),chosen=refs.find(ref=>ref.lineIndex===selectedIndex)||refs.find(ref=>ref.lineIndex>=selectedIndex)||refs[0];
+      if(chosen)selectWord(chosen.lineIndex,chosen.cueIndex,false);
+    }else if(selectedIndex>=0)setSelected(selectedIndex,true);
+    updatePreview();updateStatus();commitHistoryChange(historyBefore);
+  }
   function insertLineAt(index){
     const historyBefore=captureHistoryState();if(gridMode==='words')setGridMode('lines');index=Math.max(0,Math.min(rows.length,index));let start=0;
     if(rows.length){if(index===0)start=Math.max(0,rows[0].start-settings.txtSpacing);else start=rows[index-1].start+settings.txtSpacing;if(index>0&&index<rows.length){const left=rows[index-1].start,right=rows[index].start;if(right>left)start=Math.min(start,left+(right-left)/2);}}
@@ -2214,8 +2507,9 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
     const presets=$('agentPresetMenu');if(!presets.classList.contains('hidden')&&!presets.contains(e.target)&&e.target!==$('agentPresetTrigger')){presets.classList.add('hidden');$('agentPresetTrigger').setAttribute('aria-expanded','false');}
     const controls=$('timelineControlsMenu');if(!controls.classList.contains('hidden')&&!controls.contains(e.target)&&e.target!==$('timelineControlsTrigger')){controls.classList.add('hidden');$('timelineControlsTrigger').setAttribute('aria-expanded','false');}
   },true);
-  $('colorPickerPopover').addEventListener('click',e=>{const tab=e.target.closest?.('[data-color-tab]');if(tab){colorPickerTab=tab.dataset.colorTab;renderColorPicker();}});
+  $('colorPickerPopover').addEventListener('click',e=>{const tab=e.target.closest?.('[data-color-tab]');if(tab){colorPickerTab=tab.dataset.colorTab;renderColorPicker();positionColorPicker();}});
   $('wordColor').addEventListener('click',openColorPicker);
+  $('jumpToLineButton').addEventListener('click',jumpToSelectedLine);$('timelineViewport').addEventListener('scroll',()=>updateJumpToLineVisibility(),{passive:true});window.addEventListener('resize',()=>{if(!$('colorPickerPopover').classList.contains('hidden'))positionColorPicker();});
   $('wordColor').addEventListener('input',()=>{const value=$('wordColor').value.trim();$('wordColor').style.color=safeCssColor(value)||'var(--text)';if(/^#[0-9a-f]{3,8}$/i.test(value)){$('colorPreviewSwatch').style.background=value;$('colorPreviewHex').textContent=value;const hsv=rgbToHsv(hexToRgb(value));if(hsv.s>0.001)colorPickerHue=hsv.h;}});
   $('wordItalicToggle').addEventListener('click',()=>toggleWordEmphasis('italic'));$('wordBoldToggle').addEventListener('click',()=>toggleWordEmphasis('bold'));
   $('addWord').addEventListener('click',addWordCue);$('saveAgentPreset').addEventListener('click',saveAgentPreset);
@@ -2256,8 +2550,8 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
       flushActiveWordInspectorField();
     }
   },true);
-  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);toast('Settings saved.');});
-  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,returnToEditAfterGenerate:false};syncSettingsForm();saveSettings();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
+  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);if(id==='wordInspectorLayout'&&gridMode==='words')rerenderWordTimelinePreservingView();toast('Settings saved.');});
+  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false,wordInspectorLayout:'right'};syncSettingsForm();saveSettings();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
   document.addEventListener('keydown',e=>{
     if(e.ctrlKey&&e.key.toLowerCase()==='s'){e.preventDefault();if(gridMode==='words')exportTtml();else exportLrc();return;}
     const target=e.target; const lyricEditing=target instanceof HTMLElement&&Boolean(target.closest('.lyric-editor,#wordText'));

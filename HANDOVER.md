@@ -198,3 +198,12 @@ User-specific collaboration guidance:
 - Enlarged the Block Pause and mute/volume icons on desktop, with a proportional adjustment on compact screens. The play glyph is nudged left to optically center it, and the pause-bars geometry is centered separately.
 - Added more line-height and vertical padding to the filename to prevent descenders such as y and g from being clipped.
 - Static checks passed: inline JavaScript compiles, no duplicate HTML IDs, and the timer markup sits after the volume slider and before the filename group. Browser visual confirmation has not been run.
+
+## Editor sync centering and playback scroll stability
+
+- Increased the player filename from 12px to 13px on desktop and from 11px to 12px on narrow screens.
+- The play/pause control no longer has a filled circle by default; the shared button hover background/border still appears on hover.
+- Expanded the centered workspace max-width to 1780px so the editor panel can align closer to the left edge of the Edit navigation while extending farther to the right.
+- Switching from LRC to TTML with **Follow selected LRC line when switching to TTML** enabled now centers the selected line in the timeline. Switching from TTML to LRC centers the corresponding selected line in the line grid.
+- Mode changes cancel pending smooth-scroll animations and temporarily suppress playback-driven auto-pan while the view and selection are restored. This avoids the playback-follow handler fighting the mode-switch scroll restoration and should preserve the TTML viewport anchor while toggling modes during playback.
+- Static validation passed: inline JavaScript compiles; there are no duplicate static IDs; both direction-specific centering paths, preference guard, playback auto-pan suppression, scroll-animation cancellation, filename sizing, play-button default background, and workspace width are present. Interactive browser testing remains outstanding.

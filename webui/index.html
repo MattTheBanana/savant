@@ -349,7 +349,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
 
 
 /* Keep the edit workspace anchored to its navigation button and center the filename on the full player dock */
-#editScreen{margin-left:var(--edit-screen-shift,0px);width:calc(100% - var(--edit-screen-shift,0px))}
+#editScreen,#generateScreen,#settingsScreen{margin-left:var(--edit-screen-shift,0px);width:calc(100% - var(--edit-screen-shift,0px))}
 .player-dock-meta{position:absolute;left:0;right:0;top:calc(50% + 10px);transform:translateY(-50%);flex:none;min-width:0;width:auto;height:30px;pointer-events:none}
 .player-dock .audio-title{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);flex:none;width:var(--player-title-width,calc(100% - 760px));max-width:var(--player-title-width,calc(100% - 760px));pointer-events:none}
 .player-dock .audio-sub{right:12px;pointer-events:none}
@@ -3089,13 +3089,13 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     muted:'<svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 9v6h4l5 5V4L7 9H3z" fill="currentColor" stroke="none"/><path d="m16 9 5 6m0-6-5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
   function syncEditorPanelAlignment(){
-    const shell=document.querySelector('.shell'),editScreen=$('editScreen'),editButton=$('navEdit');
-    if(!shell||!editScreen||!editButton)return;
+    const shell=document.querySelector('.shell'),editScreen=$('editScreen'),generateScreen=$('generateScreen'),settingsScreen=$('settingsScreen'),editButton=$('navEdit');
+    if(!shell||!editScreen||!generateScreen||!settingsScreen||!editButton)return;
     const shellRect=shell.getBoundingClientRect(),editRect=editButton.getBoundingClientRect();
     const shellPadding=parseFloat(getComputedStyle(shell).paddingLeft)||0;
     const shellContentLeft=shellRect.left+shellPadding;
     const shift=Math.max(-shellPadding,editRect.left-shellContentLeft);
-    editScreen.style.setProperty('--edit-screen-shift',shift+'px');
+    for(const screen of [editScreen,generateScreen,settingsScreen])screen.style.setProperty('--edit-screen-shift',shift+'px');
   }
   function syncPlayerDockTitleLayout(){
     const dock=$('playerDock'),actions=dock?.querySelector('.player-secondary-actions'),title=$('audioTitle');

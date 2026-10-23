@@ -610,7 +610,42 @@ class Handler(BaseHTTPRequestHandler):
             except (ValueError, OSError, json.JSONDecodeError, RuntimeError) as exc:
                 self._send_json({"error": str(exc)}, 400)
             return
-        if route.path == "/api/select-folder":        if route.path == "/api/generate":
+        if route.path == "/api/select-folder":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if length > 100_000:
+                    raise ValueError("Invalid folder selection request.")
+                payload = json.loads(self.rfile.read(length).decode("utf-8"))
+                kind = str(payload.get("kind", ""))
+                if kind not in {"audio", "lyrics"}:
+                    raise ValueError("Choose either the audio or lyrics folder.")
+                filename = str(payload.get("audioName" if kind == "audio" else "lyricsName", "")).strip()
+                title = f"Choose the folder containing {filename}" if filename else f"Choose the output folder (source: {kind})"
+                try:
+                    import tkinter as tk
+                    from tkinter import filedialog
+                    root = tk.Tk()
+                    root.withdraw()
+                    try:
+                        root.attributes("-topmost", True)
+                    except tk.TclError:
+                        pass
+                    try:
+                        selected = filedialog.askdirectory(
+                            parent=root, title=title, initialdir=str(Path.home()), mustexist=True
+                        )
+                    finally:
+                        root.destroy()
+                except Exception as exc:
+                    raise RuntimeError(f"The system folder picker is unavailable: {exc}") from exc
+                if not selected:
+                    self._send_json({"cancelled": True})
+                else:
+                    self._send_json({"cancelled": False, "path": str(Path(selected).expanduser().resolve())})
+            except (ValueError, OSError, json.JSONDecodeError, RuntimeError) as exc:
+                self._send_json({"error": str(exc)}, 400)
+            return
+        if route.path == "/api/generate":
             try:
                 fields, files = _parse_multipart(self)
                 config = json.loads(fields.get("config", "{}"))

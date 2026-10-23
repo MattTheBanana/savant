@@ -300,5 +300,11 @@ User-specific collaboration guidance:
 ## Center generator progress labels on their actual segments
 
 - Centered the current generator stage label using the actual rendered rectangle of the active progress segment, instead of estimating its position as a percentage of the track. This accounts for the gaps between segments and centers the first segment label as well as labels such as “Load forced-alignment model.”
-- Removed the completion-state rule that forced the label to the far right edge, so its text remains centered over the final segment too. The overall percentage label still moves above the step label when they overlap.
+- In-progress step labels are centered on their actual segment rectangles, while the completion label is deliberately an exception and remains right-aligned to the track edge. The overall percentage label still moves above the step label when they overlap.
 - Static validation passed: inline JavaScript compiles, no duplicate static HTML IDs, and the step label uses rendered segment geometry. Browser visual confirmation remains outstanding.
+
+## Completion confetti and right-aligned completion label
+
+- Restored the generator-completion label's right-edge alignment as a deliberate exception; active/in-progress stage labels remain centered over their actual segments.
+- Added a brief, colorful confetti burst originating from the rendered center of the “Generation Complete” label when a run transitions to success. The effect is triggered once per transition rather than on every progress poll and is disabled for users who prefer reduced motion. Warnings do not trigger the success confetti.
+- Static validation passed: inline JavaScript compiles, no duplicate static HTML IDs, right-edge completion alignment is restored, and the confetti animation/trigger and reduced-motion handling are present. Browser visual confirmation remains outstanding.

@@ -630,10 +630,13 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Ctrl + A</span><span>Select all word cues in the current line.</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Ctrl + Shift + A</span><span>Select all word cues across all lines.</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Double-Tap Shift</span><span>Jump to the current line in the timeline.</span></div>
-  <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Shift + ← / →</span><span>Seek to the nearest word boundary. Plain arrows nudge the selected word or seek.</span></div>
+  <div class="floating-menu-row ttml-controls-section"><span class="shortcut">← / →</span><span>Nudge the selected word or word group.</span></div>
+  <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Shift + ← / →</span><span>Apply the configured multiplier to the nudge step.</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">F</span><span>Add a timed word cue.</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Shift + F</span><span>Add a new line below the selected line.</span></div>
   <div class="floating-menu-title ttml-controls-section">Playback controls</div>
+  <div class="floating-menu-row ttml-controls-section"><span class="shortcut">← / →</span><span>Seek by the configured step when no word cue is selected.</span></div>
+  <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Shift + ← / →</span><span>Seek to the nearest word boundary.</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Space</span><span>Play or pause.</span></div>
   <div class="floating-menu-row ttml-controls-section"><span class="shortcut">Ctrl + Space</span><span>Pause and return to the start of the current playback segment.</span></div>
 </div>
@@ -3824,8 +3827,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     else if(e.key==='ArrowDown'){e.preventDefault();if(e.shiftKey){const next=Math.min(rows.length-1,selectedIndex<0?0:selectedIndex+1);selectLineSelection(next,{shiftKey:true},true);}else if(gridMode==='words')moveSelectedWord(1);else setSelected(Math.min(rows.length-1,selectedIndex+1),true);}
     else if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
       e.preventDefault();const direction=e.key==='ArrowLeft'?-1:1;
-      if(gridMode==='words'&&e.shiftKey)seekWordBoundary(direction);
-      else if(gridMode==='words'&&!selectedWordRef)seekPlayhead(direction*settings.nudgeStep);
+      if(gridMode==='words'&&!selectedWordRef){if(e.shiftKey)seekWordBoundary(direction);else seekPlayhead(direction*settings.nudgeStep);}
       else if(selectedIndex>=0){const mult=e.shiftKey?settings.shiftMultiplier:1;const amount=settings.nudgeStep*mult*direction;if(gridMode==='words')nudgeSelectedWord(amount);else nudgeSelected(amount);}
     }else if(e.key==='Enter'&&selectedIndex>=0){e.preventDefault();if(gridMode==='words'&&selectedWordRef){$('wordText').focus();}else{const input=$('gridBody').querySelector(`tr[data-index="${selectedIndex}"] .lyric-editor`);input?.focus();}}
     else if(e.key==='Home'&&rows.length){e.preventDefault();setSelected(0,true);}

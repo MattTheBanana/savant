@@ -2468,20 +2468,23 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   function baseName() { const chosen=settings.downloadBase==='audio'&&audioName?audioName:importedLyricsName; return (chosen||'lyrics').replace(/\.(lrc|ttml|xml|txt)$/i,''); }
   function exportLrc(){ if(!rows.length){toast('Load lyrics before exporting.',true);return;}download(baseName()+'.lrc',lrcOutput(),'text/plain;charset=utf-8'); }
   function exportTtml(){ if(!rows.length){toast('Load lyrics before exporting.',true);return;}download(baseName()+'.ttml',ttmlOutput(),'application/ttml+xml;charset=utf-8'); }
+  function lineStartAtInsertion(index){
+    index=Math.max(0,Math.min(rows.length,Math.trunc(Number(index)||0)));
+    const spacing=Math.max(.2,Number(settings.txtSpacing)||3);
+    if(!rows.length)return 0;
+    if(index===0)return Math.max(0,(Number(rows[0].start)||0)-spacing);
+    if(index===rows.length)return (Number(rows[rows.length-1].start)||0)+spacing;
+    const above=Number(rows[index-1].start)||0;
+    const below=Number(rows[index].start)||0;
+    // The midpoint is strictly between distinct neighboring timestamps, even
+    // when imported data is not chronologically ordered. Equal timestamps have
+    // no representable value between them, so use the configured spacing fallback.
+    return above!==below?above+(below-above)/2:Math.max(0,above)+spacing;
+  }
   function insertTtmlLineAt(index){
     const historyBefore=captureHistoryState();
     index=Math.max(0,Math.min(rows.length,Math.trunc(Number(index)||0)));
-    let start=0;
-    if(rows.length){
-      if(index===0)start=Math.max(0,(Number(rows[0].start)||0)-settings.txtSpacing);
-      else{
-        const left=Number(rows[index-1].start)||0;
-        if(index<rows.length){
-          const right=Number(rows[index].start)||0;
-          start=right>left?Math.min(left+settings.txtSpacing,left+(right-left)/2):left+settings.txtSpacing;
-        }else start=left+settings.txtSpacing;
-      }
-    }
+    const start=lineStartAtInsertion(index);
     rows.splice(index,0,makeRow(start,'',{wordCues:[]}));
     selectedIndex=index;lastEditedIndex=index;replayFromAnchor=true;selectedWordRef=null;selectedWordKeys.clear();
     gridMode='words';activePlaybackIndex=-1;activeWordIndex=-1;
@@ -2500,8 +2503,9 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   function addLine() {
     const historyBefore=captureHistoryState();
     if(gridMode==='words')setGridMode('lines');
-    const start=selectedIndex>=0&&rows[selectedIndex]?rows[selectedIndex].start+settings.txtSpacing:(rows.length?rows[rows.length-1].start+settings.txtSpacing:0);
-    const index=selectedIndex>=0?selectedIndex+1:rows.length; rows.splice(index,0,makeRow(start,'')); selectedIndex=index;lastEditedIndex=index;replayFromAnchor=true;renderGrid();setSelected(index,true);const input=$('gridBody').querySelector(`tr[data-index="${index}"] .lyric-editor`);input?.focus();updatePreview();updateStatus();commitHistoryChange(historyBefore);
+    const index=selectedIndex>=0&&selectedIndex<rows.length?selectedIndex+1:rows.length;
+    const start=lineStartAtInsertion(index);
+    rows.splice(index,0,makeRow(start,'')); selectedIndex=index;lastEditedIndex=index;replayFromAnchor=true;renderGrid();setSelected(index,true);const input=$('gridBody').querySelector(`tr[data-index="${index}"] .lyric-editor`);input?.focus();updatePreview();updateStatus();commitHistoryChange(historyBefore);
   }
   function deleteLine(){
     if(selectedIndex<0||selectedIndex>=rows.length)return;
@@ -2850,11 +2854,20 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   function hideEditorContextMenu(){$('editorContextMenu').classList.add('hidden');contextMenuTarget=null;}
   function showEditorContextMenu(event,target){
     const menu=$('editorContextMenu');contextMenuTarget=target;menu.textContent='';
-    addContextAction(menu,'Copy',copyContextTarget,{disabled:!target,shortcut:'Ctrl+C'});
-    addContextAction(menu,'Cut',cutContextTarget,{disabled:!target,shortcut:'Ctrl+X'});
-    addContextAction(menu,'Paste',pasteContextTarget,{shortcut:'Ctrl+V'});
+    const textSelection=target?.type==='text'&&Number(target.selectionEnd)>Number(target.selectionStart);
+    const targetLineExists=Number.isInteger(target?.lineIndex)&&Boolean(rows[target.lineIndex]);
+    const targetWordExists=target?.type==='word'&&Boolean(rows[target.lineIndex]?.wordCues?.[target.cueIndex]);
+    // Text targets require an actual character selection; right-clicking elsewhere
+    // on a row or on a word permits row/word copy and cut.
+    const canCopyOrCut=Boolean(target&&(target.type==='text'?textSelection:targetWordExists||((target.type==='line'||target.type==='word')&&targetLineExists)));
+    const copyAction=addContextAction(menu,'Copy',copyContextTarget,{disabled:!canCopyOrCut,shortcut:'Ctrl+C'});
+    const cutAction=addContextAction(menu,'Cut',cutContextTarget,{disabled:!canCopyOrCut,shortcut:'Ctrl+X'});
+    const pasteAction=addContextAction(menu,'Paste',pasteContextTarget,{disabled:!editorClipboard,shortcut:'Ctrl+V'});
+    copyAction.title=canCopyOrCut?'Copy the selected text, word, or line':'Select text, a word, or a line to copy';
+    cutAction.title=canCopyOrCut?'Cut the selected text, word, or line':'Select text, a word, or a line to cut';
+    pasteAction.title=editorClipboard?'Paste the Savant clipboard':'Copy or cut something in Savant before pasting';
     addMenuSeparator(menu);addContextAction(menu,'Undo',undoEditorChange,{disabled:!undoHistory.length,shortcut:'Ctrl+Z'});addContextAction(menu,'Redo',redoEditorChange,{disabled:!redoHistory.length,shortcut:'Ctrl+Y'});
-    if(gridMode==='words'){addMenuSeparator(menu);addContextAction(menu,'Make new word',addWordCue,{disabled:!hasWordTiming,shortcut:'F'});}
+    if(gridMode==='words'){addMenuSeparator(menu);addContextAction(menu,'Add word',addWordCue,{disabled:!hasWordTiming,shortcut:'F'});}
     if(gridMode==='lines'&&target?.lineIndex!==undefined){
       addMenuSeparator(menu);
       addContextAction(menu,'Insert line above this line',()=>insertLineAt(target.lineIndex),{tooltip:'Insert a new line before this line'});
@@ -3022,8 +3035,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     updatePreview();updateStatus();commitHistoryChange(historyBefore);
   }
   function insertLineAt(index){
-    const historyBefore=captureHistoryState();if(gridMode==='words')setGridMode('lines');index=Math.max(0,Math.min(rows.length,index));let start=0;
-    if(rows.length){if(index===0)start=Math.max(0,rows[0].start-settings.txtSpacing);else start=rows[index-1].start+settings.txtSpacing;if(index>0&&index<rows.length){const left=rows[index-1].start,right=rows[index].start;if(right>left)start=Math.min(start,left+(right-left)/2);}}
+    const historyBefore=captureHistoryState();if(gridMode==='words')setGridMode('lines');index=Math.max(0,Math.min(rows.length,Math.trunc(Number(index)||0)));const start=lineStartAtInsertion(index);
     rows.splice(index,0,makeRow(start,''));selectedIndex=index;lastEditedIndex=index;replayFromAnchor=true;renderGrid();setSelected(index,true);$('gridBody').querySelector(`tr[data-index="${index}"] .lyric-editor`)?.focus();updatePreview();updateStatus();commitHistoryChange(historyBefore);
   }
   function ensureWordCues(row,lineIndex){

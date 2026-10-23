@@ -191,7 +191,8 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
     if output_path_text:
         output_path = Path(output_path_text).expanduser().resolve()
     else:
-        source = lyrics_source if operation == "adjust" else audio_source
+        # The output name and default destination follow the source lyrics, not the audio.
+        source = lyrics_source if lyrics_source is not None else audio_source
         fallback_stem = source.stem if source else "lyrics"
         raw_output_name = str(config.get("outputName", "")).strip()
         if raw_output_name:
@@ -202,7 +203,20 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
         else:
             output_stem = fallback_stem + (".adjusted" if operation == "adjust" else "")
         output_directory_text = str(config.get("outputDirectory", "")).strip()
-        output_directory = Path(output_directory_text).expanduser().resolve() if output_directory_text else directory
+        output_directory_mode = str(config.get("outputDirectoryMode", "auto")).strip().lower()
+        if output_directory_text:
+            output_directory = Path(output_directory_text).expanduser().resolve()
+            if not output_directory.is_dir():
+                raise ValueError(f"The selected output folder does not exist or is not a directory: {output_directory}")
+        elif output_directory_mode == "run":
+            output_directory = directory
+        elif lyrics_source is not None and (lyrics_path_text or "lyrics" not in saved):
+            output_directory = lyrics_source.parent
+        else:
+            raise ValueError(
+                "Choose an output folder, or select the source lyrics with Savant's local Choose Lyrics picker "
+                "so the original lyrics folder can be detected. Browser uploads do not reveal their original folder."
+            )
         output_path = output_directory / f"{output_stem}.lrc"
     _add_flag(command, "--output", output_path)
     run["artifacts"]["output-lrc"] = {"label": "Output LRC", "path": str(output_path), "kind": "output"}
@@ -256,12 +270,13 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
             _add_flag(command, "--tifa-diagnostics", diagnosis_path)
             run["artifacts"]["tifa-diagnosis"] = {"label": "TIFA diagnosis (raw JSON)", "path": str(diagnosis_path), "kind": "diagnosis"}
         elif str(config.get("aligner", "whisperx")) == "tifa":
-            default_diagnosis = audio_source.with_suffix(".tifa-diagnosis.json")
+            # Keep generated diagnostics with the selected lyric output, not beside the source audio.
+            default_diagnosis = output_path.with_suffix(".tifa-diagnosis.json")
             run["artifacts"]["tifa-diagnosis"] = {"label": "TIFA diagnosis (raw JSON)", "path": str(default_diagnosis), "kind": "diagnosis"}
 
         if bool(config.get("reviewReport")) or str(config.get("reviewReportPath", "")).strip():
             report_text = str(config.get("reviewReportPath", "")).strip()
-            report = Path(report_text).expanduser().resolve() if report_text else directory / "alignment-review.txt"
+            report = Path(report_text).expanduser().resolve() if report_text else output_path.parent / "alignment-review.txt"
             _add_flag(command, "--review-report", report)
             run["artifacts"]["review-report"] = {"label": "Alignment review report", "path": str(report), "kind": "report"}
         for field_name, arg_name in (("lineOffsets", "--line-offsets"), ("phraseOffsets", "--phrase-offsets")):

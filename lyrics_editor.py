@@ -645,6 +645,67 @@ class Handler(BaseHTTPRequestHandler):
             except (ValueError, OSError, json.JSONDecodeError, RuntimeError) as exc:
                 self._send_json({"error": str(exc)}, 400)
             return
+        if route.path == "/api/browse-path":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if length > 100_000:
+                    raise ValueError("Invalid path picker request.")
+                payload = json.loads(self.rfile.read(length).decode("utf-8"))
+                kind = str(payload.get("kind", "open"))
+                if kind not in {"folder", "open", "save"}:
+                    raise ValueError("Choose a folder, existing file, or output file.")
+                title = str(payload.get("title", "Choose a local path")).strip()[:200] or "Choose a local path"
+                current_text = str(payload.get("currentPath", "")).strip()
+                current_path = Path(current_text).expanduser() if current_text else None
+                initial_dir = Path.home()
+                initial_file = ""
+                if current_path:
+                    if current_path.is_dir():
+                        initial_dir = current_path
+                    elif current_path.parent.is_dir():
+                        initial_dir = current_path.parent
+                        initial_file = current_path.name
+                try:
+                    import tkinter as tk
+                    from tkinter import filedialog
+
+                    root = tk.Tk()
+                    root.withdraw()
+                    try:
+                        root.attributes("-topmost", True)
+                    except tk.TclError:
+                        pass
+                    try:
+                        if kind == "folder":
+                            selected = filedialog.askdirectory(
+                                parent=root, title=title, initialdir=str(initial_dir), mustexist=True
+                            )
+                        elif kind == "save":
+                            selected = filedialog.asksaveasfilename(
+                                parent=root, title=title, initialdir=str(initial_dir),
+                                initialfile=initial_file, filetypes=[("All files", "*.*")]
+                            )
+                        else:
+                            selected = filedialog.askopenfilename(
+                                parent=root, title=title, initialdir=str(initial_dir),
+                                initialfile=initial_file, filetypes=[("All files", "*.*")]
+                            )
+                    finally:
+                        root.destroy()
+                except Exception as exc:
+                    raise RuntimeError(f"The system path picker is unavailable: {exc}") from exc
+                if not selected:
+                    self._send_json({"cancelled": True})
+                else:
+                    selected_path = Path(selected).expanduser().resolve()
+                    if kind == "folder" and not selected_path.is_dir():
+                        raise ValueError("The selected output folder does not exist.")
+                    if kind == "open" and not selected_path.is_file():
+                        raise ValueError("The selected path is not a file.")
+                    self._send_json({"cancelled": False, "path": str(selected_path)})
+            except (ValueError, OSError, json.JSONDecodeError, RuntimeError) as exc:
+                self._send_json({"error": str(exc)}, 400)
+            return
         if route.path == "/api/generate":
             try:
                 fields, files = _parse_multipart(self)

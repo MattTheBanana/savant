@@ -741,7 +741,7 @@ body:not(.show-editor-controls-bar) #editorActionBar,body:not(.show-editor-contr
   async function genChooseSourceFile(kind){const file=await genPickLocalSource(kind);if(file)genSetFile(kind,file);}
   function genSourceDirectory(file){
     const raw=String(file?.path||'').trim();if(!raw)return '';
-    const normalized=raw.replace(/[\\/]+/g,'/'),index=normalized.lastIndexOf('/');
+    const normalized=raw.split(String.fromCharCode(92)).join('/'),index=normalized.lastIndexOf('/');
     if(index<0)return '';
     if(index===0)return '/';
     // Preserve a Windows drive root such as C:/ rather than truncating it to C:.

@@ -617,6 +617,8 @@ def _friendly_cli_failure(return_code: int, output: str) -> str:
     ))
     if "already exists" in message or "use --overwrite" in message:
         name = "Output Already Exists"
+    elif exception_type in {"ImportError", "ModuleNotFoundError"}:
+        name = "Python Dependency Missing"
     elif "ffmpeg" in message and missing:
         name = "FFmpeg Not Found"
     elif "tifa" in message and missing:
@@ -650,8 +652,6 @@ def _friendly_cli_failure(return_code: int, output: str) -> str:
         name = "Invalid Input or Settings"
     elif missing or exception_type == "FileNotFoundError":
         name = "File or Dependency Not Found"
-    elif exception_type in {"ImportError", "ModuleNotFoundError"}:
-        name = "Python Dependency Missing"
     elif exception_type == "PermissionError":
         name = "File Permission Error"
     elif exception_type == "FileExistsError":

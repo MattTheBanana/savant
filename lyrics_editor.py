@@ -34,7 +34,7 @@ PROGRESS_PREFIX = "@@SAVANT_PROGRESS@@"
 
 def _safe_name(filename: str, fallback: str) -> str:
     name = Path(str(filename or "").replace("\\", "/")).name
-    name = re.sub(r"[^A-Za-z0-9._() \-\u0080-\uffff]", "_", name).strip(" .")
+    name = re.sub(r"[^A-Za-z0-9._() '\-\u0080-\uffff]", "_", name).strip(" .")
     if not name or name in {".", ".."}:
         name = fallback
     return name[:180]
@@ -153,14 +153,25 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
     directory: Path = run["directory"]
     saved = {name: _save_upload(directory / "inputs", name, item) for name, item in files.items()}
     run["saved_inputs"] = saved
-    if "audio" in saved:
-        original_audio_name = Path(files["audio"][0].replace("\\", "/")).name if "audio" in files else saved["audio"].name
+    audio_path_text = str(config.get("audioSourcePath", "")).strip()
+    lyrics_path_text = str(config.get("lyricsSourcePath", "")).strip()
+    audio_source = Path(audio_path_text).expanduser().resolve() if audio_path_text else saved.get("audio")
+    lyrics_source = Path(lyrics_path_text).expanduser().resolve() if lyrics_path_text else saved.get("lyrics")
+    for source, label in ((audio_source, "audio"), (lyrics_source, "lyrics")):
+        if source is not None and not source.is_file():
+            raise ValueError(f"The selected {label} file does not exist or is not a readable file: {source}")
+    if audio_source is not None:
+        original_audio_name = (
+            Path(files["audio"][0].replace("\\", "/")).name
+            if "audio" in files and not audio_path_text
+            else audio_source.name
+        )
         run["source_audio_name"] = original_audio_name
         run.setdefault("artifacts", {})["input-audio"] = {
-            "label": "Source audio", "path": str(saved["audio"]), "kind": "input",
+            "label": "Source audio", "path": str(audio_source), "kind": "input",
             "name": original_audio_name,
         }
-    operation = str(config.get("mode", "align"))
+    operation = str(config.get("mode", "align"))    operation = str(config.get("mode", "align"))
     run["operation"] = operation
 
     if operation == "doctor":
@@ -168,19 +179,19 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
 
     command = [sys.executable, str(ALIGN_SCRIPT)]
     if operation == "adjust":
-        if "lyrics" not in saved:
+        if lyrics_source is None:
             raise ValueError("Choose an existing .lrc file to adjust.")
-        command.extend(["--adjust-lrc", str(saved["lyrics"])])
+        command.extend(["--adjust-lrc", str(lyrics_source)])
     else:
-        if "audio" not in saved or "lyrics" not in saved:
+        if audio_source is None or lyrics_source is None:
             raise ValueError("Choose both an audio file and a lyrics file.")
-        command.extend(["--audio", str(saved["audio"]), "--lyrics", str(saved["lyrics"])])
+        command.extend(["--audio", str(audio_source), "--lyrics", str(lyrics_source)])
 
     output_path_text = str(config.get("outputPath", "")).strip()
     if output_path_text:
         output_path = Path(output_path_text).expanduser().resolve()
     else:
-        source = saved.get("lyrics") if operation == "adjust" else saved.get("audio")
+        source = lyrics_source if operation == "adjust" else audio_source
         fallback_stem = source.stem if source else "lyrics"
         raw_output_name = str(config.get("outputName", "")).strip()
         if raw_output_name:
@@ -245,7 +256,7 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
             _add_flag(command, "--tifa-diagnostics", diagnosis_path)
             run["artifacts"]["tifa-diagnosis"] = {"label": "TIFA diagnosis (raw JSON)", "path": str(diagnosis_path), "kind": "diagnosis"}
         elif str(config.get("aligner", "whisperx")) == "tifa":
-            default_diagnosis = saved["audio"].with_suffix(".tifa-diagnosis.json")
+            default_diagnosis = audio_source.with_suffix(".tifa-diagnosis.json")
             run["artifacts"]["tifa-diagnosis"] = {"label": "TIFA diagnosis (raw JSON)", "path": str(default_diagnosis), "kind": "diagnosis"}
 
         if bool(config.get("reviewReport")) or str(config.get("reviewReportPath", "")).strip():
@@ -548,42 +559,58 @@ class Handler(BaseHTTPRequestHandler):
         if not self._api_mutation_allowed():
             self._send_json({"error": "This local API only accepts requests from the Savant UI."}, 403)
             return
-        if route.path == "/api/select-folder":
+        if route.path == "/api/select-source":
             try:
                 length = int(self.headers.get("Content-Length", "0"))
                 if length > 100_000:
-                    raise ValueError("Invalid folder selection request.")
+                    raise ValueError("Invalid source selection request.")
                 payload = json.loads(self.rfile.read(length).decode("utf-8"))
                 kind = str(payload.get("kind", ""))
                 if kind not in {"audio", "lyrics"}:
-                    raise ValueError("Choose either the audio or lyrics folder.")
-                filename = str(payload.get("audioName" if kind == "audio" else "lyricsName", "")).strip()
-                title = f"Choose the folder containing {filename}" if filename else f"Choose the output folder (source: {kind})"
+                    raise ValueError("Choose either an audio or lyrics source file.")
                 try:
                     import tkinter as tk
                     from tkinter import filedialog
+
                     root = tk.Tk()
                     root.withdraw()
                     try:
                         root.attributes("-topmost", True)
                     except tk.TclError:
                         pass
+                    filetypes = (
+                        [("Audio files", "*.flac *.wav *.mp3 *.m4a *.ogg *.opus *.aiff *.aif *.wma"), ("All files", "*.*")]
+                        if kind == "audio"
+                        else [("Lyric files", "*.txt *.lrc *.ttml *.xml"), ("All files", "*.*")]
+                    )
                     try:
-                        selected = filedialog.askdirectory(
-                            parent=root, title=title, initialdir=str(Path.home()), mustexist=True
+                        selected = filedialog.askopenfilename(
+                            parent=root,
+                            title="Choose the source audio file" if kind == "audio" else "Choose the source lyrics file",
+                            initialdir=str(Path.home()),
+                            filetypes=filetypes,
                         )
                     finally:
                         root.destroy()
                 except Exception as exc:
-                    raise RuntimeError(f"The system folder picker is unavailable: {exc}") from exc
+                    raise RuntimeError(f"The system file picker is unavailable: {exc}") from exc
                 if not selected:
                     self._send_json({"cancelled": True})
                 else:
-                    self._send_json({"cancelled": False, "path": str(Path(selected).expanduser().resolve())})
+                    source = Path(selected).expanduser().resolve()
+                    if not source.is_file():
+                        raise ValueError("The selected source is not a file.")
+                    self._send_json({
+                        "cancelled": False,
+                        "path": str(source),
+                        "name": source.name,
+                        "size": source.stat().st_size,
+                        "type": mimetypes.guess_type(source.name)[0] or "application/octet-stream",
+                    })
             except (ValueError, OSError, json.JSONDecodeError, RuntimeError) as exc:
                 self._send_json({"error": str(exc)}, 400)
             return
-        if route.path == "/api/generate":
+        if route.path == "/api/select-folder":        if route.path == "/api/generate":
             try:
                 fields, files = _parse_multipart(self)
                 config = json.loads(fields.get("config", "{}"))

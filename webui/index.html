@@ -1733,10 +1733,10 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     $('addWord').classList.toggle('hidden',!wordMode);
     $('addWord').disabled=!wordMode||!hasWordTiming;
     const timelineAvailable=wordMode&&hasWordTiming;
-    const fitZoom=Math.min(2000,computeFitZoom());
-    const currentZoom=Number(timelineZoom)||fitZoom;
+    const fitZoom=timelineAvailable?Math.min(2000,computeFitZoom()):0;
+    const currentZoom=timelineAvailable?Math.max(fitZoom,Number(timelineZoom)||fitZoom):(Number(timelineZoom)||0);
     const zoomTolerance=Math.max(.01,fitZoom*.001);
-    const atFit=currentZoom<=fitZoom+zoomTolerance;
+    const atFit=timelineAvailable&&Math.abs(currentZoom-fitZoom)<=zoomTolerance;
     $('zoomOut').disabled=!timelineAvailable||atFit;
     $('zoomFit').disabled=!timelineAvailable||atFit;
     $('zoomIn').disabled=!timelineAvailable||currentZoom>=2000;

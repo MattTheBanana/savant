@@ -319,6 +319,22 @@ def _local_path_suggestions(raw_text: str, kind: str, limit: int = 18) -> dict:
         return {"suggestions": [], "message": f"Could not list path suggestions: {exc}", "error": True}
 
 
+def _require_writable_output_parent(path: Path, label: str) -> None:
+    """Fail early with a clear message when a chosen output location cannot be written."""
+    parent = path.parent
+    if not parent.exists():
+        raise ValueError(
+            f"{label} folder does not exist: {parent}. Use the path suggestions to create it, "
+            "or choose another output folder."
+        )
+    if not parent.is_dir():
+        raise ValueError(f"{label} parent path is not a folder: {parent}")
+    if not _path_can_write(parent):
+        raise PermissionError(f"{label} folder is not writable or accessible: {parent}")
+    if path.exists() and path.is_file() and not os.access(path, os.W_OK):
+        raise PermissionError(f"The existing {label.lower()} file is not writable: {path}")
+
+
 def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]]) -> list[str]:
     directory: Path = run["directory"]
     saved = {name: _save_upload(directory / "inputs", name, item) for name, item in files.items()}
@@ -378,6 +394,8 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
             output_directory = Path(output_directory_text).expanduser().resolve()
             if not output_directory.is_dir():
                 raise ValueError(f"The selected output folder does not exist or is not a directory: {output_directory}")
+            if not _path_can_write(output_directory):
+                raise PermissionError(f"The selected output folder is not writable or accessible: {output_directory}")
         elif output_directory_mode == "run":
             output_directory = directory
         elif lyrics_source is not None and (lyrics_path_text or "lyrics" not in saved):
@@ -388,6 +406,7 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
                 "so the original lyrics folder can be detected. Browser uploads do not reveal their original folder."
             )
         output_path = output_directory / f"{output_stem}.lrc"
+    _require_writable_output_parent(output_path, "LRC output")
     _add_flag(command, "--output", output_path)
     run["artifacts"]["output-lrc"] = {"label": "Output LRC", "path": str(output_path), "kind": "output"}
 
@@ -423,6 +442,7 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
         else:
             ttml_path = None
         if ttml_path is not None:
+            _require_writable_output_parent(ttml_path, "TTML output")
             run["artifacts"]["output-ttml"] = {"label": "Output TTML", "path": str(ttml_path), "kind": "output"}
 
         if "singerConfig" in saved:
@@ -431,12 +451,14 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
             if not bool(config.get("separateVocals")):
                 raise ValueError("Enable vocal separation before choosing a retained vocal stem path.")
             vocal_output_path = Path(str(config["vocalOutput"])).expanduser().resolve()
+            _require_writable_output_parent(vocal_output_path, "Vocal output")
             _add_flag(command, "--vocal-output", vocal_output_path)
             run["artifacts"]["vocal-output"] = {"label": "Separated vocal stem", "path": str(vocal_output_path), "kind": "output"}
 
         tifa_diagnostics = str(config.get("tifaDiagnosticsPath", "")).strip()
         if tifa_diagnostics:
             diagnosis_path = Path(tifa_diagnostics).expanduser().resolve()
+            _require_writable_output_parent(diagnosis_path, "TIFA diagnostics output")
             _add_flag(command, "--tifa-diagnostics", diagnosis_path)
             run["artifacts"]["tifa-diagnosis"] = {"label": "TIFA diagnosis (raw JSON)", "path": str(diagnosis_path), "kind": "diagnosis"}
         elif str(config.get("aligner", "whisperx")) == "tifa":
@@ -447,6 +469,7 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
         if bool(config.get("reviewReport")) or str(config.get("reviewReportPath", "")).strip():
             report_text = str(config.get("reviewReportPath", "")).strip()
             report = Path(report_text).expanduser().resolve() if report_text else output_path.parent / "alignment-review.txt"
+            _require_writable_output_parent(report, "Review report")
             _add_flag(command, "--review-report", report)
             run["artifacts"]["review-report"] = {"label": "Alignment review report", "path": str(report), "kind": "report"}
         for field_name, arg_name in (("lineOffsets", "--line-offsets"), ("phraseOffsets", "--phrase-offsets")):

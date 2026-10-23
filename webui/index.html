@@ -15,7 +15,7 @@ tbody tr.selected td.num{color:var(--accent);font-weight:800;background:#203748}
 /* Live playback preview and drag/drop affordance. */
 tbody tr.playing{background:#25394d;box-shadow:inset 4px 0 var(--accent2)}
 tbody tr.selected.playing{background:#24434d;box-shadow:inset 4px 0 var(--accent),inset 0 0 0 1px #47776e}
-td.lyric .lyric-editor{display:block;width:calc(100% - 18px);min-width:0;min-height:34px;padding:8px 7px;border:1px solid transparent;border-radius:6px;color:var(--text);font-size:13px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;outline:none;cursor:text}
+td.lyric{padding-left:5px}td.lyric .lyric-editor{display:block;width:calc(100% - 24px);min-width:0;min-height:34px;padding:8px 5px;border:1px solid transparent;border-radius:6px;color:var(--text);font-size:13px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;outline:none;cursor:text}
 td.lyric .lyric-editor:focus{background:#0e1622;border-color:#527d83}
 td.lyric .lyric-editor:empty::before{content:'Enter lyric…';color:#61738a}
 td.lyric .lyric-editor.singer-italic,td.lyric .word-token.singer-italic{font-style:italic}
@@ -72,9 +72,9 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .file-name{max-width:min(220px,19vw);min-width:60px}
 .status{margin-left:auto;font-size:11px}
 .drag-drop-note{display:none}
-.player-dock{display:grid;position:fixed;left:0;right:0;bottom:0;height:var(--player-dock-height);z-index:80;margin:0!important;border-radius:0!important;border-left:0;border-right:0;border-bottom:0;padding:8px 16px;grid-template-columns:minmax(0,1fr);grid-template-rows:8px 30px 16px;gap:4px 12px;align-content:center;box-shadow:0 -8px 28px #0005}
-.player-dock-meta{grid-column:1;grid-row:3;position:relative;display:flex;align-items:center;justify-content:center;min-width:0;width:100%;height:16px}
-.player-dock .audio-title{min-width:0;max-width:calc(100% - 120px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;font-size:12px;line-height:1.2}
+.player-dock{display:grid;position:fixed;left:0;right:0;bottom:0;height:var(--player-dock-height);z-index:80;margin:0!important;border-radius:0!important;border-left:0;border-right:0;border-bottom:0;padding:8px 16px;grid-template-columns:minmax(0,1fr);grid-template-rows:8px 30px;gap:12px 12px;align-content:center;box-shadow:0 -8px 28px #0005}
+.player-dock-meta{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;flex:1 1 auto;min-width:0;width:auto;height:30px}
+.player-dock .audio-title{flex:1 1 auto;min-width:0;max-width:calc(100% - 120px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;font-size:12px;font-weight:400;line-height:1.2}
 .player-dock .audio-sub{position:absolute;right:0;top:50%;transform:translateY(-50%);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;font-size:10px;line-height:1.2;color:var(--muted);font-variant-numeric:tabular-nums}
 .player-dock .audio-time{font-size:11px;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
 .preview-backdrop{position:fixed;left:0;right:0;top:var(--app-header-height);bottom:var(--player-dock-height);z-index:50;background:#02060bb8;backdrop-filter:blur(1px);transition:opacity .18s ease}
@@ -344,8 +344,8 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
 .player-seek::-webkit-slider-thumb,.player-volume::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;background:#e7fbf5;border:2px solid #3b8678;box-shadow:0 1px 4px #0006}
 .player-seek::-moz-range-thumb,.player-volume::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:#e7fbf5;border:2px solid #3b8678;box-shadow:0 1px 4px #0006}
 #editScreen button,#editorContextMenu button,#agentPresetMenu button,#colorPickerPopover button,#playerDock button{text-transform:capitalize}.player-secondary-controls button{flex:0 0 32px}
-@media(max-width:1000px){.player-dock{gap:4px 8px;padding:7px 10px}.player-transport-controls{gap:7px}.player-secondary-controls{gap:8px}.player-volume{flex-basis:68px;width:68px}}
-@media(max-width:620px){.player-dock{grid-template-columns:minmax(0,1fr);grid-template-rows:7px 28px 14px;gap:3px 6px;padding:5px 8px}.player-transport-controls{gap:5px;height:7px}.player-control-button,.player-secondary-controls button{flex-basis:28px;width:28px;height:28px}.player-icon{width:16px;height:16px}.player-play-button{font-size:13px}.player-secondary-controls{gap:6px;height:28px}.player-secondary-actions{gap:4px}.player-volume-control{gap:4px}.player-volume{display:block;flex:0 1 56px;width:56px}.player-dock .audio-time{font-size:10px}.player-dock-meta{grid-row:3;height:14px}.player-dock .audio-title{max-width:calc(100% - 72px);font-size:11px}.player-dock .audio-sub{max-width:66px;font-size:9px}}
+@media(max-width:1000px){.player-dock{grid-template-columns:minmax(0,1fr);grid-template-rows:8px 30px;gap:10px 8px;padding:7px 10px}.player-transport-controls{gap:7px}.player-secondary-controls{gap:8px}.player-volume{flex-basis:68px;width:68px}}
+@media(max-width:620px){.player-dock{grid-template-columns:minmax(0,1fr);grid-template-rows:7px 28px;gap:8px 6px;padding:5px 8px}.player-transport-controls{gap:5px;height:7px}.player-control-button,.player-secondary-controls button{flex-basis:28px;width:28px;height:28px}.player-icon{width:16px;height:16px}.player-play-button{font-size:13px}.player-secondary-controls{gap:6px;height:28px}.player-secondary-actions{gap:4px}.player-volume-control{gap:4px}.player-volume{display:block;flex:0 1 56px;width:56px}.player-dock .audio-time{font-size:10px}.player-dock-meta{height:28px;gap:4px}.player-dock .audio-title{max-width:calc(100% - 72px);font-size:11px}.player-dock .audio-sub{max-width:66px;font-size:9px}}
 
 </style>
 </head>
@@ -553,7 +553,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       <section id="prefPageUi" class="preferences-page" role="tabpanel" aria-labelledby="prefTabUi" data-preferences-page="ui" hidden>
         <div class="settings-grid">
 <div class="settings-section-heading"><h3>UI</h3><p>Editor navigation, playback visibility, and post-generation behavior.</p></div>
-      <div class="setting"><label for="defaultTab">Default preview</label><select id="defaultTab"><option value="lrc">LRC</option><option value="ttml">TTML</option></select><p>Which export preview to show when the editor opens.</p></div><div class="setting"><label for="autoFollow">Grid follow behavior</label><select id="autoFollow"><option value="true">Keep selected / playing line visible</option><option value="false">Do not auto-scroll</option></select><p>Follows keyboard selection and the active lyric during playback, unless you are typing.</p></div><div class="setting"><label for="centerModifierSelection">Center selected lines and words</label><select id="centerModifierSelection"><option value="false">Off — keep nearby position</option><option value="true">On — smoothly center selection</option></select><p>When enabled, selected lines and clicked TTML words smoothly center in the editor. When off, scrolling only adjusts as needed to keep a selected line visible.</p></div><div class="setting"><label for="showEditorShortcutHints">Keyboard shortcut hints bar</label><select id="showEditorShortcutHints"><option value="false">Hide</option><option value="true">Show</option></select><p>Show or hide the compact keyboard shortcut indicators at the bottom of the editor. This setting does not affect the editor toolbar.</p></div><div class="setting"><label for="returnToEditAfterGenerate">After generation finishes</label><select id="returnToEditAfterGenerate"><option value="false">Stay on Generate and review results</option><option value="true">Open Edit automatically</option></select><p>Choose whether a completed CLI run takes you straight to the editor.</p></div><div class="setting"><label for="autoImportGeneratedOutput">Automatically import generated files</label><select id="autoImportGeneratedOutput"><option value="false">Off — use Import Output to Edit</option><option value="true">On — load audio and lyrics into Edit</option></select><p>When enabled, load the generated TTML (or LRC if TTML was not requested) and source audio in Edit after a successful run.</p></div>
+      <div class="setting"><label for="defaultTab">Default preview</label><select id="defaultTab"><option value="lrc">LRC</option><option value="ttml">TTML</option></select><p>Which export preview to show when the editor opens.</p></div><div class="setting"><label for="autoFollow">Grid follow behavior</label><select id="autoFollow"><option value="true">Keep selected / playing line visible</option><option value="false">Do not auto-scroll</option></select><p>Follows keyboard selection and the active lyric during playback, unless you are typing.</p></div><div class="setting"><label for="centerModifierSelection">Center selected lines and words</label><select id="centerModifierSelection"><option value="false">Off — keep nearby position</option><option value="true">On — smoothly center selection</option></select><p>When enabled, selected lines and clicked TTML words smoothly center in the editor. When off, scrolling only adjusts as needed to keep a selected line visible.</p></div><div class="setting"><label for="followLrcSelectionOnTtmlSwitch">Follow selected LRC line when switching to TTML</label><select id="followLrcSelectionOnTtmlSwitch"><option value="true">On — follow the selected line</option><option value="false">Off — restore the previous TTML view</option></select><p>When enabled, selecting a line in LRC and then switching to TTML brings that line into view and clears the previous word selection. Switching without a new LRC line selection restores the saved TTML view.</p></div><div class="setting"><label for="showEditorShortcutHints">Keyboard shortcut hints bar</label><select id="showEditorShortcutHints"><option value="false">Hide</option><option value="true">Show</option></select><p>Show or hide the compact keyboard shortcut indicators at the bottom of the editor. This setting does not affect the editor toolbar.</p></div><div class="setting"><label for="returnToEditAfterGenerate">After generation finishes</label><select id="returnToEditAfterGenerate"><option value="false">Stay on Generate and review results</option><option value="true">Open Edit automatically</option></select><p>Choose whether a completed CLI run takes you straight to the editor.</p></div><div class="setting"><label for="autoImportGeneratedOutput">Automatically import generated files</label><select id="autoImportGeneratedOutput"><option value="false">Off — use Import Output to Edit</option><option value="true">On — load audio and lyrics into Edit</option></select><p>When enabled, load the generated TTML (or LRC if TTML was not requested) and source audio in Edit after a successful run.</p></div>
         </div>
       </section>
       <section id="prefPageUtility" class="preferences-page" role="tabpanel" aria-labelledby="prefTabUtility" data-preferences-page="utility" hidden>
@@ -650,11 +650,11 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
         <input id="playerVolume" class="player-volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume">
       </div>
     </div>
+    <div class="player-dock-meta" role="group" aria-label="Loaded audio file">
+      <div id="audioTitle" class="audio-title">No audio loaded</div>
+      <div id="audioSub" class="audio-sub" aria-label="Audio file size"></div>
+    </div>
     <div id="timeReadout" class="audio-time">00:00.00 / 00:00.00</div>
-  </div>
-  <div class="player-dock-meta" role="group" aria-label="Loaded audio file">
-    <div id="audioTitle" class="audio-title">No audio loaded</div>
-    <div id="audioSub" class="audio-sub" aria-label="Audio file size"></div>
   </div>
   <audio id="player" class="player-audio-element" preload="metadata" aria-hidden="true" tabindex="-1"></audio>
 </div>
@@ -687,6 +687,9 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   let hasWordTiming = false;
   let sourceFormat = '';
   let gridMode = 'lines';
+  let savedLrcScrollTop=0;
+  let savedTimelineView=null;
+  let lrcSelectionChangedSinceTtmlSwitch=false;
   let selectedWordRef = null;
   let wordInspectorShownKey = null;
   let activePlaybackIndex = -1;
@@ -735,7 +738,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   };
   const DEFAULT_UI_SETTINGS = {
     nudgeStep: 0.02, shiftMultiplier: 5, replayLead: 2.0, txtSpacing: 3.0,
-    language: 'en', defaultTab: 'lrc', autoFollow: true, centerModifierSelection: false, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, doubleShiftIntervalMs: 450, returnToEditAfterGenerate: false, autoImportGeneratedOutput: false, wordInspectorLayout: 'right', showEditorShortcutHints: false,
+    language: 'en', defaultTab: 'lrc', autoFollow: true, centerModifierSelection: false, followLrcSelectionOnTtmlSwitch: true, downloadBase: 'same', timelineOverlap: 0.45, playheadLabelSize: 9, dragAutoScrollSpeed: 320, doubleShiftIntervalMs: 450, returnToEditAfterGenerate: false, autoImportGeneratedOutput: false, wordInspectorLayout: 'right', showEditorShortcutHints: false,
     generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}
   };
   let settings = {...DEFAULT_UI_SETTINGS,generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}};
@@ -1043,10 +1046,10 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     void pollInstallationSettings(true);
   }
   function saveSettings() {
-    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','centerModifierSelection','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','doubleShiftIntervalMs','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorShortcutHints']) {
+    for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','centerModifierSelection','followLrcSelectionOnTtmlSwitch','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','doubleShiftIntervalMs','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorShortcutHints']) {
       const el=$(key); if (!el) continue;
       settings[key] = ['language','defaultTab','downloadBase','wordInspectorLayout'].includes(key) ? el.value :
-        (key==='autoFollow'||key==='centerModifierSelection'||key==='returnToEditAfterGenerate'||key==='autoImportGeneratedOutput'||key==='showEditorShortcutHints') ? el.value==='true' : Number(el.value);
+        (key==='autoFollow'||key==='centerModifierSelection'||key==='followLrcSelectionOnTtmlSwitch'||key==='returnToEditAfterGenerate'||key==='autoImportGeneratedOutput'||key==='showEditorShortcutHints') ? el.value==='true' : Number(el.value);
     }
     settings.nudgeStep=Math.min(1,Math.max(.001,Number(settings.nudgeStep)||.02));
     settings.shiftMultiplier=Math.min(50,Math.max(2,Math.round(Number(settings.shiftMultiplier)||5)));
@@ -1066,7 +1069,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     for (const key of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','doubleShiftIntervalMs']) $(key).value=settings[key];
     document.documentElement.style.setProperty('--playhead-label-size',`${settings.playheadLabelSize}px`);
     $('autoFollow').value=String(settings.autoFollow);
-    $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));$('autoImportGeneratedOutput').value=String(Boolean(settings.autoImportGeneratedOutput));$('wordInspectorLayout').value=settings.wordInspectorLayout||'right';$('showEditorShortcutHints').value=String(Boolean(settings.showEditorShortcutHints));$('centerModifierSelection').value=String(Boolean(settings.centerModifierSelection));syncGeneratorDefaultsForm();applyEditorPreferences();
+    $('returnToEditAfterGenerate').value=String(Boolean(settings.returnToEditAfterGenerate));$('autoImportGeneratedOutput').value=String(Boolean(settings.autoImportGeneratedOutput));$('wordInspectorLayout').value=settings.wordInspectorLayout||'right';$('showEditorShortcutHints').value=String(Boolean(settings.showEditorShortcutHints));$('centerModifierSelection').value=String(Boolean(settings.centerModifierSelection));$('followLrcSelectionOnTtmlSwitch').value=String(Boolean(settings.followLrcSelectionOnTtmlSwitch));syncGeneratorDefaultsForm();applyEditorPreferences();
   }
   function fmtTime(sec, places=3) {
     sec=Math.max(0,Number(sec)||0); const mins=Math.floor(sec/60), secs=sec-mins*60;
@@ -1887,6 +1890,8 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     if(gridMode==='words'){
       selectedWordKeys.clear();selectedWordRef=null;wordSelectionAnchorKey=null;
       refreshWordSelection();updateWordInspector();
+    }else{
+      lrcSelectionChangedSinceTtmlSwitch=true;
     }
     if(toggle){
       if(selectedLineIndices.has(index))selectedLineIndices.delete(index);
@@ -2079,6 +2084,11 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   }
   function setGridMode(mode) {
     const nextMode=mode==='words'?'words':'lines';
+    const previousMode=gridMode;
+    if(nextMode===previousMode)return;
+    const switchingFromLinesToWords=previousMode==='lines'&&nextMode==='words';
+    const lrcTargetIndex=Number.isInteger(selectedIndex)&&selectedIndex>=0&&selectedIndex<rows.length?selectedIndex:
+      Number.isInteger(lastEditedIndex)&&lastEditedIndex>=0&&lastEditedIndex<rows.length?lastEditedIndex:-1;
     let historyBefore=null,generatedCues=false;
     if(nextMode==='words'){
       if(!rows.some(row=>String(row.text||'').trim())){toast('Add lyric text before switching to TTML word timing.',true);return;}
@@ -2090,6 +2100,13 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
         }
       });
       hasWordTiming=rows.some(row=>row.wordCues?.length);
+    }
+    if(previousMode==='lines')savedLrcScrollTop=$('lineTableWrap').scrollTop;
+    else savedTimelineView=captureTimelineView();
+    const followLrcSelection=switchingFromLinesToWords&&Boolean(settings.followLrcSelectionOnTtmlSwitch)&&lrcSelectionChangedSinceTtmlSwitch&&lrcTargetIndex>=0;
+    lrcSelectionChangedSinceTtmlSwitch=false;
+    if(followLrcSelection){
+      selectedWordRef=null;selectedWordKeys.clear();wordSelectionAnchorKey=null;
     }
     activePlaybackIndex=-1;activeWordIndex=-1;
     gridMode=nextMode;
@@ -2103,11 +2120,24 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     renderGrid();
     if(gridMode==='words'){
       const refs=allWordRefs();
-      if(refs.length){
-        const existing=refs.find(r=>r.lineIndex===selectedWordRef?.lineIndex&&r.cueIndex===selectedWordRef?.cueIndex);
-        const chosen=existing||refs.find(r=>r.lineIndex===Math.max(0,selectedIndex))||refs[0];
-        selectWord(chosen.lineIndex,chosen.cueIndex,false);
+      if(followLrcSelection){
+        const lane=$('timelineLanes').querySelector('.timeline-lane-row[data-line-index="'+lrcTargetIndex+'"]');
+        if(lane){
+          if(settings.centerModifierSelection)scrollElementToCenter($('timelineViewport'),lane,true);
+          else scrollElementToNearest($('timelineViewport'),lane);
+        }
+      }else{
+        if(refs.length){
+          const existing=refs.find(r=>r.lineIndex===selectedWordRef?.lineIndex&&r.cueIndex===selectedWordRef?.cueIndex);
+          const chosen=existing||refs.find(r=>r.lineIndex===Math.max(0,selectedIndex))||refs[0];
+          selectWord(chosen.lineIndex,chosen.cueIndex,false);
+        }
+        restoreTimelineView(savedTimelineView);
       }
+      updateJumpToLineVisibility();
+    }else{
+      $('lineTableWrap').scrollTop=savedLrcScrollTop;
+      updateLrcJumpToLineVisibility();
     }
     if(generatedCues){
       updatePreview();updateStatus();commitHistoryChange(historyBefore);
@@ -2181,7 +2211,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     if(!clip){button.classList.add('hidden');return;}
     const viewportRect=viewport.getBoundingClientRect(),clipRect=clip.getBoundingClientRect();
     const visibleTop=viewportRect.top+viewport.clientTop,visibleBottom=visibleTop+viewport.clientHeight;
-    const fullyVisible=clipRect.top>=visibleTop+1&&clipRect.bottom<=visibleBottom-1;
+    const fullyVisible=clipRect.top>=visibleTop-1&&clipRect.bottom<=visibleBottom+1;
     button.classList.toggle('hidden',fullyVisible);
   }
   function updateLrcJumpToLineVisibility(){
@@ -2194,7 +2224,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     const header=$('gridHead')?.getBoundingClientRect();
     const visibleTop=viewportRect.top+viewport.clientTop+(header?header.height:0);
     const visibleBottom=viewportRect.top+viewport.clientTop+viewport.clientHeight;
-    const fullyVisible=rowRect.top>=visibleTop+1&&rowRect.bottom<=visibleBottom-1;
+    const fullyVisible=rowRect.top>=visibleTop-1&&rowRect.bottom<=visibleBottom+1;
     button.classList.toggle('hidden',fullyVisible);
   }
   function jumpToCurrentLine(){
@@ -3693,8 +3723,8 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     }
   },true);
   $('settingsScreen').addEventListener('focusout',()=>{if(pendingInstallationSettingsSnapshot&&!settingsFormHasFocus()){const pending=pendingInstallationSettingsSnapshot;applyInstallationSettingsSnapshot(pending,true);}});
-  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','centerModifierSelection','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','doubleShiftIntervalMs','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorShortcutHints'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);if(id==='wordInspectorLayout'&&gridMode==='words')rerenderWordTimelinePreservingView();toast('Settings saved.');});
-  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,doubleShiftIntervalMs:450,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false,wordInspectorLayout:'right',centerModifierSelection:false,showEditorShortcutHints:false,generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}};syncSettingsForm();saveSettings();applyGeneratorDefaults();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
+  for(const id of ['nudgeStep','shiftMultiplier','replayLead','txtSpacing','language','defaultTab','autoFollow','centerModifierSelection','followLrcSelectionOnTtmlSwitch','downloadBase','timelineOverlap','playheadLabelSize','dragAutoScrollSpeed','doubleShiftIntervalMs','returnToEditAfterGenerate','autoImportGeneratedOutput','wordInspectorLayout','showEditorShortcutHints'])$(id).addEventListener('change',()=>{saveSettings();if(id==='defaultTab'){outputMode=settings.defaultTab;updatePreview();}if(id==='timelineOverlap'&&gridMode==='words')rerenderWordTimelinePreservingView();if(id==='playheadLabelSize')updateLiveHighlight(true);if(id==='wordInspectorLayout'&&gridMode==='words')rerenderWordTimelinePreservingView();toast('Settings saved.');});
+  $('resetSettings').addEventListener('click',()=>{settings={nudgeStep:.02,shiftMultiplier:5,replayLead:2,txtSpacing:3,language:'en',defaultTab:'lrc',autoFollow:true,downloadBase:'same',timelineOverlap:.45,playheadLabelSize:9,dragAutoScrollSpeed:320,doubleShiftIntervalMs:450,returnToEditAfterGenerate:false,autoImportGeneratedOutput:false,wordInspectorLayout:'right',centerModifierSelection:false,followLrcSelectionOnTtmlSwitch:true,showEditorShortcutHints:false,generatorDefaults:{...DEFAULT_GENERATOR_DEFAULTS}};syncSettingsForm();saveSettings();applyGeneratorDefaults();outputMode=settings.defaultTab;updatePreview();toast('Settings reset.');});
   function selectAllWords(allLines=false,lineIndexOverride=null){
     if(gridMode!=='words')return;
     const fallbackLine=selectedIndex>=0&&selectedIndex<rows.length?selectedIndex:lastEditedIndex>=0&&lastEditedIndex<rows.length?lastEditedIndex:0;

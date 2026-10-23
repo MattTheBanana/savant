@@ -264,3 +264,10 @@ User-specific collaboration guidance:
 - Expanded Escape handling in TTML mode so it clears selection when a line, a single word cue, or a multi-word selection is active. Selection styling, active indices, and inspector state are refreshed.
 - Existing Escape priority for open menus and popovers remains unchanged.
 - Static validation passed: inline JavaScript compiles and no duplicate static HTML IDs were found. Interactive browser testing remains outstanding.
+
+## Player icon alignment and volume slider fill
+
+- Shifted the playback pause glyph very slightly down and right for optical alignment.
+- Enlarged and strengthened the block-pause glyph on desktop, with a proportionate size for the compact layout, so its visible weight better matches the other controls.
+- Added a live filled/unfilled gradient to the volume slider, driven by the current volume value and refreshed with player controls.
+- Static validation passed: inline JavaScript compiles, no duplicate static HTML IDs, and the volume fill is updated from the current slider value. Browser visual confirmation remains outstanding.

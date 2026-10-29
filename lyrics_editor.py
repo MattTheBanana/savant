@@ -43,7 +43,40 @@ def _safe_name(filename: str, fallback: str) -> str:
     return name[:180]
 
 
+PATH_CHECK_TIMEOUT_SECONDS = 5.0
+
+
+def _absolute_path(path_text: str) -> Path:
+    """Normalize a local path without resolving symlinks or probing the filesystem."""
+    return Path(os.path.abspath(os.path.expanduser(str(path_text))))
+
+
+def _bounded_filesystem_check(label: str, check, timeout: float = PATH_CHECK_TIMEOUT_SECONDS):
+    """Run a potentially slow filesystem probe with a visible upper bound."""
+    completed = threading.Event()
+    outcome: dict[str, object] = {}
+
+    def probe() -> None:
+        try:
+            outcome["value"] = check()
+        except Exception as exc:
+            outcome["error"] = exc
+        finally:
+            completed.set()
+
+    threading.Thread(target=probe, daemon=True, name="savant-path-check").start()
+    if not completed.wait(timeout):
+        raise TimeoutError(
+            f"Timed out after {timeout:g} seconds while checking {label}. "
+            "Check whether the drive or folder is connected, then choose a reachable path."
+        )
+    if "error" in outcome:
+        raise outcome["error"]  # type: ignore[misc]
+    return outcome.get("value")
+
+
 def _run_snapshot(run: dict) -> dict:
+    """Return cached run state without probing user paths on status polls."""
     with RUNS_LOCK:
         snapshot = {
             "id": run["id"],
@@ -60,19 +93,19 @@ def _run_snapshot(run: dict) -> dict:
             "logs": run.get("logs", ""),
             "runDirectory": str(run["directory"]),
             "sourceAudioName": run.get("source_audio_name", ""),
+            "existingOutputs": list(run.get("existing_outputs", [])),
             "artifacts": [],
         }
         for key, meta in run.get("artifacts", {}).items():
             path = Path(meta["path"])
-            available = path.is_file()
             snapshot["artifacts"].append({
                 "key": key,
                 "label": meta.get("label", key),
                 "name": meta.get("name") or path.name,
                 "path": str(path),
                 "kind": meta.get("kind", "file"),
-                "available": available,
-                "size": path.stat().st_size if available else 0,
+                "available": bool(meta.get("available", False)),
+                "size": int(meta.get("size", 0)),
             })
         return snapshot
 
@@ -327,16 +360,20 @@ def _local_path_suggestions(raw_text: str, kind: str, limit: int = 18) -> dict:
 def _require_writable_output_parent(path: Path, label: str) -> None:
     """Fail early with a clear message when a chosen output location cannot be written."""
     parent = path.parent
-    if not parent.exists():
+    if not _bounded_filesystem_check(f"{label} folder {parent}", parent.exists):
         raise ValueError(
             f"{label} folder does not exist: {parent}. Use the path suggestions to create it, "
             "or choose another output folder."
         )
-    if not parent.is_dir():
+    if not _bounded_filesystem_check(f"{label} parent folder {parent}", parent.is_dir):
         raise ValueError(f"{label} parent path is not a folder: {parent}")
-    if not _path_can_write(parent):
+    if not _bounded_filesystem_check(f"write access to {label.lower()} folder {parent}", lambda: _path_can_write(parent)):
         raise PermissionError(f"{label} folder is not writable or accessible: {parent}")
-    if path.exists() and path.is_file() and not os.access(path, os.W_OK):
+    existing_file_is_unwritable = _bounded_filesystem_check(
+        f"existing {label.lower()} file {path}",
+        lambda: path.exists() and path.is_file() and not os.access(path, os.W_OK),
+    )
+    if existing_file_is_unwritable:
         raise PermissionError(f"The existing {label.lower()} file is not writable: {path}")
 
 
@@ -346,10 +383,10 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
     run["saved_inputs"] = saved
     audio_path_text = str(config.get("audioSourcePath", "")).strip()
     lyrics_path_text = str(config.get("lyricsSourcePath", "")).strip()
-    audio_source = Path(audio_path_text).expanduser().resolve() if audio_path_text else saved.get("audio")
-    lyrics_source = Path(lyrics_path_text).expanduser().resolve() if lyrics_path_text else saved.get("lyrics")
+    audio_source = _absolute_path(audio_path_text) if audio_path_text else saved.get("audio")
+    lyrics_source = _absolute_path(lyrics_path_text) if lyrics_path_text else saved.get("lyrics")
     for source, label in ((audio_source, "audio"), (lyrics_source, "lyrics")):
-        if source is not None and not source.is_file():
+        if source is not None and not _bounded_filesystem_check(f"selected {label} file {source}", source.is_file):
             raise ValueError(f"The selected {label} file does not exist or is not a readable file: {source}")
     if audio_source is not None:
         original_audio_name = (
@@ -380,7 +417,7 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
 
     output_path_text = str(config.get("outputPath", "")).strip()
     if output_path_text:
-        output_path = Path(output_path_text).expanduser().resolve()
+        output_path = _absolute_path(output_path_text)
     else:
         # The output name and default destination follow the source lyrics, not the audio.
         source = lyrics_source if lyrics_source is not None else audio_source
@@ -396,10 +433,10 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
         output_directory_text = str(config.get("outputDirectory", "")).strip()
         output_directory_mode = str(config.get("outputDirectoryMode", "auto")).strip().lower()
         if output_directory_text:
-            output_directory = Path(output_directory_text).expanduser().resolve()
-            if not output_directory.is_dir():
+            output_directory = _absolute_path(output_directory_text)
+            if not _bounded_filesystem_check(f"output folder {output_directory}", output_directory.is_dir):
                 raise ValueError(f"The selected output folder does not exist or is not a directory: {output_directory}")
-            if not _path_can_write(output_directory):
+            if not _bounded_filesystem_check(f"write access to output folder {output_directory}", lambda: _path_can_write(output_directory)):
                 raise PermissionError(f"The selected output folder is not writable or accessible: {output_directory}")
         elif output_directory_mode == "run":
             output_directory = directory
@@ -439,7 +476,7 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
 
         ttml_path_text = str(config.get("ttmlOutputPath", "")).strip()
         if ttml_path_text:
-            ttml_path = Path(ttml_path_text).expanduser().resolve()
+            ttml_path = _absolute_path(ttml_path_text)
             _add_flag(command, "--ttml-output", ttml_path)
         elif bool(config.get("wordLevel")) or "singerConfig" in saved:
             ttml_path = output_path.with_suffix(".ttml")
@@ -455,14 +492,14 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
         if "vocalOutput" in config and str(config.get("vocalOutput", "")).strip():
             if not bool(config.get("separateVocals")):
                 raise ValueError("Enable vocal separation before choosing a retained vocal stem path.")
-            vocal_output_path = Path(str(config["vocalOutput"])).expanduser().resolve()
+            vocal_output_path = _absolute_path(str(config["vocalOutput"]))
             _require_writable_output_parent(vocal_output_path, "Vocal output")
             _add_flag(command, "--vocal-output", vocal_output_path)
             run["artifacts"]["vocal-output"] = {"label": "Separated vocal stem", "path": str(vocal_output_path), "kind": "output"}
 
         tifa_diagnostics = str(config.get("tifaDiagnosticsPath", "")).strip()
         if tifa_diagnostics:
-            diagnosis_path = Path(tifa_diagnostics).expanduser().resolve()
+            diagnosis_path = _absolute_path(tifa_diagnostics)
             _require_writable_output_parent(diagnosis_path, "TIFA diagnostics output")
             _add_flag(command, "--tifa-diagnostics", diagnosis_path)
             run["artifacts"]["tifa-diagnosis"] = {"label": "TIFA diagnosis (raw JSON)", "path": str(diagnosis_path), "kind": "diagnosis"}
@@ -473,7 +510,7 @@ def _build_command(run: dict, config: dict, files: dict[str, tuple[str, bytes]])
 
         if bool(config.get("reviewReport")) or str(config.get("reviewReportPath", "")).strip():
             report_text = str(config.get("reviewReportPath", "")).strip()
-            report = Path(report_text).expanduser().resolve() if report_text else output_path.parent / "alignment-review.txt"
+            report = _absolute_path(report_text) if report_text else output_path.parent / "alignment-review.txt"
             _require_writable_output_parent(report, "Review report")
             _add_flag(command, "--review-report", report)
             run["artifacts"]["review-report"] = {"label": "Alignment review report", "path": str(report), "kind": "report"}
@@ -682,6 +719,58 @@ def _friendly_cli_failure(return_code: int, output: str) -> str:
     return f"{name}: {detail}"
 
 
+def _prepare_and_run_worker(run_id: str, config: dict, files: dict[str, tuple[str, bytes]], env: dict[str, str]) -> None:
+    """Validate input/output paths off the HTTP request thread, then launch the CLI."""
+    with RUNS_LOCK:
+        run = RUNS.get(run_id)
+        if not run:
+            return
+    try:
+        _set_progress(run, 1, "Checking output paths", 0)
+        _append_log(run, "Checking input and output paths before launching the CLI.")
+        command = _build_command(run, config, files)
+
+        operation = str(config.get("mode", "align"))
+        if operation in {"align", "adjust"} and not bool(config.get("dryRun")):
+            _set_progress(run, 2, "Checking existing output files", 0)
+            _append_log(run, "Checking whether planned output files already exist.")
+            existing_outputs = []
+            seen_outputs = set()
+            for artifact in run.get("artifacts", {}).values():
+                raw_path = str(artifact.get("path", "")).strip()
+                if artifact.get("kind") not in {"output", "diagnosis", "report"} or not raw_path:
+                    continue
+                path = _absolute_path(raw_path)
+                if _bounded_filesystem_check(f"existing output {path}", path.exists):
+                    normalized = str(path)
+                    if normalized not in seen_outputs:
+                        seen_outputs.add(normalized)
+                        existing_outputs.append(normalized)
+            existing_outputs.sort()
+            if existing_outputs and not bool(config.get("overwritePromptConfirmed")):
+                with RUNS_LOCK:
+                    run["status"] = "overwrite-required"
+                    run["existing_outputs"] = existing_outputs
+                    run["pending_command"] = command
+                    run["pending_env"] = env
+                    run["error"] = "Existing output files need confirmation before generation."
+                _set_progress(run, 2, "Waiting for overwrite confirmation", 0)
+                _append_log(run, "Existing output files were found. Waiting for the user to confirm overwrite.")
+                return
+
+        _run_worker(run_id, command, env)
+    except Exception as exc:
+        with RUNS_LOCK:
+            run["status"] = "failed"
+            run["finished"] = time.time()
+            run["error"] = f"{type(exc).__name__}: {exc}"
+            for meta in run.get("artifacts", {}).values():
+                kind = meta.get("kind", "file")
+                meta["available"] = kind in {"log", "input"}
+        _set_progress(run, int(run.get("overall_progress", 1)), "Failed", 100)
+        _append_log(run, f"ERROR: {type(exc).__name__}: {exc}")
+
+
 def _run_worker(run_id: str, command: list[str], env: dict[str, str]) -> None:
     with RUNS_LOCK:
         run = RUNS[run_id]
@@ -721,6 +810,9 @@ def _run_worker(run_id: str, command: list[str], env: dict[str, str]) -> None:
             run["finished"] = time.time()
             run["status"] = "success" if return_code == 0 else ("warning" if return_code == 1 else "failed")
             run["error"] = None if return_code in (0, 1) else _friendly_cli_failure(return_code, run.get("logs", ""))
+            for meta in run.get("artifacts", {}).values():
+                kind = meta.get("kind", "file")
+                meta["available"] = kind in {"log", "input"} or (return_code in (0, 1) and kind in {"output", "diagnosis", "report"})
         if return_code in (0, 1):
             _set_progress(run, 100, "Finished" if return_code == 0 else "Finished with warnings", 100)
         else:
@@ -730,6 +822,9 @@ def _run_worker(run_id: str, command: list[str], env: dict[str, str]) -> None:
             run["status"] = "failed"
             run["finished"] = time.time()
             run["error"] = f"{type(exc).__name__}: {exc}"
+            for meta in run.get("artifacts", {}).values():
+                kind = meta.get("kind", "file")
+                meta["available"] = kind in {"log", "input"}
         _append_log(run, f"ERROR: {type(exc).__name__}: {exc}")
     finally:
         process_obj = run.get("process")
@@ -1167,50 +1262,35 @@ class Handler(BaseHTTPRequestHandler):
                 (run_dir / "inputs").mkdir(parents=True, exist_ok=False)
                 run = {
                     "id": run_id,
-                    "status": "queued",
+                    "status": "running",
                     "operation": str(config.get("mode", "align")),
                     "created": time.time(),
-                    "started": None,
+                    "started": time.time(),
                     "finished": None,
                     "return_code": None,
-                    "step": "Queued",
-                    "overall_progress": 0,
+                    "step": "Checking output paths",
+                    "overall_progress": 1,
                     "step_progress": 0,
                     "logs": "",
                     "directory": run_dir,
                     "log_path": run_dir / "savant-generate.log",
                     "artifacts": {
-                        "log": {"label": "Generation log", "path": str(run_dir / "savant-generate.log"), "kind": "log"}
+                        "log": {"label": "Generation log", "path": str(run_dir / "savant-generate.log"), "kind": "log", "available": True}
                     },
+                    "existing_outputs": [],
                 }
                 run["log_path"].write_text("", encoding="utf-8")
-                command = _build_command(run, config, files)
-                operation = str(config.get("mode", "align"))
-                if operation in {"align", "adjust"} and not bool(config.get("dryRun")):
-                    existing_outputs = sorted({
-                        str(Path(str(artifact.get("path", ""))).expanduser().resolve())
-                        for artifact in run.get("artifacts", {}).values()
-                        if artifact.get("kind") in {"output", "diagnosis", "report"}
-                        and str(artifact.get("path", "")).strip()
-                        and Path(str(artifact.get("path", ""))).expanduser().exists()
-                    })
-                    if existing_outputs and not bool(config.get("overwritePromptConfirmed")):
-                        # No subprocess has been started. Discard this attempt's uploaded inputs
-                        # so the UI can ask first and submit a clean, approved request if needed.
-                        shutil.rmtree(run_dir, ignore_errors=True)
-                        self._send_json({
-                            "error": "Existing output files require overwrite confirmation.",
-                            "overwriteRequired": True,
-                            "existingOutputs": existing_outputs,
-                        }, 409)
-                        return
                 with RUNS_LOCK:
                     RUNS[run_id] = run
-                _set_progress(run, 1, "Queued")
+                _append_log(run, "Run received; preparing inputs and checking output paths.")
                 env = os.environ.copy()
                 env["PYTHONUNBUFFERED"] = "1"
                 env["SAVANT_GUI_PROGRESS"] = "1"
-                thread = threading.Thread(target=_run_worker, args=(run_id, command, env), daemon=True)
+                thread = threading.Thread(
+                    target=_prepare_and_run_worker,
+                    args=(run_id, config, files, env),
+                    daemon=True,
+                )
                 thread.start()
                 self._send_json({"runId": run_id})
             except (ValueError, OSError, json.JSONDecodeError) as exc:
@@ -1247,6 +1327,56 @@ class Handler(BaseHTTPRequestHandler):
                 thread.start()
                 self._send_json({"runId": run_id, "label": label})
             except (ValueError, OSError, json.JSONDecodeError, RuntimeError) as exc:
+                self._send_json({"error": str(exc)}, 400)
+            return
+        match = re.fullmatch(r"/api/runs/([A-Za-z0-9_-]+)/confirm-overwrite", route.path)
+        if match:
+            run_id = match.group(1)
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if length > 100_000:
+                    raise ValueError("Invalid overwrite confirmation request.")
+                payload = json.loads(self.rfile.read(length).decode("utf-8"))
+                confirmed = bool(payload.get("confirmed", False))
+                with RUNS_LOCK:
+                    run = RUNS.get(run_id)
+                    if not run:
+                        self._send_json({"error": "Run not found."}, 404)
+                        return
+                    if run.get("status") != "overwrite-required":
+                        self._send_json({"error": "This run is not waiting for overwrite confirmation."}, 409)
+                        return
+                    run["existing_outputs"] = []
+                    if confirmed:
+                        command = run.pop("pending_command", None)
+                        env = run.pop("pending_env", None)
+                        if not isinstance(command, list) or not isinstance(env, dict):
+                            self._send_json({"error": "The prepared command is no longer available. Start the run again."}, 409)
+                            return
+                        if "--overwrite" not in command:
+                            command.append("--overwrite")
+                        run["status"] = "queued"
+                        run["error"] = None
+                        run["step"] = "Overwrite confirmed"
+                    else:
+                        run["status"] = "cancelled"
+                        run["finished"] = time.time()
+                        run["error"] = "Run cancelled; existing output files were left untouched."
+                        run["step"] = "Run Cancelled"
+                        for meta in run.get("artifacts", {}).values():
+                            kind = meta.get("kind", "file")
+                            meta["available"] = kind in {"log", "input"}
+                if confirmed:
+                    _append_log(run, "Overwrite confirmed; starting the CLI.")
+                    _set_progress(run, 2, "Overwrite confirmed", 0)
+                    thread = threading.Thread(target=_run_worker, args=(run_id, command, env), daemon=True)
+                    thread.start()
+                    self._send_json({"ok": True, "accepted": True})
+                else:
+                    _append_log(run, "Run cancelled; existing output files were left untouched.")
+                    _set_progress(run, int(run.get("overall_progress", 1)), "Run Cancelled", 100)
+                    self._send_json({"ok": True, "accepted": False})
+            except (ValueError, OSError, json.JSONDecodeError) as exc:
                 self._send_json({"error": str(exc)}, 400)
             return
         if route.path == "/api/open-artifact":

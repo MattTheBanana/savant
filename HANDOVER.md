@@ -323,3 +323,13 @@ User-specific collaboration guidance:
 - Moved the `Compute device` control from the basic generator configuration into Advanced Options, under the “Model and TIFA” card. Its existing task-based visibility behavior and `genDevice` value binding remain unchanged.
 - Changed the desktop basic-settings grid to four columns and ordered its controls as Task, Alignment backend, Global timing offset (seconds), and Language code. Existing responsive breakpoints still collapse the row for narrower viewports.
 - Static validation passed: inline JavaScript compiles, there are no duplicate HTML IDs, the compute-device wrapper appears only once in Advanced Options, and the four requested basic controls are in the four-column grid. Interactive GUI layout verification remains outstanding.
+
+## Generator progress and output-path preflight
+
+- Initialized the progress display through the same layout calculation used for later progress updates, so the `0%` label is moved above the current-step label whenever their horizontal positions overlap.
+- Changed generator uploads to use upload-progress events. The status now distinguishes `Uploading inputs` from `Checking output paths`, instead of displaying a path-checking message while a large file is still being sent.
+- Moved command construction and output-path checks into a background preflight worker. The API returns a run ID before path checks finish, allowing the progress display and Logs pane to keep updating during preflight.
+- Added a five-second bound to individual filesystem probes used for source/output validation and existing-output checks. A slow or disconnected drive produces a clear timeout error naming the path check instead of keeping the generator request pending indefinitely.
+- Removed filesystem stat calls from run-status polling. Artifact availability is cached from the run outcome, so polling no longer re-checks potentially slow output paths.
+- Preserved overwrite protection by exposing existing outputs through run status and adding a confirmation endpoint. Confirming overwrite resumes the already-prepared command without uploading the source files a second time; declining cancels the run and leaves existing files untouched.
+- Added `tests/test_generator_preflight.py` for cached artifact status and timeout messaging. Static UI checks passed (inline JavaScript parses; no duplicate static HTML IDs). Python tests and interactive GUI verification were not run in this environment.

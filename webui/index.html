@@ -152,7 +152,7 @@ td.lyric .word-token.playing-word{font-weight:850;color:#071a1a;background:var(-
 .generate-drop-zone.dragover,.generate-mini-drop.dragover{border-color:var(--accent);background:#15322f}
 .generate-drop-icon{font-size:26px;color:var(--accent)}.generate-drop-zone strong{font-size:14px}.generate-file-name{display:block;max-width:100%;overflow-wrap:anywhere;color:#cfdbeb;font-size:12px}.generate-file-name.empty,.generate-muted,.generate-drop-help,.generate-card-note{color:var(--muted);font-size:12px}
 .generate-drop-help{line-height:1.5}.generate-file-input{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
-.generate-basic-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;padding:17px 0}.generate-output-name{min-width:0}
+.generate-basic-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;padding:17px 0}.generate-output-name{min-width:0}
 .generate-basic-grid .setting,.generate-advanced-card .setting{min-width:0}.generate-check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 .generate-check{display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid var(--border);border-radius:9px;background:#111a27;cursor:pointer;min-width:0}
 .generate-check input{margin-top:3px;accent-color:var(--accent);flex:0 0 auto}.generate-check span{display:grid;gap:3px;min-width:0}.generate-check strong{font-size:12px}.generate-check small{font-size:11px;line-height:1.45;color:var(--muted)}
@@ -474,9 +474,8 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
       <div class="generate-basic-grid">
         <div class="setting"><label for="genMode">Task</label><select id="genMode"><option value="align">Align audio to lyrics</option><option value="adjust">Adjust an existing LRC</option><option value="doctor">Run System Diagnostics only</option></select><p>Choose the CLI operation.</p></div>
         <div id="genAlignOptions" class="setting"><label for="genAligner">Alignment backend</label><select id="genAligner"><option value="whisperx">WhisperX · general alignment</option><option value="tifa">TIFA · singing-trained alignment (English)</option></select><p>TIFA requires its separate optional install and model.</p></div>
-        <div id="genLanguageWrap" class="setting"><label for="genLanguage">Language code</label><input id="genLanguage" value="en" maxlength="20" spellcheck="false"><p>Language used in the recording.</p></div>
-        <div id="genDeviceWrap" class="setting"><label for="genDevice">Compute device</label><select id="genDevice"><option value="auto">Auto detect</option><option value="cuda">CUDA GPU</option><option value="cpu">CPU</option></select><p>Auto is recommended for most systems.</p></div>
         <div id="genOffsetWrap" class="setting"><label for="genOffset">Global timing offset (seconds)</label><input id="genOffset" type="number" min="-30" max="30" step="0.01" value="0"><p>Negative values move timings earlier.</p></div>
+        <div id="genLanguageWrap" class="setting"><label for="genLanguage">Language code</label><input id="genLanguage" value="en" maxlength="20" spellcheck="false"><p>Language used in the recording.</p></div>
       </div>
       <div class="generate-output-row">
         <div id="genOutputNameWrap" class="setting"><label for="genOutputName">Output filename</label><input id="genOutputName" type="text" placeholder="Defaults to the lyrics filename" autocomplete="off" spellcheck="false"><p>The LRC and generated TTML use this name. The lyrics filename is the default.</p></div>
@@ -500,6 +499,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
           <label class="generate-check compact"><input id="genDryRun" type="checkbox"><span><strong>Dry run only</strong><small>Validate inputs and planned outputs without loading a model.</small></span></label>
         </div>
         <div class="generate-advanced-card"><h3>Model and TIFA</h3>
+          <div id="genDeviceWrap" class="setting"><label for="genDevice">Compute device</label><select id="genDevice"><option value="auto">Auto detect</option><option value="cuda">CUDA GPU</option><option value="cpu">CPU</option></select><p>Auto is recommended for most systems.</p></div>
           <div class="setting"><label for="genAlignModel">Custom WhisperX alignment model</label><input id="genAlignModel" type="text" placeholder="Optional model name"></div>
           <div class="setting"><label for="genTifaRoot">TIFA source directory</label><div class="path-input-control"><input id="genTifaRoot" type="text" placeholder="Use project default" data-path-input="true" data-path-kind="folder" data-path-role="source-directory" autocomplete="off" spellcheck="false"><button class="small path-action-button" type="button" data-path-target="genTifaRoot" data-path-kind="folder" data-path-title="Choose TIFA source directory">Browse…</button></div></div>
           <div class="setting"><label for="genTifaPython">TIFA Python executable</label><div class="path-input-control"><input id="genTifaPython" type="text" placeholder="Use project default" data-path-input="true" data-path-kind="open" data-path-role="source-file" autocomplete="off" spellcheck="false"><button class="small path-action-button" type="button" data-path-target="genTifaPython" data-path-kind="open" data-path-title="Choose TIFA Python executable">Browse…</button></div></div>

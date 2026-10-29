@@ -1613,7 +1613,7 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     });
     $('genOverallText').textContent=overall+'%';
     track.setAttribute('aria-valuenow',String(overall));
-    $('genCurrentStep').textContent=['success','warning'].includes(snapshot.status)?(snapshot.status==='warning'?'Completed With Warnings':'Generation Complete'):snapshot.status==='failed'?'Generation Failed':step;
+    $('genCurrentStep').textContent=['success','warning'].includes(snapshot.status)?(snapshot.status==='warning'?'Completed With Warnings':'Generation Complete'):snapshot.status==='failed'?'Generation Failed':snapshot.status==='cancelled'?'Run Cancelled':step;
     $('genCurrentStep').title=step;
     const currentStepLabel=$('genCurrentStep'),activeSegmentRect=segments[active]?.getBoundingClientRect(),stageWrapRect=$('genProgressStageWrap').getBoundingClientRect();
     if(activeSegmentRect&&stageWrapRect){
@@ -1626,11 +1626,11 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     const percentRect=percentLabel.getBoundingClientRect(),stepRect=stepLabel.getBoundingClientRect();
     const horizontalOverlap=percentRect.left<stepRect.right+8&&percentRect.right+8>stepRect.left;
     percentLabel.classList.toggle('above-step',horizontalOverlap);
-    $('genRunStatusBadge').textContent=({queued:'Queued',running:'Running',success:'Completed',warning:'Completed With Warnings',failed:'Failed'})[snapshot.status]||snapshot.status;
+    $('genRunStatusBadge').textContent=({queued:'Queued',running:'Running',success:'Completed',warning:'Completed With Warnings',failed:'Failed',cancelled:'Cancelled','overwrite-required':'Confirm Overwrite'})[snapshot.status]||snapshot.status;
     host.classList.toggle('finished',['success','warning'].includes(snapshot.status));host.classList.toggle('failed',snapshot.status==='failed');
     const footer=$('genFooterStatus');
     footer.classList.toggle('error',snapshot.status==='failed');
-    footer.textContent=snapshot.error||(snapshot.status==='success'?'Generation complete. Review the output files or import them into Edit.':snapshot.status==='warning'?'Generation finished with warnings. Review the logs and output files.':snapshot.status==='failed'?'Generation failed. Open Logs for details.':'Working locally…');
+    footer.textContent=snapshot.error||(snapshot.status==='success'?'Generation complete. Review the output files or import them into Edit.':snapshot.status==='warning'?'Generation finished with warnings. Review the logs and output files.':snapshot.status==='failed'?'Generation failed. Open Logs for details.':snapshot.status==='cancelled'?'Run cancelled; existing output files were left untouched.':snapshot.status==='overwrite-required'?'Existing output files need confirmation before generation.':'Working locally…');
     host.dataset.progressStatus=String(snapshot.status||'');
     if(snapshot.status==='success'&&previousStatus!=='success')requestAnimationFrame(genLaunchCompletionConfetti);
   }
@@ -1669,45 +1669,49 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
     if(mode==='align'&&genFiles.singerConfig)form.append('singerConfig',genFiles.singerConfig,genFiles.singerConfig.name);
     if((mode==='align'||mode==='adjust')&&genFiles.lineOffsets)form.append('lineOffsets',genFiles.lineOffsets,genFiles.lineOffsets.name);
     if((mode==='align'||mode==='adjust')&&genFiles.phraseOffsets)form.append('phraseOffsets',genFiles.phraseOffsets,genFiles.phraseOffsets.name);
-    await startGeneratorRequest('/api/generate',form,'Run Generator',false);
+    await startGeneratorRequest('/api/generate',form,'Run Generator',false,mode);
   }
   async function startGeneratorInstall(kind,label){
     if(genRunBusy)return;const option=genCapabilities?.installers?.[kind];if(!option?.available){showInstallGuidance(kind,option?.description||'No installer is available.');return;}
     const warnings={base:'This installs WhisperX / base packages in the Python environment used by Savant.',vocal:'This installs optional demucs-infer in the Python environment used by Savant.',tifa:'This runs the separate TIFA installer and may download model code and weights.',ffmpeg:'This runs winget to install FFmpeg system-wide.'};
     if(!window.confirm((warnings[kind]||'Run the requested installer?')+'\n\nContinue with '+(label||option.label)+'?'))return;
-    await startGeneratorRequest('/api/install',JSON.stringify({kind}),label||option.label,true);
+    await startGeneratorRequest('/api/install',JSON.stringify({kind}),label||option.label,true,'install-'+kind);
   }
-  async function startGeneratorRequest(url,body,label,isInstall=false){
-    genRunBusy=true;genIsInstallRun=isInstall;if(!isInstall)genImportedRunId=null;$('genRunButton').disabled=true;$('genRunButton').textContent=isInstall?'Installing…':'Checking Outputs…';$('genFooterStatus').textContent=isInstall?label+'…':'Checking output paths before generation…';
+  async function startGeneratorRequest(url,body,label,isInstall=false,operation='align'){
+    genRunBusy=true;genIsInstallRun=isInstall;if(!isInstall)genImportedRunId=null;$('genRunButton').disabled=true;$('genRunButton').textContent=isInstall?'Installing…':'Uploading Inputs…';$('genFooterStatus').textContent=isInstall?label+'…':'Uploading input files…';
     $('genImportButton').disabled=true;genSetOutputButtons(null);genOutputReady=false;genCompletedNeedsConfigChange=false;$('genFooterStatus').classList.remove('error');
-    $('generateRunStatus').classList.remove('hidden','finished','failed');$('genCurrentStep').textContent=isInstall?label+'…':'Checking output paths…';$('genOverallText').textContent='0%';$('genSegmentTrack').setAttribute('aria-valuenow','0');
-    $('genSegmentTrack').querySelectorAll('.generate-segment').forEach((segment,index)=>{segment.classList.toggle('active',index===0);segment.classList.remove('complete');segment.querySelector('.generate-segment-fill').style.width=index===0?'35%':'0%';});
-    selectGenerateResult('logs');$('genLogs').textContent=isInstall?'Starting '+label+'…\n':'Checking output paths before launching the CLI…\n';
+    $('generateRunStatus').classList.remove('hidden','finished','failed');
+    selectGenerateResult('logs');$('genLogs').textContent=isInstall?'Starting '+label+'…\n':'Uploading input files, then checking output paths…\n';
+    genSetProgress({operation,status:'running',overallProgress:0,step:isInstall?label+'…':'Uploading inputs…',stepProgress:0,logs:''});
+    $('genFooterStatus').textContent=isInstall?label+'…':'Uploading input files…';
     const request=async()=>{
-      const response=await fetch(url,{method:'POST',headers:{'X-Savant-UI':'1',...(isInstall?{'Content-Type':'application/json'}:{})},body});
-      let result={};try{result=await response.json();}catch(_){}
-      if(response.status===409&&result.overwriteRequired&&!isInstall){
-        const existing=Array.isArray(result.existingOutputs)?result.existingOutputs.map(path=>String(path)):[];
-        const shown=existing.slice(0,8);
-        const extra=existing.length>shown.length?'\n… and '+(existing.length-shown.length)+' more file(s)':'';
-        const details=shown.map(path=>'• '+path).join('\n');
-        const prompt='These output files already exist and will be replaced if you continue:\n\n'+details+extra+'\n\nOverwrite '+(existing.length===1?'this file':'these files')+' and continue?';
-        if(!window.confirm(prompt)){
-          const error=new Error('Run cancelled; existing output files were left untouched.');
-          error.cancelled=true;throw error;
-        }
-        let config;
-        try{config=JSON.parse(body.get('config')||'{}');}catch(_){throw new Error('Could not prepare the overwrite-approved run. Please try again.');}
-        config.overwrite=true;config.overwritePromptConfirmed=true;
-        body.set('config',JSON.stringify(config));
-        return request();
+      if(isInstall){
+        return await genFetchJson(url,{method:'POST',headers:{'Content-Type':'application/json','X-Savant-UI':'1'},body});
       }
-      if(!response.ok)throw new Error(result.error||'The local task could not be started.');
-      return result;
+      return await new Promise((resolve,reject)=>{
+        const xhr=new XMLHttpRequest();
+        xhr.open('POST',url,true);
+        xhr.setRequestHeader('X-Savant-UI','1');
+        xhr.upload.addEventListener('progress',event=>{
+          if(!event.lengthComputable||event.total<=0)return;
+          const percent=Math.max(0,Math.min(100,Math.round(event.loaded/event.total*100)));
+          const step=percent>=100?'Checking output paths…':'Uploading inputs ('+percent+'%)…';
+          genSetProgress({operation,status:'running',overallProgress:0,step,stepProgress:percent,logs:''});
+          $('genFooterStatus').textContent=percent>=100?'Upload complete; checking output paths…':'Uploading input files ('+percent+'%)…';
+        });
+        xhr.onload=()=>{
+          let result={};try{result=JSON.parse(xhr.responseText||'{}');}catch(_){}
+          if(xhr.status>=200&&xhr.status<300)resolve(result);
+          else reject(new Error(result.error||('Local API returned HTTP '+xhr.status+'.')));
+        };
+        xhr.onerror=()=>reject(new Error('The local connection was interrupted while uploading inputs.'));
+        xhr.onabort=()=>reject(new Error('The input upload was cancelled.'));
+        xhr.send(body);
+      });
     };
     try{
       const result=await request();
-      genActiveRunId=result.runId;genDiagnosisLoadedFor=null;genLastSnapshot={id:result.runId,status:'queued',logs:$('genLogs').textContent,artifacts:[]};$('genRunButton').textContent=isInstall?'Installing…':'Running…';$('genFooterStatus').textContent=isInstall?label+'…':'Starting generation…';await pollGeneratorRun(result.runId);
+      genActiveRunId=result.runId;genDiagnosisLoadedFor=null;genLastSnapshot={id:result.runId,status:'running',operation,step:isInstall?label:'Checking output paths',overallProgress:1,logs:$('genLogs').textContent,artifacts:[]};$('genRunButton').textContent=isInstall?'Installing…':'Running…';$('genFooterStatus').textContent=isInstall?label+'…':'Checking output paths…';await pollGeneratorRun(result.runId);
     }catch(error){
       genRunBusy=false;genIsInstallRun=false;$('genRunButton').disabled=false;$('genRunButton').innerHTML='<span aria-hidden="true">▶</span> Run Generator';$('genImportButton').disabled=true;
       const host=$('generateRunStatus');
@@ -1726,9 +1730,23 @@ body:not(.show-editor-shortcut-hints) #editorHotkeyBar{display:none!important}
   async function pollGeneratorRun(runId){
     if(genPollTimer)clearTimeout(genPollTimer);if(!genRunBusy||genActiveRunId!==runId)return;
     try{const snapshot=await genFetchJson('/api/runs/'+encodeURIComponent(runId));genLastSnapshot=snapshot;genSetProgress(snapshot);$('genLogs').textContent=snapshot.logs||'(No output yet.)';if(genResultTab==='logs')$('genLogs').scrollTop=$('genLogs').scrollHeight;
+      if(snapshot.started&&Date.now()/1000-Number(snapshot.started)>15&&/checking output paths|checking existing output files/i.test(String(snapshot.step||'')))$('genFooterStatus').textContent='Path checks are taking longer than expected. A disconnected drive or inaccessible folder may be delaying this step.';
       renderGenerateInstallPrompts();if((snapshot.artifacts||[]).some(a=>a.key==='tifa-diagnosis'&&a.available))await loadGenerateDiagnosis(runId);
-      if(['success','warning','failed'].includes(snapshot.status)){
+      if(snapshot.status==='overwrite-required'){
+        const existing=Array.isArray(snapshot.existingOutputs)?snapshot.existingOutputs.map(path=>String(path)):[];
+        const shown=existing.slice(0,8),extra=existing.length>shown.length?'\n… and '+(existing.length-shown.length)+' more file(s)':'';
+        const details=shown.map(path=>'• '+path).join('\n');
+        const prompt='These output files already exist and will be replaced if you continue:\n\n'+details+extra+'\n\nOverwrite '+(existing.length===1?'this file':'these files')+' and continue?';
+        const confirmed=window.confirm(prompt);
+        await genFetchJson('/api/runs/'+encodeURIComponent(runId)+'/confirm-overwrite',{method:'POST',headers:{'Content-Type':'application/json','X-Savant-UI':'1'},body:JSON.stringify({confirmed})});
+      }
+      if(['success','warning','failed','cancelled'].includes(snapshot.status)){
         const wasInstall=genIsInstallRun;genRunBusy=false;
+        if(snapshot.status==='cancelled'){
+          genIsInstallRun=false;$('genRunButton').disabled=false;$('genRunButton').innerHTML='<span aria-hidden="true">▶</span> Run Generator';$('genImportButton').disabled=true;genSetOutputButtons(null);
+          $('genFooterStatus').classList.remove('error');$('genFooterStatus').textContent=snapshot.error||'Run cancelled; existing output files were left untouched.';
+          $('genRunStatusBadge').textContent='Cancelled';return;
+        }
         if(!wasInstall&&['success','warning'].includes(snapshot.status)){
           genCompletedNeedsConfigChange=true;$('genRunButton').disabled=true;$('genRunButton').textContent='✓ Generated';genSetImportButton(snapshot);
         }else{

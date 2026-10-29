@@ -1,6 +1,6 @@
 # Savant — Development Handover
 
-**Updated:** 2026-10-23  
+**Updated:** 2026-10-29  
 **Repository:** [MattTheBanana/savant](https://github.com/MattTheBanana/savant)  
 **Branch:** `main`  
 **Latest implementation commit:** [`7f56150d9522cc09103d332e1ace057bf6ca22a8`](https://github.com/MattTheBanana/savant/commit/7f56150d9522cc09103d332e1ace057bf6ca22a8)
@@ -317,3 +317,9 @@ User-specific collaboration guidance:
 - Shifted the pause-state and stop icons 1px up and 1px right for better optical alignment.
 - Fixed generated TTML musical notes being too short: intro cues now span to just before the first lyric, inter-line cues span most of the available gap, and outro cues extend to the media duration. Added regression tests for all three cases in `tests/test_instrumental_cue_durations.py`.
 - Static validation passed: inline JavaScript compiles, no duplicate static HTML IDs, requested footer controls and routing are present, and cue duration regression tests are committed. Interactive GUI verification and execution of Python tests remain outstanding in this environment.
+
+## Generator primary settings row and compute-device placement
+
+- Moved the `Compute device` control from the basic generator configuration into Advanced Options, under the “Model and TIFA” card. Its existing task-based visibility behavior and `genDevice` value binding remain unchanged.
+- Changed the desktop basic-settings grid to four columns and ordered its controls as Task, Alignment backend, Global timing offset (seconds), and Language code. Existing responsive breakpoints still collapse the row for narrower viewports.
+- Static validation passed: inline JavaScript compiles, there are no duplicate HTML IDs, the compute-device wrapper appears only once in Advanced Options, and the four requested basic controls are in the four-column grid. Interactive GUI layout verification remains outstanding.
